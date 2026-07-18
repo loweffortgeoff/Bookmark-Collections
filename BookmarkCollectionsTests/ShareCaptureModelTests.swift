@@ -1,0 +1,129 @@
+import SwiftData
+import UniformTypeIdentifiers
+import XCTest
+@testable import BookmarkCollections
+
+@MainActor
+final class ShareCaptureModelTests: XCTestCase {
+    func testURLAttachmentLoadsImmediately() async throws {
+        let model = try makeModel()
+        let url = try XCTUnwrap(URL(string: "https://example.com/article"))
+
+        await model.load(from: [NSItemProvider(object: url as NSURL)])
+
+        XCTAssertEqual(model.capture?.urlString, url.absoluteString)
+        XCTAssertEqual(model.state, .ready)
+    }
+
+    func testPlainTextContainingAURLLoads() async throws {
+        let model = try makeModel()
+        let provider = NSItemProvider(object: "Read https://example.com/from-text later" as NSString)
+
+        await model.load(from: [provider])
+
+        XCTAssertEqual(model.capture?.urlString, "https://example.com/from-text")
+        XCTAssertEqual(model.state, .ready)
+    }
+
+    func testUnsupportedInputReportsAUsefulError() async throws {
+        let model = try makeModel()
+        let provider = NSItemProvider(item: Data([0x01]) as NSData, typeIdentifier: UTType.data.identifier)
+
+        await model.load(from: [provider])
+
+        guard case let .failed(message) = model.state else {
+            return XCTFail("Expected unsupported input to fail")
+        }
+        XCTAssertTrue(message.localizedCaseInsensitiveContains("web link"))
+    }
+
+    func testSavePersistsBeforeCallingCompletion() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        var completedAfterSave = false
+        let model = ShareCaptureModel(context: container.mainContext) {
+            completedAfterSave = (try? container.mainContext.fetch(FetchDescriptor<Bookmark>()).count) == 1
+        }
+        let provider = NSItemProvider(object: NSURL(string: "https://example.com/offline")!)
+        await model.load(from: [provider])
+
+        model.save(collectionID: nil, favorite: true)
+
+        let bookmark = try XCTUnwrap(container.mainContext.fetch(FetchDescriptor<Bookmark>()).first)
+        XCTAssertTrue(completedAfterSave)
+        XCTAssertTrue(bookmark.isFavorite)
+        XCTAssertEqual(bookmark.metadataState, .pending)
+        XCTAssertEqual(model.state, .saved)
+    }
+
+    func testStoreFailureDoesNotCallCompletion() async throws {
+        var didComplete = false
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { _, _, _ in throw TestError.storeUnavailable },
+            onComplete: { didComplete = true }
+        )
+        await model.load(from: [NSItemProvider(object: NSURL(string: "https://example.com/failure")!)])
+
+        model.save(collectionID: nil, favorite: false)
+
+        XCTAssertFalse(didComplete)
+        guard case let .failed(message) = model.state else {
+            return XCTFail("Expected the store failure to remain visible")
+        }
+        XCTAssertTrue(message.localizedCaseInsensitiveContains("save"))
+    }
+
+    func testDuplicateSaveUpdatesTheExistingBookmark() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let existing = try bookmark(from: repository.save(url: "https://example.com/duplicate"))
+        let collection = BookmarkCollection(name: "Reading", sortPosition: 0)
+        container.mainContext.insert(collection)
+        let model = ShareCaptureModel(context: container.mainContext, onComplete: {})
+        await model.load(from: [NSItemProvider(object: NSURL(string: "https://example.com/duplicate")!)])
+
+        model.save(collectionID: collection.id, favorite: true)
+
+        let bookmarks = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+        XCTAssertEqual(bookmarks.count, 1)
+        XCTAssertEqual(bookmarks.first?.id, existing.id)
+        XCTAssertEqual(bookmarks.first?.collection?.id, collection.id)
+        XCTAssertTrue(bookmarks.first?.isFavorite == true)
+    }
+
+    func testDuplicateSaveRestoresARecentlyDeletedBookmark() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let deleted = Bookmark(
+            urlString: "https://example.com/restored",
+            normalizedURLString: "https://example.com/restored"
+        )
+        deleted.deletedAt = Date()
+        container.mainContext.insert(deleted)
+        try container.mainContext.save()
+        let model = ShareCaptureModel(context: container.mainContext, onComplete: {})
+        await model.load(from: [NSItemProvider(object: NSURL(string: "https://example.com/restored")!)])
+
+        model.save(collectionID: nil, favorite: false)
+
+        let bookmarks = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+        XCTAssertEqual(bookmarks.count, 1)
+        XCTAssertEqual(bookmarks.first?.id, deleted.id)
+        XCTAssertNil(bookmarks.first?.deletedAt)
+    }
+
+    private func makeModel() throws -> ShareCaptureModel {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        return ShareCaptureModel(context: container.mainContext, onComplete: {})
+    }
+
+    private func bookmark(from result: SaveResult) throws -> Bookmark {
+        switch result {
+        case let .created(bookmark), let .updated(bookmark), let .restored(bookmark):
+            bookmark
+        }
+    }
+
+    private enum TestError: Error {
+        case storeUnavailable
+    }
+}
