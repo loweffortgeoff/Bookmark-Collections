@@ -22,6 +22,7 @@ struct BookmarkCollectionsApp: App {
             LibraryRootView()
                 .task(id: scenePhase) {
                     guard scenePhase == .active else { return }
+                    try? BookmarkRepository(context: container.mainContext).reconcileDuplicates()
                     let enricher = MetadataEnricher(
                         context: container.mainContext,
                         provider: LinkPresentationMetadataProvider()
