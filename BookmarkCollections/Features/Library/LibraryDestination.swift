@@ -6,6 +6,33 @@ enum LibraryDestination: Hashable {
     case collection(UUID)
     case recentlyDeleted
 
+    var title: String {
+        switch self {
+        case .allItems: "All Items"
+        case .favorites: "Favorites"
+        case .collection: "Collection"
+        case .recentlyDeleted: "Recently Deleted"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .allItems: "square.grid.2x2"
+        case .favorites: "star"
+        case .collection: "folder"
+        case .recentlyDeleted: "trash"
+        }
+    }
+
+    var accessibilityIdentifier: String {
+        switch self {
+        case .allItems: "library.allItems"
+        case .favorites: "library.favorites"
+        case .collection: "library.collection"
+        case .recentlyDeleted: "library.recentlyDeleted"
+        }
+    }
+
     func includes(_ bookmark: Bookmark) -> Bool {
         switch self {
         case .allItems:
@@ -30,4 +57,3 @@ enum LibraryDestination: Hashable {
             || (bookmark.collection?.name.localizedCaseInsensitiveContains(query) ?? false)
     }
 }
-

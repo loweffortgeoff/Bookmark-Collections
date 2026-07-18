@@ -1,0 +1,42 @@
+import SwiftUI
+
+struct LibraryToolbar: ToolbarContent {
+    @Binding var sort: BookmarkSort
+    @Binding var ascending: Bool
+    let onAdd: () -> Void
+    let onNewCollection: () -> Void
+    let onSettings: () -> Void
+    let showEmptyRecentlyDeleted: Bool
+    let onEmptyRecentlyDeleted: () -> Void
+
+    var body: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            if showEmptyRecentlyDeleted {
+                Button(role: .destructive, action: onEmptyRecentlyDeleted) {
+                    Label("Empty Recently Deleted", systemImage: "trash.slash")
+                }
+            }
+
+            Menu {
+                Picker("Sort By", selection: $sort) {
+                    Text("Date Added").tag(BookmarkSort.dateAdded)
+                    Text("Date Modified").tag(BookmarkSort.dateModified)
+                    Text("Title").tag(BookmarkSort.title)
+                    Text("Domain").tag(BookmarkSort.domain)
+                }
+                Toggle("Ascending", isOn: $ascending)
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+
+            Menu {
+                Button("Add Link", systemImage: "link", action: onAdd)
+                Button("New Collection", systemImage: "folder.badge.plus", action: onNewCollection)
+                Divider()
+                Button("Settings", systemImage: "gear", action: onSettings)
+            } label: {
+                Label("Add", systemImage: "plus")
+            }
+        }
+    }
+}
