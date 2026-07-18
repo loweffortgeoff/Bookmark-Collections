@@ -4,3 +4,6 @@ DerivedData/
 xcuserdata/
 .superpowers/
 
+docs/superpowers/scratch/*
+!docs/superpowers/scratch/README.md
+
