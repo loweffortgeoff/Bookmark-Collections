@@ -8,16 +8,24 @@ import UIKit
 
 struct BookmarkCard: View {
     @Environment(\.openURL) private var openURL
+    @FocusState private var isFocused: Bool
     let bookmark: Bookmark
     let onOpen: (() -> Void)?
+    let onCommandSelection: (() -> Void)?
 
-    init(bookmark: Bookmark, onOpen: (() -> Void)? = nil) {
+    init(
+        bookmark: Bookmark,
+        onOpen: (() -> Void)? = nil,
+        onCommandSelection: (() -> Void)? = nil
+    ) {
         self.bookmark = bookmark
         self.onOpen = onOpen
+        self.onCommandSelection = onCommandSelection
     }
 
     var body: some View {
         Button {
+            onCommandSelection?()
             if let onOpen {
                 onOpen()
             } else if let url = URL(string: bookmark.urlString) {
@@ -46,6 +54,15 @@ struct BookmarkCard: View {
             .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)
+        .focused($isFocused)
+        .onChange(of: isFocused) { _, focused in
+            if focused { onCommandSelection?() }
+        }
+        #if os(macOS)
+        .onHover { hovering in
+            if hovering { onCommandSelection?() }
+        }
+        #endif
         .accessibilityElement(children: .combine)
         .accessibilityLabel(displayTitle)
         .accessibilityValue(accessibilityValue)

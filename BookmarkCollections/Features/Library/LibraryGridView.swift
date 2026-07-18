@@ -14,6 +14,7 @@ struct LibraryGridView: View {
     let onEdit: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
+    let onCommandSelection: (Bookmark) -> Void
 
     @State private var isSelecting = false
     @State private var selection: Set<UUID> = []
@@ -50,7 +51,8 @@ struct LibraryGridView: View {
                                 ZStack(alignment: .topTrailing) {
                                     BookmarkCard(
                                         bookmark: bookmark,
-                                        onOpen: isSelecting ? { toggleSelection(bookmark) } : nil
+                                        onOpen: isSelecting ? { toggleSelection(bookmark) } : nil,
+                                        onCommandSelection: { onCommandSelection(bookmark) }
                                     )
                                     if isSelecting {
                                         Image(systemName: selection.contains(bookmark.id) ? "checkmark.circle.fill" : "circle")
@@ -84,16 +86,6 @@ struct LibraryGridView: View {
                             onError(error.localizedDescription)
                             return false
                         }
-                    }
-                }
-            }
-        }
-        .toolbar {
-            if destination != .recentlyDeleted {
-                ToolbarItem(placement: .secondaryAction) {
-                    Button(isSelecting ? "Done" : "Select") {
-                        isSelecting.toggle()
-                        if !isSelecting { selection.removeAll() }
                     }
                 }
             }

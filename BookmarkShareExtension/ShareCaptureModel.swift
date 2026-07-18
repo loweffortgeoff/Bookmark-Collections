@@ -116,8 +116,7 @@ final class ShareCaptureModel: ObservableObject {
 
     private func firstURL(from providers: [NSItemProvider]) async -> ShareCapture? {
         for provider in providers where provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
-            guard let item = try? await provider.loadItem(forTypeIdentifier: UTType.url.identifier),
-                  let value = urlString(from: item),
+            guard let value = await urlString(from: provider),
                   let normalized = try? NormalizedURL(value) else {
                 continue
             }
@@ -127,6 +126,29 @@ final class ShareCaptureModel: ObservableObject {
                 faviconData: nil,
                 previewImageData: nil
             )
+        }
+        return nil
+    }
+
+    private func urlString(from provider: NSItemProvider) async -> String? {
+        if provider.canLoadObject(ofClass: NSURL.self),
+           let url = await withCheckedContinuation({ (continuation: CheckedContinuation<URL?, Never>) in
+               provider.loadObject(ofClass: NSURL.self) { object, _ in
+                   continuation.resume(returning: (object as? NSURL).map { $0 as URL })
+               }
+           }) {
+            return url.absoluteString
+        }
+        if let item = try? await provider.loadItem(forTypeIdentifier: UTType.url.identifier),
+           let value = urlString(from: item) {
+            return value
+        }
+        if let data = await withCheckedContinuation({ continuation in
+            provider.loadDataRepresentation(forTypeIdentifier: UTType.url.identifier) { data, _ in
+                continuation.resume(returning: data)
+            }
+        }) {
+            return String(data: data, encoding: .utf8)
         }
         return nil
     }

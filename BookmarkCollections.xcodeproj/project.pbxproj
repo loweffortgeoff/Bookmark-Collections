@@ -44,6 +44,11 @@
 		A205E0E0689F63E4E9F9C14B /* LibraryDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05102A8289C2F112837B7967 /* LibraryDestination.swift */; };
 		A7C596693A4BF88ACF7113BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
 		B69FAB340269644E9EE3ED22 /* NormalizedURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */; };
+		B2E000000000000000000011 /* SyncHealthMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000001 /* SyncHealthMonitor.swift */; };
+		B2E000000000000000000012 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000002 /* SettingsView.swift */; };
+		B2E000000000000000000013 /* ImportSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000003 /* ImportSummaryView.swift */; };
+		B2E000000000000000000014 /* BookmarkCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000004 /* BookmarkCommands.swift */; };
+		B2E000000000000000000015 /* SyncHealthMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000005 /* SyncHealthMonitorTests.swift */; };
 		B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */; };
 		BF649CA42F416CBADD35C7D5 /* BookmarkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */; };
 		C4E1AAF67BC266210E5E7F47 /* LibraryFilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4180897CF75533E68392C123 /* LibraryFilteringTests.swift */; };
@@ -128,6 +133,11 @@
 		A730ACF3F1742FEFDD86791C /* BookmarkCollectionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB2B672D4311053AA7226242 /* AddBookmarkView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddBookmarkView.swift; sourceTree = "<group>"; };
 		B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepository.swift; sourceTree = "<group>"; };
+		B2E000000000000000000001 /* SyncHealthMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncHealthMonitor.swift; sourceTree = "<group>"; };
+		B2E000000000000000000002 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B2E000000000000000000003 /* ImportSummaryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImportSummaryView.swift; sourceTree = "<group>"; };
+		B2E000000000000000000004 /* BookmarkCommands.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCommands.swift; sourceTree = "<group>"; };
+		B2E000000000000000000005 /* SyncHealthMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncHealthMonitorTests.swift; sourceTree = "<group>"; };
 		B5055F864AEC29548D040BA7 /* BackupDocument.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackupDocument.swift; sourceTree = "<group>"; };
 		B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsApp.swift; sourceTree = "<group>"; };
 		B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepositoryTests.swift; sourceTree = "<group>"; };
@@ -191,12 +201,22 @@
 			children = (
 				B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */,
 				CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */,
+				B2E000000000000000000021 /* Commands */,
 				AD70BEA3B3DE83BB539D83FF /* Data */,
 				C8A120DC4D454B5A3C6E492E /* Domain */,
 				54591EFCC988C5938AD09E3B /* Features */,
 			);
 			name = BookmarkCollections;
 			path = BookmarkCollections;
+			sourceTree = "<group>";
+		};
+		B2E000000000000000000021 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				B2E000000000000000000004 /* BookmarkCommands.swift */,
+			);
+			name = Commands;
+			path = Commands;
 			sourceTree = "<group>";
 		};
 		54591EFCC988C5938AD09E3B /* Features */ = {
@@ -206,9 +226,20 @@
 				7845767353CD8FF084F5C996 /* Bookmark */,
 				54BC6340171E41A652736663 /* Collections */,
 				C3651FB7A73FB1BEE25AC254 /* Deleted */,
+				B2E000000000000000000020 /* Settings */,
 			);
 			name = Features;
 			path = Features;
+			sourceTree = "<group>";
+		};
+		B2E000000000000000000020 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B2E000000000000000000002 /* SettingsView.swift */,
+				B2E000000000000000000003 /* ImportSummaryView.swift */,
+			);
+			name = Settings;
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		54BC6340171E41A652736663 /* Collections */ = {
@@ -319,6 +350,7 @@
 				B5055F864AEC29548D040BA7 /* BackupDocument.swift */,
 				D372E880BBBADFC88B1F4B6D /* LibraryImportService.swift */,
 				C99C46BE09BD05E5F512CE83 /* LibraryExportService.swift */,
+				B2E000000000000000000001 /* SyncHealthMonitor.swift */,
 			);
 			name = Domain;
 			path = Domain;
@@ -336,6 +368,7 @@
 				26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */,
 				43A3FEF5A0C8263B6522A77C /* ImportExportTests.swift */,
 				E3B768D2A17B4FBE8D1906AB /* ShareCaptureModelTests.swift */,
+				B2E000000000000000000005 /* SyncHealthMonitorTests.swift */,
 			);
 			name = BookmarkCollectionsTests;
 			path = BookmarkCollectionsTests;
@@ -536,6 +569,10 @@
 				F4F0795FF29CEB95D126C5FD /* CollectionEditor.swift in Sources */,
 				0F3826D69E2D108F3C2D478E /* RecentlyDeletedView.swift in Sources */,
 				3F1C3A7AD2504F2EAB6E5011 /* ShareCaptureModel.swift in Sources */,
+				B2E000000000000000000011 /* SyncHealthMonitor.swift in Sources */,
+				B2E000000000000000000012 /* SettingsView.swift in Sources */,
+				B2E000000000000000000013 /* ImportSummaryView.swift in Sources */,
+				B2E000000000000000000014 /* BookmarkCommands.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,6 +589,7 @@
 				DA781D6E10AB03C0D0589DB7 /* MetadataEnricherTests.swift in Sources */,
 				7C997A311097701618DD1204 /* ImportExportTests.swift in Sources */,
 				E3B768D2A17B4FBE8D1906AA /* ShareCaptureModelTests.swift in Sources */,
+				B2E000000000000000000015 /* SyncHealthMonitorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

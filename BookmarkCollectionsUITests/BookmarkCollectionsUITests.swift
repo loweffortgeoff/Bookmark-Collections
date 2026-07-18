@@ -82,6 +82,35 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("selection.delete").waitForExistence(timeout: 2))
     }
 
+    func testBookmarkCardExposesOrganizationAndFavoriteState() {
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.allItems"))
+        let card = identified("bookmark.seeded-active")
+        XCTAssertTrue(card.waitForExistence(timeout: 5))
+
+        XCTAssertEqual(card.label, "Seeded Active")
+        let value = card.value as? String ?? ""
+        XCTAssertTrue(value.contains("example.com"))
+        XCTAssertTrue(value.contains("Reading"))
+        XCTAssertTrue(value.contains("Favorite"))
+    }
+
+    func testSettingsExposesImportExportAndICloudStatus() {
+        #if os(macOS)
+        let addMenu = identified("library.addMenu")
+        #else
+        let addMenu = app.buttons["Add"]
+        #endif
+        XCTAssertTrue(addMenu.waitForExistence(timeout: 5))
+        activate(addMenu)
+        activate(contextMenuItem("Settings"))
+
+        XCTAssertTrue(identified("settings.importLinks").waitForExistence(timeout: 2))
+        XCTAssertTrue(identified("settings.exportHTML").exists)
+        XCTAssertTrue(identified("settings.exportJSON").exists)
+        XCTAssertTrue(identified("settings.syncStatus").exists)
+    }
+
     func testAppLaunches() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]

@@ -37,6 +37,7 @@ struct LibraryToolbar: ToolbarContent {
             } label: {
                 Label("Add", systemImage: "plus")
             }
+            .accessibilityIdentifier("library.addMenu")
         }
     }
 }

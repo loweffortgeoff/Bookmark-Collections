@@ -3,6 +3,7 @@ import SwiftUI
 
 struct LibraryRootView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openURL) private var openURL
     @Query(sort: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)])
     private var bookmarks: [Bookmark]
     @Query(sort: [SortDescriptor(\BookmarkCollection.sortPosition), SortDescriptor(\BookmarkCollection.id)])
@@ -10,6 +11,7 @@ struct LibraryRootView: View {
 
     @State private var destination: LibraryDestination? = .allItems
     @State private var searchText = ""
+    @State private var isSearchPresented = false
     @State private var sort: BookmarkSort = .dateAdded
     @State private var ascending = false
     @State private var sheet: SheetDestination?
@@ -17,20 +19,10 @@ struct LibraryRootView: View {
     @State private var emptyingRecentlyDeleted = false
     @State private var deletingCollection: BookmarkCollection?
     @State private var errorMessage: String?
+    @State private var commandBookmark: Bookmark?
 
     var body: some View {
         navigationView
-            .toolbar {
-                LibraryToolbar(
-                    sort: $sort,
-                    ascending: $ascending,
-                    onAdd: { sheet = .addBookmark },
-                    onNewCollection: { sheet = .newCollection },
-                    onSettings: { sheet = .settings },
-                    showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
-                    onEmptyRecentlyDeleted: { emptyingRecentlyDeleted = true }
-                )
-            }
             .sheet(item: $sheet, content: sheetContent)
             .alert("Delete Permanently?", isPresented: permanentDeletePresented, presenting: permanentlyDeleting) { bookmark in
                 Button("Delete Permanently", role: .destructive) {
@@ -73,6 +65,10 @@ struct LibraryRootView: View {
             } message: {
                 Text(errorMessage ?? "Try again.")
             }
+            .focusedSceneValue(\.bookmarkCommandActions, commandActions)
+            .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
+                if bookmarkID == nil { commandBookmark = nil }
+            }
     }
 
     private var navigationView: some View {
@@ -95,10 +91,22 @@ struct LibraryRootView: View {
                 onAdd: { sheet = .addBookmark },
                 onEdit: { sheet = .editBookmark($0) },
                 onPermanentDelete: { permanentlyDeleting = $0 },
-                onError: { errorMessage = $0 }
+                onError: { errorMessage = $0 },
+                onCommandSelection: { commandBookmark = $0 }
             )
             .navigationTitle(navigationTitle)
-            .searchable(text: $searchText, prompt: "Search bookmarks")
+            .searchable(text: $searchText, isPresented: $isSearchPresented, prompt: "Search bookmarks")
+            .toolbar {
+                LibraryToolbar(
+                    sort: $sort,
+                    ascending: $ascending,
+                    onAdd: { sheet = .addBookmark },
+                    onNewCollection: { sheet = .newCollection },
+                    onSettings: { sheet = .settings },
+                    showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
+                    onEmptyRecentlyDeleted: { emptyingRecentlyDeleted = true }
+                )
+            }
             .overlay(alignment: .topLeading) {
                 Text(navigationTitle)
                     .frame(width: 1, height: 1)
@@ -130,14 +138,28 @@ struct LibraryRootView: View {
         case let .editCollection(collection):
             CollectionEditor(collection: collection)
         case .settings:
+            SettingsView()
+        case let .shareBookmark(bookmark):
             NavigationStack {
-                ContentUnavailableView(
-                    "Settings",
-                    systemImage: "gear",
-                    description: Text("Import, export, and iCloud status arrive in the next build step.")
-                )
-                .navigationTitle("Settings")
+                VStack(spacing: 20) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.largeTitle)
+                    if let url = URL(string: bookmark.urlString) {
+                        ShareLink(item: url) {
+                            Label("Share Bookmark", systemImage: "square.and.arrow.up")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    } else {
+                        ContentUnavailableView(
+                            "Bookmark URL Is Invalid",
+                            systemImage: "exclamationmark.triangle"
+                        )
+                    }
+                }
+                .padding()
+                .navigationTitle("Share")
             }
+            .frame(minWidth: 320, minHeight: 220)
         }
     }
 
@@ -181,6 +203,42 @@ struct LibraryRootView: View {
             errorMessage = error.localizedDescription
         }
     }
+
+    private var commandActions: BookmarkCommandActions {
+        BookmarkCommandActions(
+            addLink: { sheet = .addBookmark },
+            focusSearch: { isSearchPresented = true },
+            newCollection: { sheet = .newCollection },
+            selectedBookmark: visibleCommandBookmark,
+            canDeleteSelected: visibleCommandBookmark?.deletedAt == nil,
+            openSelected: {
+                guard let bookmark = visibleCommandBookmark,
+                      let url = URL(string: bookmark.urlString) else { return }
+                openURL(url)
+            },
+            shareSelected: {
+                guard let bookmark = visibleCommandBookmark else { return }
+                sheet = .shareBookmark(bookmark)
+            },
+            deleteSelected: {
+                guard let bookmark = visibleCommandBookmark,
+                      bookmark.deletedAt == nil else { return }
+                perform {
+                    try BookmarkRepository(context: modelContext).softDelete(bookmark)
+                    commandBookmark = nil
+                }
+            }
+        )
+    }
+
+    private var visibleCommandBookmark: Bookmark? {
+        guard let commandBookmark,
+              let bookmark = bookmarks.first(where: { $0.id == commandBookmark.id }),
+              (destination ?? .allItems).matches(bookmark, searchText: searchText) else {
+            return nil
+        }
+        return bookmark
+    }
 }
 
 private enum SheetDestination: Identifiable {
@@ -189,6 +247,7 @@ private enum SheetDestination: Identifiable {
     case newCollection
     case editCollection(BookmarkCollection)
     case settings
+    case shareBookmark(Bookmark)
 
     var id: String {
         switch self {
@@ -197,6 +256,7 @@ private enum SheetDestination: Identifiable {
         case .newCollection: "new-collection"
         case let .editCollection(collection): "collection-\(collection.id)"
         case .settings: "settings"
+        case let .shareBookmark(bookmark): "share-\(bookmark.id)"
         }
     }
 }

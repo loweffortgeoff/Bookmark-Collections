@@ -30,6 +30,11 @@ struct BookmarkCollectionsApp: App {
                 }
         }
         .modelContainer(container)
+        .commands {
+            #if os(macOS)
+            BookmarkCommands()
+            #endif
+        }
     }
 
     @MainActor
