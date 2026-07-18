@@ -92,5 +92,50 @@ struct BookmarkRepository {
             try context.save()
         }
     }
-}
 
+    func setFavorite(_ bookmark: Bookmark, to isFavorite: Bool) throws {
+        bookmark.isFavorite = isFavorite
+        bookmark.modifiedAt = Date()
+        try context.save()
+    }
+
+    func move(_ bookmark: Bookmark, to collection: BookmarkCollection?) throws {
+        bookmark.collection = collection
+        bookmark.modifiedAt = Date()
+        try context.save()
+    }
+
+    func softDelete(_ bookmark: Bookmark, at date: Date = Date()) throws {
+        bookmark.deletedAt = date
+        bookmark.modifiedAt = date
+        try context.save()
+    }
+
+    func restore(_ bookmark: Bookmark) throws {
+        bookmark.deletedAt = nil
+        bookmark.modifiedAt = Date()
+        try context.save()
+    }
+
+    func permanentlyDelete(_ bookmark: Bookmark) throws {
+        context.delete(bookmark)
+        try context.save()
+    }
+
+    @discardableResult
+    func purgeExpiredDeleted(now: Date = Date()) throws -> Int {
+        let expirationDate = now.addingTimeInterval(-30 * 24 * 60 * 60)
+        let bookmarks = try context.fetch(FetchDescriptor<Bookmark>())
+        let expired = bookmarks.filter { bookmark in
+            guard let deletedAt = bookmark.deletedAt else { return false }
+            return deletedAt < expirationDate
+        }
+        for bookmark in expired {
+            context.delete(bookmark)
+        }
+        if !expired.isEmpty {
+            try context.save()
+        }
+        return expired.count
+    }
+}
