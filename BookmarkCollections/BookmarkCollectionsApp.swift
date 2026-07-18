@@ -3,6 +3,7 @@ import SwiftUI
 
 @main
 struct BookmarkCollectionsApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     private let container: ModelContainer
 
     init() {
@@ -16,6 +17,14 @@ struct BookmarkCollectionsApp: App {
     var body: some Scene {
         WindowGroup {
             Text("Bookmarks")
+                .task(id: scenePhase) {
+                    guard scenePhase == .active else { return }
+                    let enricher = MetadataEnricher(
+                        context: container.mainContext,
+                        provider: LinkPresentationMetadataProvider()
+                    )
+                    try? await enricher.enrichPending(limit: 20)
+                }
         }
         .modelContainer(container)
     }
