@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0848D91E80BC004B8D82CEDE /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */; };
 		25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */; };
+		39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */; };
 		3EC03544BA85B63865BC9FAF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
 		4B041D5A9AC91906BC55EE29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
+		66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */; };
 		94EB14B7F01E6ABF03CA2BA8 /* BookmarkCollectionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */; };
 		A7C596693A4BF88ACF7113BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
 		B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */; };
@@ -33,14 +36,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsUITests.swift; sourceTree = "<group>"; };
 		404742BB54C83E8B300ABCBA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		759D749C74AFDC52A1E9FA93 /* BookmarkCollectionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E66F242DB106C4B82B72FA /* BookmarkCollections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookmarkCollections.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelContainerTests.swift; sourceTree = "<group>"; };
+		A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Bookmark.swift; sourceTree = "<group>"; };
 		A730ACF3F1742FEFDD86791C /* BookmarkCollectionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsApp.swift; sourceTree = "<group>"; };
 		CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BookmarkCollections.entitlements; sourceTree = "<group>"; };
+		E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +90,7 @@
 			children = (
 				B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */,
 				CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */,
+				AD70BEA3B3DE83BB539D83FF /* Data */,
 			);
 			name = BookmarkCollections;
 			path = BookmarkCollections;
@@ -115,6 +122,17 @@
 				404742BB54C83E8B300ABCBA /* Foundation.framework */,
 			);
 			name = iOS;
+			sourceTree = "<group>";
+		};
+		AD70BEA3B3DE83BB539D83FF /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */,
+				E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */,
+				2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */,
+			);
+			name = Data;
+			path = Data;
 			sourceTree = "<group>";
 		};
 		E73DFC1A05C2EF931043685B /* BookmarkCollectionsTests */ = {
@@ -253,6 +271,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */,
+				39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */,
+				66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */,
+				0848D91E80BC004B8D82CEDE /* ModelContainerFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +317,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -314,6 +336,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -335,6 +358,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = BookmarkCollections/BookmarkCollections.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bookmark Collections";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -356,6 +380,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -374,6 +399,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -509,6 +535,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = BookmarkCollections/BookmarkCollections.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bookmark Collections";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";

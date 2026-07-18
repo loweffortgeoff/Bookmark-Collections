@@ -3,7 +3,15 @@ import SwiftUI
 
 @main
 struct BookmarkCollectionsApp: App {
-    private let container = try! ModelContainerFactory.make(inMemory: false, cloudKit: true)
+    private let container: ModelContainer
+
+    init() {
+        let runtime = AppRuntimeConfiguration()
+        container = try! ModelContainerFactory.make(
+            inMemory: runtime.usesInMemoryStore,
+            cloudKit: runtime.usesCloudKit
+        )
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -13,22 +21,15 @@ struct BookmarkCollectionsApp: App {
     }
 }
 
-enum ModelContainerFactory {
-    static func make(inMemory: Bool, cloudKit: Bool) throws -> ModelContainer {
-        let schema = Schema([ScaffoldRecord.self])
-        let configuration = ModelConfiguration(
-            "BookmarkCollectionsScaffold",
-            schema: schema,
-            isStoredInMemoryOnly: inMemory,
-            cloudKitDatabase: cloudKit ? .automatic : .none
-        )
-        return try ModelContainer(for: schema, configurations: configuration)
+struct AppRuntimeConfiguration {
+    let usesInMemoryStore: Bool
+    let usesCloudKit: Bool
+
+    init(
+        arguments: [String] = ProcessInfo.processInfo.arguments,
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) {
+        usesInMemoryStore = environment["XCTestConfigurationFilePath"] != nil
+        usesCloudKit = !usesInMemoryStore
     }
-}
-
-@Model
-final class ScaffoldRecord {
-    var createdAt = Date()
-
-    init() {}
 }

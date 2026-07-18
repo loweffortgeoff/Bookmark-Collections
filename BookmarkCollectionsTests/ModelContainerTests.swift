@@ -8,4 +8,43 @@ final class ModelContainerTests: XCTestCase {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         XCTAssertNotNil(container.mainContext.container)
     }
+
+    func testBookmarkRoundTripPreservesOrganization() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let collection = BookmarkCollection(name: "Development", sortPosition: 0)
+        let bookmark = Bookmark(
+            urlString: "https://example.com",
+            normalizedURLString: "https://example.com/"
+        )
+        bookmark.title = "Example"
+        bookmark.isFavorite = true
+        bookmark.collection = collection
+        container.mainContext.insert(collection)
+        container.mainContext.insert(bookmark)
+        try container.mainContext.save()
+
+        let descriptor = FetchDescriptor<Bookmark>()
+        let saved = try XCTUnwrap(container.mainContext.fetch(descriptor).first)
+        XCTAssertEqual(saved.title, "Example")
+        XCTAssertEqual(saved.collection?.name, "Development")
+        XCTAssertTrue(saved.isFavorite)
+        XCTAssertEqual(saved.metadataState, .pending)
+    }
+
+    func testRuntimeConfigurationUsesAnInMemoryStoreForUnitTests() {
+        let configuration = AppRuntimeConfiguration(
+            arguments: [],
+            environment: ["XCTestConfigurationFilePath": "/tmp/tests.xctestconfiguration"]
+        )
+
+        XCTAssertTrue(configuration.usesInMemoryStore)
+        XCTAssertFalse(configuration.usesCloudKit)
+    }
+
+    func testRuntimeConfigurationUsesTheSharedCloudStoreNormally() {
+        let configuration = AppRuntimeConfiguration(arguments: [], environment: [:])
+
+        XCTAssertFalse(configuration.usesInMemoryStore)
+        XCTAssertTrue(configuration.usesCloudKit)
+    }
 }
