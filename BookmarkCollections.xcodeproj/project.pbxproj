@@ -13,9 +13,13 @@
 		3EC03544BA85B63865BC9FAF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
 		4B041D5A9AC91906BC55EE29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
 		66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */; };
+		8F5ECDBFB449D3D7ABB440AC /* BookmarkRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */; };
 		94EB14B7F01E6ABF03CA2BA8 /* BookmarkCollectionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */; };
 		A7C596693A4BF88ACF7113BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
+		B69FAB340269644E9EE3ED22 /* NormalizedURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */; };
 		B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */; };
+		DEC0265458304A82517C232F /* BookmarkRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */; };
+		E28588B56C6C14C14719AB3E /* NormalizedURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408DE91A2CAC8F771079E424 /* NormalizedURLTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,12 +43,16 @@
 		2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsUITests.swift; sourceTree = "<group>"; };
 		404742BB54C83E8B300ABCBA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		408DE91A2CAC8F771079E424 /* NormalizedURLTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NormalizedURLTests.swift; sourceTree = "<group>"; };
 		759D749C74AFDC52A1E9FA93 /* BookmarkCollectionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E66F242DB106C4B82B72FA /* BookmarkCollections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookmarkCollections.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NormalizedURL.swift; sourceTree = "<group>"; };
 		8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelContainerTests.swift; sourceTree = "<group>"; };
 		A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Bookmark.swift; sourceTree = "<group>"; };
 		A730ACF3F1742FEFDD86791C /* BookmarkCollectionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepository.swift; sourceTree = "<group>"; };
 		B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsApp.swift; sourceTree = "<group>"; };
+		B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepositoryTests.swift; sourceTree = "<group>"; };
 		CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BookmarkCollections.entitlements; sourceTree = "<group>"; };
 		E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -91,6 +99,7 @@
 				B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */,
 				CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */,
 				AD70BEA3B3DE83BB539D83FF /* Data */,
+				C8A120DC4D454B5A3C6E492E /* Domain */,
 			);
 			name = BookmarkCollections;
 			path = BookmarkCollections;
@@ -135,10 +144,22 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		C8A120DC4D454B5A3C6E492E /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */,
+				B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */,
+			);
+			name = Domain;
+			path = Domain;
+			sourceTree = "<group>";
+		};
 		E73DFC1A05C2EF931043685B /* BookmarkCollectionsTests */ = {
 			isa = PBXGroup;
 			children = (
 				8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */,
+				408DE91A2CAC8F771079E424 /* NormalizedURLTests.swift */,
+				B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */,
 			);
 			name = BookmarkCollectionsTests;
 			path = BookmarkCollectionsTests;
@@ -274,6 +295,8 @@
 				39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */,
 				66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */,
 				0848D91E80BC004B8D82CEDE /* ModelContainerFactory.swift in Sources */,
+				B69FAB340269644E9EE3ED22 /* NormalizedURL.swift in Sources */,
+				8F5ECDBFB449D3D7ABB440AC /* BookmarkRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +305,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */,
+				E28588B56C6C14C14719AB3E /* NormalizedURLTests.swift in Sources */,
+				DEC0265458304A82517C232F /* BookmarkRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

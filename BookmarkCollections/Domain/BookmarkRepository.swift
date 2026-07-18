@@ -1,0 +1,96 @@
+import Foundation
+import SwiftData
+
+enum SaveResult {
+    case created(Bookmark)
+    case updated(Bookmark)
+    case restored(Bookmark)
+}
+
+@MainActor
+struct BookmarkRepository {
+    let context: ModelContext
+
+    func save(
+        url value: String,
+        collection: BookmarkCollection? = nil,
+        favorite: Bool = false
+    ) throws -> SaveResult {
+        let normalized = try NormalizedURL(value)
+        let normalizedString = normalized.string
+        let descriptor = FetchDescriptor<Bookmark>(
+            predicate: #Predicate { bookmark in
+                bookmark.normalizedURLString == normalizedString
+            },
+            sortBy: [SortDescriptor(\Bookmark.createdAt)]
+        )
+        let matches = try context.fetch(descriptor)
+        let now = Date()
+
+        let result: SaveResult
+        if let existing = matches.first(where: { $0.deletedAt == nil }) {
+            existing.collection = collection
+            existing.isFavorite = favorite
+            existing.modifiedAt = now
+            result = .updated(existing)
+        } else if let deleted = matches.first {
+            deleted.deletedAt = nil
+            deleted.collection = collection
+            deleted.isFavorite = favorite
+            deleted.modifiedAt = now
+            result = .restored(deleted)
+        } else {
+            let bookmark = Bookmark(
+                urlString: value,
+                normalizedURLString: normalizedString,
+                createdAt: now
+            )
+            bookmark.domain = normalized.url.host?.lowercased() ?? ""
+            bookmark.collection = collection
+            bookmark.isFavorite = favorite
+            bookmark.metadataState = .pending
+            context.insert(bookmark)
+            result = .created(bookmark)
+        }
+
+        try context.save()
+        return result
+    }
+
+    func reconcileDuplicates() throws {
+        let bookmarks = try context.fetch(FetchDescriptor<Bookmark>())
+        let groups = Dictionary(grouping: bookmarks, by: \Bookmark.normalizedURLString)
+        var changed = false
+
+        for group in groups.values where group.count > 1 {
+            let orderedByCreation = group.sorted { left, right in
+                if left.createdAt == right.createdAt {
+                    return left.id.uuidString < right.id.uuidString
+                }
+                return left.createdAt < right.createdAt
+            }
+            guard let canonical = orderedByCreation.first else { continue }
+            let mostRecentlyModified = group.max { left, right in
+                if left.modifiedAt == right.modifiedAt {
+                    return left.id.uuidString < right.id.uuidString
+                }
+                return left.modifiedAt < right.modifiedAt
+            } ?? canonical
+
+            canonical.isFavorite = group.contains(where: \Bookmark.isFavorite)
+            canonical.title = mostRecentlyModified.title
+            canonical.collection = mostRecentlyModified.collection
+            canonical.modifiedAt = mostRecentlyModified.modifiedAt
+
+            for duplicate in orderedByCreation.dropFirst() {
+                context.delete(duplicate)
+            }
+            changed = true
+        }
+
+        if changed {
+            try context.save()
+        }
+    }
+}
+
