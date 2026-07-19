@@ -117,6 +117,33 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(bookmark.kindRawValue, Bookmark.Kind.image.rawValue)
     }
 
+    func testSaveImageCreatesImageBookmark() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let data = Data([0x89, 0x50, 0x4E, 0x47])
+
+        let bookmark = try repository.saveImage(data: data, title: "Screenshot", favorite: true)
+
+        XCTAssertEqual(bookmark.kind, .image)
+        XCTAssertEqual(bookmark.title, "Screenshot")
+        XCTAssertEqual(bookmark.previewImageData, data)
+        XCTAssertTrue(bookmark.urlString.isEmpty)
+        XCTAssertTrue(bookmark.isFavorite)
+        XCTAssertEqual(bookmark.metadataState, .ready)
+        XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<Bookmark>()).count, 1)
+    }
+
+    func testReconcileDuplicatesIgnoresImageBookmarks() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        _ = try repository.saveImage(data: Data([0x01]), title: "First")
+        _ = try repository.saveImage(data: Data([0x02]), title: "Second")
+
+        try repository.reconcileDuplicates()
+
+        XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<Bookmark>()).count, 2)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult
