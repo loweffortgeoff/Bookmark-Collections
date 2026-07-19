@@ -1,8 +1,11 @@
+import SwiftData
 import SwiftUI
 
 struct AccentPickerView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(AppAccent.storageKey) private var accentKey = AppAccent.defaultAccent.rawValue
+    @Query(sort: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)])
+    private var bookmarks: [Bookmark]
 
     private var selected: AppAccent {
         AppAccent(storedKey: accentKey)
@@ -12,14 +15,17 @@ struct AccentPickerView: View {
         NavigationStack {
             Form {
                 Section {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 52), spacing: 10)], spacing: 18) {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 56), spacing: 14)],
+                        spacing: 20
+                    ) {
                         ForEach(AppAccent.allCases) { accent in
                             AccentSwatch(accent: accent, isSelected: accent == selected) {
                                 accentKey = accent.rawValue
                             }
                         }
                     }
-                    .padding(.vertical, 6)
+                    .padding(.vertical, 10)
                 } header: {
                     Text("Theme Colors")
                 } footer: {
@@ -27,6 +33,7 @@ struct AccentPickerView: View {
                         "Every color is tuned for both light and dark, so your menus stay readable.",
                         systemImage: "info.circle"
                     )
+                    .padding(.top, 4)
                 }
 
                 Section("Preview") {
@@ -34,20 +41,25 @@ struct AccentPickerView: View {
                         Label("All Items", systemImage: "square.grid.2x2")
                             .fontWeight(.semibold)
                         Spacer()
-                        Text("128")
+                        Text("\(LibraryDestination.allItems.count(in: bookmarks))")
                             .fontWeight(.semibold)
                             .foregroundStyle(.tint)
+                            .monospacedDigit()
                     }
                     .listRowBackground(selectedRowBackground)
                     HStack {
                         Label("Favorites", systemImage: "star.fill")
                         Spacer()
-                        Text("12")
+                        Text("\(LibraryDestination.favorites.count(in: bookmarks))")
                             .fontWeight(.semibold)
                             .foregroundStyle(.tint)
+                            .monospacedDigit()
                     }
                 }
             }
+            #if os(macOS)
+            .formStyle(.grouped)
+            #endif
             .navigationTitle("Accent Color")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -59,7 +71,7 @@ struct AccentPickerView: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 400, minHeight: 480)
+        .frame(minWidth: 520, idealWidth: 540, minHeight: 520, idealHeight: 560)
         #endif
         .tint(selected.color)
     }
@@ -84,18 +96,18 @@ private struct AccentSwatch: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 7) {
+            VStack(spacing: 8) {
                 ZStack {
                     Circle()
                         .fill(accent.color)
-                        .frame(width: 38, height: 38)
+                        .frame(width: 40, height: 40)
                     if isSelected {
                         Image(systemName: "checkmark")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(colorScheme == .dark ? Color.black.opacity(0.72) : .white)
                     }
                 }
-                .frame(width: 44, height: 44)
+                .frame(width: 48, height: 48)
                 .overlay {
                     if isSelected {
                         Circle().strokeBorder(accent.color, lineWidth: 2.5)
@@ -117,4 +129,5 @@ private struct AccentSwatch: View {
 
 #Preview {
     AccentPickerView()
+        .modelContainer(for: Bookmark.self, inMemory: true)
 }
