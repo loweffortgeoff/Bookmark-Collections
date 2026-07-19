@@ -12,7 +12,6 @@
 		1350389BA87A38C81FF0B54F /* MetadataEnricher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB99F5A7DF143AF6D4D0F8 /* MetadataEnricher.swift */; };
 		25A907445DAA3C2388A05E31 /* BookmarkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD552091A37EFEE76D22B76F /* BookmarkCard.swift */; };
 		25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */; };
-		C7B2000000000000000000A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B2000000000000000000A0 /* AppDelegate.swift */; };
 		39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */; };
 		3AE96EF67091667CAF8182B4 /* BookmarkActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873AA412E826EECFA73C7A7B /* BookmarkActions.swift */; };
 		3EC03544BA85B63865BC9FAF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
@@ -53,6 +52,7 @@
 		B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */; };
 		BF649CA42F416CBADD35C7D5 /* BookmarkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */; };
 		C4E1AAF67BC266210E5E7F47 /* LibraryFilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4180897CF75533E68392C123 /* LibraryFilteringTests.swift */; };
+		C7B2000000000000000000A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B2000000000000000000A0 /* AppDelegate.swift */; };
 		CC46E86FA196515AE22F07DE /* LibraryGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABB0D7A29C50EDB02DFA6BE /* LibraryGridView.swift */; };
 		CDF378D75E9A3B53949EF957 /* LibraryExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99C46BE09BD05E5F512CE83 /* LibraryExportService.swift */; };
 		DA781D6E10AB03C0D0589DB7 /* MetadataEnricherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */; };
@@ -103,8 +103,6 @@
 
 /* Begin PBXFileReference section */
 		04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkEditorView.swift; sourceTree = "<group>"; };
-		C7B2000000000000000000A0 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C7B2000000000000000000A2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05102A8289C2F112837B7967 /* LibraryDestination.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryDestination.swift; sourceTree = "<group>"; };
 		1F2F1CA2D9DBD3DCF69ADADB /* CollectionListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionListView.swift; sourceTree = "<group>"; };
 		26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MetadataEnricherTests.swift; sourceTree = "<group>"; };
@@ -146,6 +144,8 @@
 		B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepositoryTests.swift; sourceTree = "<group>"; };
 		BD552091A37EFEE76D22B76F /* BookmarkCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCard.swift; sourceTree = "<group>"; };
 		BD5B51863AE2858FE6823A25 /* CollectionRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionRepositoryTests.swift; sourceTree = "<group>"; };
+		C7B2000000000000000000A0 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C7B2000000000000000000A2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C99C46BE09BD05E5F512CE83 /* LibraryExportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryExportService.swift; sourceTree = "<group>"; };
 		CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BookmarkCollections.entitlements; sourceTree = "<group>"; };
 		D372E880BBBADFC88B1F4B6D /* LibraryImportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryImportService.swift; sourceTree = "<group>"; };
@@ -678,6 +678,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookmarkCollections/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bookmarx;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -925,6 +926,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookmarkCollections/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bookmarx;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
