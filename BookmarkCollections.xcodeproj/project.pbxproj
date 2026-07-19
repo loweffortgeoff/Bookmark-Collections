@@ -464,7 +464,6 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookmarkCollections/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Tucked: Stuff for Whenever";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -712,7 +711,6 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookmarkCollections/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Tucked: Stuff for Whenever";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
