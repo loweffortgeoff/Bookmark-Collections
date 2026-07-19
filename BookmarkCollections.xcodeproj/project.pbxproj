@@ -74,6 +74,7 @@
 				Data/BookmarkCollection.swift,
 				Data/ModelContainerFactory.swift,
 				Domain/BookmarkRepository.swift,
+				Domain/ImageDownsampler.swift,
 				Domain/MetadataProvider.swift,
 				Domain/NormalizedURL.swift,
 			);
