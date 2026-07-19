@@ -18,7 +18,8 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
 - Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
-
+- Custom sidebar selection styling (soft tinted pill + left accent bar) from the Tucked mockups — deferred from accent palette v1.
+- Reconsider the accent picker's Preview rows if pill styling never ships (preview currently shows the design's pill chrome, which native selection doesn't match).
 ## Deferred Beyond v1
 
 These items were explicitly excluded from v1 and are not release blockers or committed roadmap work:
@@ -33,4 +34,6 @@ These items were explicitly excluded from v1 and are not release blockers or com
 
 ## Done
 
-_Nothing checked off yet under this format — earlier v1 work landed before TODO.md tracked completions with dates. Going forward, completed items move here with a date (YYYY-MM-DD) instead of sitting in Next or Backlog._
+_Earlier v1 work landed before TODO.md tracked completions with dates._
+
+- [x] Decide accent default: moved from Graphite to Grape after device verification — gray-tinted buttons read too close to disabled (2026-07-19).
