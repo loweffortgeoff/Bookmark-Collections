@@ -74,3 +74,9 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** v1 image capture is iOS-only via the share extension; the Mac views synced images but cannot capture them.
 - **Why:** The share extension target is iOS-only (always has been), Mac capture paths (drag-and-drop, file importer) are separate work, and shipping a clean iOS capture path now beats holding the feature.
 - **Alternative considered:** Adding Mac drag-and-drop import to the branch — deferred to Backlog to keep v1 tight.
+
+## 2026-07-19 (Grape as default accent)
+
+- **Decision:** The out-of-box accent default is Grape, not Graphite.
+- **Why:** Device verification confirmed the code-review concern — Graphite's gray tint makes button text read as disabled. Grape is the on-brand icon purple and reads unambiguously interactive.
+- **Alternative considered:** Keeping Graphite (the design frame's "most-native" pick) — rejected after seeing it on device; Graphite remains available in the picker.

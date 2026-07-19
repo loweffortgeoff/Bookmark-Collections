@@ -19,7 +19,7 @@ enum AppAccent: String, CaseIterable, Identifiable {
     case graphite
 
     static let storageKey = "accentKey"
-    static let defaultAccent: AppAccent = .graphite
+    static let defaultAccent: AppAccent = .grape
 
     init(storedKey: String) {
         self = AppAccent(rawValue: storedKey) ?? Self.defaultAccent
