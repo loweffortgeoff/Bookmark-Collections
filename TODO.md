@@ -14,7 +14,7 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 - Files-importer image import (Mac).
 - Drag & drop image import (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
-- Tags system.
+- Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 
 ## Deferred Beyond v1
 
