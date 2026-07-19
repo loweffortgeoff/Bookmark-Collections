@@ -3,7 +3,7 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 .superpowers/
+.worktrees/
 
 docs/superpowers/scratch/*
 !docs/superpowers/scratch/README.md
-
