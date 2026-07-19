@@ -3,64 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0848D91E80BC004B8D82CEDE /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */; };
-		0F3826D69E2D108F3C2D478E /* RecentlyDeletedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E0011644200226C4EF5008 /* RecentlyDeletedView.swift */; };
-		1350389BA87A38C81FF0B54F /* MetadataEnricher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB99F5A7DF143AF6D4D0F8 /* MetadataEnricher.swift */; };
-		25A907445DAA3C2388A05E31 /* BookmarkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD552091A37EFEE76D22B76F /* BookmarkCard.swift */; };
-		25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */; };
-		39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */; };
-		3AE96EF67091667CAF8182B4 /* BookmarkActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873AA412E826EECFA73C7A7B /* BookmarkActions.swift */; };
 		3EC03544BA85B63865BC9FAF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
-		3F1C3A7AD2504F2EAB6E5011 /* ShareCaptureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1C3A7AD2504F2EAB6E5012 /* ShareCaptureModel.swift */; };
 		4B041D5A9AC91906BC55EE29 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
-		582E17B6E067877793575C66 /* AddBookmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2B672D4311053AA7226242 /* AddBookmarkView.swift */; };
-		623E393FE8558546762FBACA /* LibraryImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D372E880BBBADFC88B1F4B6D /* LibraryImportService.swift */; };
-		66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */; };
-		6A7633185699FBD20887F535 /* BookmarkSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACD8D6AB4AFD196E211AF06 /* BookmarkSort.swift */; };
-		7C997A311097701618DD1204 /* ImportExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A3FEF5A0C8263B6522A77C /* ImportExportTests.swift */; };
-		80272C83987248A68947ABCB /* CollectionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F4F9BC77FE2B4FA8A61CAC /* CollectionRepository.swift */; };
-		804189835B40BF44CFBA5AAE /* CollectionRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5B51863AE2858FE6823A25 /* CollectionRepositoryTests.swift */; };
-		8A49B36026AE6DD335351CBB /* CollectionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2F1CA2D9DBD3DCF69ADADB /* CollectionListView.swift */; };
-		8E45D705BD5BEDDC37B813B4 /* LibraryRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BC780D227E0118F344EBD7 /* LibraryRootView.swift */; };
-		8F5ECDBFB449D3D7ABB440AC /* BookmarkRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */; };
-		91A5E78821D28557B4796A8B /* LibraryToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6894B2A1BB04BA5FF267A23 /* LibraryToolbar.swift */; };
-		94EB14B7F01E6ABF03CA2BA8 /* BookmarkCollectionsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */; };
-		98E8EAE38A205305BC0BC9BE /* RecentlyDeletedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E979DFAA1B6E567267E1C8ED /* RecentlyDeletedTests.swift */; };
-		9DAC63BE2C3EF85956161640 /* MetadataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F488BE3A5BB71DB6E19C455E /* MetadataProvider.swift */; };
-		A1E000000000000000000010 /* ShareCaptureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1C3A7AD2504F2EAB6E5012 /* ShareCaptureModel.swift */; };
-		A1E000000000000000000011 /* ShareCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E000000000000000000001 /* ShareCaptureView.swift */; };
-		A1E000000000000000000012 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E000000000000000000002 /* ShareViewController.swift */; };
-		A1E000000000000000000013 /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */; };
-		A1E000000000000000000014 /* BookmarkCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */; };
-		A1E000000000000000000015 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */; };
-		A1E000000000000000000016 /* NormalizedURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */; };
-		A1E000000000000000000017 /* BookmarkRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */; };
 		A1E000000000000000000018 /* BookmarkShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A1E000000000000000000005 /* BookmarkShareExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		A1E000000000000000000019 /* MetadataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F488BE3A5BB71DB6E19C455E /* MetadataProvider.swift */; };
-		A205E0E0689F63E4E9F9C14B /* LibraryDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05102A8289C2F112837B7967 /* LibraryDestination.swift */; };
 		A7C596693A4BF88ACF7113BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
-		B2E000000000000000000011 /* SyncHealthMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000001 /* SyncHealthMonitor.swift */; };
-		B2E000000000000000000012 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000002 /* SettingsView.swift */; };
-		B2E000000000000000000013 /* ImportSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000003 /* ImportSummaryView.swift */; };
-		B2E000000000000000000014 /* BookmarkCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000004 /* BookmarkCommands.swift */; };
-		B2E000000000000000000015 /* SyncHealthMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E000000000000000000005 /* SyncHealthMonitorTests.swift */; };
-		B69FAB340269644E9EE3ED22 /* NormalizedURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */; };
-		B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */; };
-		BF649CA42F416CBADD35C7D5 /* BookmarkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */; };
-		C4E1AAF67BC266210E5E7F47 /* LibraryFilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4180897CF75533E68392C123 /* LibraryFilteringTests.swift */; };
-		C7B2000000000000000000A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B2000000000000000000A0 /* AppDelegate.swift */; };
-		CC46E86FA196515AE22F07DE /* LibraryGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABB0D7A29C50EDB02DFA6BE /* LibraryGridView.swift */; };
-		CDF378D75E9A3B53949EF957 /* LibraryExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99C46BE09BD05E5F512CE83 /* LibraryExportService.swift */; };
-		DA781D6E10AB03C0D0589DB7 /* MetadataEnricherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */; };
-		DE6A0BD0BD54776FDED34DEB /* BackupDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5055F864AEC29548D040BA7 /* BackupDocument.swift */; };
-		DEC0265458304A82517C232F /* BookmarkRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */; };
-		E28588B56C6C14C14719AB3E /* NormalizedURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408DE91A2CAC8F771079E424 /* NormalizedURLTests.swift */; };
-		E3B768D2A17B4FBE8D1906AA /* ShareCaptureModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B768D2A17B4FBE8D1906AB /* ShareCaptureModelTests.swift */; };
-		F4F0795FF29CEB95D126C5FD /* CollectionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ADAF64931BA30CCD217782 /* CollectionEditor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,59 +52,95 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkEditorView.swift; sourceTree = "<group>"; };
-		05102A8289C2F112837B7967 /* LibraryDestination.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryDestination.swift; sourceTree = "<group>"; };
-		1F2F1CA2D9DBD3DCF69ADADB /* CollectionListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionListView.swift; sourceTree = "<group>"; };
-		26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MetadataEnricherTests.swift; sourceTree = "<group>"; };
-		2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
-		32BC780D227E0118F344EBD7 /* LibraryRootView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryRootView.swift; sourceTree = "<group>"; };
-		39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsUITests.swift; sourceTree = "<group>"; };
-		3ACD8D6AB4AFD196E211AF06 /* BookmarkSort.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkSort.swift; sourceTree = "<group>"; };
-		3F1C3A7AD2504F2EAB6E5012 /* ShareCaptureModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareCaptureModel.swift; sourceTree = "<group>"; };
 		404742BB54C83E8B300ABCBA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		408DE91A2CAC8F771079E424 /* NormalizedURLTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NormalizedURLTests.swift; sourceTree = "<group>"; };
-		4180897CF75533E68392C123 /* LibraryFilteringTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryFilteringTests.swift; sourceTree = "<group>"; };
-		43A3FEF5A0C8263B6522A77C /* ImportExportTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImportExportTests.swift; sourceTree = "<group>"; };
-		70ADAF64931BA30CCD217782 /* CollectionEditor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionEditor.swift; sourceTree = "<group>"; };
 		759D749C74AFDC52A1E9FA93 /* BookmarkCollectionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		78F4F9BC77FE2B4FA8A61CAC /* CollectionRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionRepository.swift; sourceTree = "<group>"; };
 		86E66F242DB106C4B82B72FA /* BookmarkCollections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookmarkCollections.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		873AA412E826EECFA73C7A7B /* BookmarkActions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkActions.swift; sourceTree = "<group>"; };
-		88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NormalizedURL.swift; sourceTree = "<group>"; };
-		8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelContainerTests.swift; sourceTree = "<group>"; };
-		93E0011644200226C4EF5008 /* RecentlyDeletedView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecentlyDeletedView.swift; sourceTree = "<group>"; };
-		9ABB0D7A29C50EDB02DFA6BE /* LibraryGridView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryGridView.swift; sourceTree = "<group>"; };
-		A1E000000000000000000001 /* ShareCaptureView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareCaptureView.swift; sourceTree = "<group>"; };
-		A1E000000000000000000002 /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		A1E000000000000000000003 /* BookmarkShareExtension.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BookmarkShareExtension.entitlements; sourceTree = "<group>"; };
-		A1E000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1E000000000000000000005 /* BookmarkShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookmarkShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Bookmark.swift; sourceTree = "<group>"; };
-		A6894B2A1BB04BA5FF267A23 /* LibraryToolbar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryToolbar.swift; sourceTree = "<group>"; };
 		A730ACF3F1742FEFDD86791C /* BookmarkCollectionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB2B672D4311053AA7226242 /* AddBookmarkView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddBookmarkView.swift; sourceTree = "<group>"; };
-		B2E000000000000000000001 /* SyncHealthMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncHealthMonitor.swift; sourceTree = "<group>"; };
-		B2E000000000000000000002 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		B2E000000000000000000003 /* ImportSummaryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImportSummaryView.swift; sourceTree = "<group>"; };
-		B2E000000000000000000004 /* BookmarkCommands.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCommands.swift; sourceTree = "<group>"; };
-		B2E000000000000000000005 /* SyncHealthMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncHealthMonitorTests.swift; sourceTree = "<group>"; };
-		B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepository.swift; sourceTree = "<group>"; };
-		B5055F864AEC29548D040BA7 /* BackupDocument.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackupDocument.swift; sourceTree = "<group>"; };
-		B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollectionsApp.swift; sourceTree = "<group>"; };
-		B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkRepositoryTests.swift; sourceTree = "<group>"; };
-		BD552091A37EFEE76D22B76F /* BookmarkCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCard.swift; sourceTree = "<group>"; };
-		BD5B51863AE2858FE6823A25 /* CollectionRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionRepositoryTests.swift; sourceTree = "<group>"; };
-		C7B2000000000000000000A0 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C7B2000000000000000000A2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C99C46BE09BD05E5F512CE83 /* LibraryExportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryExportService.swift; sourceTree = "<group>"; };
-		CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BookmarkCollections.entitlements; sourceTree = "<group>"; };
-		D372E880BBBADFC88B1F4B6D /* LibraryImportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryImportService.swift; sourceTree = "<group>"; };
-		DFEB99F5A7DF143AF6D4D0F8 /* MetadataEnricher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MetadataEnricher.swift; sourceTree = "<group>"; };
-		E3B768D2A17B4FBE8D1906AB /* ShareCaptureModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareCaptureModelTests.swift; sourceTree = "<group>"; };
-		E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkCollection.swift; sourceTree = "<group>"; };
-		E979DFAA1B6E567267E1C8ED /* RecentlyDeletedTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecentlyDeletedTests.swift; sourceTree = "<group>"; };
-		F488BE3A5BB71DB6E19C455E /* MetadataProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MetadataProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AA10000000000000000000B1 /* Exceptions for "BookmarkCollections" folder in "BookmarkCollections" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 317F4694532C67B8968B4636 /* BookmarkCollections */;
+		};
+		AA10000000000000000000B2 /* Exceptions for "BookmarkCollections" folder in "BookmarkShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Data/Bookmark.swift,
+				Data/BookmarkCollection.swift,
+				Data/ModelContainerFactory.swift,
+				Domain/BookmarkRepository.swift,
+				Domain/MetadataProvider.swift,
+				Domain/NormalizedURL.swift,
+			);
+			target = A1E000000000000000000030 /* BookmarkShareExtension */;
+		};
+		AA10000000000000000000B3 /* Exceptions for "BookmarkShareExtension" folder in "BookmarkCollections" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ShareCaptureModel.swift,
+			);
+			target = 317F4694532C67B8968B4636 /* BookmarkCollections */;
+		};
+		AA10000000000000000000B4 /* Exceptions for "BookmarkShareExtension" folder in "BookmarkShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A1E000000000000000000030 /* BookmarkShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		AA10000000000000000000A1 /* BookmarkCollections */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA10000000000000000000B1 /* Exceptions for "BookmarkCollections" folder in "BookmarkCollections" target */,
+				AA10000000000000000000B2 /* Exceptions for "BookmarkCollections" folder in "BookmarkShareExtension" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = BookmarkCollections;
+			sourceTree = "<group>";
+		};
+		AA10000000000000000000A2 /* BookmarkShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA10000000000000000000B3 /* Exceptions for "BookmarkShareExtension" folder in "BookmarkCollections" target */,
+				AA10000000000000000000B4 /* Exceptions for "BookmarkShareExtension" folder in "BookmarkShareExtension" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = BookmarkShareExtension;
+			sourceTree = "<group>";
+		};
+		AA10000000000000000000A3 /* BookmarkCollectionsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = BookmarkCollectionsTests;
+			sourceTree = "<group>";
+		};
+		AA10000000000000000000A4 /* BookmarkCollectionsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = BookmarkCollectionsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		6218E273D3BC4F1F43E7FF23 /* Frameworks */ = {
@@ -199,93 +185,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		2FE2A0C4A23DC71D834BDAC2 /* BookmarkCollections */ = {
-			isa = PBXGroup;
-			children = (
-				B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */,
-				C7B2000000000000000000A0 /* AppDelegate.swift */,
-				CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */,
-				C7B2000000000000000000A2 /* Info.plist */,
-				B2E000000000000000000021 /* Commands */,
-				AD70BEA3B3DE83BB539D83FF /* Data */,
-				C8A120DC4D454B5A3C6E492E /* Domain */,
-				54591EFCC988C5938AD09E3B /* Features */,
-			);
-			path = BookmarkCollections;
-			sourceTree = "<group>";
-		};
-		3F1C3A7AD2504F2EAB6E5013 /* BookmarkShareExtension */ = {
-			isa = PBXGroup;
-			children = (
-				3F1C3A7AD2504F2EAB6E5012 /* ShareCaptureModel.swift */,
-				A1E000000000000000000001 /* ShareCaptureView.swift */,
-				A1E000000000000000000002 /* ShareViewController.swift */,
-				A1E000000000000000000003 /* BookmarkShareExtension.entitlements */,
-				A1E000000000000000000004 /* Info.plist */,
-			);
-			path = BookmarkShareExtension;
-			sourceTree = "<group>";
-		};
-		54591EFCC988C5938AD09E3B /* Features */ = {
-			isa = PBXGroup;
-			children = (
-				6CE9E134FCC57F2CE1B31F77 /* Library */,
-				7845767353CD8FF084F5C996 /* Bookmark */,
-				54BC6340171E41A652736663 /* Collections */,
-				C3651FB7A73FB1BEE25AC254 /* Deleted */,
-				B2E000000000000000000020 /* Settings */,
-			);
-			path = Features;
-			sourceTree = "<group>";
-		};
-		54BC6340171E41A652736663 /* Collections */ = {
-			isa = PBXGroup;
-			children = (
-				1F2F1CA2D9DBD3DCF69ADADB /* CollectionListView.swift */,
-				70ADAF64931BA30CCD217782 /* CollectionEditor.swift */,
-			);
-			path = Collections;
-			sourceTree = "<group>";
-		};
-		6CE9E134FCC57F2CE1B31F77 /* Library */ = {
-			isa = PBXGroup;
-			children = (
-				05102A8289C2F112837B7967 /* LibraryDestination.swift */,
-				32BC780D227E0118F344EBD7 /* LibraryRootView.swift */,
-				9ABB0D7A29C50EDB02DFA6BE /* LibraryGridView.swift */,
-				BD552091A37EFEE76D22B76F /* BookmarkCard.swift */,
-				A6894B2A1BB04BA5FF267A23 /* LibraryToolbar.swift */,
-			);
-			path = Library;
-			sourceTree = "<group>";
-		};
-		7845767353CD8FF084F5C996 /* Bookmark */ = {
-			isa = PBXGroup;
-			children = (
-				873AA412E826EECFA73C7A7B /* BookmarkActions.swift */,
-				AB2B672D4311053AA7226242 /* AddBookmarkView.swift */,
-				04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */,
-			);
-			path = Bookmark;
-			sourceTree = "<group>";
-		};
-		8734E80FFC29C14A558193C7 /* BookmarkCollectionsUITests */ = {
-			isa = PBXGroup;
-			children = (
-				39B0D831DA9CAB2B3EE0A21B /* BookmarkCollectionsUITests.swift */,
-			);
-			path = BookmarkCollectionsUITests;
-			sourceTree = "<group>";
-		};
 		8974EC51DF38B4996E9D22BF = {
 			isa = PBXGroup;
 			children = (
 				E79618C129729AC2A70CFD5E /* Products */,
 				1A696E431A581DC1C805CD7A /* Frameworks */,
-				2FE2A0C4A23DC71D834BDAC2 /* BookmarkCollections */,
-				E73DFC1A05C2EF931043685B /* BookmarkCollectionsTests */,
-				8734E80FFC29C14A558193C7 /* BookmarkCollectionsUITests */,
-				3F1C3A7AD2504F2EAB6E5013 /* BookmarkShareExtension */,
+				AA10000000000000000000A1 /* BookmarkCollections */,
+				AA10000000000000000000A3 /* BookmarkCollectionsTests */,
+				AA10000000000000000000A4 /* BookmarkCollectionsUITests */,
+				AA10000000000000000000A2 /* BookmarkShareExtension */,
 			);
 			sourceTree = "<group>";
 		};
@@ -295,75 +203,6 @@
 				404742BB54C83E8B300ABCBA /* Foundation.framework */,
 			);
 			name = iOS;
-			sourceTree = "<group>";
-		};
-		AD70BEA3B3DE83BB539D83FF /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */,
-				E7B983D9D28FDF71949DD287 /* BookmarkCollection.swift */,
-				2FEF2C8CFADF07567831AD68 /* ModelContainerFactory.swift */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
-		B2E000000000000000000020 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				B2E000000000000000000002 /* SettingsView.swift */,
-				B2E000000000000000000003 /* ImportSummaryView.swift */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
-		B2E000000000000000000021 /* Commands */ = {
-			isa = PBXGroup;
-			children = (
-				B2E000000000000000000004 /* BookmarkCommands.swift */,
-			);
-			path = Commands;
-			sourceTree = "<group>";
-		};
-		C3651FB7A73FB1BEE25AC254 /* Deleted */ = {
-			isa = PBXGroup;
-			children = (
-				93E0011644200226C4EF5008 /* RecentlyDeletedView.swift */,
-			);
-			path = Deleted;
-			sourceTree = "<group>";
-		};
-		C8A120DC4D454B5A3C6E492E /* Domain */ = {
-			isa = PBXGroup;
-			children = (
-				88D37B51C31A3C1ED00AC55B /* NormalizedURL.swift */,
-				B456B90E8576E6E3CADC4CE3 /* BookmarkRepository.swift */,
-				78F4F9BC77FE2B4FA8A61CAC /* CollectionRepository.swift */,
-				3ACD8D6AB4AFD196E211AF06 /* BookmarkSort.swift */,
-				F488BE3A5BB71DB6E19C455E /* MetadataProvider.swift */,
-				DFEB99F5A7DF143AF6D4D0F8 /* MetadataEnricher.swift */,
-				B5055F864AEC29548D040BA7 /* BackupDocument.swift */,
-				D372E880BBBADFC88B1F4B6D /* LibraryImportService.swift */,
-				C99C46BE09BD05E5F512CE83 /* LibraryExportService.swift */,
-				B2E000000000000000000001 /* SyncHealthMonitor.swift */,
-			);
-			path = Domain;
-			sourceTree = "<group>";
-		};
-		E73DFC1A05C2EF931043685B /* BookmarkCollectionsTests */ = {
-			isa = PBXGroup;
-			children = (
-				8C48D253BF0576CAB6FC9490 /* ModelContainerTests.swift */,
-				408DE91A2CAC8F771079E424 /* NormalizedURLTests.swift */,
-				B834C4DC1DCFB1268E4CEFF1 /* BookmarkRepositoryTests.swift */,
-				BD5B51863AE2858FE6823A25 /* CollectionRepositoryTests.swift */,
-				E979DFAA1B6E567267E1C8ED /* RecentlyDeletedTests.swift */,
-				4180897CF75533E68392C123 /* LibraryFilteringTests.swift */,
-				26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */,
-				43A3FEF5A0C8263B6522A77C /* ImportExportTests.swift */,
-				E3B768D2A17B4FBE8D1906AB /* ShareCaptureModelTests.swift */,
-				B2E000000000000000000005 /* SyncHealthMonitorTests.swift */,
-			);
-			path = BookmarkCollectionsTests;
 			sourceTree = "<group>";
 		};
 		E79618C129729AC2A70CFD5E /* Products */ = {
@@ -394,6 +233,9 @@
 			dependencies = (
 				A1E000000000000000000035 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				AA10000000000000000000A1 /* BookmarkCollections */,
+			);
 			name = BookmarkCollections;
 			productName = BookmarkCollections;
 			productReference = 86E66F242DB106C4B82B72FA /* BookmarkCollections.app */;
@@ -412,6 +254,9 @@
 			dependencies = (
 				E8807435613882CDB2AED078 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				AA10000000000000000000A3 /* BookmarkCollectionsTests */,
+			);
 			name = BookmarkCollectionsTests;
 			productName = BookmarkCollectionsTests;
 			productReference = 759D749C74AFDC52A1E9FA93 /* BookmarkCollectionsTests.xctest */;
@@ -428,6 +273,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA10000000000000000000A2 /* BookmarkShareExtension */,
 			);
 			name = BookmarkShareExtension;
 			productName = BookmarkShareExtension;
@@ -446,6 +294,9 @@
 			);
 			dependencies = (
 				57595C2C0CF98A45D4BC5D5B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA10000000000000000000A4 /* BookmarkCollectionsUITests */,
 			);
 			name = BookmarkCollectionsUITests;
 			productName = BookmarkCollectionsUITests;
@@ -472,7 +323,6 @@
 				};
 			};
 			buildConfigurationList = BF287647C718A804B82AB8B7 /* Build configuration list for PBXProject "BookmarkCollections" */;
-			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -528,36 +378,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */,
-				C7B2000000000000000000A1 /* AppDelegate.swift in Sources */,
-				39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */,
-				66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */,
-				0848D91E80BC004B8D82CEDE /* ModelContainerFactory.swift in Sources */,
-				B69FAB340269644E9EE3ED22 /* NormalizedURL.swift in Sources */,
-				8F5ECDBFB449D3D7ABB440AC /* BookmarkRepository.swift in Sources */,
-				80272C83987248A68947ABCB /* CollectionRepository.swift in Sources */,
-				6A7633185699FBD20887F535 /* BookmarkSort.swift in Sources */,
-				A205E0E0689F63E4E9F9C14B /* LibraryDestination.swift in Sources */,
-				9DAC63BE2C3EF85956161640 /* MetadataProvider.swift in Sources */,
-				1350389BA87A38C81FF0B54F /* MetadataEnricher.swift in Sources */,
-				DE6A0BD0BD54776FDED34DEB /* BackupDocument.swift in Sources */,
-				623E393FE8558546762FBACA /* LibraryImportService.swift in Sources */,
-				CDF378D75E9A3B53949EF957 /* LibraryExportService.swift in Sources */,
-				8E45D705BD5BEDDC37B813B4 /* LibraryRootView.swift in Sources */,
-				CC46E86FA196515AE22F07DE /* LibraryGridView.swift in Sources */,
-				25A907445DAA3C2388A05E31 /* BookmarkCard.swift in Sources */,
-				91A5E78821D28557B4796A8B /* LibraryToolbar.swift in Sources */,
-				3AE96EF67091667CAF8182B4 /* BookmarkActions.swift in Sources */,
-				582E17B6E067877793575C66 /* AddBookmarkView.swift in Sources */,
-				BF649CA42F416CBADD35C7D5 /* BookmarkEditorView.swift in Sources */,
-				8A49B36026AE6DD335351CBB /* CollectionListView.swift in Sources */,
-				F4F0795FF29CEB95D126C5FD /* CollectionEditor.swift in Sources */,
-				0F3826D69E2D108F3C2D478E /* RecentlyDeletedView.swift in Sources */,
-				3F1C3A7AD2504F2EAB6E5011 /* ShareCaptureModel.swift in Sources */,
-				B2E000000000000000000011 /* SyncHealthMonitor.swift in Sources */,
-				B2E000000000000000000012 /* SettingsView.swift in Sources */,
-				B2E000000000000000000013 /* ImportSummaryView.swift in Sources */,
-				B2E000000000000000000014 /* BookmarkCommands.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -565,16 +385,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B766C71CB230919FA8DF32E2 /* ModelContainerTests.swift in Sources */,
-				E28588B56C6C14C14719AB3E /* NormalizedURLTests.swift in Sources */,
-				DEC0265458304A82517C232F /* BookmarkRepositoryTests.swift in Sources */,
-				804189835B40BF44CFBA5AAE /* CollectionRepositoryTests.swift in Sources */,
-				98E8EAE38A205305BC0BC9BE /* RecentlyDeletedTests.swift in Sources */,
-				C4E1AAF67BC266210E5E7F47 /* LibraryFilteringTests.swift in Sources */,
-				DA781D6E10AB03C0D0589DB7 /* MetadataEnricherTests.swift in Sources */,
-				7C997A311097701618DD1204 /* ImportExportTests.swift in Sources */,
-				E3B768D2A17B4FBE8D1906AA /* ShareCaptureModelTests.swift in Sources */,
-				B2E000000000000000000015 /* SyncHealthMonitorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,7 +392,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94EB14B7F01E6ABF03CA2BA8 /* BookmarkCollectionsUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,15 +399,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1E000000000000000000010 /* ShareCaptureModel.swift in Sources */,
-				A1E000000000000000000011 /* ShareCaptureView.swift in Sources */,
-				A1E000000000000000000012 /* ShareViewController.swift in Sources */,
-				A1E000000000000000000013 /* Bookmark.swift in Sources */,
-				A1E000000000000000000014 /* BookmarkCollection.swift in Sources */,
-				A1E000000000000000000015 /* ModelContainerFactory.swift in Sources */,
-				A1E000000000000000000016 /* NormalizedURL.swift in Sources */,
-				A1E000000000000000000017 /* BookmarkRepository.swift in Sources */,
-				A1E000000000000000000019 /* MetadataProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
