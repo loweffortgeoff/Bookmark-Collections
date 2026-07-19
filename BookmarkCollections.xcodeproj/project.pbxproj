@@ -102,10 +102,6 @@
 				AA10000000000000000000B1 /* Exceptions for "BookmarkCollections" folder in "BookmarkCollections" target */,
 				AA10000000000000000000B2 /* Exceptions for "BookmarkCollections" folder in "BookmarkShareExtension" target */,
 			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = BookmarkCollections;
 			sourceTree = "<group>";
 		};
@@ -115,28 +111,16 @@
 				AA10000000000000000000B3 /* Exceptions for "BookmarkShareExtension" folder in "BookmarkCollections" target */,
 				AA10000000000000000000B4 /* Exceptions for "BookmarkShareExtension" folder in "BookmarkShareExtension" target */,
 			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = BookmarkShareExtension;
 			sourceTree = "<group>";
 		};
 		AA10000000000000000000A3 /* BookmarkCollectionsTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = BookmarkCollectionsTests;
 			sourceTree = "<group>";
 		};
 		AA10000000000000000000A4 /* BookmarkCollectionsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = BookmarkCollectionsUITests;
 			sourceTree = "<group>";
 		};
@@ -330,6 +314,7 @@
 				Base,
 			);
 			mainGroup = 8974EC51DF38B4996E9D22BF;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = E79618C129729AC2A70CFD5E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -478,7 +463,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookmarkCollections/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Bookmarx;
+				INFOPLIST_KEY_CFBundleDisplayName = Bookmarc;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -726,7 +711,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookmarkCollections/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Bookmarx;
+				INFOPLIST_KEY_CFBundleDisplayName = Bookmarc;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
