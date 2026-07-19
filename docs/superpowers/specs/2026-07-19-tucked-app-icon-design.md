@@ -53,6 +53,10 @@ yellow color relationship must remain intact.
 - No Xcode project-file changes unless asset catalog validation proves they are
   required.
 
+Every delivered PNG must be an opaque, full-bleed square with no alpha channel.
+The artwork must not bake in rounded corners, a rounded-rectangle frame, corner
+transparency, or any other platform mask. iOS applies the final icon mask.
+
 The implementation should replace the current app icon assets in place while
 retaining the current filenames and asset-catalog structure. The existing
 `Bookmarx`-named design masters may be replaced or supplemented by clearly named
@@ -67,7 +71,9 @@ The finished icon must:
 - retain a recognizable silhouette at 16, 32, 60, and 180 points;
 - remain distinguishable in grayscale and against light and dark desktop
   contexts;
-- contain no unintended transparency or baked-in text;
+- have no alpha channel or transparent pixels;
+- fill the complete square canvas without baked-in rounded corners or masking;
+- contain no baked-in text;
 - match every filename, pixel dimension, idiom, and scale declared by the
   existing asset catalog;
 - pass asset-catalog/build validation for the app target.
