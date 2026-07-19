@@ -58,6 +58,10 @@ enum LibraryDestination: Hashable {
         }
     }
 
+    func count(in bookmarks: [Bookmark]) -> Int {
+        bookmarks.filter { includes($0) }.count
+    }
+
     func matches(_ bookmark: Bookmark, searchText: String) -> Bool {
         guard includes(bookmark) else { return false }
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)

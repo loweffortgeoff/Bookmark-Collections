@@ -80,6 +80,35 @@ final class LibraryFilteringTests: XCTestCase {
         XCTAssertFalse(LibraryDestination.links.includes(image))
     }
 
+    func testDestinationCountsMatchInclusionRules() {
+        let development = BookmarkCollection(name: "Development", sortPosition: 0)
+        let research = BookmarkCollection(name: "Research", sortPosition: 1)
+
+        let activeLink = makeBookmark(path: "active-link")
+        let favoriteLink = makeBookmark(path: "favorite-link", favorite: true)
+        let filedLink = makeBookmark(path: "filed-link", collection: development)
+        let image = makeBookmark(path: "image")
+        image.kind = .image
+        let favoriteImage = makeBookmark(path: "favorite-image", favorite: true, collection: research)
+        favoriteImage.kind = .image
+        let deletedLink = makeBookmark(path: "deleted-link", deletedAt: Date())
+        let deletedInCollection = makeBookmark(path: "deleted-filed", collection: development, deletedAt: Date())
+
+        let bookmarks = [
+            activeLink, favoriteLink, filedLink, image, favoriteImage, deletedLink, deletedInCollection
+        ]
+
+        XCTAssertEqual(LibraryDestination.allItems.count(in: bookmarks), 5)
+        XCTAssertEqual(LibraryDestination.links.count(in: bookmarks), 3)
+        XCTAssertEqual(LibraryDestination.images.count(in: bookmarks), 2)
+        XCTAssertEqual(LibraryDestination.favorites.count(in: bookmarks), 2)
+        XCTAssertEqual(LibraryDestination.collection(development.id).count(in: bookmarks), 1)
+        XCTAssertEqual(LibraryDestination.collection(research.id).count(in: bookmarks), 1)
+        XCTAssertEqual(LibraryDestination.collection(UUID()).count(in: bookmarks), 0)
+        XCTAssertEqual(LibraryDestination.recentlyDeleted.count(in: bookmarks), 2)
+        XCTAssertEqual(LibraryDestination.allItems.count(in: []), 0)
+    }
+
     private func makeBookmark(
         path: String,
         id: UUID = UUID(),
