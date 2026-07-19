@@ -46,7 +46,7 @@
 - Consumes: existing `LibraryDestination.includes(_: Bookmark) -> Bool`
 - Produces: `LibraryDestination.count(in bookmarks: [Bookmark]) -> Int` — instance method returning `bookmarks.filter { includes($0) }.count`
 
-- [ ] **Step 1: Create the feature branch**
+- [x] **Step 1: Create the feature branch**
 
 ```bash
 git checkout main
@@ -54,7 +54,7 @@ git pull --ff-only
 git checkout -b feature/sidebar-count-totals
 ```
 
-- [ ] **Step 2: Write the failing unit test**
+- [x] **Step 2: Write the failing unit test**
 
 Append to `LibraryFilteringTests` (after `testLinksDestinationExcludesImageKind`, before `makeBookmark`):
 
@@ -98,7 +98,7 @@ Notes on expected numbers:
 - Research collection active: favoriteImage → **1**
 - Soft-deleted: deletedLink, deletedInCollection → **2** Recently Deleted (helper is correct even though UI will not display this count)
 
-- [ ] **Step 3: Run the test to verify it fails**
+- [x] **Step 3: Run the test to verify it fails**
 
 ```bash
 xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollections \
@@ -108,7 +108,7 @@ xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollectio
 
 Expected: FAIL — `count(in:)` does not exist on `LibraryDestination`.
 
-- [ ] **Step 4: Implement the minimal helper**
+- [x] **Step 4: Implement the minimal helper**
 
 In `LibraryDestination.swift`, after `includes(_ bookmark: Bookmark) -> Bool` (before `matches`), add:
 
@@ -120,7 +120,7 @@ In `LibraryDestination.swift`, after `includes(_ bookmark: Bookmark) -> Bool` (b
 
 Do not add any other filter logic. The method must only call `includes`.
 
-- [ ] **Step 5: Run the test to verify it passes**
+- [x] **Step 5: Run the test to verify it passes**
 
 ```bash
 xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollections \
@@ -130,7 +130,7 @@ xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollectio
 
 Expected: `** TEST SUCCEEDED **` (all `LibraryFilteringTests` green).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add \
@@ -156,7 +156,7 @@ EOF
 - Consumes: `LibraryDestination.count(in:)` from Task 1; SwiftData `@Query` for `[Bookmark]`
 - Produces: Trailing secondary count on All Items, Images, Links, Favorites, and each collection row; Recently Deleted unchanged (no count)
 
-- [ ] **Step 1: Add bookmark query and count helper to CollectionListView**
+- [x] **Step 1: Add bookmark query and count helper to CollectionListView**
 
 In `CollectionListView.swift`, add a second `@Query` after the existing collections query:
 
@@ -173,7 +173,7 @@ Add a private helper on the view (after `body` / near `destinationRow`):
     }
 ```
 
-- [ ] **Step 2: Update destinationRow to show optional trailing count**
+- [x] **Step 2: Update destinationRow to show optional trailing count**
 
 Replace `destinationRow` and its call sites so library destinations show counts and Recently Deleted does not.
 
@@ -226,7 +226,7 @@ Update Recently Deleted call site to pass `showsCount: false`:
             }
 ```
 
-- [ ] **Step 3: Add counts to collection rows**
+- [x] **Step 3: Add counts to collection rows**
 
 Replace the collection `ForEach` label body so each collection row shows a trailing count. Keep context menu, tag, and accessibility identifiers as they are today.
 
@@ -253,7 +253,7 @@ Replace the collection `ForEach` label body so each collection row shows a trail
 
 Note: `contextMenu` stays on the label content (as today on `Label`); do not remove rename/delete.
 
-- [ ] **Step 4: Build to verify compile**
+- [x] **Step 4: Build to verify compile**
 
 ```bash
 xcodebuild build -project BookmarkCollections.xcodeproj -scheme BookmarkCollections \
@@ -262,7 +262,7 @@ xcodebuild build -project BookmarkCollections.xcodeproj -scheme BookmarkCollecti
 
 Expected: `** BUILD SUCCEEDED **`
 
-- [ ] **Step 5: Re-run unit tests**
+- [x] **Step 5: Re-run unit tests**
 
 ```bash
 xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollections \
@@ -271,7 +271,7 @@ xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollectio
 
 Expected: `** TEST SUCCEEDED **`
 
-- [ ] **Step 6: Manual smoke (local simulator or Mac app)**
+- [x] **Step 6: Manual smoke (local simulator or Mac app)**
 
 Confirm visually:
 1. Empty library → All Items / Images / Links / Favorites show `0`
@@ -280,7 +280,7 @@ Confirm visually:
 4. Assign to a collection → that collection’s count increments
 5. Soft-delete → library/collection counts drop; Recently Deleted still has no trailing number
 
-- [ ] **Step 7: Changelog**
+- [x] **Step 7: Changelog**
 
 Under `CHANGELOG.md` Unreleased → Added (create Unreleased section if missing), add:
 
@@ -288,7 +288,7 @@ Under `CHANGELOG.md` Unreleased → Added (create Unreleased section if missing)
 - Sidebar shows item counts for All Items, Images, Links, Favorites, and each collection.
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add \
