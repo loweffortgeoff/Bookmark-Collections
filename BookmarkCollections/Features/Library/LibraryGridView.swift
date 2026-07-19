@@ -162,9 +162,9 @@ struct LibraryGridView: View {
 
     private var columns: [GridItem] {
         #if os(macOS)
-        [GridItem(.adaptive(minimum: 220, maximum: 320), spacing: 18)]
+        [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 18)]
         #else
-        [GridItem(.adaptive(minimum: 160, maximum: 260), spacing: 14)]
+        [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 14)]
         #endif
     }
 
