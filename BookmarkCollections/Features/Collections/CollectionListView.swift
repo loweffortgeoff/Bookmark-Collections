@@ -32,7 +32,7 @@ struct CollectionListView: View {
                                 Label(collection.name, systemImage: "folder")
                                 Spacer()
                                 Text("\(count(for: destination))")
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(.tint)
                                     .accessibilityLabel("\(count(for: destination)) items")
                             }
                             .contextMenu {
@@ -84,7 +84,7 @@ struct CollectionListView: View {
                 if showsCount {
                     Spacer()
                     Text("\(count(for: destination))")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.tint)
                         .accessibilityLabel("\(count(for: destination)) items")
                 }
             }

@@ -15,6 +15,7 @@ struct BookmarkCollectionsApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #endif
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(AppAccent.storageKey) private var accentKey = AppAccent.defaultAccent.rawValue
     private let container: ModelContainer
 
     init() {
@@ -31,6 +32,7 @@ struct BookmarkCollectionsApp: App {
     var body: some Scene {
         WindowGroup {
             LibraryRootView()
+                .tint(AppAccent(storedKey: accentKey).color)
                 .task(id: scenePhase) {
                     guard scenePhase == .active else { return }
                     try? BookmarkRepository(context: container.mainContext).reconcileDuplicates()
