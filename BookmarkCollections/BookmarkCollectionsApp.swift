@@ -75,6 +75,16 @@ struct BookmarkCollectionsApp: App {
         for preview in seededPreviewBookmarks() {
             context.insert(preview)
         }
+        let image = Bookmark(
+            id: UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
+            urlString: "",
+            normalizedURLString: ""
+        )
+        image.kind = .image
+        image.title = "Seeded Image"
+        image.metadataState = .ready
+        image.previewImageData = solidPreviewData(width: 640, height: 480, red: 0.85, green: 0.60, blue: 0.20)
+        context.insert(image)
         try? context.save()
     }
 

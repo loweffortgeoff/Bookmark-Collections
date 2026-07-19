@@ -13,6 +13,7 @@ struct LibraryGridView: View {
     let onAdd: () -> Void
     let onEdit: (Bookmark) -> Void
     let onInfo: (Bookmark) -> Void
+    let onOpenImage: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
     let onCommandSelection: (Bookmark) -> Void
@@ -53,7 +54,7 @@ struct LibraryGridView: View {
                                     ZStack(alignment: .topTrailing) {
                                         BookmarkCard(
                                             bookmark: bookmark,
-                                            onOpen: isSelecting ? { toggleSelection(bookmark) } : nil,
+                                            onOpen: cardOpenAction(for: bookmark),
                                             onCommandSelection: { onCommandSelection(bookmark) }
                                         )
                                         if isSelecting {
@@ -149,6 +150,12 @@ struct LibraryGridView: View {
         if !selection.insert(bookmark.id).inserted {
             selection.remove(bookmark.id)
         }
+    }
+
+    private func cardOpenAction(for bookmark: Bookmark) -> (() -> Void)? {
+        if isSelecting { return { toggleSelection(bookmark) } }
+        if bookmark.kind == .image { return { onOpenImage(bookmark) } }
+        return nil
     }
 
     private func moveSelection(to collection: BookmarkCollection?) {

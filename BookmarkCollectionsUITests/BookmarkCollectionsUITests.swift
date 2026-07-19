@@ -123,6 +123,15 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("settings.syncStatus").exists)
     }
 
+    func testImagesDestinationShowsOnlyImageItems() {
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.images"))
+
+        let imageCard = identified("bookmark.11111111-1111-1111-1111-111111111111")
+        XCTAssertTrue(imageCard.waitForExistence(timeout: 5))
+        XCTAssertFalse(identified("bookmark.seeded-active").exists)
+    }
+
     func testAppLaunches() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]

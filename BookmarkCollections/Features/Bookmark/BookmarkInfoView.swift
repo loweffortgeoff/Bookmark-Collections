@@ -19,18 +19,20 @@ struct BookmarkInfoView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Button {
-                        if let url = URL(string: bookmark.urlString) { openURL(url) }
-                    } label: {
-                        Text(bookmark.urlString)
-                            .font(.callout)
-                            .foregroundStyle(.tint)
-                            .multilineTextAlignment(.leading)
+                if bookmark.kind == .link {
+                    Section {
+                        Button {
+                            if let url = URL(string: bookmark.urlString) { openURL(url) }
+                        } label: {
+                            Text(bookmark.urlString)
+                                .font(.callout)
+                                .foregroundStyle(.tint)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Open link")
+                        Button("Copy URL", systemImage: "doc.on.doc", action: copyURL)
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Open link")
-                    Button("Copy URL", systemImage: "doc.on.doc", action: copyURL)
                 }
                 Section {
                     Text(bookmark.title.isEmpty ? bookmark.domain : bookmark.title)
