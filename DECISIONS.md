@@ -63,6 +63,12 @@ Significant decisions made during development, logged for future reference.
 - **Alternative considered:** A separate model for images — rejected for duplicating the entire lifecycle machinery (collection membership, favorite, soft delete, CloudKit mirroring, query/sort plumbing) for a second time.
 - **v1 consequence:** JSON/HTML export and import predate `kind` and only handle URLs, so image bookmarks are excluded from both export formats until an image-capable backup format is designed (tracked in TODO.md Backlog).
 
+## 2026-07-19 (Curated accent palette)
+
+- **Decision:** Ship a curated 7-swatch accent system (Grape, Coral, Amber, Cherry, Fern, Teal, Graphite) — swatch key stored, `{dark, light}` pair resolved per theme, text stays neutral — with Graphite as the default and native `List` selection for v1.
+- **Why:** Free color wells let users pick unreadable accents; pre-tuned pairs guarantee contrast in both themes; Graphite is the understated, most-native default.
+- **Alternative considered:** A free color well with a per-theme contrast clamp (lighten on dark / darken on light) — rejected as more machinery for a worse curated feel. Also deferred: custom pill+left-bar sidebar selection styling from the Tucked mockups (tracked in TODO.md Backlog).
+
 ## 2026-07-19 (v1 image capture is iOS-only)
 
 - **Decision:** v1 image capture is iOS-only via the share extension; the Mac views synced images but cannot capture them.

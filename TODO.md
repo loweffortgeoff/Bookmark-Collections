@@ -18,6 +18,9 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
 - Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
+- Custom sidebar selection styling (soft tinted pill + left accent bar) from the Tucked mockups — deferred from accent palette v1.
+- Reconsider the accent picker's Preview rows if pill styling never ships (preview currently shows the design's pill chrome, which native selection doesn't match).
+- Decide whether Graphite default's gray-tinted buttons (reads close to disabled) is acceptable, or whether the default should move to Grape.
 
 ## Deferred Beyond v1
 
