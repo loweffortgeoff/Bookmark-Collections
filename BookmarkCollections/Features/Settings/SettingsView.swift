@@ -57,6 +57,9 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            #if os(macOS)
+            .formStyle(.grouped)
+            #endif
             .navigationTitle("Settings")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -65,7 +68,7 @@ struct SettingsView: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 440, minHeight: 360)
+        .frame(minWidth: 520, idealWidth: 520, minHeight: 480, idealHeight: 500)
         #endif
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
