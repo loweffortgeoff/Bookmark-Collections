@@ -19,6 +19,7 @@ All notable project changes are recorded here.
 - New Tucked app icon: a curious star peeking from a pocket in the Dusk Candy palette.
 - Get Info panel on the bookmark context menu (URL, title, collection, favorite, added/modified dates).
 - Save images and screenshots via the Share Sheet; new Images and Links sidebar filters; full-screen image viewer.
+- Sidebar shows item counts for All Items, Images, Links, Favorites, and each collection.
 
 ### Fixed — 2026-07-19
 
