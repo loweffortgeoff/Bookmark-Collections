@@ -16,6 +16,7 @@ All notable project changes are recorded here.
 - Settings with honest iCloud account availability and import/export summaries.
 - Native macOS commands, keyboard focus behavior, semantic accessibility labels, and adaptive light/dark Dynamic Type layouts.
 - Duplicate reconciliation for independently saved normalized URLs after CloudKit merges.
+- New Tucked app icon: a curious star peeking from a pocket in the Dusk Candy palette.
 
 ### Fixed — 2026-07-19
 
