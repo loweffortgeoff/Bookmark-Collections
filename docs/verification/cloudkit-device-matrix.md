@@ -6,7 +6,7 @@ Last updated: 2026-07-18 (America/New_York)
 
 Automated implementation verification is complete. The real-device same-account matrix below is now fully confirmed across iPhone, iPad, and Mac. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
 
-One open item from this pass: collection rename and permanent delete both needed a relaunch on iPad to reflect a change that originated on Mac, while the same operations from iPhone synced live. Not yet root-caused — see the notes on those rows below.
+Mac-originated changes (collection rename, permanent delete, favorite toggle, move to collection) initially required backgrounding/relaunching a receiving iPhone or iPad to appear, while iPhone-originated changes always appeared live. Root cause: the app was never actually receiving CloudKit's silent push notifications, because the Push Notifications capability (and `aps-environment` entitlement) was never enabled on the target — `registerForRemoteNotifications()` alone is a no-op without it. The only sync trigger was the app becoming active. Fixed in `e2b1b24` by enabling the Push Notifications capability, adding `aps-environment: development` to the entitlements, and adding registration/receipt logging to `AppDelegate`. Retested on real devices post-fix: live sync now works without backgrounding. Note the entitlement is currently `development` — confirm it flips to `production` automatically at archive/TestFlight time (standard Xcode behavior via the distribution provisioning profile), and treat that as part of the CloudKit Production release gate below.
 
 ## Completed evidence
 
@@ -36,10 +36,10 @@ Use one iPhone, one iPad, and one Mac signed into the same development iCloud ac
 | Create bookmark | Confirmed | Confirmed | Pending | Shared an App Store Connect page via the Share Extension on iPad; synced to iPhone. Mac not yet exercised for this row. |
 | Toggle Favorite | Confirmed | Confirmed | Confirmed | Favorited on iPhone, synced to iPad and Mac; unfavorite also synced. |
 | Move to collection | Confirmed | Confirmed | Confirmed | Moved into a collection on iPad; collection and membership synced to iPhone and Mac. |
-| Rename collection | Confirmed | Confirmed (needed relaunch) | Confirmed | Renamed on Mac; synced live to iPhone, but iPad only showed the new name after a relaunch — possibly a missed live-refresh on remote CloudKit change while foregrounded. Worth a closer look, not yet root-caused. |
+| Rename collection | Confirmed | Confirmed | Confirmed | Renamed on Mac; originally needed a relaunch on iPad to show live — root-caused to missing Push Notifications capability, fixed in `e2b1b24`, retested live post-fix. |
 | Soft delete | Confirmed | Confirmed | Confirmed | Deleted on iPhone; appeared in Recently Deleted on iPad and Mac live, no relaunch needed. |
 | Restore | Confirmed | Confirmed | Confirmed | Restored on iPhone; removed from Recently Deleted on iPad and Mac live, no relaunch needed. |
-| Permanent delete | Confirmed | Confirmed (needed relaunch) | Confirmed | Permanently deleted on Mac; synced live to iPhone, but iPad again only reflected it after a relaunch — same pattern as the collection rename. |
+| Permanent delete | Confirmed | Confirmed | Confirmed | Permanently deleted on Mac; originally needed a relaunch on iPad to show live — same root cause and fix as the collection rename row, retested live post-fix. |
 | Preview arrival | Confirmed | Confirmed | Confirmed | Favicon and preview image for the App Store Connect bookmark visible on all three devices. |
 | Relaunch persistence | Confirmed | Confirmed | Confirmed | Force-quit and relaunched on all three; bookmarks, collections, and favorite state all persisted locally. |
 
