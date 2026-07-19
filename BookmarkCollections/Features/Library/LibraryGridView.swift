@@ -45,46 +45,54 @@ struct LibraryGridView: View {
                 if visibleBookmarks.isEmpty {
                     emptyState
                 } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 18) {
-                            ForEach(visibleBookmarks) { bookmark in
-                                ZStack(alignment: .topTrailing) {
-                                    BookmarkCard(
-                                        bookmark: bookmark,
-                                        onOpen: isSelecting ? { toggleSelection(bookmark) } : nil,
-                                        onCommandSelection: { onCommandSelection(bookmark) }
-                                    )
-                                    if isSelecting {
-                                        Image(systemName: selection.contains(bookmark.id) ? "checkmark.circle.fill" : "circle")
-                                            .font(.title2)
-                                            .foregroundStyle(selection.contains(bookmark.id) ? Color.accentColor : Color.secondary)
-                                            .padding(10)
-                                            .accessibilityHidden(true)
+                    GeometryReader { proxy in
+                        ScrollView {
+                            LazyVGrid(columns: columns, spacing: 18) {
+                                ForEach(visibleBookmarks) { bookmark in
+                                    ZStack(alignment: .topTrailing) {
+                                        BookmarkCard(
+                                            bookmark: bookmark,
+                                            onOpen: isSelecting ? { toggleSelection(bookmark) } : nil,
+                                            onCommandSelection: { onCommandSelection(bookmark) }
+                                        )
+                                        if isSelecting {
+                                            Image(systemName: selection.contains(bookmark.id) ? "checkmark.circle.fill" : "circle")
+                                                .font(.title2)
+                                                .foregroundStyle(selection.contains(bookmark.id) ? Color.accentColor : Color.secondary)
+                                                .padding(10)
+                                                .accessibilityHidden(true)
+                                        }
+                                    }
+                                    .contextMenu {
+                                        BookmarkActions(
+                                            bookmark: bookmark,
+                                            isRecentlyDeleted: destination == .recentlyDeleted,
+                                            onEdit: { onEdit(bookmark) },
+                                            onPermanentDelete: { onPermanentDelete(bookmark) },
+                                            onError: onError
+                                        )
                                     }
                                 }
-                                .contextMenu {
-                                    BookmarkActions(
-                                        bookmark: bookmark,
-                                        isRecentlyDeleted: destination == .recentlyDeleted,
-                                        onEdit: { onEdit(bookmark) },
-                                        onPermanentDelete: { onPermanentDelete(bookmark) },
-                                        onError: onError
-                                    )
-                                }
                             }
+                            .padding()
                         }
-                        .padding()
-                    }
-                    .dropDestination(for: URL.self) { urls, _ in
-                        do {
-                            let repository = BookmarkRepository(context: modelContext)
-                            for url in urls where ["http", "https"].contains(url.scheme?.lowercased()) {
-                                _ = try repository.save(url: url.absoluteString)
+                        // iPadOS windowed resize doesn't reliably re-propose width to
+                        // already-materialized LazyVGrid cells, leaving stale/clipped
+                        // geometry ("window shade" effect). Forcing a fresh grid
+                        // identity when the available width crosses a coarse bucket
+                        // discards the stale cells instead of relaying them out in place.
+                        .id(Int(proxy.size.width / 20))
+                        .dropDestination(for: URL.self) { urls, _ in
+                            do {
+                                let repository = BookmarkRepository(context: modelContext)
+                                for url in urls where ["http", "https"].contains(url.scheme?.lowercased()) {
+                                    _ = try repository.save(url: url.absoluteString)
+                                }
+                                return true
+                            } catch {
+                                onError(error.localizedDescription)
+                                return false
                             }
-                            return true
-                        } catch {
-                            onError(error.localizedDescription)
-                            return false
                         }
                     }
                 }
