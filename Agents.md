@@ -1,19 +1,19 @@
-# Project: Bookmark Collections
+# Project: Tucked
 
-Bookmark Collections is a native SwiftUI bookmark manager for iPhone, iPad,
+Tucked is a native SwiftUI bookmark manager for iPhone, iPad,
 and Mac. It saves HTTP and HTTPS links locally, captures links through an iOS
 Share Extension, enriches them with webpage metadata, organizes them into zero
 or one collection plus an independent Favorite state, and mirrors the private
 library through SwiftData and CloudKit.
 
-The project currently uses `BookmarkCollections` as its Xcode target and
-bundle identifier namespace. The app display name in the build settings is
-still provisional; do not rename product-facing strings or identifiers unless
-the task explicitly asks for it.
+The product name is now Tucked. The project still uses `BookmarkCollections`
+as its Xcode target and bundle identifier namespace — that rename is a
+separate, not-yet-scheduled task. Do not rename Xcode identifiers, folders,
+or the bundle ID unless a task explicitly asks for it.
 
 ## Codex Scope
 
-- This file is the Codex-facing project guide for Bookmark Collections.
+- This file is the Codex-facing project guide for Tucked.
 - Do not read or follow `CLAUDE.md` unless Geoff explicitly asks for it.
 - Keep changes focused and prefer the smallest implementation that fits the
   existing architecture.

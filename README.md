@@ -1,6 +1,8 @@
-# Bookmark Collections
+# Tucked
 
-Bookmark Collections is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links from the iOS Share Sheet, enriches them with webpage metadata, organizes them into one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit.
+Tucked is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links from the iOS Share Sheet, enriches them with webpage metadata, organizes them into one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit.
+
+The Xcode project, bundle identifier, and internal file/folder names still use `BookmarkCollections` (see Requirements and Architecture below) — that rename is a separate, not-yet-scheduled task.
 
 The project has no third-party dependencies. Reads and writes use the local SwiftData store first; metadata and CloudKit never sit on the save path.
 
