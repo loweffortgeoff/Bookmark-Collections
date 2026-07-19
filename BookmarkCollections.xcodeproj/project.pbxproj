@@ -461,6 +461,15 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					317F4694532C67B8968B4636 = {
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = BF287647C718A804B82AB8B7 /* Build configuration list for PBXProject "BookmarkCollections" */;
 			compatibilityVersion = "Xcode 3.2";
