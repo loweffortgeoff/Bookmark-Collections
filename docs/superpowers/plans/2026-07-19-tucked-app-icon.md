@@ -6,7 +6,7 @@
 
 **Architecture:** Keep one editable SVG master and one canonical 1024-by-1024 RGB PNG in `design/`. Derive every existing asset-catalog PNG from that canonical raster so all platform sizes share identical artwork and remain opaque; keep `Contents.json` and the Xcode project unchanged.
 
-**Tech Stack:** SVG, macOS Quick Look rendering, Xcode `pngcrush`, `sips`, Xcode asset catalogs, `xcodebuild`
+**Tech Stack:** SVG, macOS Quick Look rendering, `ffmpeg`, `sips`, Xcode asset catalogs, `xcodebuild`
 
 ## Global Constraints
 
@@ -82,7 +82,6 @@ Use `apply_patch` to create `design/Tucked-master.svg` with this complete conten
 
   <g transform="translate(16 -10) rotate(12 512 456)" filter="url(#starShadow)">
     <path d="M512 172 L566 334 L737 339 L601 441 L648 606 L512 512 L376 606 L423 441 L287 339 L458 334 Z" fill="url(#star)"/>
-    <path d="M443 321 Q512 269 581 314" fill="none" stroke="#FFFDE0" stroke-width="22" stroke-linecap="round" opacity="0.55"/>
     <ellipse cx="454" cy="397" rx="17" ry="21" fill="#55358E"/>
     <ellipse cx="562" cy="383" rx="17" ry="21" fill="#55358E"/>
     <circle cx="449" cy="391" r="5" fill="#FFFFFF" opacity="0.72"/>
@@ -115,9 +114,9 @@ Expected: Quick Look reports thumbnail generation and the `test` command exits `
 Run:
 
 ```bash
-xcrun pngcrush -q -c 2 \
-  "$icon_render_dir/Tucked-master.svg.png" \
-  design/Tucked-AppIcon-1024.png
+/opt/homebrew/bin/ffmpeg -loglevel error -y \
+  -i "$icon_render_dir/Tucked-master.svg.png" \
+  -pix_fmt rgb24 design/Tucked-AppIcon-1024.png
 sips -g pixelWidth -g pixelHeight -g hasAlpha \
   design/Tucked-AppIcon-1024.png
 ```
