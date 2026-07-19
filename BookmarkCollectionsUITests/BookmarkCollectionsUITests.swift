@@ -159,7 +159,8 @@ final class BookmarkCollectionsUITests: XCTestCase {
 
     private func destinationElement(_ identifier: String) -> XCUIElement {
         let button = app.buttons.matching(identifier: identifier).firstMatch
-        return button.exists ? button : app.staticTexts.matching(identifier: identifier).firstMatch
+        _ = button.waitForExistence(timeout: 5)
+        return button
     }
 
     private func contextMenuItem(_ title: String) -> XCUIElement {
