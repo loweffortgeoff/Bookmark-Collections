@@ -12,6 +12,8 @@ struct LibraryGridView: View {
     let ascending: Bool
     let onAdd: () -> Void
     let onEdit: (Bookmark) -> Void
+    let onInfo: (Bookmark) -> Void
+    let onOpenImage: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
     let onCommandSelection: (Bookmark) -> Void
@@ -52,7 +54,7 @@ struct LibraryGridView: View {
                                     ZStack(alignment: .topTrailing) {
                                         BookmarkCard(
                                             bookmark: bookmark,
-                                            onOpen: isSelecting ? { toggleSelection(bookmark) } : nil,
+                                            onOpen: cardOpenAction(for: bookmark),
                                             onCommandSelection: { onCommandSelection(bookmark) }
                                         )
                                         if isSelecting {
@@ -68,6 +70,7 @@ struct LibraryGridView: View {
                                             bookmark: bookmark,
                                             isRecentlyDeleted: destination == .recentlyDeleted,
                                             onEdit: { onEdit(bookmark) },
+                                            onInfo: { onInfo(bookmark) },
                                             onPermanentDelete: { onPermanentDelete(bookmark) },
                                             onError: onError
                                         )
@@ -149,6 +152,12 @@ struct LibraryGridView: View {
         }
     }
 
+    private func cardOpenAction(for bookmark: Bookmark) -> (() -> Void)? {
+        if isSelecting { return { toggleSelection(bookmark) } }
+        if bookmark.kind == .image { return { onOpenImage(bookmark) } }
+        return nil
+    }
+
     private func moveSelection(to collection: BookmarkCollection?) {
         updateSelection { $0.collection = collection }
     }
@@ -197,6 +206,18 @@ struct LibraryGridView: View {
                     "No Bookmarks",
                     systemImage: "folder",
                     description: Text("Move bookmarks into this collection from their Edit menu.")
+                )
+            case .images:
+                ContentUnavailableView(
+                    "No Images",
+                    systemImage: "photo",
+                    description: Text("Share a screenshot or image from another app to save it here.")
+                )
+            case .links:
+                ContentUnavailableView(
+                    "No Links",
+                    systemImage: "link",
+                    description: Text("Share a link from another app or add one here.")
                 )
             case .allItems:
                 ContentUnavailableView(

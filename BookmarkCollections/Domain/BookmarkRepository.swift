@@ -57,8 +57,29 @@ struct BookmarkRepository {
         return result
     }
 
+    @discardableResult
+    func saveImage(
+        data: Data,
+        title: String,
+        collection: BookmarkCollection? = nil,
+        favorite: Bool = false
+    ) throws -> Bookmark {
+        let now = Date()
+        let bookmark = Bookmark(urlString: "", normalizedURLString: "", createdAt: now)
+        bookmark.kind = .image
+        bookmark.title = title
+        bookmark.previewImageData = data
+        bookmark.collection = collection
+        bookmark.isFavorite = favorite
+        bookmark.metadataState = .ready
+        context.insert(bookmark)
+        try context.save()
+        return bookmark
+    }
+
     func reconcileDuplicates() throws {
         let bookmarks = try context.fetch(FetchDescriptor<Bookmark>())
+            .filter { $0.kind == .link }
         let groups = Dictionary(grouping: bookmarks, by: \Bookmark.normalizedURLString)
         var changed = false
 

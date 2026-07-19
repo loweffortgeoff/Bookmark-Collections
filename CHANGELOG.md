@@ -17,6 +17,8 @@ All notable project changes are recorded here.
 - Native macOS commands, keyboard focus behavior, semantic accessibility labels, and adaptive light/dark Dynamic Type layouts.
 - Duplicate reconciliation for independently saved normalized URLs after CloudKit merges.
 - New Tucked app icon: a curious star peeking from a pocket in the Dusk Candy palette.
+- Get Info panel on the bookmark context menu (URL, title, collection, favorite, added/modified dates).
+- Save images and screenshots via the Share Sheet; new Images and Links sidebar filters; full-screen image viewer.
 
 ### Fixed — 2026-07-19
 
@@ -25,7 +27,7 @@ All notable project changes are recorded here.
 
 ### Verification
 
-- 37 unit tests pass on native macOS and iPhone simulator.
-- 8 UI tests pass on native macOS and iPhone simulator.
+- 47 unit tests pass on native macOS and iPhone simulator.
+- 10 UI tests pass on native macOS and iPhone simulator.
 - Signed iOS app and Share Extension build and validate with matching App Group and CloudKit entitlements.
 - Real-device CloudKit, Production schema, and TestFlight checks remain release gates; see `docs/verification/cloudkit-device-matrix.md`.

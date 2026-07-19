@@ -67,6 +67,28 @@ final class MetadataEnricherTests: XCTestCase {
         XCTAssertEqual(callCount, 2)
     }
 
+    func testEnrichmentSkipsImageBookmarks() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let image = try BookmarkRepository(context: container.mainContext)
+            .saveImage(data: Data([0x01]), title: "Screenshot")
+        image.metadataState = .pending
+        try container.mainContext.save()
+        let provider = FailingIfCalledProvider()
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.enrichPending(limit: 10)
+        try await enricher.refresh(image)
+
+        XCTAssertEqual(image.metadataState, .pending)
+    }
+
+    private struct FailingIfCalledProvider: MetadataProviding {
+        func metadata(for url: URL) async throws -> LinkMetadata {
+            XCTFail("Image bookmarks must not be enriched")
+            return LinkMetadata(domain: "")
+        }
+    }
+
     private func makeBookmark(
         in container: ModelContainer,
         path: String = "article"

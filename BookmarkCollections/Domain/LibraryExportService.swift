@@ -17,7 +17,7 @@ struct LibraryExportService {
                 SortDescriptor(\Bookmark.createdAt),
                 SortDescriptor(\Bookmark.id)
             ])
-        )
+        ).filter { $0.kind != .image }
         let document = BackupDocument(
             exportedAt: exportedAt,
             collections: collections.map { collection in
@@ -63,7 +63,7 @@ struct LibraryExportService {
                 SortDescriptor(\Bookmark.createdAt),
                 SortDescriptor(\Bookmark.id)
             ])
-        ).filter { $0.deletedAt == nil }
+        ).filter { $0.deletedAt == nil && $0.kind != .image }
 
         var lines = [
             "<!DOCTYPE NETSCAPE-Bookmark-file-1>",

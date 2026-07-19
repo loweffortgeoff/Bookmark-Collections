@@ -54,7 +54,7 @@ struct ShareCaptureView: View {
         case .idle, .loading:
             HStack {
                 ProgressView()
-                Text("Loading shared link…")
+                Text("Loading shared item…")
             }
         case .saving:
             HStack {
@@ -63,7 +63,7 @@ struct ShareCaptureView: View {
             }
         default:
             if let capture = model.capture {
-                Section("Link") {
+                Section(capture.kind == .image ? "Image" : "Link") {
                     if let previewData = capture.previewImageData,
                        let preview = UIImage(data: previewData) {
                         Image(uiImage: preview)
@@ -77,9 +77,11 @@ struct ShareCaptureView: View {
                     if let title = capture.suggestedTitle, !title.isEmpty {
                         LabeledContent("Title", value: title)
                     }
-                    Text(capture.urlString)
-                        .font(.callout)
-                        .textSelection(.enabled)
+                    if capture.kind == .link {
+                        Text(capture.urlString)
+                            .font(.callout)
+                            .textSelection(.enabled)
+                    }
                 }
             }
         }

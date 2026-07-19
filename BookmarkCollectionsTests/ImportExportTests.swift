@@ -116,6 +116,27 @@ final class ImportExportTests: XCTestCase {
         XCTAssertEqual(html.components(separatedBy: "https://example.com/?a=1").count - 1, 1)
     }
 
+    func testImageBookmarksAreExcludedFromJSONAndHTMLExport() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        _ = try repository.save(url: "https://example.com/article")
+        _ = try repository.saveImage(data: Data([1, 2, 3]), title: "Screenshot")
+
+        let jsonData = try LibraryExportService(context: container.mainContext).exportJSON(
+            exportedAt: Date(timeIntervalSince1970: 3_000)
+        )
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let document = try decoder.decode(BackupDocument.self, from: jsonData)
+        XCTAssertEqual(document.bookmarks.count, 1)
+        XCTAssertEqual(document.bookmarks.first?.urlString, "https://example.com/article")
+
+        let htmlData = try LibraryExportService(context: container.mainContext).exportHTML()
+        let html = try XCTUnwrap(String(data: htmlData, encoding: .utf8))
+        XCTAssertFalse(html.contains("Screenshot"))
+        XCTAssertFalse(html.contains("HREF=\"\""))
+    }
+
     func testJSONImportRejectsFutureVersions() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let data = Data("{\"version\":999,\"exportedAt\":\"1970-01-01T00:00:00Z\",\"collections\":[],\"bookmarks\":[]}".utf8)

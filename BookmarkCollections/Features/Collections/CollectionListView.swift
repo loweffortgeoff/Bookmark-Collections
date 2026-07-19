@@ -14,6 +14,8 @@ struct CollectionListView: View {
         List(selection: $selection) {
             Section("Library") {
                 destinationRow(.allItems, title: "All Items", identifier: "destination.allItems")
+                destinationRow(.images, title: "Images", identifier: "destination.images")
+                destinationRow(.links, title: "Links", identifier: "destination.links")
                 destinationRow(.favorites, title: "Favorites", identifier: "destination.favorites")
             }
 

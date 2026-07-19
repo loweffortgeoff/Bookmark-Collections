@@ -111,6 +111,62 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertNil(bookmarks.first?.deletedAt)
     }
 
+    func testImageAttachmentLoadsAsImageCapture() async throws {
+        let model = try makeModel()
+        let provider = NSItemProvider(
+            item: try onePixelPNG() as NSData,
+            typeIdentifier: UTType.png.identifier
+        )
+
+        await model.load(from: [provider])
+
+        XCTAssertEqual(model.capture?.kind, .image)
+        XCTAssertNotNil(model.capture?.previewImageData)
+        XCTAssertEqual(model.capture?.urlString, "")
+        XCTAssertEqual(model.state, .ready)
+    }
+
+    func testImageSavePersistsImageBookmark() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let model = ShareCaptureModel(context: container.mainContext, onComplete: {})
+        let provider = NSItemProvider(
+            item: try onePixelPNG() as NSData,
+            typeIdentifier: UTType.png.identifier
+        )
+        await model.load(from: [provider])
+
+        model.save(collectionID: nil, favorite: true)
+
+        let bookmark = try XCTUnwrap(container.mainContext.fetch(FetchDescriptor<Bookmark>()).first)
+        XCTAssertEqual(bookmark.kind, .image)
+        XCTAssertNotNil(bookmark.previewImageData)
+        XCTAssertTrue(bookmark.urlString.isEmpty)
+        XCTAssertTrue(bookmark.isFavorite)
+        XCTAssertFalse(bookmark.title.isEmpty)
+        XCTAssertEqual(bookmark.metadataState, .ready)
+        XCTAssertEqual(model.state, .saved)
+    }
+
+    func testJunkDataTypedAsImageFails() async throws {
+        let model = try makeModel()
+        let provider = NSItemProvider(
+            item: Data([0x00, 0x01, 0x02]) as NSData,
+            typeIdentifier: UTType.png.identifier
+        )
+
+        await model.load(from: [provider])
+
+        guard case .failed = model.state else {
+            return XCTFail("Expected junk image data to fail")
+        }
+    }
+
+    /// Smallest valid PNG: 1x1 transparent pixel.
+    private func onePixelPNG() throws -> Data {
+        let base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+        return try XCTUnwrap(Data(base64Encoded: base64))
+    }
+
     private func makeModel() throws -> ShareCaptureModel {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         return ShareCaptureModel(context: container.mainContext, onComplete: {})

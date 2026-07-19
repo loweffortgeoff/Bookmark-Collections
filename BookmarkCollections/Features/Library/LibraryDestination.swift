@@ -3,6 +3,8 @@ import Foundation
 enum LibraryDestination: Hashable {
     case allItems
     case favorites
+    case links
+    case images
     case collection(UUID)
     case recentlyDeleted
 
@@ -10,6 +12,8 @@ enum LibraryDestination: Hashable {
         switch self {
         case .allItems: "All Items"
         case .favorites: "Favorites"
+        case .links: "Links"
+        case .images: "Images"
         case .collection: "Collection"
         case .recentlyDeleted: "Recently Deleted"
         }
@@ -19,6 +23,8 @@ enum LibraryDestination: Hashable {
         switch self {
         case .allItems: "square.grid.2x2"
         case .favorites: "star"
+        case .links: "link"
+        case .images: "photo"
         case .collection: "folder"
         case .recentlyDeleted: "trash"
         }
@@ -28,6 +34,8 @@ enum LibraryDestination: Hashable {
         switch self {
         case .allItems: "library.allItems"
         case .favorites: "library.favorites"
+        case .links: "library.links"
+        case .images: "library.images"
         case .collection: "library.collection"
         case .recentlyDeleted: "library.recentlyDeleted"
         }
@@ -39,6 +47,10 @@ enum LibraryDestination: Hashable {
             bookmark.deletedAt == nil
         case .favorites:
             bookmark.deletedAt == nil && bookmark.isFavorite
+        case .links:
+            bookmark.deletedAt == nil && bookmark.kind == .link
+        case .images:
+            bookmark.deletedAt == nil && bookmark.kind == .image
         case let .collection(id):
             bookmark.deletedAt == nil && bookmark.collection?.id == id
         case .recentlyDeleted:

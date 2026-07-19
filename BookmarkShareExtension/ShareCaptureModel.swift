@@ -4,6 +4,7 @@ import SwiftData
 import UniformTypeIdentifiers
 
 struct ShareCapture: Equatable {
+    var kind: Bookmark.Kind = .link
     let urlString: String
     var suggestedTitle: String?
     var faviconData: Data?
@@ -17,6 +18,10 @@ enum ShareCaptureState: Equatable {
     case saving
     case saved
     case failed(String)
+}
+
+enum ShareCaptureError: Error {
+    case missingImageData
 }
 
 @MainActor
@@ -42,6 +47,24 @@ final class ShareCaptureModel: ObservableObject {
         saveAction = { capture, collectionID, favorite in
             let collection = try context.fetch(FetchDescriptor<BookmarkCollection>())
                 .first(where: { $0.id == collectionID })
+            if capture.kind == .image {
+                guard let data = capture.previewImageData else {
+                    throw ShareCaptureError.missingImageData
+                }
+                let title: String
+                if let suggested = capture.suggestedTitle, !suggested.isEmpty {
+                    title = suggested
+                } else {
+                    title = "Image — \(Date().formatted(date: .abbreviated, time: .omitted))"
+                }
+                let bookmark = try BookmarkRepository(context: context).saveImage(
+                    data: data,
+                    title: title,
+                    collection: collection,
+                    favorite: favorite
+                )
+                return .created(bookmark)
+            }
             let result = try BookmarkRepository(context: context).save(
                 url: capture.urlString,
                 collection: collection,
@@ -86,15 +109,19 @@ final class ShareCaptureModel: ObservableObject {
         let loaded: ShareCapture?
         if let directURL {
             loaded = directURL
+        } else if let textURL = await firstURL(inTextFrom: providers) {
+            loaded = textURL
         } else {
-            loaded = await firstURL(inTextFrom: providers)
+            loaded = await firstImage(from: providers)
         }
         if let loaded {
             capture = loaded
             state = .ready
-            fetchMetadata(for: loaded)
+            if loaded.kind == .link {
+                fetchMetadata(for: loaded)
+            }
         } else {
-            state = .failed("Share a web link that begins with http:// or https://.")
+            state = .failed("Share a web link or an image.")
         }
     }
 
@@ -170,6 +197,25 @@ final class ShareCaptureModel: ObservableObject {
                     previewImageData: nil
                 )
             }
+        }
+        return nil
+    }
+
+    private func firstImage(from providers: [NSItemProvider]) async -> ShareCapture? {
+        for provider in providers where provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+            let data: Data? = await withCheckedContinuation { continuation in
+                provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+                    continuation.resume(returning: data)
+                }
+            }
+            guard let data, ImageDownsampler.isValidImage(data) else { continue }
+            return ShareCapture(
+                kind: .image,
+                urlString: "",
+                suggestedTitle: provider.suggestedName,
+                faviconData: nil,
+                previewImageData: ImageDownsampler.downsample(data, maximumPixelSize: 1_200)
+            )
         }
         return nil
     }

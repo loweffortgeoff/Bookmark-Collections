@@ -58,6 +58,28 @@ final class LibraryFilteringTests: XCTestCase {
         }
     }
 
+    func testImagesDestinationIncludesOnlyImageKind() {
+        let link = Bookmark(urlString: "https://example.com/a", normalizedURLString: "https://example.com/a")
+        let image = Bookmark(urlString: "", normalizedURLString: "")
+        image.kind = .image
+        let deletedImage = Bookmark(urlString: "", normalizedURLString: "")
+        deletedImage.kind = .image
+        deletedImage.deletedAt = Date()
+
+        XCTAssertTrue(LibraryDestination.images.includes(image))
+        XCTAssertFalse(LibraryDestination.images.includes(link))
+        XCTAssertFalse(LibraryDestination.images.includes(deletedImage))
+    }
+
+    func testLinksDestinationExcludesImageKind() {
+        let link = Bookmark(urlString: "https://example.com/a", normalizedURLString: "https://example.com/a")
+        let image = Bookmark(urlString: "", normalizedURLString: "")
+        image.kind = .image
+
+        XCTAssertTrue(LibraryDestination.links.includes(link))
+        XCTAssertFalse(LibraryDestination.links.includes(image))
+    }
+
     private func makeBookmark(
         path: String,
         id: UUID = UUID(),

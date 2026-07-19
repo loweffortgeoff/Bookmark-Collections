@@ -1,5 +1,4 @@
 import Foundation
-import ImageIO
 @preconcurrency import LinkPresentation
 import UniformTypeIdentifiers
 
@@ -57,33 +56,6 @@ actor LinkPresentationMetadataProvider: MetadataProviding {
             }
         }
         guard let data else { return nil }
-        return downsample(data, maximumPixelSize: 1_200)
-    }
-
-    private func downsample(_ data: Data, maximumPixelSize: Int) -> Data {
-        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
-            return data
-        }
-        let options: [CFString: Any] = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maximumPixelSize
-        ]
-        guard let image = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
-            return data
-        }
-
-        let output = NSMutableData()
-        guard let destination = CGImageDestinationCreateWithData(
-            output,
-            UTType.png.identifier as CFString,
-            1,
-            nil
-        ) else {
-            return data
-        }
-        CGImageDestinationAddImage(destination, image, nil)
-        guard CGImageDestinationFinalize(destination) else { return data }
-        return output as Data
+        return ImageDownsampler.downsample(data, maximumPixelSize: 1_200)
     }
 }

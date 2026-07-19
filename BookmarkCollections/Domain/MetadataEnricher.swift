@@ -14,7 +14,9 @@ struct MetadataEnricher {
                 SortDescriptor(\Bookmark.id)
             ])
         )
-        let pending = bookmarks.lazy.filter { $0.metadataState == .pending }.prefix(limit)
+        let pending = bookmarks.lazy
+            .filter { $0.kind == .link && $0.metadataState == .pending }
+            .prefix(limit)
 
         for bookmark in pending {
             try await refresh(bookmark)
@@ -22,6 +24,7 @@ struct MetadataEnricher {
     }
 
     func refresh(_ bookmark: Bookmark) async throws {
+        guard bookmark.kind == .link else { return }
         let refreshDate = Date()
         do {
             guard let url = URL(string: bookmark.urlString) else {

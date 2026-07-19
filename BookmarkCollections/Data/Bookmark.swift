@@ -9,6 +9,11 @@ final class Bookmark {
         case failed
     }
 
+    enum Kind: String, Codable, CaseIterable {
+        case link
+        case image
+    }
+
     var id: UUID = UUID()
     var urlString: String = ""
     var normalizedURLString: String = ""
@@ -23,10 +28,16 @@ final class Bookmark {
     var deletedAt: Date?
     var metadataStateRawValue: String = MetadataState.pending.rawValue
     var lastMetadataRefreshAt: Date?
+    var kindRawValue: String = Kind.link.rawValue
 
     var metadataState: MetadataState {
         get { MetadataState(rawValue: metadataStateRawValue) ?? .pending }
         set { metadataStateRawValue = newValue.rawValue }
+    }
+
+    var kind: Kind {
+        get { Kind(rawValue: kindRawValue) ?? .link }
+        set { kindRawValue = newValue.rawValue }
     }
 
     init(

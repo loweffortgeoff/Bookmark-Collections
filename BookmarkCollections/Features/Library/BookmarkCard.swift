@@ -45,7 +45,7 @@ struct BookmarkCard: View {
                         .font(.headline)
                         .foregroundStyle(.primary)
                         .lineLimit(2, reservesSpace: true)
-                    Text(bookmark.domain)
+                    Text(subtitle)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -102,6 +102,12 @@ struct BookmarkCard: View {
         guard let image = UIImage(data: data) else { return nil }
         return Image(uiImage: image)
         #endif
+    }
+
+    private var subtitle: String {
+        bookmark.kind == .image
+            ? bookmark.createdAt.formatted(date: .abbreviated, time: .omitted)
+            : bookmark.domain
     }
 
     private var displayTitle: String {
