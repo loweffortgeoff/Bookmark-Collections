@@ -63,7 +63,9 @@ struct BookmarkInfoView: View {
                 }
             }
         }
+        #if os(macOS)
         .frame(minWidth: 380, minHeight: 440)
+        #endif
     }
 
     private var collectionSelection: Binding<UUID?> {

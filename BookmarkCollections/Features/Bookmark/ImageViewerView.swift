@@ -60,7 +60,9 @@ struct ImageViewerView: View {
                 }
             }
         }
+        #if os(macOS)
         .frame(minWidth: 480, minHeight: 400)
+        #endif
     }
 
     private var viewerImage: Image? {
