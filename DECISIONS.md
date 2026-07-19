@@ -80,3 +80,9 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** The out-of-box accent default is Grape, not Graphite.
 - **Why:** Device verification confirmed the code-review concern — Graphite's gray tint makes button text read as disabled. Grape is the on-brand icon purple and reads unambiguously interactive.
 - **Alternative considered:** Keeping Graphite (the design frame's "most-native" pick) — rejected after seeing it on device; Graphite remains available in the picker.
+
+## 2026-07-19 (Sidebar pill selection)
+
+- **Decision:** Replace native sidebar selection with the custom accent pill (Buttons writing the selection binding inside `List(selection:)`, custom `listRowBackground`); also retire the stale blue `AccentColor` asset in favor of the Grape pair.
+- **Why:** macOS native selection paints from the compiled asset accent and can't follow the runtime accent, so any non-blue accent clashed; owning the row background is the only way selection follows `AppAccent`.
+- **Alternative considered:** Keeping native selection and only updating the asset to Grape — rejected because selection would still ignore the user's chosen accent. Accepted losses (macOS sidebar keyboard nav, pressed/hover affordance) tracked in TODO.md Backlog.
