@@ -104,6 +104,19 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertTrue(canonical.isFavorite)
     }
 
+    func testBookmarkDefaultsToLinkKindAndRoundTripsImage() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = Bookmark(urlString: "https://example.com/kind", normalizedURLString: "https://example.com/kind")
+        container.mainContext.insert(bookmark)
+        try container.mainContext.save()
+
+        XCTAssertEqual(bookmark.kind, .link)
+
+        bookmark.kind = .image
+        try container.mainContext.save()
+        XCTAssertEqual(bookmark.kindRawValue, Bookmark.Kind.image.rawValue)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult
