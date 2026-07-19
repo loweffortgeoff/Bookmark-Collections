@@ -44,6 +44,7 @@ struct ImageViewerView: View {
                 }
             }
             .navigationTitle(bookmark.title)
+            .toolbarTitleDisplayMode(.inline)
             .accessibilityIdentifier("imageViewer")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
