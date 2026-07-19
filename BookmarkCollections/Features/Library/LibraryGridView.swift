@@ -200,6 +200,18 @@ struct LibraryGridView: View {
                     systemImage: "folder",
                     description: Text("Move bookmarks into this collection from their Edit menu.")
                 )
+            case .images:
+                ContentUnavailableView(
+                    "No Images",
+                    systemImage: "photo",
+                    description: Text("Share a screenshot or image from another app to save it here.")
+                )
+            case .links:
+                ContentUnavailableView(
+                    "No Links",
+                    systemImage: "link",
+                    description: Text("Share a link from another app or add one here.")
+                )
             case .allItems:
                 ContentUnavailableView(
                     "No Bookmarks",
