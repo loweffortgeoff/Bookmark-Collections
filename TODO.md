@@ -10,6 +10,11 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
+- Photos-picker in-app image import.
+- Files-importer image import (Mac).
+- Drag & drop image import (Mac/iPad).
+- `pageDescription` field + og:description fetch for the info panel.
+- Tags system.
 
 ## Deferred Beyond v1
 
