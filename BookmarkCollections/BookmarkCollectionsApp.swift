@@ -1,6 +1,12 @@
 import SwiftData
 import SwiftUI
 
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 @main
 struct BookmarkCollectionsApp: App {
     #if os(iOS)
@@ -66,7 +72,59 @@ struct BookmarkCollectionsApp: App {
         context.insert(collection)
         context.insert(active)
         context.insert(deleted)
+        for preview in seededPreviewBookmarks() {
+            context.insert(preview)
+        }
         try? context.save()
+    }
+
+    /// Bookmarks whose preview images span portrait, wide, and square aspect
+    /// ratios with mixed title lengths — the grid must render them at uniform
+    /// card size.
+    @MainActor
+    private static func seededPreviewBookmarks() -> [Bookmark] {
+        let variants: [(slug: String, title: String, width: CGFloat, height: CGFloat, tint: (Double, Double, Double))] = [
+            ("seeded-portrait", "Portrait Preview With a Deliberately Long Two Line Title", 600, 900, (0.75, 0.30, 0.30)),
+            ("seeded-wide", "Wide", 1200, 400, (0.30, 0.55, 0.75)),
+            ("seeded-square", "Square Preview", 500, 500, (0.35, 0.65, 0.40)),
+            ("seeded-landscape", "Landscape 16:9 Preview", 800, 450, (0.60, 0.45, 0.70))
+        ]
+        return variants.map { variant in
+            let bookmark = Bookmark(
+                urlString: "https://example.com/\(variant.slug)",
+                normalizedURLString: "https://example.com/\(variant.slug)"
+            )
+            bookmark.title = variant.title
+            bookmark.domain = "example.com"
+            bookmark.metadataState = .ready
+            bookmark.previewImageData = solidPreviewData(
+                width: variant.width,
+                height: variant.height,
+                red: variant.tint.0,
+                green: variant.tint.1,
+                blue: variant.tint.2
+            )
+            return bookmark
+        }
+    }
+
+    private static func solidPreviewData(width: CGFloat, height: CGFloat, red: Double, green: Double, blue: Double) -> Data? {
+        #if os(macOS)
+        let image = NSImage(size: .init(width: width, height: height), flipped: false) { rect in
+            NSColor(red: red, green: green, blue: blue, alpha: 1).setFill()
+            rect.fill()
+            return true
+        }
+        guard let tiff = image.tiffRepresentation,
+              let rep = NSBitmapImageRep(data: tiff) else { return nil }
+        return rep.representation(using: .png, properties: [:])
+        #else
+        let renderer = UIGraphicsImageRenderer(size: .init(width: width, height: height))
+        return renderer.pngData { context in
+            UIColor(red: red, green: green, blue: blue, alpha: 1).setFill()
+            context.fill(.init(x: 0, y: 0, width: width, height: height))
+        }
+        #endif
     }
 }
 

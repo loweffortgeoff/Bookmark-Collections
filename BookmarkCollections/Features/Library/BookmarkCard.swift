@@ -33,16 +33,18 @@ struct BookmarkCard: View {
             }
         } label: {
             VStack(alignment: .leading, spacing: 10) {
-                preview
-                    .frame(maxWidth: .infinity)
+                // Fixed 16:9 canvas; the preview draws in an overlay so an
+                // overflowing scaledToFill image can never stretch the card.
+                Color.clear
                     .aspectRatio(16 / 9, contentMode: .fit)
+                    .overlay { preview }
                     .clipped()
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(displayTitle)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                        .lineLimit(2)
+                        .lineLimit(2, reservesSpace: true)
                     Text(bookmark.domain)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
