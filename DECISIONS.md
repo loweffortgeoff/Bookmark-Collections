@@ -31,3 +31,7 @@ SwiftUI navigation, forms, file import/export, sharing, alerts, commands, and ac
 ## Honest sync health
 
 CloudKit does not expose a trustworthy app-level “all records synced” timestamp. Settings therefore reports only account availability and actionable lookup errors; it never invents last-sync evidence.
+
+## Width-bucketed `.id()` to defeat stale LazyVGrid cell geometry on iPadOS resize
+
+iPadOS 26's continuous freeform window resizing does not reliably re-propose a fresh width to already-materialized `LazyVGrid` cells in the library grid; mid-drag, cells can retain stale geometry. Because `BookmarkCard`'s preview area is `Color.clear.aspectRatio(16/9, contentMode: .fit).overlay { preview }.clipped()`, that stale geometry gets clipped against the new cell bounds, producing a torn "window shade" artifact during a live resize. This reproduces only on iPadOS (not Mac) and is a pre-existing iPadOS windowing behavior, not a regression from unifying the grid's column band. The fix wraps the grid's `ScrollView` in a `GeometryReader` and applies `.id(Int(proxy.size.width / 20))`, forcing `LazyVGrid` to fully discard and rematerialize its cells once available width crosses a ~20pt bucket, rather than relying on `LazyVGrid` to relayout existing cells in place. The 20pt bucket size is a conservative, untested-at-finer-granularity choice; alternatives considered were reducing to a coarser bucket (risks visible bucket-boundary snapping) or invalidating on every width change (defeats the purpose of `LazyVGrid` reuse).
