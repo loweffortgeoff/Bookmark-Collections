@@ -12,9 +12,12 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
 - Photos-picker in-app image import.
 - Files-importer image import (Mac).
-- Drag & drop image import (Mac/iPad).
+- Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
+- Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
+- Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
+- `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
 
 ## Deferred Beyond v1
 

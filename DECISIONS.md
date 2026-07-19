@@ -62,3 +62,9 @@ Significant decisions made during development, logged for future reference.
 - **Why:** Collections, favorites, soft delete, CloudKit sync, and existing queries work unchanged. `kind` is a CloudKit-safe additive field with a default, so it doesn't require a schema migration story beyond the usual additive-field handling.
 - **Alternative considered:** A separate model for images — rejected for duplicating the entire lifecycle machinery (collection membership, favorite, soft delete, CloudKit mirroring, query/sort plumbing) for a second time.
 - **v1 consequence:** JSON/HTML export and import predate `kind` and only handle URLs, so image bookmarks are excluded from both export formats until an image-capable backup format is designed (tracked in TODO.md Backlog).
+
+## 2026-07-19 (v1 image capture is iOS-only)
+
+- **Decision:** v1 image capture is iOS-only via the share extension; the Mac views synced images but cannot capture them.
+- **Why:** The share extension target is iOS-only (always has been), Mac capture paths (drag-and-drop, file importer) are separate work, and shipping a clean iOS capture path now beats holding the feature.
+- **Alternative considered:** Adding Mac drag-and-drop import to the branch — deferred to Backlog to keep v1 tight.

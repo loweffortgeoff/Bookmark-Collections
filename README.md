@@ -1,6 +1,6 @@
 # Tucked
 
-Tucked is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links from the iOS Share Sheet, enriches them with webpage metadata, organizes them into one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit.
+Tucked is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links from the iOS Share Sheet, enriches them with webpage metadata, organizes them into one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit. Alongside link capture, Tucked saves images and screenshots shared from the iOS Share Sheet (iOS-only capture; they sync to Mac/iPad via CloudKit), with Images/Links sidebar filters, a full-screen zoomable image viewer, and a Get Info panel on the bookmark context menu.
 
 The Xcode project, bundle identifier, and internal file/folder names still use `BookmarkCollections` (see Requirements and Architecture below) — that rename is a separate, not-yet-scheduled task.
 
@@ -51,7 +51,7 @@ For iOS simulator tests, replace the destination with an installed simulator, su
 ## Architecture
 
 - `BookmarkCollections/Data`: CloudKit-compatible SwiftData models and shared container setup.
-- `BookmarkCollections/Domain`: URL normalization, repository mutations, metadata, import/export, and sync health.
+- `BookmarkCollections/Domain`: URL normalization, repository mutations, metadata, import/export, sync health, and shared image downsampling (`ImageDownsampler`, used by both the app and the share extension).
 - `BookmarkCollections/Features`: adaptive SwiftUI library, editors, Settings, and Recently Deleted.
 - `BookmarkCollections/Commands`: focused macOS menu commands and shortcuts.
 - `BookmarkShareExtension`: immediate Share Sheet validation and durable App Group save.
