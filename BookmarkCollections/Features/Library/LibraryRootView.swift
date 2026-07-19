@@ -90,6 +90,7 @@ struct LibraryRootView: View {
                 ascending: ascending,
                 onAdd: { sheet = .addBookmark },
                 onEdit: { sheet = .editBookmark($0) },
+                onInfo: { sheet = .bookmarkInfo($0) },
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
                 onCommandSelection: { commandBookmark = $0 }
@@ -133,6 +134,8 @@ struct LibraryRootView: View {
             AddBookmarkView()
         case let .editBookmark(bookmark):
             BookmarkEditorView(bookmark: bookmark)
+        case let .bookmarkInfo(bookmark):
+            BookmarkInfoView(bookmark: bookmark)
         case .newCollection:
             CollectionEditor()
         case let .editCollection(collection):
@@ -244,6 +247,7 @@ struct LibraryRootView: View {
 private enum SheetDestination: Identifiable {
     case addBookmark
     case editBookmark(Bookmark)
+    case bookmarkInfo(Bookmark)
     case newCollection
     case editCollection(BookmarkCollection)
     case settings
@@ -253,6 +257,7 @@ private enum SheetDestination: Identifiable {
         switch self {
         case .addBookmark: "add-bookmark"
         case let .editBookmark(bookmark): "bookmark-\(bookmark.id)"
+        case let .bookmarkInfo(bookmark): "info-\(bookmark.id)"
         case .newCollection: "new-collection"
         case let .editCollection(collection): "collection-\(collection.id)"
         case .settings: "settings"

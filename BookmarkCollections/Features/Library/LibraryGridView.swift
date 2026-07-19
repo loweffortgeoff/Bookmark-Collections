@@ -12,6 +12,7 @@ struct LibraryGridView: View {
     let ascending: Bool
     let onAdd: () -> Void
     let onEdit: (Bookmark) -> Void
+    let onInfo: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
     let onCommandSelection: (Bookmark) -> Void
@@ -68,6 +69,7 @@ struct LibraryGridView: View {
                                             bookmark: bookmark,
                                             isRecentlyDeleted: destination == .recentlyDeleted,
                                             onEdit: { onEdit(bookmark) },
+                                            onInfo: { onInfo(bookmark) },
                                             onPermanentDelete: { onPermanentDelete(bookmark) },
                                             onError: onError
                                         )

@@ -42,6 +42,18 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("bookmarkEditor").waitForExistence(timeout: 2))
     }
 
+    func testSeededCardOpensInfoPanelFromContextMenu() {
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.allItems"))
+        let card = identified("bookmark.seeded-active")
+        XCTAssertTrue(card.waitForExistence(timeout: 5))
+
+        activateContextMenu(on: card)
+        activate(contextMenuItem("Get Info"))
+
+        XCTAssertTrue(identified("bookmarkInfo").waitForExistence(timeout: 2))
+    }
+
     func testPermanentDeletionRequiresConfirmation() {
         showSidebarIfNeeded()
         let recentlyDeleted = destinationElement("destination.recentlyDeleted")

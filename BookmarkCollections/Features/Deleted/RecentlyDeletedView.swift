@@ -19,6 +19,7 @@ struct RecentlyDeletedView: View {
             ascending: ascending,
             onAdd: {},
             onEdit: { _ in },
+            onInfo: { _ in },
             onPermanentDelete: onPermanentDelete,
             onError: onError,
             onCommandSelection: { _ in }

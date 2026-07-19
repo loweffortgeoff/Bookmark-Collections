@@ -6,6 +6,7 @@ struct BookmarkActions: View {
     let bookmark: Bookmark
     let isRecentlyDeleted: Bool
     let onEdit: () -> Void
+    let onInfo: () -> Void
     let onPermanentDelete: () -> Void
     let onError: (String) -> Void
 
@@ -19,6 +20,7 @@ struct BookmarkActions: View {
                 onPermanentDelete()
             }
         } else {
+            Button("Get Info", systemImage: "info.circle") { onInfo() }
             Button(bookmark.isFavorite ? "Unfavorite" : "Favorite", systemImage: bookmark.isFavorite ? "star.slash" : "star") {
                 perform {
                     try BookmarkRepository(context: modelContext).setFavorite(bookmark, to: !bookmark.isFavorite)
