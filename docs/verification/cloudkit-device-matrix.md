@@ -4,9 +4,9 @@ Last updated: 2026-07-18 (America/New_York)
 
 ## Release status
 
-Automated implementation verification is complete. Real-device synchronization, destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
+Automated implementation verification is complete. The real-device same-account matrix below is now fully confirmed across iPhone, iPad, and Mac. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
 
-Paired hardware was discoverable during this pass (two iPhones and one iPad Pro), but the required flows need hands-on device interaction and account-level CloudKit Console access. No app was installed and no Production schema was changed during this automated pass.
+One open item from this pass: collection rename and permanent delete both needed a relaunch on iPad to reflect a change that originated on Mac, while the same operations from iPhone synced live. Not yet root-caused — see the notes on those rows below.
 
 ## Completed evidence
 
@@ -33,15 +33,15 @@ Use one iPhone, one iPad, and one Mac signed into the same development iCloud ac
 
 | Operation | iPhone | iPad | Mac | Notes |
 | --- | --- | --- | --- | --- |
-| Create bookmark | Pending | Pending | Pending | |
-| Toggle Favorite | Pending | Pending | Pending | |
-| Move to collection | Pending | Pending | Pending | |
-| Rename collection | Pending | Pending | Pending | |
-| Soft delete | Pending | Pending | Pending | |
-| Restore | Pending | Pending | Pending | |
-| Permanent delete | Pending | Pending | Pending | |
-| Preview arrival | Pending | Pending | Pending | |
-| Relaunch persistence | Pending | Pending | Pending | |
+| Create bookmark | Confirmed | Confirmed | Pending | Shared an App Store Connect page via the Share Extension on iPad; synced to iPhone. Mac not yet exercised for this row. |
+| Toggle Favorite | Confirmed | Confirmed | Confirmed | Favorited on iPhone, synced to iPad and Mac; unfavorite also synced. |
+| Move to collection | Confirmed | Confirmed | Confirmed | Moved into a collection on iPad; collection and membership synced to iPhone and Mac. |
+| Rename collection | Confirmed | Confirmed (needed relaunch) | Confirmed | Renamed on Mac; synced live to iPhone, but iPad only showed the new name after a relaunch — possibly a missed live-refresh on remote CloudKit change while foregrounded. Worth a closer look, not yet root-caused. |
+| Soft delete | Confirmed | Confirmed | Confirmed | Deleted on iPhone; appeared in Recently Deleted on iPad and Mac live, no relaunch needed. |
+| Restore | Confirmed | Confirmed | Confirmed | Restored on iPhone; removed from Recently Deleted on iPad and Mac live, no relaunch needed. |
+| Permanent delete | Confirmed | Confirmed (needed relaunch) | Confirmed | Permanently deleted on Mac; synced live to iPhone, but iPad again only reflected it after a relaunch — same pattern as the collection rename. |
+| Preview arrival | Confirmed | Confirmed | Confirmed | Favicon and preview image for the App Store Connect bookmark visible on all three devices. |
+| Relaunch persistence | Confirmed | Confirmed | Confirmed | Force-quit and relaunched on all three; bookmarks, collections, and favorite state all persisted locally. |
 
 ## Offline conflict matrix
 

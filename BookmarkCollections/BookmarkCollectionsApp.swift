@@ -3,6 +3,11 @@ import SwiftUI
 
 @main
 struct BookmarkCollectionsApp: App {
+    #if os(iOS)
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #elseif os(macOS)
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #endif
     @Environment(\.scenePhase) private var scenePhase
     private let container: ModelContainer
 

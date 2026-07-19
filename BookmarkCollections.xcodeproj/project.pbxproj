@@ -12,6 +12,7 @@
 		1350389BA87A38C81FF0B54F /* MetadataEnricher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB99F5A7DF143AF6D4D0F8 /* MetadataEnricher.swift */; };
 		25A907445DAA3C2388A05E31 /* BookmarkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD552091A37EFEE76D22B76F /* BookmarkCard.swift */; };
 		25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */; };
+		C7B2000000000000000000A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B2000000000000000000A0 /* AppDelegate.swift */; };
 		39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63BF5CD2B0B187AABFBB615 /* Bookmark.swift */; };
 		3AE96EF67091667CAF8182B4 /* BookmarkActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873AA412E826EECFA73C7A7B /* BookmarkActions.swift */; };
 		3EC03544BA85B63865BC9FAF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404742BB54C83E8B300ABCBA /* Foundation.framework */; };
@@ -102,6 +103,8 @@
 
 /* Begin PBXFileReference section */
 		04ED65DA532319622DE2A085 /* BookmarkEditorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookmarkEditorView.swift; sourceTree = "<group>"; };
+		C7B2000000000000000000A0 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C7B2000000000000000000A2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05102A8289C2F112837B7967 /* LibraryDestination.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryDestination.swift; sourceTree = "<group>"; };
 		1F2F1CA2D9DBD3DCF69ADADB /* CollectionListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionListView.swift; sourceTree = "<group>"; };
 		26E2520B1BEDF6EC19422DE5 /* MetadataEnricherTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MetadataEnricherTests.swift; sourceTree = "<group>"; };
@@ -200,7 +203,9 @@
 			isa = PBXGroup;
 			children = (
 				B653553EB636ABAE52A4AABF /* BookmarkCollectionsApp.swift */,
+				C7B2000000000000000000A0 /* AppDelegate.swift */,
 				CEE51C2174F9B9764A9906CD /* BookmarkCollections.entitlements */,
+				C7B2000000000000000000A2 /* Info.plist */,
 				B2E000000000000000000021 /* Commands */,
 				AD70BEA3B3DE83BB539D83FF /* Data */,
 				C8A120DC4D454B5A3C6E492E /* Domain */,
@@ -515,6 +520,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				25C1B418A01D1FC1D6A186A7 /* BookmarkCollectionsApp.swift in Sources */,
+				C7B2000000000000000000A1 /* AppDelegate.swift in Sources */,
 				39ED534851A5AD89D1681469 /* Bookmark.swift in Sources */,
 				66ECC9EB2E24DD9D8D4E90C9 /* BookmarkCollection.swift in Sources */,
 				0848D91E80BC004B8D82CEDE /* ModelContainerFactory.swift in Sources */,
@@ -661,11 +667,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Bookmarked Bookmarks";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BookmarkCollections/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -911,11 +914,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Bookmarked Bookmarks";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BookmarkCollections/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
