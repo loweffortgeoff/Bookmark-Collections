@@ -2,7 +2,7 @@
 # Builds and installs Tucked (BookmarkCollections) to the Mac, iPhone, and iPad
 # used for the real-device CloudKit verification matrix
 # (docs/verification/cloudkit-device-matrix.md).
-#
+
 # Unlock the iPhone and iPad before running this — devicectl cannot install
 # or launch on a locked device.
 
