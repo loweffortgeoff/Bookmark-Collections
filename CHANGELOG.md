@@ -49,8 +49,8 @@ All notable project changes are recorded here.
 
 ### Verification
 
-- Fresh 2026-07-23 verification: 49 unit tests and 10 UI tests pass on native macOS.
-- Fresh 2026-07-23 iPhone 17 Pro simulator regression: the focused 11-test `ShareCaptureModelTests` suite passes. The complete iPhone simulator unit and UI suites were not rerun for the macOS Share extension work.
+- Fresh 2026-07-23 verification: 52 unit tests and 10 UI tests pass on native macOS.
+- Fresh 2026-07-23 iPhone 17 Pro simulator regression: the focused 14-test `ShareCaptureModelTests` suite passes. The complete iPhone simulator unit and UI suites were not rerun for the macOS Share extension work.
 - Earlier, pre-2026-07-23 full-suite iPhone simulator results recorded 47 unit tests and 10 UI tests passing.
 - Signed iOS app and Share Extension build and validate with matching App Group and CloudKit entitlements.
 - Real-device CloudKit, Production schema, and TestFlight checks remain release gates; see `docs/verification/cloudkit-device-matrix.md`.
