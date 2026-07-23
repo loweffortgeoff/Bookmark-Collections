@@ -95,7 +95,7 @@ final class ShareViewController: NSViewController {
 
     override func loadView() {
         view = NSView()
-        preferredContentSize = NSSize(width: 420, height: 520)
+        preferredContentSize = NSSize(width: 360, height: 200)
     }
 
     override func viewDidLoad() {
@@ -112,13 +112,12 @@ final class ShareViewController: NSViewController {
             )
             self.container = container
             let model = ShareCaptureModel(
-                context: container.mainContext,
-                metadataProvider: LinkPresentationMetadataProvider()
+                context: container.mainContext
             ) { [weak self] in
                 self?.extensionContext?.completeRequest(returningItems: nil)
             }
             host(
-                ShareCaptureView(
+                MacQuickSaveView(
                     model: model,
                     providers: inputProviders,
                     onCancel: { [weak self] in self?.cancelRequest() }
