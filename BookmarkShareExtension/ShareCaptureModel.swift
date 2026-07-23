@@ -125,6 +125,12 @@ final class ShareCaptureModel: ObservableObject {
         }
     }
 
+    func quickSave(from providers: [NSItemProvider]) async {
+        await load(from: providers)
+        guard state == .ready else { return }
+        save(collectionID: nil, favorite: false)
+    }
+
     func save(collectionID: UUID?, favorite: Bool) {
         guard let capture else {
             state = .failed("Load a valid web link before saving.")

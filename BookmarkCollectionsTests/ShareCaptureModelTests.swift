@@ -55,6 +55,111 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertEqual(model.state, .saved)
     }
 
+    func testQuickSaveUsesDefaultOrganizationAndCompletesAfterSave() async throws {
+        var saveWasCalled = false
+        var receivedCollectionID: UUID? = UUID()
+        var receivedFavorite = true
+        var completedAfterSave = false
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { capture, collectionID, favorite in
+                saveWasCalled = true
+                receivedCollectionID = collectionID
+                receivedFavorite = favorite
+                return .created(
+                    Bookmark(
+                        urlString: capture.urlString,
+                        normalizedURLString: capture.urlString
+                    )
+                )
+            },
+            onComplete: {
+                completedAfterSave = saveWasCalled
+            }
+        )
+        let provider = NSItemProvider(
+            object: NSURL(string: "https://example.com/quick-save")!
+        )
+
+        await model.quickSave(from: [provider])
+
+        XCTAssertTrue(saveWasCalled)
+        XCTAssertNil(receivedCollectionID)
+        XCTAssertFalse(receivedFavorite)
+        XCTAssertTrue(completedAfterSave)
+        XCTAssertEqual(model.state, .saved)
+    }
+
+    func testQuickSaveUnsupportedInputDoesNotSaveOrComplete() async {
+        var didSave = false
+        var didComplete = false
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { _, _, _ in
+                didSave = true
+                return .created(
+                    Bookmark(urlString: "", normalizedURLString: "")
+                )
+            },
+            onComplete: {
+                didComplete = true
+            }
+        )
+        let provider = NSItemProvider(
+            item: Data([0x01]) as NSData,
+            typeIdentifier: UTType.data.identifier
+        )
+
+        await model.quickSave(from: [provider])
+
+        XCTAssertFalse(didSave)
+        XCTAssertFalse(didComplete)
+        guard case let .failed(message) = model.state else {
+            return XCTFail("Expected unsupported input to fail")
+        }
+        XCTAssertTrue(message.localizedCaseInsensitiveContains("web link"))
+    }
+
+    func testQuickSaveCanRetryAfterSaveFailure() async {
+        var attempts = 0
+        var completions = 0
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { capture, _, _ in
+                attempts += 1
+                if attempts == 1 {
+                    throw TestError.storeUnavailable
+                }
+                return .created(
+                    Bookmark(
+                        urlString: capture.urlString,
+                        normalizedURLString: capture.urlString
+                    )
+                )
+            },
+            onComplete: {
+                completions += 1
+            }
+        )
+        let provider = NSItemProvider(
+            object: NSURL(string: "https://example.com/quick-save-retry")!
+        )
+
+        await model.quickSave(from: [provider])
+
+        XCTAssertEqual(attempts, 1)
+        XCTAssertEqual(completions, 0)
+        guard case .failed = model.state else {
+            return XCTFail("Expected the first save to fail")
+        }
+
+        await model.quickSave(from: [provider])
+
+        XCTAssertEqual(attempts, 2)
+        XCTAssertEqual(completions, 1)
+        XCTAssertEqual(model.state, .saved)
+    }
+
     func testStoreFailureDoesNotCallCompletion() async throws {
         var didComplete = false
         let model = ShareCaptureModel(
