@@ -1,5 +1,12 @@
 import SwiftUI
+
+#if os(iOS)
 import UIKit
+private typealias PlatformImage = UIImage
+#elseif os(macOS)
+import AppKit
+private typealias PlatformImage = NSImage
+#endif
 
 struct ShareCaptureView: View {
     @ObservedObject var model: ShareCaptureModel
@@ -65,8 +72,8 @@ struct ShareCaptureView: View {
             if let capture = model.capture {
                 Section(capture.kind == .image ? "Image" : "Link") {
                     if let previewData = capture.previewImageData,
-                       let preview = UIImage(data: previewData) {
-                        Image(uiImage: preview)
+                       let preview = PlatformImage(data: previewData) {
+                        Image(platformImage: preview)
                             .resizable()
                             .scaledToFill()
                             .frame(maxWidth: .infinity)
@@ -92,5 +99,15 @@ struct ShareCaptureView: View {
             return "Retry"
         }
         return "Save"
+    }
+}
+
+private extension Image {
+    init(platformImage: PlatformImage) {
+        #if os(iOS)
+        self.init(uiImage: platformImage)
+        #elseif os(macOS)
+        self.init(nsImage: platformImage)
+        #endif
     }
 }
