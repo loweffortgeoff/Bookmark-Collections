@@ -147,6 +147,28 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertEqual(model.state, .saved)
     }
 
+    func testImageSaveAssignsCollectionAndFavorite() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let collection = BookmarkCollection(name: "Reference", sortPosition: 0)
+        container.mainContext.insert(collection)
+        try container.mainContext.save()
+        let model = ShareCaptureModel(context: container.mainContext, onComplete: {})
+        let provider = NSItemProvider(
+            item: try onePixelPNG() as NSData,
+            typeIdentifier: UTType.png.identifier
+        )
+        await model.load(from: [provider])
+
+        model.save(collectionID: collection.id, favorite: true)
+
+        let bookmark = try XCTUnwrap(
+            container.mainContext.fetch(FetchDescriptor<Bookmark>()).first
+        )
+        XCTAssertEqual(bookmark.kind, .image)
+        XCTAssertEqual(bookmark.collection?.id, collection.id)
+        XCTAssertTrue(bookmark.isFavorite)
+    }
+
     func testJunkDataTypedAsImageFails() async throws {
         let model = try makeModel()
         let provider = NSItemProvider(
