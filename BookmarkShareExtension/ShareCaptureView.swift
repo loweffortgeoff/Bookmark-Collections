@@ -18,25 +18,22 @@ struct ShareCaptureView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                captureSection
-                if model.capture != nil {
-                    Picker("Collection", selection: $selectedCollectionID) {
-                        Text("None").tag(nil as UUID?)
-                        ForEach(model.collections) { collection in
-                            Text(collection.name).tag(collection.id as UUID?)
-                        }
+            #if os(macOS)
+            VStack(spacing: 0) {
+                captureForm
+                Divider()
+                HStack {
+                    Button("Cancel", action: onCancel)
+                    Spacer()
+                    Button(saveButtonTitle) {
+                        model.save(collectionID: selectedCollectionID, favorite: isFavorite)
                     }
-                    Toggle("Favorite", isOn: $isFavorite)
+                    .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                 }
-                if case let .failed(message) = model.state {
-                    Section {
-                        Label(message, systemImage: "exclamationmark.triangle")
-                            .foregroundStyle(.red)
-                    }
-                }
+                .padding()
             }
-            .navigationTitle("Save Bookmark")
+            #elseif os(iOS)
+            captureForm
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: onCancel)
@@ -48,11 +45,34 @@ struct ShareCaptureView: View {
                     .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                 }
             }
+            #endif
         }
         .task {
             guard model.state == .idle else { return }
             await model.load(from: providers)
         }
+    }
+
+    private var captureForm: some View {
+        Form {
+            captureSection
+            if model.capture != nil {
+                Picker("Collection", selection: $selectedCollectionID) {
+                    Text("None").tag(nil as UUID?)
+                    ForEach(model.collections) { collection in
+                        Text(collection.name).tag(collection.id as UUID?)
+                    }
+                }
+                Toggle("Favorite", isOn: $isFavorite)
+            }
+            if case let .failed(message) = model.state {
+                Section {
+                    Label(message, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.red)
+                }
+            }
+        }
+        .navigationTitle("Save Bookmark")
     }
 
     @ViewBuilder
