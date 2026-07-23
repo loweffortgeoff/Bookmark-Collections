@@ -12,10 +12,11 @@ Mac-originated changes (collection rename, permanent delete, favorite toggle, mo
 
 | Area | Result | Evidence |
 | --- | --- | --- |
-| macOS unit tests | Pass | 37 tests, 0 failures after a clean rebuild |
-| macOS UI tests | Pass | 8 tests, 0 failures using the required signed runner |
-| iPhone simulator unit tests | Pass | 37 tests, 0 failures on iPhone 17 Pro / iOS 26.5 |
-| iPhone simulator UI tests | Pass | 8 tests, 0 failures on iPhone 17 Pro / iOS 26.5 |
+| macOS unit tests | Pass | 49 tests, 0 failures on 2026-07-23 |
+| macOS UI tests | Pass | 10 tests, 0 failures on 2026-07-23 using the required signed runner |
+| iPhone simulator Share-capture regression | Pass | 11 focused `ShareCaptureModelTests`, 0 failures on iPhone 17 Pro / iOS 26.5 on 2026-07-23; the complete simulator suites were not rerun |
+| iPhone simulator unit tests (historical) | Pass | 37 tests, 0 failures on iPhone 17 Pro / iOS 26.5 during the 2026-07-18 verification pass |
+| iPhone simulator UI tests (historical) | Pass | 8 tests, 0 failures on iPhone 17 Pro / iOS 26.5 during the 2026-07-18 verification pass |
 | Static analysis | Pass | `xcodebuild analyze` succeeded; launch-screen and orientation validation warnings were corrected |
 | Signed device build | Pass | App and Share Extension signed and embedded successfully |
 | Entitlement inspection | Pass | Both products contain the same App Group and private CloudKit container identifiers |
