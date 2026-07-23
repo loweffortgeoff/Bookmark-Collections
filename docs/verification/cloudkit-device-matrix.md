@@ -4,7 +4,7 @@ Last updated: 2026-07-23 (America/New_York)
 
 ## Release status
 
-Automated implementation verification is complete. The real-device same-account matrix below is now fully confirmed across iPhone, iPad, and Mac. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
+Automated implementation verification is complete. Most of the real-device same-account matrix below is confirmed across iPhone, iPad, and Mac, but Mac-originated create-bookmark propagation remains pending. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are also still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
 
 Mac-originated changes (collection rename, permanent delete, favorite toggle, move to collection) initially required backgrounding/relaunching a receiving iPhone or iPad to appear, while iPhone-originated changes always appeared live. Root cause: the app was never actually receiving CloudKit's silent push notifications, because the Push Notifications capability (and `aps-environment` entitlement) was never enabled on the target — `registerForRemoteNotifications()` alone is a no-op without it. The only sync trigger was the app becoming active. Fixed in `e2b1b24` by enabling the Push Notifications capability, adding `aps-environment: development` to the entitlements, and adding registration/receipt logging to `AppDelegate`. Retested on real devices post-fix: live sync now works without backgrounding. Note the entitlement is currently `development` — confirm it flips to `production` automatically at archive/TestFlight time (standard Xcode behavior via the distribution provisioning profile), and treat that as part of the CloudKit Production release gate below.
 
@@ -23,6 +23,7 @@ Mac-originated changes (collection rename, permanent delete, favorite toggle, mo
 | macOS Share extension build and registration | Pass | Signed `platform=macOS` build succeeded; the embedded extension has the shared App Group/CloudKit entitlements plus App Sandbox and outbound networking, and `pluginkit` registers it as `Save to Tucked` |
 | macOS link Share flow | Pass | With Tucked closed, Safari saved the exact public URL documented below into Home as a Favorite; a second share updated the same record rather than adding a duplicate |
 | macOS image Share flow | Pass | With Tucked closed, Finder shared the repository app icon into Personal as a Favorite; Tucked rendered the image card and the active image count increased by one |
+| macOS image panel preview visibility | Unverified | The preview is intentionally AX-hidden and ShareKit omitted the protected remote panel from Computer Use screenshots, so no direct panel-preview observation is claimed |
 | macOS Share cancel | Pass | The body-local Cancel button dismissed the Safari panel and the unique cancel-test URL remained absent from the shared store |
 | JSON backup recovery | Pass (automated) | Round trip preserved bookmark/collection UUIDs, URL, title, order, Favorite, and dates in a fresh in-memory store |
 | HTML portability format | Pass (automated) | Netscape header, escaping, folders, Favorite tags, and non-duplication are covered |
@@ -77,6 +78,9 @@ Live host evidence, with Tucked confirmed closed before each first save:
   panel. Tucked then visibly rendered the pocket-star image card with the
   non-empty title `Image — Jul 23, 2026`, Personal, and Favorite; the active
   image count moved from 5 to 6 and the stored preview payload was non-empty.
+  The extension-panel preview itself was not directly observable because it
+  is AX-hidden and ShareKit omitted the protected remote panel from Computer
+  Use screenshots; that preview-visibility sub-check remains unverified.
 - Safari opened
   `https://example.com/?tucked-macos-share=20260723-task4-cancel`; the
   AX-visible body-local Cancel button dismissed the panel and a read-only
