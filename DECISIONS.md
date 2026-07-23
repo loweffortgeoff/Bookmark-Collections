@@ -86,3 +86,9 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** Replace native sidebar selection with the custom accent pill (Buttons writing the selection binding inside `List(selection:)`, custom `listRowBackground`); also retire the stale blue `AccentColor` asset in favor of the Grape pair.
 - **Why:** macOS native selection paints from the compiled asset accent and can't follow the runtime accent, so any non-blue accent clashed; owning the row background is the only way selection follows `AppAccent`.
 - **Alternative considered:** Keeping native selection and only updating the asset to Grape — rejected because selection would still ignore the user's chosen accent. Accepted losses (macOS sidebar keyboard nav, pressed/hover affordance) tracked in TODO.md Backlog.
+
+## 2026-07-23 (One multiplatform Share extension)
+
+- **Decision:** The existing Share extension target supports both iOS and macOS. It keeps platform-specific UIKit/AppKit hosting and signing configuration around one shared capture model, form, repository save path, App Group store, and CloudKit container. This supersedes the 2026-07-19 decision that v1 image capture is iOS-only: links, text links, and images can now be captured from Share surfaces on both platforms.
+- **Why:** The accepted inputs and durable local-first save semantics are the same on both platforms. Sharing the target keeps URL normalization, image downsampling, Collection/Favorite behavior, and completion-after-persistence rules aligned without duplicating product logic.
+- **Alternative considered:** Separate iOS and macOS Share extension targets — rejected because their only meaningful differences are host-controller and platform-signing details; separate targets would duplicate the capture UI and create two persistence paths that could drift.

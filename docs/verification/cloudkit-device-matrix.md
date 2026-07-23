@@ -1,6 +1,6 @@
 # CloudKit and Release Verification Matrix
 
-Last updated: 2026-07-18 (America/New_York)
+Last updated: 2026-07-23 (America/New_York)
 
 ## Release status
 
@@ -19,13 +19,71 @@ Mac-originated changes (collection rename, permanent delete, favorite toggle, mo
 | Static analysis | Pass | `xcodebuild analyze` succeeded; launch-screen and orientation validation warnings were corrected |
 | Signed device build | Pass | App and Share Extension signed and embedded successfully |
 | Entitlement inspection | Pass | Both products contain the same App Group and private CloudKit container identifiers |
-| Share Extension live flow | Pass | Safari Share Sheet loaded an exact URL, Save dismissed only after persistence, and the main app immediately displayed it |
+| iOS Share Extension live flow | Pass | Safari Share Sheet loaded an exact URL, Save dismissed only after persistence, and the main app immediately displayed it |
+| macOS Share extension build and registration | Pass | Signed `platform=macOS` build succeeded; the embedded extension has the shared App Group/CloudKit entitlements plus App Sandbox and outbound networking, and `pluginkit` registers it as `Save to Tucked` |
+| macOS link Share flow | Pass | With Tucked closed, Safari saved the exact public URL documented below into Home as a Favorite; a second share updated the same record rather than adding a duplicate |
+| macOS image Share flow | Pass | With Tucked closed, Finder shared the repository app icon into Personal as a Favorite; Tucked rendered the image card and the active image count increased by one |
+| macOS Share cancel | Pass | The body-local Cancel button dismissed the Safari panel and the unique cancel-test URL remained absent from the shared store |
 | JSON backup recovery | Pass (automated) | Round trip preserved bookmark/collection UUIDs, URL, title, order, Favorite, and dates in a fresh in-memory store |
 | HTML portability format | Pass (automated) | Netscape header, escaping, folders, Favorite tags, and non-duplication are covered |
 | Dark + maximum Dynamic Type | Pass (automated UI) | Card accessibility and Settings checks passed in dark appearance at accessibility XXXL; simulator was restored afterward |
 | VoiceOver semantics | Pass (automated) | Card exposes title, domain, collection, and Favorite state; decorative preview content is hidden |
 
 Note: a combined unsigned macOS clean-test invocation can cause XCTest to SIGKILL its UI runner before bootstrap. Unit tests passed in that clean invocation; the full UI target passed immediately when rebuilt with normal signing. This is a test-harness signing condition, not an app crash.
+
+## macOS Share extension verification — 2026-07-23
+
+The signed build used for the final live flow was produced from commit `3fd8ead`
+with:
+
+```bash
+xcodebuild build \
+  -project BookmarkCollections.xcodeproj \
+  -scheme BookmarkCollections \
+  -destination 'platform=macOS'
+```
+
+The build succeeded. ShareKit selected the default DerivedData product at:
+
+```text
+/Users/geoffreysilva/Library/Developer/Xcode/DerivedData/BookmarkCollections-cmvirhxqbwkgthazaqqrktobwfhc/Build/Products/Debug/BookmarkCollections.app
+```
+
+While both the Safari link panel and Finder image panel were open, `ps` and
+`lsof` reported the live extension executable and mapped debug dylib inside
+that app. This is runtime evidence for the default DerivedData product, not
+the separate deterministic worktree build used during earlier signing checks.
+
+The embedded extension is Apple Development signed as
+`com.loweffortapps.BookmarkCollections.ShareExtension`, team
+`2R5TZD4XAH`. Effective entitlements include App Sandbox, App Group
+`group.com.loweffortapps.BookmarkCollections`, CloudKit container
+`iCloud.com.loweffortapps.BookmarkCollections`, and outbound network client
+access. `pluginkit -mAvvv -p com.apple.share-services` registered that exact
+embedded path as the macOS `Save to Tucked` Share service.
+
+Live host evidence, with Tucked confirmed closed before each first save:
+
+- Safari shared
+  `https://example.com/?tucked-macos-share=20260723-task4-final`. The panel
+  showed `Example Domain` and the exact URL; Home and Favorite were selected,
+  the AX-visible Save button dismissed the panel, and Tucked showed one
+  matching Home/Favorite card. Re-sharing the same URL retained one store
+  record with the same primary key and a later modification date.
+- Finder shared
+  `BookmarkCollections/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png`.
+  Finder showed the selected 758 KB PNG preview; the extension loaded its
+  Image section, Personal and Favorite were selected, and Save dismissed the
+  panel. Tucked then visibly rendered the pocket-star image card with the
+  non-empty title `Image — Jul 23, 2026`, Personal, and Favorite; the active
+  image count moved from 5 to 6 and the stored preview payload was non-empty.
+- Safari opened
+  `https://example.com/?tucked-macos-share=20260723-task4-cancel`; the
+  AX-visible body-local Cancel button dismissed the panel and a read-only
+  shared-store query confirmed zero records for that normalized URL.
+
+These checks verify local macOS Share capture and do not provide CloudKit
+Production, TestFlight, or cross-device synchronization evidence.
 
 ## Real-device same-account matrix
 

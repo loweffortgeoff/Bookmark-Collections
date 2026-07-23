@@ -8,6 +8,8 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 ## Backlog
 
+The deferred Photos picker, Files importer, and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
+
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
 - Photos-picker in-app image import.

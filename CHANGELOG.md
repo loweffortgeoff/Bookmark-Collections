@@ -21,6 +21,10 @@ All notable project changes are recorded here.
 - Save images and screenshots via the Share Sheet; new Images and Links sidebar filters; full-screen image viewer.
 - Sidebar shows item counts for All Items, Images, Links, Favorites, and each collection.
 
+### Added — 2026-07-23
+
+- Added Save to Tucked to macOS Share menus using the existing multiplatform Share extension, with link, text-link, and image capture plus the same Collection and Favorite choices available on iOS.
+
 ### Added — 2026-07-19
 
 - Curated 7-swatch accent palette (Grape, Coral, Amber, Cherry, Fern, Teal, Graphite), each a `{dark, light}` hex pair resolved per OS appearance via dynamic NSColor/UIColor (`AppAccent.swift`). Swatch key stored in `@AppStorage("accentKey")` (default Grape) and applied as `.tint` at the app root; sidebar counts now use `.tint` instead of `.secondary`. New `AccentPickerView` sheet (swatch grid, tuned-for-both-themes footnote, preview rows) reachable from a new Appearance section in Settings.
