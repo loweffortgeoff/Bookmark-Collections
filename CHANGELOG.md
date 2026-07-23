@@ -23,7 +23,14 @@ All notable project changes are recorded here.
 
 ### Added — 2026-07-23
 
-- Added Save to Tucked to macOS Share menus using the existing multiplatform Share extension, with link, text-link, and image capture plus the same Collection and Favorite choices available on iOS.
+- Added Save to Tucked to macOS Share menus using the existing multiplatform Share extension, with link, text-link, and image capture.
+
+### Changed — 2026-07-23
+
+- Changed the macOS **Save to Tucked** Share action to Quick Save: shared
+  links and images now save immediately with no collection and Favorite off,
+  avoiding the nested Collection menu inside Safari's Share surface. The
+  interactive iPhone and iPad Share Sheet is unchanged.
 
 ### Added — 2026-07-19
 

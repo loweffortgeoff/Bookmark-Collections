@@ -92,3 +92,20 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** The existing Share extension target supports both iOS and macOS. It keeps platform-specific UIKit/AppKit hosting and signing configuration around one shared capture model, form, repository save path, App Group store, and CloudKit container. This supersedes the 2026-07-19 decision that v1 image capture is iOS-only: links, text links, and images can now be captured from Share surfaces on both platforms.
 - **Why:** The accepted inputs and durable local-first save semantics are the same on both platforms. Sharing the target keeps URL normalization, image downsampling, Collection/Favorite behavior, and completion-after-persistence rules aligned without duplicating product logic.
 - **Alternative considered:** Separate iOS and macOS Share extension targets — rejected because their only meaningful differences are host-controller and platform-signing details; separate targets would duplicate the capture UI and create two persistence paths that could drift.
+
+## 2026-07-23 (macOS Share uses capture-first Quick Save)
+
+- **Decision:** On macOS, choosing **Save to Tucked** immediately saves the
+  shared link or image with no collection and Favorite off. The extension may
+  show brief progress and exposes Retry/Cancel only after failure. iOS and
+  iPadOS retain the interactive Collection and Favorite form.
+- **Why:** Safari hosts the extension in a ShareKit-owned system dialog, so
+  the Collection picker becomes a native menu nested inside Safari's Share
+  interaction. Live verification showed that the menu functions but the
+  layered interaction is awkward and is not Debug-specific. Tucked already
+  persists directly into the shared App Group store, so capture can finish
+  without launching the containing app.
+- **Alternative considered:** Keep full cross-platform UI parity — rejected
+  because the macOS host interaction is needlessly layered. Add a preference
+  or a second Share action — rejected as extra settings/target complexity for
+  a capture path intended to be immediate.

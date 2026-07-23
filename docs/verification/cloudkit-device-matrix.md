@@ -22,10 +22,10 @@ Mac-originated changes (collection rename, permanent delete, favorite toggle, mo
 | Entitlement inspection | Pass | Both products contain the same App Group and private CloudKit container identifiers |
 | iOS Share Extension live flow | Pass | Safari Share Sheet loaded an exact URL, Save dismissed only after persistence, and the main app immediately displayed it |
 | macOS Share extension build and registration | Pass | Signed `platform=macOS` build succeeded; the embedded extension has the shared App Group/CloudKit entitlements plus App Sandbox and outbound networking, and `pluginkit` registers it as `Save to Tucked` |
-| macOS link Share flow | Pass | With Tucked closed, Safari saved the exact public URL documented below into Home as a Favorite; a second share updated the same record rather than adding a duplicate |
-| macOS image Share flow | Pass | With Tucked closed, Finder shared the repository app icon into Personal as a Favorite; Tucked rendered the image card and the active image count increased by one |
-| macOS image panel preview visibility | Unverified | The preview is intentionally AX-hidden and ShareKit omitted the protected remote panel from Computer Use screenshots, so no direct panel-preview observation is claimed |
-| macOS Share cancel | Pass | The body-local Cancel button dismissed the Safari panel and the unique cancel-test URL remained absent from the shared store |
+| macOS link Share flow | Pass | With Tucked closed, Safari Quick Save persisted the exact public URL documented below, dismissed without success-time controls, and produced a no-collection, Favorite-off bookmark |
+| macOS image Share flow (initial confirmation UI) | Pass (historical) | Before Quick Save replaced the macOS confirmation UI, Finder shared the repository app icon into Personal as a Favorite; Tucked rendered the image card and the active image count increased by one |
+| macOS image panel preview visibility (initial confirmation UI) | Unverified, superseded | The former preview was intentionally AX-hidden and ShareKit omitted the protected remote panel from Computer Use screenshots; current Quick Save has no preview UI |
+| macOS Quick Save failure and retry | Pass (automated) | Unsupported-input and save-failure retry tests pass; no ordinary live host exposed the extension for unsupported content during the Quick Save verification |
 | JSON backup recovery | Pass (automated) | Round trip preserved bookmark/collection UUIDs, URL, title, order, Favorite, and dates in a fresh in-memory store |
 | HTML portability format | Pass (automated) | Netscape header, escaping, folders, Favorite tags, and non-duplication are covered |
 | Dark + maximum Dynamic Type | Pass (automated UI) | Card accessibility and Settings checks passed in dark appearance at accessibility XXXL; simulator was restored afterward |
@@ -33,7 +33,57 @@ Mac-originated changes (collection rename, permanent delete, favorite toggle, mo
 
 Note: a combined unsigned macOS clean-test invocation can cause XCTest to SIGKILL its UI runner before bootstrap. Unit tests passed in that clean invocation; the full UI target passed immediately when rebuilt with normal signing. This is a test-harness signing condition, not an app crash.
 
-## macOS Share extension verification — 2026-07-23
+## macOS Quick Save verification — 2026-07-23
+
+The signed deterministic build at commit `51393ad` was produced with:
+
+```bash
+xcodebuild build \
+  -project BookmarkCollections.xcodeproj \
+  -scheme BookmarkCollections \
+  -configuration Debug \
+  -destination 'platform=macOS' \
+  -derivedDataPath build/QuickSaveDerivedData
+```
+
+The build succeeded. Strict nested code-signing verification passed, and the
+embedded extension retained App Sandbox, outbound network access, App Group
+`group.com.loweffortapps.BookmarkCollections`, and CloudKit container
+`iCloud.com.loweffortapps.BookmarkCollections`. `pluginkit` registered that
+extension as `Save to Tucked`.
+
+The focused 14-test native macOS `ShareCaptureModelTests` run then built the
+same source state into Xcode's default DerivedData location. ShareKit selected
+that registered product for the live Safari flow:
+
+```text
+/Users/geoffreysilva/Library/Developer/Xcode/DerivedData/BookmarkCollections-cmvirhxqbwkgthazaqqrktobwfhc/Build/Products/Debug/BookmarkCollections.app
+```
+
+All Tucked and Share extension processes were confirmed closed before Safari
+shared:
+
+```text
+https://example.com/?tucked-macos-quick-save=20260723
+```
+
+Choosing **Save to Tucked** returned directly to Safari in under one second.
+No Collection picker, Favorite toggle, Save button, or intermediate AX-visible
+confirmation panel appeared, and the containing app remained closed. Opening
+Tucked increased All Items from 24 to 25 and Links from 18 to 19. The new
+Example Domain card had no organization suffix; Get Info reported Collection
+`None` and Favorite off. The unique verification bookmark was then
+soft-deleted, returning the active counts to their prior values.
+
+No ordinary host offered the extension for unsupported input during this live
+pass, so no live failure-panel claim is made. Automated tests verify that
+unsupported input and save failure do not complete the request and that a
+second Quick Save attempt can succeed.
+
+This verifies local macOS Share capture. It does not provide CloudKit
+Production, TestFlight, or cross-device synchronization evidence.
+
+## Initial macOS Share extension verification — 2026-07-23
 
 The signed build used for the final live flow was produced from commit `3fd8ead`
 with:

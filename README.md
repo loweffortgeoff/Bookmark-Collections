@@ -2,6 +2,11 @@
 
 Tucked is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links, text links, images, and screenshots from the iOS Share Sheet and macOS Share menus, enriches links with webpage metadata, organizes every item into zero or one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit. Links and images can be captured on both platforms; Images/Links sidebar filters, a full-screen zoomable image viewer, and a Get Info panel on the bookmark context menu keep the mixed library browsable. A curated accent palette (Settings → Appearance) tints the app with one of seven colors, each tuned separately for light and dark mode.
 
+On Mac, **Save to Tucked** is a capture-first action: it saves immediately
+with no collection and Favorite off, then dismisses. Collection and Favorite
+can be changed later in Tucked. The iPhone and iPad Share Sheet keeps its
+interactive Collection and Favorite controls.
+
 The Xcode project, bundle identifier, and internal file/folder names still use `BookmarkCollections` (see Requirements and Architecture below) — that rename is a separate, not-yet-scheduled task.
 
 The project has no third-party dependencies. Reads and writes use the local SwiftData store first; metadata and CloudKit never sit on the save path.
@@ -54,7 +59,8 @@ For iOS simulator tests, replace the destination with an installed simulator, su
 - `BookmarkCollections/Domain`: URL normalization, repository mutations, metadata, import/export, sync health, and shared image downsampling (`ImageDownsampler`, used by both the app and the share extension).
 - `BookmarkCollections/Features`: adaptive SwiftUI library, editors, Settings, Appearance (accent palette), and Recently Deleted.
 - `BookmarkCollections/Commands`: focused macOS menu commands and shortcuts.
-- `BookmarkShareExtension`: immediate Share Sheet validation and durable App Group save.
+- `BookmarkShareExtension`: immediate Share validation and durable App Group
+  save, using Quick Save on macOS and an interactive confirmation form on iOS.
 - `BookmarkCollectionsTests` and `BookmarkCollectionsUITests`: domain, persistence, accessibility, and cross-platform UI coverage.
 
 On activation, the app reconciles independently created records for the same normalized URL. The earliest-created record remains canonical, Favorite is preserved if either record is favorited, and the most recently modified title and collection win.
