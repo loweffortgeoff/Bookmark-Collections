@@ -49,6 +49,14 @@ xcodebuild test \
   -only-testing:BookmarkCollectionsUITests
 ```
 
+To install the Mac app rather than just build it, run `scripts/install-mac.sh`.
+It installs to `/Applications/Tucked.app` and launches from there, so the app
+survives a rebuild and appears in Spotlight. Building alone leaves the only copy
+in `build/DerivedData`, where the next build or test run replaces it. Defaults to
+`Debug` (Development CloudKit environment, matching the device installs); set
+`CONFIGURATION=Release` once the Production schema is deployed.
+`scripts/install-all-devices.sh` calls this script for its Mac step.
+
 The macOS UI runner must remain code signed. After a clean build, disabling signing can cause XCTest to kill the runner before it bootstraps. If the macOS UI suite starts failing wholesale — element queries timing out even on known-good code — the runner's signature has gone stale; run `scripts/reset-ui-tests.sh` to clear DerivedData and rerun the suite from a clean rebuild.
 
 For iOS simulator tests, replace the destination with an installed simulator, such as `platform=iOS Simulator,name=iPhone 17 Pro`, and run the unit and UI targets separately with `-only-testing` for deterministic CI results.

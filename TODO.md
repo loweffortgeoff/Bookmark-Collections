@@ -12,6 +12,11 @@ The deferred Photos picker, Files importer, and drag-and-drop items below are al
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
+- Switch `scripts/install-mac.sh` to `CONFIGURATION=Release` once the Production
+  CloudKit schema is deployed. Release drops `get-task-allow` and the
+  `testmanagerd` temporary exceptions, and takes the daily-driver Mac copy out
+  of the bundle-id collision with the macOS UI test suite. Blocked today because
+  Release signs into the Production CloudKit environment.
 - Photos-picker in-app image import.
 - Files-importer image import (Mac).
 - Drag & drop image import onto the library grid (Mac/iPad).
@@ -38,6 +43,10 @@ These items were explicitly excluded from v1 and are not release blockers or com
 ## Done
 
 _Earlier v1 work landed before TODO.md tracked completions with dates._
+
+- [x] Give the Mac a real install step: `scripts/install-mac.sh` installs to
+      `/Applications/Tucked.app` instead of launching the build product in
+      place, so the app survives a rebuild and shows in Spotlight (2026-07-25).
 
 - [x] Decide accent default: moved from Graphite to Grape after device verification — gray-tinted buttons read too close to disabled (2026-07-19).
 - [x] Custom sidebar selection styling (soft tinted pill + left accent bar) from the Tucked mockups (2026-07-19).

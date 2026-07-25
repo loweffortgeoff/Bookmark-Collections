@@ -109,3 +109,28 @@ Significant decisions made during development, logged for future reference.
   because the macOS host interaction is needlessly layered. Add a preference
   or a second Share action — rejected as extra settings/target complexity for
   a capture path intended to be immediate.
+
+## 2026-07-25 (The Mac gets its own install script, installing to /Applications)
+
+- **Decision:** macOS installs through `scripts/install-mac.sh`, which builds,
+  copies the product to `/Applications/Tucked.app`, prunes dead LaunchServices
+  registrations, re-registers the installed path, and launches from there.
+  `scripts/install-all-devices.sh` calls it instead of carrying its own Mac
+  branch. The bundle is installed as `Tucked.app`, not `BookmarkCollections.app`.
+- **Why:** The Mac branch built and then `open`ed the product in place from
+  `build/DerivedData`. That is a launch, not an install: it is the same shape as
+  the iPhone/iPad branch minus the `devicectl device install` step. The only
+  copy therefore sat in a build directory, where the next rebuild, a macOS UI
+  test run, or `scripts/reset-ui-tests.sh` removed or replaced it — which is why
+  the Mac app "stopped running after about a day" and had to be relaunched from
+  Xcode. Nothing was expiring; the signing certificate and provisioning profile
+  were valid for another year. The `Tucked.app` file name is required separately:
+  Finder and Spotlight match applications on the bundle's file name, and
+  `CFBundleDisplayName` alone does not make "Tucked" findable.
+- **Alternative considered:** Parameterizing the combined script's Mac branch —
+  rejected, the branch was structurally wrong rather than mistuned. Building the
+  Mac install as Release to escape the bundle-id collision with the macOS UI test
+  suite — rejected for now because Release signs into the Production CloudKit
+  environment, whose schema is not yet deployed; `scripts/reset-ui-tests.sh` was
+  scoped to DerivedData paths instead. Revisit `CONFIGURATION=Release` once the
+  Production schema ships.

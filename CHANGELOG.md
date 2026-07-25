@@ -21,6 +21,21 @@ All notable project changes are recorded here.
 - Save images and screenshots via the Share Sheet; new Images and Links sidebar filters; full-screen image viewer.
 - Sidebar shows item counts for All Items, Images, Links, Favorites, and each collection.
 
+### Fixed — 2026-07-25
+
+- Fixed the Mac never actually installing. `scripts/install-all-devices.sh`
+  built the Mac app and launched it in place out of `build/DerivedData`, so the
+  only copy lived in a build directory that the next rebuild, macOS UI test run,
+  or `scripts/reset-ui-tests.sh` deleted — the app stopped running with nothing
+  left to relaunch, and Spotlight had no installed app to find. The Mac now
+  installs to `/Applications/Tucked.app` via `scripts/install-mac.sh`, which the
+  combined script calls. iPhone and iPad installs are unchanged.
+- Installed the Mac app as `Tucked.app` rather than `BookmarkCollections.app`.
+  Finder and Spotlight match applications on the bundle's file name, not
+  `CFBundleDisplayName`, so searching "Tucked" previously found nothing.
+- Scoped `scripts/reset-ui-tests.sh`'s `pkill` pattern to DerivedData paths so
+  resetting the UI suite can no longer kill the installed `/Applications` copy.
+
 ### Added — 2026-07-23
 
 - Added Save to Tucked to macOS Share menus using the existing multiplatform Share extension, with link, text-link, and image capture.

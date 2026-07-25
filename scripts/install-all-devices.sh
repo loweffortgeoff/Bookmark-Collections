@@ -30,21 +30,11 @@ IPAD_STATUS="not run"
 echo "This will install to $IPHONE_NAME and $IPAD_NAME — make sure both are unlocked."
 read -p "Press Enter to continue, or Ctrl+C to cancel... " _
 
-echo "== Building macOS =="
-if xcodebuild build \
-    -project "$PROJECT" \
-    -scheme "$SCHEME" \
-    -configuration "$CONFIGURATION" \
-    -destination 'platform=macOS' \
-    -derivedDataPath "$DERIVED_DATA_PATH"; then
-  MAC_APP_PATH="$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/$SCHEME.app"
-  if open "$MAC_APP_PATH"; then
-    MAC_STATUS="launched"
-  else
-    MAC_STATUS="build ok, launch failed"
-  fi
+echo "== Building and installing macOS =="
+if scripts/install-mac.sh; then
+  MAC_STATUS="installed and launched"
 else
-  MAC_STATUS="build failed"
+  MAC_STATUS="failed (see log above)"
 fi
 
 echo "== Building iOS (generic device) =="
