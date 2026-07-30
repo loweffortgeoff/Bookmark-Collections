@@ -20,7 +20,7 @@ struct RecentlyDeletedView: View {
             onAdd: {},
             onEdit: { _ in },
             onInfo: { _ in },
-            onOpenImage: { _ in },
+            onOpen: { _ in },
             onPermanentDelete: onPermanentDelete,
             onError: onError,
             onCommandSelection: { _ in }

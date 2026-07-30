@@ -91,7 +91,7 @@ struct LibraryRootView: View {
                 onAdd: { sheet = .addBookmark },
                 onEdit: { sheet = .editBookmark($0) },
                 onInfo: { sheet = .bookmarkInfo($0) },
-                onOpenImage: { sheet = .imageViewer($0) },
+                onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
                 onCommandSelection: { commandBookmark = $0 }
@@ -191,6 +191,17 @@ struct LibraryRootView: View {
         }
     }
 
+    private func openBookmark(_ bookmark: Bookmark) {
+        if bookmark.kind == .image {
+            perform { try BookmarkRepository(context: modelContext).markOpened(bookmark) }
+            sheet = .imageViewer(bookmark)
+            return
+        }
+        guard let url = URL(string: bookmark.urlString), !bookmark.urlString.isEmpty else { return }
+        perform { try BookmarkRepository(context: modelContext).markOpened(bookmark) }
+        openURL(url)
+    }
+
     private var commandActions: BookmarkCommandActions {
         BookmarkCommandActions(
             addLink: { sheet = .addBookmark },
@@ -199,9 +210,8 @@ struct LibraryRootView: View {
             selectedBookmark: visibleCommandBookmark,
             canDeleteSelected: visibleCommandBookmark?.deletedAt == nil,
             openSelected: {
-                guard let bookmark = visibleCommandBookmark,
-                      let url = URL(string: bookmark.urlString) else { return }
-                openURL(url)
+                guard let bookmark = visibleCommandBookmark else { return }
+                openBookmark(bookmark)
             },
             shareSelected: {
                 guard let bookmark = visibleCommandBookmark else { return }

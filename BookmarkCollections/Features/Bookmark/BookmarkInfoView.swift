@@ -22,7 +22,13 @@ struct BookmarkInfoView: View {
                 if bookmark.kind == .link {
                     Section {
                         Button {
-                            if let url = URL(string: bookmark.urlString) { openURL(url) }
+                            guard let url = URL(string: bookmark.urlString) else { return }
+                            do {
+                                try BookmarkRepository(context: modelContext).markOpened(bookmark)
+                                openURL(url)
+                            } catch {
+                                errorMessage = error.localizedDescription
+                            }
                         } label: {
                             Text(bookmark.urlString)
                                 .font(.callout)
