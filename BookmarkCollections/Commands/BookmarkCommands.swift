@@ -10,6 +10,8 @@ struct BookmarkCommandActions {
     let openSelected: () -> Void
     let shareSelected: () -> Void
     let deleteSelected: () -> Void
+    let surpriseMe: () -> Void
+    let canSurpriseMe: Bool
 }
 
 private struct BookmarkCommandActionsKey: FocusedValueKey {
@@ -48,6 +50,8 @@ struct BookmarkCommands: Commands {
                 .disabled(actions?.selectedBookmark == nil)
             Button("Share") { actions?.shareSelected() }
                 .disabled(actions?.selectedBookmark == nil)
+            Button("Surprise Me") { actions?.surpriseMe() }
+                .disabled(actions?.canSurpriseMe != true)
             Divider()
             Button("Move to Recently Deleted") { actions?.deleteSelected() }
                 .keyboardShortcut(.delete, modifiers: .command)

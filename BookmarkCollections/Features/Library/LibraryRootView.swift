@@ -106,7 +106,10 @@ struct LibraryRootView: View {
                     onNewCollection: { sheet = .newCollection },
                     onSettings: { sheet = .settings },
                     showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
-                    onEmptyRecentlyDeleted: { emptyingRecentlyDeleted = true }
+                    onEmptyRecentlyDeleted: { emptyingRecentlyDeleted = true },
+                    showSurpriseMe: destination != .recentlyDeleted,
+                    canSurpriseMe: !surpriseCandidates.isEmpty,
+                    onSurpriseMe: surpriseMe
                 )
             }
             .overlay(alignment: .topLeading) {
@@ -202,6 +205,19 @@ struct LibraryRootView: View {
         openURL(url)
     }
 
+    private var surpriseCandidates: [Bookmark] {
+        UntuckRules.surpriseCandidates(
+            in: bookmarks,
+            destination: destination ?? .allItems,
+            searchText: searchText
+        )
+    }
+
+    private func surpriseMe() {
+        guard let bookmark = surpriseCandidates.randomElement() else { return }
+        openBookmark(bookmark)
+    }
+
     private var commandActions: BookmarkCommandActions {
         BookmarkCommandActions(
             addLink: { sheet = .addBookmark },
@@ -224,7 +240,9 @@ struct LibraryRootView: View {
                     try BookmarkRepository(context: modelContext).softDelete(bookmark)
                     commandBookmark = nil
                 }
-            }
+            },
+            surpriseMe: surpriseMe,
+            canSurpriseMe: destination != .recentlyDeleted && !surpriseCandidates.isEmpty
         )
     }
 

@@ -8,6 +8,9 @@ struct LibraryToolbar: ToolbarContent {
     let onSettings: () -> Void
     let showEmptyRecentlyDeleted: Bool
     let onEmptyRecentlyDeleted: () -> Void
+    let showSurpriseMe: Bool
+    let canSurpriseMe: Bool
+    let onSurpriseMe: () -> Void
 
     var body: some ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
@@ -15,6 +18,14 @@ struct LibraryToolbar: ToolbarContent {
                 Button(role: .destructive, action: onEmptyRecentlyDeleted) {
                     Label("Empty Recently Deleted", systemImage: "trash.slash")
                 }
+            }
+
+            if showSurpriseMe {
+                Button(action: onSurpriseMe) {
+                    Label("Surprise me", systemImage: "shuffle")
+                }
+                .disabled(!canSurpriseMe)
+                .accessibilityIdentifier("library.surpriseMe")
             }
 
             Menu {
