@@ -6,6 +6,7 @@ enum LibraryDestination: Hashable {
     case links
     case images
     case collection(UUID)
+    case forgotten
     case recentlyDeleted
 
     var title: String {
@@ -15,6 +16,7 @@ enum LibraryDestination: Hashable {
         case .links: "Links"
         case .images: "Images"
         case .collection: "Collection"
+        case .forgotten: "Forgotten"
         case .recentlyDeleted: "Recently Deleted"
         }
     }
@@ -26,6 +28,7 @@ enum LibraryDestination: Hashable {
         case .links: "link"
         case .images: "photo"
         case .collection: "folder"
+        case .forgotten: "clock.arrow.circlepath"
         case .recentlyDeleted: "trash"
         }
     }
@@ -37,6 +40,7 @@ enum LibraryDestination: Hashable {
         case .links: "library.links"
         case .images: "library.images"
         case .collection: "library.collection"
+        case .forgotten: "library.forgotten"
         case .recentlyDeleted: "library.recentlyDeleted"
         }
     }
@@ -53,6 +57,8 @@ enum LibraryDestination: Hashable {
             bookmark.deletedAt == nil && bookmark.kind == .image
         case let .collection(id):
             bookmark.deletedAt == nil && bookmark.collection?.id == id
+        case .forgotten:
+            UntuckRules.isForgotten(bookmark)
         case .recentlyDeleted:
             bookmark.deletedAt != nil
         }

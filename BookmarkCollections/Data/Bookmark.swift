@@ -25,6 +25,7 @@ final class Bookmark {
     var collection: BookmarkCollection?
     var createdAt: Date = Date()
     var modifiedAt: Date = Date()
+    var lastOpenedAt: Date? = nil
     var deletedAt: Date?
     var metadataStateRawValue: String = MetadataState.pending.rawValue
     var lastMetadataRefreshAt: Date?

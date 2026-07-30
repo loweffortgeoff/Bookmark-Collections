@@ -227,6 +227,12 @@ struct LibraryGridView: View {
                 )
                 Button("Add Link", action: onAdd)
                     .buttonStyle(.borderedProminent)
+            case .forgotten:
+                ContentUnavailableView(
+                    "Nothing forgotten yet",
+                    systemImage: "clock.arrow.circlepath",
+                    description: Text("Items you’ve never opened that are older than 30 days show up here.")
+                )
             }
         }
         .padding()
