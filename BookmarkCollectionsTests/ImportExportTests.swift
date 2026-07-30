@@ -146,6 +146,60 @@ final class ImportExportTests: XCTestCase {
         }
     }
 
+    func testJSONRoundTripPreservesLastOpenedAt() throws {
+        let source = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let openedAt = Date(timeIntervalSince1970: 2_500)
+        let bookmark = Bookmark(
+            urlString: "https://example.com/opened",
+            normalizedURLString: "https://example.com/opened",
+            createdAt: Date(timeIntervalSince1970: 1_000),
+            modifiedAt: Date(timeIntervalSince1970: 2_000)
+        )
+        bookmark.lastOpenedAt = openedAt
+        source.mainContext.insert(bookmark)
+        try source.mainContext.save()
+
+        let data = try LibraryExportService(context: source.mainContext).exportJSON()
+        let destination = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        _ = try LibraryImportService(context: destination.mainContext).importJSON(data)
+
+        let restored = try XCTUnwrap(
+            destination.mainContext.fetch(FetchDescriptor<Bookmark>()).first
+        )
+        XCTAssertEqual(restored.lastOpenedAt, openedAt)
+    }
+
+    func testJSONImportMissingLastOpenedAtDefaultsToNil() throws {
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "1970-01-01T00:00:03Z",
+          "collections": [],
+          "bookmarks": [
+            {
+              "id": "00000000-0000-0000-0000-000000000020",
+              "urlString": "https://example.com/article",
+              "normalizedURLString": "https://example.com/article",
+              "title": "Title",
+              "domain": "example.com",
+              "isFavorite": false,
+              "collectionID": null,
+              "createdAt": "1970-01-01T00:00:01Z",
+              "modifiedAt": "1970-01-01T00:00:02Z",
+              "deletedAt": null
+            }
+          ]
+        }
+        """
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        _ = try LibraryImportService(context: container.mainContext)
+            .importJSON(Data(json.utf8))
+        let restored = try XCTUnwrap(
+            container.mainContext.fetch(FetchDescriptor<Bookmark>()).first
+        )
+        XCTAssertNil(restored.lastOpenedAt)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult

@@ -39,6 +39,7 @@ struct BackupDocument: Codable, Sendable {
         let createdAt: Date
         let modifiedAt: Date
         let deletedAt: Date?
+        let lastOpenedAt: Date?
     }
 
     enum Error: Swift.Error, Equatable {

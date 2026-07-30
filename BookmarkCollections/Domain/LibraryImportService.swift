@@ -114,6 +114,7 @@ struct LibraryImportService {
             bookmark.createdAt = record.createdAt
             bookmark.modifiedAt = record.modifiedAt
             bookmark.deletedAt = record.deletedAt
+            bookmark.lastOpenedAt = record.lastOpenedAt
             bookmark.faviconData = nil
             bookmark.previewImageData = nil
             bookmark.metadataState = .pending

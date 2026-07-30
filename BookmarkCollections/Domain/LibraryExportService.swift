@@ -40,7 +40,8 @@ struct LibraryExportService {
                     collectionID: bookmark.collection?.id,
                     createdAt: bookmark.createdAt,
                     modifiedAt: bookmark.modifiedAt,
-                    deletedAt: bookmark.deletedAt
+                    deletedAt: bookmark.deletedAt,
+                    lastOpenedAt: bookmark.lastOpenedAt
                 )
             }
         )
