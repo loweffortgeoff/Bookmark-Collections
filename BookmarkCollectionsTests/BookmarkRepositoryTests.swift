@@ -144,6 +144,80 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<Bookmark>()).count, 2)
     }
 
+    func testMarkOpenedSetsLastOpenedAtAndBumpsModifiedAt() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let bookmark = try createdBookmark(from: repository.save(url: "https://example.com/open-me"))
+        let originalModified = bookmark.modifiedAt
+        // Must be >= originalModified so the "bumps modifiedAt" assertion is meaningful.
+        let openedAt = originalModified.addingTimeInterval(1)
+
+        try repository.markOpened(bookmark, at: openedAt)
+
+        XCTAssertEqual(bookmark.lastOpenedAt, openedAt)
+        XCTAssertEqual(bookmark.modifiedAt, openedAt)
+        XCTAssertGreaterThanOrEqual(bookmark.modifiedAt, originalModified)
+    }
+
+    func testReconcileDuplicatesKeepsLaterLastOpenedAt() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let earlierOpen = Date(timeIntervalSince1970: 200)
+        let laterOpen = Date(timeIntervalSince1970: 400)
+
+        let earliest = Bookmark(
+            urlString: "https://example.com/item",
+            normalizedURLString: "https://example.com/item",
+            createdAt: Date(timeIntervalSince1970: 100),
+            modifiedAt: Date(timeIntervalSince1970: 100)
+        )
+        earliest.lastOpenedAt = earlierOpen
+        let newest = Bookmark(
+            urlString: "https://example.com/item",
+            normalizedURLString: "https://example.com/item",
+            createdAt: Date(timeIntervalSince1970: 150),
+            modifiedAt: Date(timeIntervalSince1970: 300)
+        )
+        newest.lastOpenedAt = laterOpen
+        container.mainContext.insert(earliest)
+        container.mainContext.insert(newest)
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        let bookmarks = try allBookmarks(in: container)
+        XCTAssertEqual(bookmarks.count, 1)
+        XCTAssertEqual(bookmarks.first?.lastOpenedAt, laterOpen)
+    }
+
+    func testReconcileDuplicatesPrefersNonNilLastOpenedAt() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let openDate = Date(timeIntervalSince1970: 250)
+
+        let earliest = Bookmark(
+            urlString: "https://example.com/item",
+            normalizedURLString: "https://example.com/item",
+            createdAt: Date(timeIntervalSince1970: 100),
+            modifiedAt: Date(timeIntervalSince1970: 100)
+        )
+        // lastOpenedAt remains nil
+        let newest = Bookmark(
+            urlString: "https://example.com/item",
+            normalizedURLString: "https://example.com/item",
+            createdAt: Date(timeIntervalSince1970: 150),
+            modifiedAt: Date(timeIntervalSince1970: 300)
+        )
+        newest.lastOpenedAt = openDate
+        container.mainContext.insert(earliest)
+        container.mainContext.insert(newest)
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        XCTAssertEqual(try allBookmarks(in: container).first?.lastOpenedAt, openDate)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult

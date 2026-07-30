@@ -102,6 +102,7 @@ struct BookmarkRepository {
             canonical.title = mostRecentlyModified.title
             canonical.collection = mostRecentlyModified.collection
             canonical.modifiedAt = mostRecentlyModified.modifiedAt
+            canonical.lastOpenedAt = group.compactMap(\.lastOpenedAt).max()
 
             for duplicate in orderedByCreation.dropFirst() {
                 context.delete(duplicate)
@@ -112,6 +113,12 @@ struct BookmarkRepository {
         if changed {
             try context.save()
         }
+    }
+
+    func markOpened(_ bookmark: Bookmark, at date: Date = Date()) throws {
+        bookmark.lastOpenedAt = date
+        bookmark.modifiedAt = date
+        try context.save()
     }
 
     func setFavorite(_ bookmark: Bookmark, to isFavorite: Bool) throws {
