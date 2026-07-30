@@ -20,6 +20,9 @@ All notable project changes are recorded here.
 - Get Info panel on the bookmark context menu (URL, title, collection, favorite, added/modified dates).
 - Save images and screenshots via the Share Sheet; new Images and Links sidebar filters; full-screen image viewer.
 - Sidebar shows item counts for All Items, Images, Links, Favorites, and each collection.
+- Forgotten library destination: never-opened items older than 30 days.
+- Surprise me toolbar action: opens a random item from the current visible set.
+- Track `lastOpenedAt` when opening links or the image viewer; include it in JSON backups.
 
 ### Fixed — 2026-07-25
 

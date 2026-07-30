@@ -27,6 +27,11 @@ The deferred Photos picker, Files importer, and drag-and-drop items below are al
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
 - macOS sidebar keyboard navigation (arrow keys/type-select) lost when sidebar rows became untagged Buttons — restore if it proves annoying.
 - Sidebar rows have no pressed/hover affordance with `.plain` button style — consider a hover highlight on macOS.
+- Untuck hub sheet (approach B) on top of `UntuckRules`.
+- Configurable Forgotten threshold / Settings control.
+- “Not opened in 30 days” re-entry (opened once, then stale again).
+- Sort by last opened.
+- Production CloudKit schema deploy for `lastOpenedAt` before Production-signed Untuck release (if not already done at ship time).
 
 ## Deferred Beyond v1
 

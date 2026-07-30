@@ -134,3 +134,10 @@ Significant decisions made during development, logged for future reference.
   environment, whose schema is not yet deployed; `scripts/reset-ui-tests.sh` was
   scoped to DerivedData paths instead. Revisit `CONFIGURATION=Release` once the
   Production schema ships.
+
+## 2026-07-30 (Untuck: lastOpenedAt + Forgotten filter destination)
+
+- **Decision:** Approach A — additive `lastOpenedAt`, Forgotten as `LibraryDestination`,
+  Surprise me from current visible set; pure `UntuckRules` for membership/candidates.
+- **Why:** Anti-hoard surface with minimal architecture; expandable to a hub sheet later.
+- **Alternative considered:** Untuck hub sheet first (B); age-only without open tracking.
