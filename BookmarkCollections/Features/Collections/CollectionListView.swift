@@ -25,6 +25,7 @@ struct CollectionListView: View {
                 destinationRow(.images, title: "Images", identifier: "destination.images", showsCount: true)
                 destinationRow(.links, title: "Links", identifier: "destination.links", showsCount: true)
                 destinationRow(.favorites, title: "Favorites", identifier: "destination.favorites", showsCount: true)
+                destinationRow(.forgotten, title: "Forgotten", identifier: "destination.forgotten", showsCount: true)
             }
 
             Section {

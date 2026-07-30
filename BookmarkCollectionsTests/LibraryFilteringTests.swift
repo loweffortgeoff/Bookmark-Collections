@@ -109,6 +109,26 @@ final class LibraryFilteringTests: XCTestCase {
         XCTAssertEqual(LibraryDestination.allItems.count(in: []), 0)
     }
 
+    func testForgottenDestinationMembership() {
+        let ancient = makeBookmark(path: "ancient")
+        ancient.createdAt = Date().addingTimeInterval(-(UntuckRules.forgottenAge + 60))
+        let opened = makeBookmark(path: "opened")
+        opened.createdAt = Date().addingTimeInterval(-(UntuckRules.forgottenAge + 60))
+        opened.lastOpenedAt = Date()
+        let young = makeBookmark(path: "young")
+
+        XCTAssertTrue(LibraryDestination.forgotten.includes(ancient))
+        XCTAssertFalse(LibraryDestination.forgotten.includes(opened))
+        XCTAssertFalse(LibraryDestination.forgotten.includes(young))
+    }
+
+    func testForgottenCountIgnoresNonMembers() {
+        let ancient = makeBookmark(path: "ancient")
+        ancient.createdAt = Date().addingTimeInterval(-(UntuckRules.forgottenAge + 60))
+        let young = makeBookmark(path: "young")
+        XCTAssertEqual(LibraryDestination.forgotten.count(in: [ancient, young]), 1)
+    }
+
     private func makeBookmark(
         path: String,
         id: UUID = UUID(),

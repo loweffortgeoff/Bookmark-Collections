@@ -19,6 +19,10 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("library.favorites").waitForExistence(timeout: 2))
 
         showSidebarIfNeeded()
+        activate(destinationElement("destination.forgotten"))
+        XCTAssertTrue(identified("library.forgotten").waitForExistence(timeout: 2))
+
+        showSidebarIfNeeded()
         activate(destinationElement("destination.collections"))
         XCTAssertTrue(
             identified("library.collection").waitForExistence(timeout: 2)
