@@ -7,11 +7,8 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
 
-    @AppStorage(AppAccent.storageKey) private var accentKey = AppAccent.defaultAccent.rawValue
-
     @StateObject private var syncHealth = SyncHealthMonitor()
     @State private var isImporting = false
-    @State private var isPickingAccent = false
     @State private var importSummary: ImportSummary?
     @State private var exportDocument: ExportFileDocument?
     @State private var exportType: UTType = .json
@@ -22,24 +19,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Appearance") {
-                    Button {
-                        isPickingAccent = true
-                    } label: {
-                        HStack {
-                            Label("Accent Color", systemImage: "paintpalette")
-                            Spacer()
-                            Circle()
-                                .fill(selectedAccent.color)
-                                .frame(width: 14, height: 14)
-                                .accessibilityHidden(true)
-                            Text(selectedAccent.displayName)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .accessibilityIdentifier("settings.accentColor")
-                }
-
                 Section("Library Data") {
                     Button("Import Links", systemImage: "square.and.arrow.down", action: beginImport)
                         .accessibilityIdentifier("settings.importLinks")
@@ -88,9 +67,6 @@ struct SettingsView: View {
             defaultFilename: exportFilename,
             onCompletion: handleExportCompletion
         )
-        .sheet(isPresented: $isPickingAccent) {
-            AccentPickerView()
-        }
         .sheet(isPresented: importSummaryPresented) {
             if let importSummary {
                 ImportSummaryView(summary: importSummary)
@@ -101,10 +77,6 @@ struct SettingsView: View {
         } message: {
             Text(errorMessage ?? "Try again.")
         }
-    }
-
-    private var selectedAccent: AppAccent {
-        AppAccent(storedKey: accentKey)
     }
 
     private func beginImport() {

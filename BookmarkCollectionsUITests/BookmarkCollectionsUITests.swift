@@ -125,6 +125,7 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("settings.exportHTML").exists)
         XCTAssertTrue(identified("settings.exportJSON").exists)
         XCTAssertTrue(identified("settings.syncStatus").exists)
+        XCTAssertFalse(identified("settings.accentColor").exists)
     }
 
     func testImagesDestinationShowsOnlyImageItems() {
