@@ -24,6 +24,12 @@ All notable project changes are recorded here.
 - Surprise me toolbar action: opens a random item from the current visible set.
 - Track `lastOpenedAt` when opening links or the image viewer; include it in JSON backups.
 
+### Changed — 2026-08-12
+
+- Removed the in-app accent picker and custom sidebar pills. Tint and
+  sidebar selection now follow the system (macOS system accent; iOS
+  default blue).
+
 ### Fixed — 2026-07-25
 
 - Fixed the Mac never actually installing. `scripts/install-all-devices.sh`

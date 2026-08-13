@@ -141,3 +141,10 @@ Significant decisions made during development, logged for future reference.
   Surprise me from current visible set; pure `UntuckRules` for membership/candidates.
 - **Why:** Anti-hoard surface with minimal architecture; expandable to a hub sheet later.
 - **Alternative considered:** Untuck hub sheet first (B); age-only without open tracking.
+
+## 2026-08-12 (Native system accent)
+
+- **Decision:** Remove the curated accent palette, Settings → Appearance, and custom sidebar pill selection. Use the platform accent and native `List` selection.
+- **Why:** The picker forced custom selection chrome that felt less native than the rest of the app.
+- **Alternative considered:** Keep Grape as a compiled `AccentColor` with no picker — rejected; that is still an app-owned color rather than the system accent.
+- **Supersedes:** 2026-07-19 Curated accent palette, Grape as default accent, and Sidebar pill selection. Leave those entries in place and treat this one as current.

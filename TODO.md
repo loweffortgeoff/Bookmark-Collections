@@ -25,8 +25,6 @@ The deferred Photos picker, Files importer, and drag-and-drop items below are al
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
 - Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
-- macOS sidebar keyboard navigation (arrow keys/type-select) lost when sidebar rows became untagged Buttons — restore if it proves annoying.
-- Sidebar rows have no pressed/hover affordance with `.plain` button style — consider a hover highlight on macOS.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).
@@ -65,6 +63,7 @@ _Earlier v1 work landed before TODO.md tracked completions with dates._
       `/Applications/Tucked.app` instead of launching the build product in
       place, so the app survives a rebuild and shows in Spotlight (2026-07-25).
 
+- [x] Restore native sidebar selection (keyboard nav + hover) by dropping custom pills (2026-08-12).
 - [x] Decide accent default: moved from Graphite to Grape after device verification — gray-tinted buttons read too close to disabled (2026-07-19).
 - [x] Custom sidebar selection styling (soft tinted pill + left accent bar) from the Tucked mockups (2026-07-19).
 - [x] Reconsider the accent picker's Preview rows if pill styling never ships — resolved: pill styling shipped, so the picker preview now matches the real sidebar (2026-07-19).
