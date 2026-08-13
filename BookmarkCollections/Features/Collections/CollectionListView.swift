@@ -79,6 +79,10 @@ struct CollectionListView: View {
         Label(title, systemImage: destination.systemImage)
             .modifier(OptionalCountBadge(count: showsCount ? count(for: destination) : nil))
             .tag(destination)
+            // The identifier must ride on the whole row: SwiftUI List labels
+            // otherwise let the SF Symbol image claim it, and the test taps a
+            // 20pt image inside a non-hittable cell instead of the row.
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier(identifier)
     }
 }

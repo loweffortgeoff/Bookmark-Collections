@@ -163,7 +163,15 @@ final class BookmarkCollectionsUITests: XCTestCase {
     }
 
     private func destinationElement(_ identifier: String) -> XCUIElement {
-        let element = identified(identifier)
+        // Sidebar rows are tappable cells whose labels (the row's sub-elements)
+        // receive tap focus, not the row element itself. In a UI-testing
+        // process, VoiceOver is disabled, so the identifier can land on the
+        // label while only the parent cell is hittable. Prefer the hittable
+        // ancestor cell; fall back to any identifier match.
+        let byIdentifier = app.descendants(matching: .any).matching(identifier: identifier)
+        let cell = byIdentifier.cells.firstMatch
+        if cell.exists { return cell }
+        let element = byIdentifier.firstMatch
         _ = element.waitForExistence(timeout: 5)
         return element
     }
@@ -180,7 +188,14 @@ final class BookmarkCollectionsUITests: XCTestCase {
         #if os(macOS)
         element.click()
         #else
-        element.tap()
+        if element.isHittable {
+            element.tap()
+        } else {
+            // Sidebar rows under the native (untinted) selection can report
+            // hittable=false in the testing process even when visible; a
+            // coordinate tap goes through hit-testing at the frame center.
+            element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
         #endif
     }
 
