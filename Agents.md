@@ -201,6 +201,14 @@ complete. Keep release-gate evidence in
 `docs/verification/cloudkit-device-matrix.md`, and mention missing real-device
 evidence rather than implying that simulator tests prove CloudKit sync.
 
+## Release & Authorial Docs
+
+Ownership splits by phase: the dev-session docs above (CHANGELOG.md,
+DECISIONS.md, TODO.md) are covered in Project Documentation. ASC_LISTING.md
+and RELEASE_NOTES.md don't exist yet — the project hasn't reached a release
+pass. Once they exist, the release-pass skill owns them and reconciles them
+at release time; do not edit them during a dev session.
+
 ## Session End
 
 - Review the diff for accidental changes and run the narrowest useful

@@ -101,6 +101,12 @@ that makes the first error findable.
 
 # Release & Authorial Docs
 
+These files are shared across sessions and agents. Ownership splits by phase:
+dev sessions maintain the in-flight docs below; the release-pass skill owns the
+listing and release docs and reconciles them at release time.
+
+### Required editing & housekeeping during development sessions:
+
 - DECISIONS.md — Append new entries when in-session decisions are
   made. Use the existing format (`## YYYY-MM-DD (title)`, then
   **Decision** / **Why** / **Alternative considered**). Do not
@@ -112,11 +118,6 @@ that makes the first error findable.
   sitting in Next or Backlog.
 - CHANGELOG.md — in-flight changes to the project as a result of
   coding sessions.
-
-This project doesn't use a separate brainstorm/planning agent
-alongside Claude Code (no Cowork split), so Claude Code owns these
-docs end to end during sessions — no handoff notes needed. Revisit
-this if that changes.
 
 ### Release Docs
 
