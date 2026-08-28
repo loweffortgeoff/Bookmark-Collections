@@ -129,6 +129,59 @@ final class LibraryFilteringTests: XCTestCase {
         XCTAssertEqual(LibraryDestination.forgotten.count(in: [ancient, young]), 1)
     }
 
+    func testSnippetsDestinationIncludesOnlyTextBookmarks() {
+        let snippet = Bookmark(urlString: "", normalizedURLString: "")
+        snippet.kind = .text
+        snippet.snippetBody = "A saved paragraph"
+        snippet.title = "A saved paragraph"
+
+        let link = Bookmark(
+            urlString: "https://example.com/story",
+            normalizedURLString: "https://example.com/story"
+        )
+
+        let image = Bookmark(urlString: "", normalizedURLString: "")
+        image.kind = .image
+
+        XCTAssertTrue(LibraryDestination.snippets.includes(snippet))
+        XCTAssertFalse(LibraryDestination.snippets.includes(link))
+        XCTAssertFalse(LibraryDestination.snippets.includes(image))
+
+        XCTAssertFalse(LibraryDestination.links.includes(snippet))
+        XCTAssertFalse(LibraryDestination.images.includes(snippet))
+        XCTAssertTrue(LibraryDestination.allItems.includes(snippet))
+    }
+
+    func testSnippetsDestinationExcludesDeletedSnippets() {
+        let snippet = Bookmark(urlString: "", normalizedURLString: "")
+        snippet.kind = .text
+        snippet.snippetBody = "Deleted text"
+        snippet.deletedAt = Date()
+
+        XCTAssertFalse(LibraryDestination.snippets.includes(snippet))
+        XCTAssertTrue(LibraryDestination.recentlyDeleted.includes(snippet))
+    }
+
+    func testSearchMatchesTextFoundOnlyInASnippetBody() {
+        let snippet = Bookmark(urlString: "", normalizedURLString: "")
+        snippet.kind = .text
+        snippet.title = "Untitled note"
+        snippet.snippetBody = "The migration runs on a Tuesday"
+
+        XCTAssertTrue(
+            LibraryDestination.allItems.matches(snippet, searchText: "tuesday")
+        )
+        XCTAssertFalse(
+            LibraryDestination.allItems.matches(snippet, searchText: "wednesday")
+        )
+    }
+
+    func testSnippetsDestinationIdentifierAndTitle() {
+        XCTAssertEqual(LibraryDestination.snippets.title, "Snippets")
+        XCTAssertEqual(LibraryDestination.snippets.accessibilityIdentifier, "library.snippets")
+        XCTAssertEqual(LibraryDestination.snippets.systemImage, "text.quote")
+    }
+
     private func makeBookmark(
         path: String,
         id: UUID = UUID(),

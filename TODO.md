@@ -8,7 +8,7 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 ## Backlog
 
-The deferred Photos picker, Files importer, and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
+The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
@@ -18,12 +18,14 @@ The deferred Photos picker, Files importer, and drag-and-drop items below are al
   of the bundle-id collision with the macOS UI test suite. Blocked today because
   Release signs into the Production CloudKit environment.
 - Photos-picker in-app image import.
-- Files-importer image import (Mac).
 - Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
 - Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
+- Make the macOS Share menu command kind-aware for snippets. Share still assumes a URL, so it shows “URL invalid” for a snippet with no source link. Open already routes a snippet to the editor, and Copy Text is on the Bookmark menu.
+- Sharing plain non-URL text from the iOS Share Sheet to create a snippet. Deliberately out of scope in the 2026-08-28 parity pass; snippets are created in-app only.
+- Mac quick-capture panel with a global shortcut and clipboard detection, as in the Glaze build. Out of scope in the 2026-08-28 parity pass because macOS already captures through the Share menu.
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
@@ -58,6 +60,8 @@ These items were explicitly excluded from v1 and are not release blockers or com
 ## Done
 
 _Earlier v1 work landed before TODO.md tracked completions with dates._
+
+- [x] Files-importer image import (Mac) — shipped as `File ▸ Add Images…` (2026-08-28).
 
 - [x] Give the Mac a real install step: `scripts/install-mac.sh` installs to
       `/Applications/Tucked.app` instead of launching the build product in

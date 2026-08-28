@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct LibraryRootView: View {
     @Environment(\.modelContext) private var modelContext
@@ -20,6 +21,9 @@ struct LibraryRootView: View {
     @State private var deletingCollection: BookmarkCollection?
     @State private var errorMessage: String?
     @State private var commandBookmark: Bookmark?
+    #if os(macOS)
+    @State private var isAddingImages = false
+    #endif
 
     var body: some View {
         navigationView
@@ -69,6 +73,25 @@ struct LibraryRootView: View {
             .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
                 if bookmarkID == nil { commandBookmark = nil }
             }
+            #if os(macOS)
+            .fileImporter(
+                isPresented: $isAddingImages,
+                allowedContentTypes: [.image],
+                allowsMultipleSelection: true
+            ) { result in
+                switch result {
+                case let .success(urls):
+                    perform {
+                        let summary = try ImageImportService(context: modelContext).importImages(at: urls)
+                        if !summary.failedLines.isEmpty {
+                            errorMessage = "Could not add \(summary.failedLines.count) of \(urls.count) images."
+                        }
+                    }
+                case let .failure(error):
+                    errorMessage = error.localizedDescription
+                }
+            }
+            #endif
     }
 
     private var navigationView: some View {
@@ -89,7 +112,9 @@ struct LibraryRootView: View {
                 sort: sort,
                 ascending: ascending,
                 onAdd: { sheet = .addBookmark },
-                onEdit: { sheet = .editBookmark($0) },
+                onEdit: { bookmark in
+                    sheet = bookmark.kind == .text ? .snippetEditor(bookmark) : .editBookmark(bookmark)
+                },
                 onInfo: { sheet = .bookmarkInfo($0) },
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
@@ -103,6 +128,8 @@ struct LibraryRootView: View {
                     sort: $sort,
                     ascending: $ascending,
                     onAdd: { sheet = .addBookmark },
+                    onNewSnippet: { sheet = .snippetEditor(nil) },
+                    onAddImages: addImages,
                     onNewCollection: { sheet = .newCollection },
                     onSettings: { sheet = .settings },
                     showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
@@ -150,6 +177,8 @@ struct LibraryRootView: View {
             SettingsView()
         case let .shareBookmark(bookmark):
             ShareBookmarkSheet(bookmark: bookmark)
+        case let .snippetEditor(bookmark):
+            SnippetEditorView(bookmark: bookmark)
         }
     }
 
@@ -186,6 +215,12 @@ struct LibraryRootView: View {
         )
     }
 
+    private func addImages() {
+        #if os(macOS)
+        isAddingImages = true
+        #endif
+    }
+
     private func perform(_ action: () throws -> Void) {
         do {
             try action()
@@ -198,6 +233,11 @@ struct LibraryRootView: View {
         if bookmark.kind == .image {
             perform { try BookmarkRepository(context: modelContext).markOpened(bookmark) }
             sheet = .imageViewer(bookmark)
+            return
+        }
+        if bookmark.kind == .text {
+            perform { try BookmarkRepository(context: modelContext).markOpened(bookmark) }
+            sheet = .snippetEditor(bookmark)
             return
         }
         guard let url = URL(string: bookmark.urlString), !bookmark.urlString.isEmpty else { return }
@@ -221,8 +261,10 @@ struct LibraryRootView: View {
     private var commandActions: BookmarkCommandActions {
         BookmarkCommandActions(
             addLink: { sheet = .addBookmark },
+            addImages: addImages,
             focusSearch: { isSearchPresented = true },
             newCollection: { sheet = .newCollection },
+            newSnippet: { sheet = .snippetEditor(nil) },
             selectedBookmark: visibleCommandBookmark,
             canDeleteSelected: visibleCommandBookmark?.deletedAt == nil,
             openSelected: {
@@ -232,6 +274,11 @@ struct LibraryRootView: View {
             shareSelected: {
                 guard let bookmark = visibleCommandBookmark else { return }
                 sheet = .shareBookmark(bookmark)
+            },
+            canCopyTextSelected: visibleCommandBookmark?.kind == .text,
+            copyTextSelected: {
+                guard let bookmark = visibleCommandBookmark, bookmark.kind == .text else { return }
+                SnippetPasteboard.copy(bookmark.snippetBody)
             },
             deleteSelected: {
                 guard let bookmark = visibleCommandBookmark,
@@ -265,6 +312,7 @@ private enum SheetDestination: Identifiable {
     case editCollection(BookmarkCollection)
     case settings
     case shareBookmark(Bookmark)
+    case snippetEditor(Bookmark?)
 
     var id: String {
         switch self {
@@ -276,6 +324,7 @@ private enum SheetDestination: Identifiable {
         case let .editCollection(collection): "collection-\(collection.id)"
         case .settings: "settings"
         case let .shareBookmark(bookmark): "share-\(bookmark.id)"
+        case let .snippetEditor(bookmark): "snippet-\(bookmark?.id.uuidString ?? "new")"
         }
     }
 }

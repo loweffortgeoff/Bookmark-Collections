@@ -73,7 +73,9 @@ struct BookmarkCard: View {
 
     @ViewBuilder
     private var preview: some View {
-        if let previewImage {
+        if bookmark.kind == .text {
+            SnippetExcerpt(text: bookmark.snippetBody)
+        } else if let previewImage {
             previewImage
                 .resizable()
                 .scaledToFill()
@@ -105,9 +107,14 @@ struct BookmarkCard: View {
     }
 
     private var subtitle: String {
-        bookmark.kind == .image
-            ? bookmark.createdAt.formatted(date: .abbreviated, time: .omitted)
-            : bookmark.domain
+        switch bookmark.kind {
+        case .text:
+            bookmark.domain.isEmpty ? "Snippet" : bookmark.domain
+        case .image:
+            bookmark.createdAt.formatted(date: .abbreviated, time: .omitted)
+        case .link:
+            bookmark.domain
+        }
     }
 
     private var displayTitle: String {
@@ -121,11 +128,22 @@ struct BookmarkCard: View {
     private var accessibilityValue: String {
         [
             bookmark.domain,
+            snippetAccessibilityExcerpt,
             bookmark.collection?.name,
             bookmark.isFavorite ? "Favorite" : nil
         ]
         .compactMap { $0 }
         .joined(separator: ", ")
+    }
+
+    /// `SnippetExcerpt` is `accessibilityHidden` so the card reads as one
+    /// element — a snippet's body has to surface here instead, bounded so
+    /// VoiceOver doesn't announce an unbounded wall of text.
+    private var snippetAccessibilityExcerpt: String? {
+        guard bookmark.kind == .text else { return nil }
+        let trimmed = bookmark.snippetBody.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return trimmed.count > 200 ? "\(trimmed.prefix(200))…" : trimmed
     }
 
     private var cardIdentifier: String {

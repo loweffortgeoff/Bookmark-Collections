@@ -12,12 +12,14 @@ struct LibraryExportService {
                 SortDescriptor(\BookmarkCollection.id)
             ])
         )
-        let bookmarks = try context.fetch(
+        let allBookmarks = try context.fetch(
             FetchDescriptor<Bookmark>(sortBy: [
                 SortDescriptor(\Bookmark.createdAt),
                 SortDescriptor(\Bookmark.id)
             ])
-        ).filter { $0.kind != .image }
+        )
+        let bookmarks = allBookmarks.filter { $0.kind == .link }
+        let snippets = allBookmarks.filter { $0.kind == .text }
         let document = BackupDocument(
             exportedAt: exportedAt,
             collections: collections.map { collection in
@@ -43,6 +45,20 @@ struct LibraryExportService {
                     deletedAt: bookmark.deletedAt,
                     lastOpenedAt: bookmark.lastOpenedAt
                 )
+            },
+            snippets: snippets.map { snippet in
+                BackupDocument.SnippetRecord(
+                    id: snippet.id,
+                    title: snippet.title,
+                    body: snippet.snippetBody,
+                    sourceUrl: snippet.urlString.isEmpty ? nil : snippet.urlString,
+                    isFavorite: snippet.isFavorite,
+                    collectionID: snippet.collection?.id,
+                    createdAt: snippet.createdAt,
+                    modifiedAt: snippet.modifiedAt,
+                    deletedAt: snippet.deletedAt,
+                    lastOpenedAt: snippet.lastOpenedAt
+                )
             }
         )
 
@@ -64,7 +80,7 @@ struct LibraryExportService {
                 SortDescriptor(\Bookmark.createdAt),
                 SortDescriptor(\Bookmark.id)
             ])
-        ).filter { $0.deletedAt == nil && $0.kind != .image }
+        ).filter { $0.deletedAt == nil && $0.kind == .link }
 
         var lines = [
             "<!DOCTYPE NETSCAPE-Bookmark-file-1>",

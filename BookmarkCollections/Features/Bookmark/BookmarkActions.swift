@@ -34,6 +34,11 @@ struct BookmarkActions: View {
             }
             Button("Move", systemImage: "folder") { onEdit() }
             Button("Edit", systemImage: "pencil") { onEdit() }
+            if bookmark.kind == .text {
+                Button("Copy Text", systemImage: "doc.on.doc") {
+                    SnippetPasteboard.copy(bookmark.snippetBody)
+                }
+            }
             if bookmark.kind == .link {
                 ShareLink(item: URL(string: bookmark.urlString)!)
             } else if let shareImage {

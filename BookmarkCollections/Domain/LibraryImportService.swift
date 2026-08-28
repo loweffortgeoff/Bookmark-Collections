@@ -5,6 +5,23 @@ import SwiftData
 struct LibraryImportService {
     let context: ModelContext
 
+    // Backups arrive from producers that always write fractional seconds and
+    // from producers that never do. `.iso8601` accepts only one of those, so
+    // one unexpected date would fail the whole document. Both formatters are
+    // configured once and never mutated, which `ISO8601DateFormatter` supports
+    // across threads, so a backup with thousands of dates allocates neither.
+    nonisolated(unsafe) private static let fractionalDateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    nonisolated(unsafe) private static let wholeSecondDateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+
     func importText(_ text: String) throws -> ImportSummary {
         let repository = BookmarkRepository(context: context)
         var summary = ImportSummary()
@@ -32,7 +49,17 @@ struct LibraryImportService {
 
     func importJSON(_ data: Data) throws -> ImportSummary {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let value = try decoder.singleValueContainer().decode(String.self)
+            if let date = Self.fractionalDateFormatter.date(from: value) { return date }
+            if let date = Self.wholeSecondDateFormatter.date(from: value) { return date }
+            throw DecodingError.dataCorrupted(
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "“\(value)” is not an ISO 8601 date."
+                )
+            )
+        }
         let document = try decoder.decode(BackupDocument.self, from: data)
         guard document.version <= BackupDocument.currentVersion else {
             throw BackupDocument.Error.unsupportedVersion(document.version)
@@ -119,6 +146,58 @@ struct LibraryImportService {
             bookmark.previewImageData = nil
             bookmark.metadataState = .pending
             bookmark.lastMetadataRefreshAt = nil
+        }
+
+        for record in document.snippets {
+            let body = record.body.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !body.isEmpty else { continue }
+
+            let existing = bookmarksByID[record.id]
+
+            // A hand-edited or concatenated file can reuse one id for both a
+            // link and a snippet. Rewriting the link in place would destroy its
+            // URL, so the snippet is reported instead of applied.
+            if let existing, existing.kind != .text {
+                summary.failedLines.append("Snippet \(record.id) collides with an existing bookmark.")
+                continue
+            }
+
+            if let existing {
+                if existing.deletedAt != nil && record.deletedAt == nil {
+                    summary.restoredCount += 1
+                } else {
+                    summary.duplicateCount += 1
+                }
+            } else {
+                summary.newCount += 1
+            }
+
+            let snippet = existing ?? Bookmark(
+                id: record.id,
+                urlString: "",
+                normalizedURLString: "",
+                createdAt: record.createdAt,
+                modifiedAt: record.modifiedAt
+            )
+            snippet.kind = .text
+            snippet.snippetBody = body
+            snippet.title = BookmarkRepository.deriveSnippetTitle(record.title, body: body)
+            // Glaze writes no domain for a snippet, so the host is always
+            // derived from the source link here, never read from the backup.
+            BookmarkRepository.applySource(record.sourceUrl, to: snippet)
+            snippet.normalizedURLString = ""
+            snippet.isFavorite = record.isFavorite
+            snippet.collection = record.collectionID.flatMap { collectionsByID[$0] }
+            snippet.createdAt = record.createdAt
+            snippet.modifiedAt = record.modifiedAt
+            snippet.deletedAt = record.deletedAt
+            snippet.lastOpenedAt = record.lastOpenedAt
+            snippet.metadataState = .ready
+
+            if existing == nil {
+                context.insert(snippet)
+                bookmarksByID[record.id] = snippet
+            }
         }
 
         try context.save()

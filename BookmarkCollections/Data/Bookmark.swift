@@ -12,6 +12,7 @@ final class Bookmark {
     enum Kind: String, Codable, CaseIterable {
         case link
         case image
+        case text
     }
 
     var id: UUID = UUID()
@@ -30,6 +31,8 @@ final class Bookmark {
     var metadataStateRawValue: String = MetadataState.pending.rawValue
     var lastMetadataRefreshAt: Date?
     var kindRawValue: String = Kind.link.rawValue
+    /// Snippet contents for `.text` bookmarks. Empty for every other kind.
+    var snippetBody: String = ""
 
     var metadataState: MetadataState {
         get { MetadataState(rawValue: metadataStateRawValue) ?? .pending }

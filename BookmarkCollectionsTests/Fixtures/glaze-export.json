@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "exportedAt": "2026-08-27T12:00:00.000Z",
+  "collections": [
+    {
+      "id": "00000000-0000-0000-0000-0000000000A1",
+      "name": "Reading",
+      "sortPosition": 0,
+      "createdAt": "2026-08-01T09:00:00.000Z",
+      "modifiedAt": "2026-08-01T09:00:00.000Z"
+    }
+  ],
+  "snippets": [
+    {
+      "id": "00000000-0000-0000-0000-0000000000B1",
+      "title": "A kept paragraph",
+      "body": "The part of the article worth keeping.\nAnd a second line.",
+      "sourceUrl": "https://example.com/article",
+      "isFavorite": true,
+      "collectionID": "00000000-0000-0000-0000-0000000000A1",
+      "createdAt": "2026-08-20T10:00:00.000Z",
+      "modifiedAt": "2026-08-21T11:00:00.000Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "00000000-0000-0000-0000-0000000000B2",
+      "title": "",
+      "body": "   \nDerive my title from this line\ntrailing",
+      "sourceUrl": null,
+      "isFavorite": false,
+      "collectionID": null,
+      "createdAt": "2026-08-22T10:00:00.000Z",
+      "modifiedAt": "2026-08-22T10:00:00.000Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    }
+  ],
+  "bookmarks": [
+    {
+      "id": "00000000-0000-0000-0000-0000000000C1",
+      "urlString": "https://example.com/story",
+      "normalizedURLString": "https://example.com/story",
+      "title": "A Story",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "00000000-0000-0000-0000-0000000000A1",
+      "createdAt": "2026-08-19T10:00:00.000Z",
+      "modifiedAt": "2026-08-19T10:00:00.000Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    }
+  ]
+}

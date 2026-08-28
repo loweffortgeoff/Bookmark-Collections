@@ -5,6 +5,7 @@ enum LibraryDestination: Hashable {
     case favorites
     case links
     case images
+    case snippets
     case collection(UUID)
     case forgotten
     case recentlyDeleted
@@ -15,6 +16,7 @@ enum LibraryDestination: Hashable {
         case .favorites: "Favorites"
         case .links: "Links"
         case .images: "Images"
+        case .snippets: "Snippets"
         case .collection: "Collection"
         case .forgotten: "Forgotten"
         case .recentlyDeleted: "Recently Deleted"
@@ -27,6 +29,7 @@ enum LibraryDestination: Hashable {
         case .favorites: "star"
         case .links: "link"
         case .images: "photo"
+        case .snippets: "text.quote"
         case .collection: "folder"
         case .forgotten: "clock.arrow.circlepath"
         case .recentlyDeleted: "trash"
@@ -39,6 +42,7 @@ enum LibraryDestination: Hashable {
         case .favorites: "library.favorites"
         case .links: "library.links"
         case .images: "library.images"
+        case .snippets: "library.snippets"
         case .collection: "library.collection"
         case .forgotten: "library.forgotten"
         case .recentlyDeleted: "library.recentlyDeleted"
@@ -55,6 +59,8 @@ enum LibraryDestination: Hashable {
             bookmark.deletedAt == nil && bookmark.kind == .link
         case .images:
             bookmark.deletedAt == nil && bookmark.kind == .image
+        case .snippets:
+            bookmark.deletedAt == nil && bookmark.kind == .text
         case let .collection(id):
             bookmark.deletedAt == nil && bookmark.collection?.id == id
         case .forgotten:
@@ -76,6 +82,7 @@ enum LibraryDestination: Hashable {
         return bookmark.title.localizedCaseInsensitiveContains(query)
             || bookmark.domain.localizedCaseInsensitiveContains(query)
             || bookmark.urlString.localizedCaseInsensitiveContains(query)
+            || bookmark.snippetBody.localizedCaseInsensitiveContains(query)
             || (bookmark.collection?.name.localizedCaseInsensitiveContains(query) ?? false)
     }
 }

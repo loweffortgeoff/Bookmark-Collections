@@ -148,3 +148,15 @@ Significant decisions made during development, logged for future reference.
 - **Why:** The picker forced custom selection chrome that felt less native than the rest of the app.
 - **Alternative considered:** Keep Grape as a compiled `AccentColor` with no picker — rejected; that is still an app-owned color rather than the system accent.
 - **Supersedes:** 2026-07-19 Curated accent palette, Grape as default accent, and Sidebar pill selection. Leave those entries in place and treat this one as current.
+
+## 2026-08-28 (Snippets reuse the bookmark model rather than getting their own)
+
+- **Decision:** A snippet is a `Bookmark` with `kind == .text`, a `snippetBody`, and an empty `normalizedURLString`. It is not a separate SwiftData model.
+- **Why:** Every library behavior a snippet needs already exists on `Bookmark`: collections, Favorite, soft delete, Recently Deleted, Forgotten, search, sorting, and CloudKit mirroring. A second model would have had to reimplement all of it and then be merged back at every destination. The empty normalized URL is what keeps snippets out of link de-duplication, and image bookmarks already rely on the same trick.
+- **Alternative considered:** A separate `Snippet` model with its own repository. Rejected: it doubles every destination, every sort, and every backup path for one differing field.
+
+## 2026-08-28 (Opening a snippet opens its editor, and that counts as opening it)
+
+- **Decision:** Opening a snippet presents `SnippetEditorView` and calls `markOpened`.
+- **Why:** A snippet has nowhere else to open. Making the editor the viewer avoids a read-only surface that duplicates the editor's layout. The `markOpened` call is not cosmetic: without it, a snippet read every week still falls into Forgotten after 30 days and can never leave, because Forgotten keys on `lastOpenedAt` being nil.
+- **Alternative considered:** A separate read-only snippet viewer, matching `ImageViewerView`. Rejected: an image viewer earns its own surface because zoom and full-screen are not editing affordances. Text has no equivalent.

@@ -3,12 +3,16 @@ import SwiftUI
 @MainActor
 struct BookmarkCommandActions {
     let addLink: () -> Void
+    let addImages: () -> Void
     let focusSearch: () -> Void
     let newCollection: () -> Void
+    let newSnippet: () -> Void
     let selectedBookmark: Bookmark?
     let canDeleteSelected: Bool
     let openSelected: () -> Void
     let shareSelected: () -> Void
+    let canCopyTextSelected: Bool
+    let copyTextSelected: () -> Void
     let deleteSelected: () -> Void
     let surpriseMe: () -> Void
     let canSurpriseMe: Bool
@@ -33,6 +37,13 @@ struct BookmarkCommands: Commands {
             Button("Add Link") { actions?.addLink() }
                 .keyboardShortcut("n", modifiers: .command)
                 .disabled(actions == nil)
+            Button("New Snippet") { actions?.newSnippet() }
+                .keyboardShortcut("t", modifiers: .command)
+                .disabled(actions == nil)
+            #if os(macOS)
+            Button("Add Images…") { actions?.addImages() }
+                .disabled(actions == nil)
+            #endif
             Button("New Collection") { actions?.newCollection() }
                 .keyboardShortcut("n", modifiers: [.command, .shift])
                 .disabled(actions == nil)
@@ -50,6 +61,8 @@ struct BookmarkCommands: Commands {
                 .disabled(actions?.selectedBookmark == nil)
             Button("Share") { actions?.shareSelected() }
                 .disabled(actions?.selectedBookmark == nil)
+            Button("Copy Text") { actions?.copyTextSelected() }
+                .disabled(actions?.canCopyTextSelected != true)
             Button("Surprise Me") { actions?.surpriseMe() }
                 .disabled(actions?.canSurpriseMe != true)
             Divider()

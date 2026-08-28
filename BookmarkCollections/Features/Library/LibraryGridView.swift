@@ -218,6 +218,12 @@ struct LibraryGridView: View {
                     systemImage: "link",
                     description: Text("Share a link from another app or add one here.")
                 )
+            case .snippets:
+                ContentUnavailableView(
+                    "No Snippets",
+                    systemImage: "text.quote",
+                    description: Text("Save a piece of text to find it here.")
+                )
             case .allItems:
                 ContentUnavailableView(
                     "No Bookmarks",
