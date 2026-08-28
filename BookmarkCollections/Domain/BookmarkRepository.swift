@@ -7,6 +7,18 @@ enum SaveResult {
     case restored(Bookmark)
 }
 
+extension BookmarkRepository {
+    enum SnippetError: Swift.Error, LocalizedError, Equatable {
+        case emptyBody
+
+        var errorDescription: String? {
+            switch self {
+            case .emptyBody: "A snippet needs some text."
+            }
+        }
+    }
+}
+
 @MainActor
 struct BookmarkRepository {
     let context: ModelContext
@@ -75,6 +87,75 @@ struct BookmarkRepository {
         context.insert(bookmark)
         try context.save()
         return bookmark
+    }
+
+    /// Fall back to the snippet's first meaningful line when no title was given.
+    static func deriveSnippetTitle(_ title: String, body: String) -> String {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedTitle.isEmpty { return trimmedTitle }
+
+        let firstLine = body
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .first { !$0.isEmpty } ?? ""
+        if firstLine.isEmpty { return "Snippet" }
+        return firstLine.count > 80 ? "\(firstLine.prefix(80))…" : firstLine
+    }
+
+    @discardableResult
+    func saveSnippet(
+        title: String = "",
+        body: String,
+        sourceURL: String? = nil,
+        collection: BookmarkCollection? = nil,
+        favorite: Bool = false
+    ) throws -> Bookmark {
+        let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedBody.isEmpty else { throw SnippetError.emptyBody }
+
+        let now = Date()
+        // A snippet keeps an empty normalized URL so link de-duplication,
+        // which always queries with a parsed NormalizedURL, can never match it.
+        let bookmark = Bookmark(urlString: "", normalizedURLString: "", createdAt: now)
+        bookmark.kind = .text
+        bookmark.snippetBody = trimmedBody
+        bookmark.title = Self.deriveSnippetTitle(title, body: trimmedBody)
+        Self.applySource(sourceURL, to: bookmark)
+        bookmark.collection = collection
+        bookmark.isFavorite = favorite
+        bookmark.metadataState = .ready
+        context.insert(bookmark)
+        try context.save()
+        return bookmark
+    }
+
+    func updateSnippet(
+        _ bookmark: Bookmark,
+        title: String,
+        body: String,
+        sourceURL: String?
+    ) throws {
+        let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedBody.isEmpty else { throw SnippetError.emptyBody }
+
+        bookmark.snippetBody = trimmedBody
+        bookmark.title = Self.deriveSnippetTitle(title, body: trimmedBody)
+        Self.applySource(sourceURL, to: bookmark)
+        bookmark.modifiedAt = Date()
+        try context.save()
+    }
+
+    /// A snippet's source link is optional, so an unparseable one is dropped
+    /// rather than costing the user the text they were trying to keep.
+    static func applySource(_ sourceURL: String?, to bookmark: Bookmark) {
+        let trimmed = sourceURL?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !trimmed.isEmpty, let normalized = try? NormalizedURL(trimmed) else {
+            bookmark.urlString = ""
+            bookmark.domain = ""
+            return
+        }
+        bookmark.urlString = trimmed
+        bookmark.domain = normalized.url.host?.lowercased() ?? ""
     }
 
     func reconcileDuplicates() throws {
