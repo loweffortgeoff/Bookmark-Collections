@@ -121,6 +121,46 @@ struct LibraryImportService {
             bookmark.lastMetadataRefreshAt = nil
         }
 
+        for record in document.snippets {
+            let body = record.body.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !body.isEmpty else { continue }
+
+            let existing = bookmarksByID[record.id]
+
+            if existing == nil {
+                summary.newCount += 1
+            } else {
+                summary.duplicateCount += 1
+            }
+
+            let snippet = existing ?? Bookmark(
+                id: record.id,
+                urlString: "",
+                normalizedURLString: "",
+                createdAt: record.createdAt,
+                modifiedAt: record.modifiedAt
+            )
+            snippet.kind = .text
+            snippet.snippetBody = body
+            snippet.title = BookmarkRepository.deriveSnippetTitle(record.title, body: body)
+            // Glaze writes no domain for a snippet, so the host is always
+            // derived from the source link here, never read from the backup.
+            BookmarkRepository.applySource(record.sourceUrl, to: snippet)
+            snippet.normalizedURLString = ""
+            snippet.isFavorite = record.isFavorite
+            snippet.collection = record.collectionID.flatMap { collectionsByID[$0] }
+            snippet.createdAt = record.createdAt
+            snippet.modifiedAt = record.modifiedAt
+            snippet.deletedAt = record.deletedAt
+            snippet.lastOpenedAt = record.lastOpenedAt
+            snippet.metadataState = .ready
+
+            if existing == nil {
+                context.insert(snippet)
+                bookmarksByID[record.id] = snippet
+            }
+        }
+
         try context.save()
         try BookmarkRepository(context: context).reconcileDuplicates()
         return summary

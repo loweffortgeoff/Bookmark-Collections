@@ -200,6 +200,153 @@ final class ImportExportTests: XCTestCase {
         XCTAssertNil(restored.lastOpenedAt)
     }
 
+    func testImportingAGlazeExportRestoresSnippetsAlongsideLinks() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let url = try XCTUnwrap(
+            Bundle(for: Self.self).url(forResource: "glaze-export", withExtension: "json")
+        )
+        let data = try Data(contentsOf: url)
+        let service = LibraryImportService(context: container.mainContext)
+
+        let summary = try service.importJSON(data)
+
+        XCTAssertEqual(summary.newCount, 3)
+        let bookmarks = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+        let snippets = bookmarks.filter { $0.kind == .text }
+        XCTAssertEqual(snippets.count, 2)
+
+        let titled = try XCTUnwrap(snippets.first { $0.title == "A kept paragraph" })
+        XCTAssertEqual(
+            titled.snippetBody,
+            "The part of the article worth keeping.\nAnd a second line."
+        )
+        XCTAssertEqual(titled.urlString, "https://example.com/article")
+        XCTAssertEqual(titled.domain, "example.com")
+        XCTAssertEqual(titled.normalizedURLString, "")
+        XCTAssertTrue(titled.isFavorite)
+        XCTAssertEqual(titled.collection?.name, "Reading")
+        XCTAssertEqual(titled.metadataState, .ready)
+
+        let derived = try XCTUnwrap(snippets.first { $0.title == "Derive my title from this line" })
+        XCTAssertEqual(derived.urlString, "")
+        XCTAssertEqual(derived.domain, "")
+        XCTAssertNil(derived.collection)
+    }
+
+    func testImportingTheSameGlazeExportTwiceCreatesNoDuplicates() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let url = try XCTUnwrap(
+            Bundle(for: Self.self).url(forResource: "glaze-export", withExtension: "json")
+        )
+        let data = try Data(contentsOf: url)
+        let service = LibraryImportService(context: container.mainContext)
+        _ = try service.importJSON(data)
+
+        let summary = try service.importJSON(data)
+
+        XCTAssertEqual(summary.newCount, 0)
+        let snippets = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+            .filter { $0.kind == .text }
+        XCTAssertEqual(snippets.count, 2)
+        XCTAssertEqual(summary.duplicateCount, 3)
+    }
+
+    func testJSONRoundTripPreservesSnippets() throws {
+        let source = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: source.mainContext)
+        let collection = BookmarkCollection(name: "Research", sortPosition: 0)
+        source.mainContext.insert(collection)
+        let snippet = try repository.saveSnippet(
+            title: "Kept",
+            body: "Body text worth keeping",
+            sourceURL: "https://example.com/source",
+            collection: collection,
+            favorite: true
+        )
+        let snippetID = snippet.id
+
+        let data = try LibraryExportService(context: source.mainContext).exportJSON()
+
+        let destination = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        _ = try LibraryImportService(context: destination.mainContext).importJSON(data)
+
+        let restored = try XCTUnwrap(
+            try destination.mainContext.fetch(FetchDescriptor<Bookmark>())
+                .first { $0.id == snippetID }
+        )
+        XCTAssertEqual(restored.kind, .text)
+        XCTAssertEqual(restored.snippetBody, "Body text worth keeping")
+        XCTAssertEqual(restored.title, "Kept")
+        XCTAssertEqual(restored.urlString, "https://example.com/source")
+        XCTAssertTrue(restored.isFavorite)
+        XCTAssertEqual(restored.collection?.name, "Research")
+    }
+
+    func testJSONExportKeepsSnippetsOutOfTheBookmarksArray() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        _ = try repository.save(url: "https://example.com/link")
+        _ = try repository.saveSnippet(body: "Snippet text")
+
+        let data = try LibraryExportService(context: container.mainContext).exportJSON()
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let document = try decoder.decode(BackupDocument.self, from: data)
+
+        XCTAssertEqual(document.bookmarks.count, 1)
+        XCTAssertEqual(document.bookmarks.first?.urlString, "https://example.com/link")
+        XCTAssertEqual(document.snippets.count, 1)
+        XCTAssertEqual(document.snippets.first?.body, "Snippet text")
+    }
+
+    func testHTMLExportOmitsSnippets() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        _ = try repository.save(url: "https://example.com/link")
+        _ = try repository.saveSnippet(body: "Snippet text that must not ship")
+
+        let data = try LibraryExportService(context: container.mainContext).exportHTML()
+        let html = try XCTUnwrap(String(data: data, encoding: .utf8))
+
+        XCTAssertTrue(html.contains("https://example.com/link"))
+        XCTAssertFalse(html.contains("Snippet text that must not ship"))
+    }
+
+    func testABackupWithoutASnippetsKeyStillImports() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let legacy = """
+        {
+          "version": 1,
+          "exportedAt": "2026-08-01T09:00:00Z",
+          "collections": [],
+          "bookmarks": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000D1",
+              "urlString": "https://example.com/legacy",
+              "normalizedURLString": "https://example.com/legacy",
+              "title": "Legacy",
+              "domain": "example.com",
+              "isFavorite": false,
+              "collectionID": null,
+              "createdAt": "2026-08-01T09:00:00Z",
+              "modifiedAt": "2026-08-01T09:00:00Z",
+              "deletedAt": null,
+              "lastOpenedAt": null
+            }
+          ]
+        }
+        """
+        let service = LibraryImportService(context: container.mainContext)
+
+        let summary = try service.importJSON(Data(legacy.utf8))
+
+        XCTAssertEqual(summary.newCount, 1)
+        XCTAssertEqual(
+            try container.mainContext.fetch(FetchDescriptor<Bookmark>()).count,
+            1
+        )
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult
