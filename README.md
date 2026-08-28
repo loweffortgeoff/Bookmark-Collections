@@ -83,10 +83,11 @@ Settings supports:
 
 Preview and favicon binaries are deliberately omitted from JSON backups and are fetched again after restore.
 
-Update every device to a build that knows the `text` kind before you import a
-backup that holds snippets. An older build reads an unknown kind as a link.
-Its duplicate reconciliation then treats every synced snippet as a duplicate of
-every other one and deletes all but the oldest.
+Update every device to a build that knows the `text` kind before any snippet
+reaches the library. Snippets arrive by two routes: you create them in Tucked,
+or you restore them from a backup. An older build reads an unknown kind as a
+link. Its reconciliation runs on activation, treats every synced snippet as a
+duplicate of every other one, and deletes all but the oldest.
 
 ## Data and privacy
 
