@@ -83,6 +83,11 @@ Settings supports:
 
 Preview and favicon binaries are deliberately omitted from JSON backups and are fetched again after restore.
 
+Update every device to a build that knows the `text` kind before you import a
+backup that holds snippets. An older build reads an unknown kind as a link.
+Its duplicate reconciliation then treats every synced snippet as a duplicate of
+every other one and deletes all but the oldest.
+
 ## Data and privacy
 
 The full library remains available locally. CloudKit uses the user’s private database; the app includes no analytics, telemetry, custom account, or third-party sync service. Settings reports only iCloud account availability and does not claim an exact or complete sync time.

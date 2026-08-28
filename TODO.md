@@ -23,7 +23,7 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
 - Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
-- Make macOS menu commands kind-aware for snippets as well as images. Open and Share both assume a URL.
+- Make the macOS Share menu command kind-aware for snippets. Share still assumes a URL, so it shows “URL invalid” for a snippet with no source link. Open already routes a snippet to the editor, and Copy Text is on the Bookmark menu.
 - Sharing plain non-URL text from the iOS Share Sheet to create a snippet. Deliberately out of scope in the 2026-08-28 parity pass; snippets are created in-app only.
 - Mac quick-capture panel with a global shortcut and clipboard detection, as in the Glaze build. Out of scope in the 2026-08-28 parity pass because macOS already captures through the Share menu.
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
