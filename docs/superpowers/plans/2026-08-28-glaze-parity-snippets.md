@@ -26,6 +26,8 @@
 - **Accessibility identifiers use two prefixes**, matching the existing split: `LibraryDestination.accessibilityIdentifier` returns `library.*` (used on the detail column), while `CollectionListView` sidebar rows pass `destination.*`. Snippets need both: `library.snippets` and `destination.snippets`.
 - **Dynamic Type:** never hardcode font sizes. Use text styles.
 - **Docs:** `CHANGELOG.md`, `TODO.md`, and `DECISIONS.md` are updated in Task 6, not scattered across tasks.
+- **New files join their targets automatically.** The project uses `PBXFileSystemSynchronizedRootGroup`, so a `.swift` file placed in a target's folder compiles into that target with no `project.pbxproj` edit, and a non-source file placed under `BookmarkCollectionsTests/` is copied as a test bundle resource. If a newly created file is somehow not found by the compiler, open the project in Xcode once to let it re-sync before editing the pbxproj by hand.
+- **`#if os(macOS)` cannot wrap a labeled argument inside a call.** Swift permits `#if` around declarations, statements, and postfix modifier chains, but not around individual arguments in an argument list. Platform-specific *actions* are therefore declared unconditionally and given a no-op body where they do not apply; only the `Button` declarations and the `.fileImporter` modifier are guarded.
 - Unit test command:
   ```
   xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollections -destination 'platform=macOS' -only-testing:BookmarkCollectionsTests
@@ -900,7 +902,7 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 
 - [ ] **Step 1: Create the Glaze export fixture**
 
-Create `BookmarkCollectionsTests/Fixtures/glaze-export.json`. Add it to the `BookmarkCollectionsTests` target as a bundle resource in Xcode:
+Create `BookmarkCollectionsTests/Fixtures/glaze-export.json`. The synchronized file group copies it into the test bundle automatically. If `Bundle(for:).url(forResource:)` returns nil at Step 7, the file did not land as a resource — inline the same JSON as a multiline string constant in the test file, exactly as `testABackupWithoutASnippetsKeyStillImports` already does, rather than editing `project.pbxproj`.
 
 ```json
 {
@@ -1469,6 +1471,8 @@ In `BookmarkCollections/Features/Library/LibraryRootView.swift`, add state besid
     #endif
 ```
 
+This one is legal: `#if` around a property *declaration* is fine. It is only argument lists that cannot be guarded.
+
 Attach the importer to the same view that carries `.sheet(item: $sheet, ...)`:
 
 ```swift
@@ -1495,22 +1499,34 @@ Attach the importer to the same view that carries `.sheet(item: $sheet, ...)`:
 
 Add `import UniformTypeIdentifiers` at the top of the file for `.image`.
 
-Wire the action into `BookmarkCommandActions` (around line 223) and the toolbar call (around line 105):
+Wire the action into the `BookmarkCommandActions` construction (around line 223) and the `LibraryToolbar` call (around line 105). Both arguments are passed unconditionally — see the Global Constraint above, `#if` cannot wrap a labeled argument:
 
 ```swift
-            #if os(macOS)
-            addImages: { isAddingImages = true },
-            #endif
+            addImages: addImages,
 ```
+
+```swift
+                    onAddImages: addImages,
+```
+
+and add the single platform-guarded helper beside the other private methods:
+
+```swift
+    private func addImages() {
+        #if os(macOS)
+        isAddingImages = true
+        #endif
+    }
+```
+
+On iOS this compiles to an empty method that nothing calls, because the menu item and toolbar button that would call it are themselves guarded out.
 
 - [ ] **Step 5: Add the menu and toolbar entries**
 
-In `BookmarkCollections/Commands/BookmarkCommands.swift`, add the action to the struct and the command, both macOS-only:
+In `BookmarkCollections/Commands/BookmarkCommands.swift`, add the action to the struct unconditionally, and guard only the command itself:
 
 ```swift
-    #if os(macOS)
     let addImages: () -> Void
-    #endif
 ```
 
 ```swift
@@ -1520,12 +1536,12 @@ In `BookmarkCollections/Commands/BookmarkCommands.swift`, add the action to the 
             #endif
 ```
 
-In `BookmarkCollections/Features/Library/LibraryToolbar.swift`, add the property and the menu item:
+`BookmarkCommands` is only installed on macOS, but `BookmarkCommandActions` is constructed on every platform, so the property must exist everywhere.
+
+In `BookmarkCollections/Features/Library/LibraryToolbar.swift`, add the property unconditionally and guard only the menu item:
 
 ```swift
-    #if os(macOS)
     let onAddImages: () -> Void
-    #endif
 ```
 
 ```swift
