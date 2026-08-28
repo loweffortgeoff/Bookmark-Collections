@@ -1217,18 +1217,18 @@ Check `exportHTML` in the same file. It must filter to `kind == .link`. If it fi
 
 - [ ] **Step 6: Import the snippets array**
 
-In `BookmarkCollections/Domain/LibraryImportService.swift`, after the existing bookmark loop and before `return summary`, add the snippet loop. Snippets are matched on `id` alone and never touch normalized-URL de-duplication:
+In `BookmarkCollections/Domain/LibraryImportService.swift`, add the snippet loop **after the existing bookmark loop and immediately before `try context.save()`** — not before `return summary`, because `try context.save()` and `reconcileDuplicates()` sit between the two, and a snippet inserted after the save would never persist.
+
+Reuse the `bookmarksByID` dictionary the bookmark loop already built rather than issuing a fresh fetch. The dictionary is authoritative for this transaction, and a fetch would depend on SwiftData surfacing unsaved inserts.
+
+Snippets are matched on `id` alone and never touch normalized-URL de-duplication:
 
 ```swift
         for record in document.snippets {
             let body = record.body.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !body.isEmpty else { continue }
 
-            let recordID = record.id
-            let descriptor = FetchDescriptor<Bookmark>(
-                predicate: #Predicate { $0.id == recordID }
-            )
-            let existing = try context.fetch(descriptor).first
+            let existing = bookmarksByID[record.id]
 
             if existing == nil {
                 summary.newCount += 1
@@ -1260,9 +1260,12 @@ In `BookmarkCollections/Domain/LibraryImportService.swift`, after the existing b
 
             if existing == nil {
                 context.insert(snippet)
+                bookmarksByID[record.id] = snippet
             }
         }
 ```
+
+Two snippet records carrying the same id inside one backup therefore collapse to one record, exactly as two bookmark records with the same id already do.
 
 `Bookmark.init` already accepts an id: `init(id:urlString:normalizedURLString:createdAt:modifiedAt:)`, with `id` defaulted. Passing `record.id` is what preserves identity across a round trip, and it is also what makes the second import of the same file a duplicate rather than a second copy.
 
