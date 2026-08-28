@@ -2,7 +2,19 @@
 
 ## Next
 
-_Nothing in flight._
+- The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.
+  Merged `main` is byte-identical to the tree whose UI suite passed on
+  2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
+  and all code signatures are valid. The runner attaches to the app and gets a
+  pid, but reads zero accessibility identifiers from it — an empty tree, not a
+  missing element. Ruled out: stale runner signature, leftover processes, a
+  clean DerivedData rebuild, and moving `/Applications/Tucked.app` aside.
+  Leading explanation is macOS withholding Accessibility/Automation permission
+  after a second binary claimed the same bundle identifier. First thing to try:
+  `tccutil reset All com.loweffortapps.BookmarkCollections`, re-run the suite,
+  and grant control when macOS prompts. Then check System Settings → Privacy &
+  Security → Accessibility for Xcode and Terminal. Release builds drop
+  `get-task-allow`, so installing Release may clear this on its own.
 
 The remaining v1 release gates (real-device CloudKit matrix, Production schema, TestFlight/new-account check) are tracked in `docs/verification/cloudkit-device-matrix.md`, not here.
 
@@ -12,11 +24,6 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
-- Switch `scripts/install-mac.sh` to `CONFIGURATION=Release` once the Production
-  CloudKit schema is deployed. Release drops `get-task-allow` and the
-  `testmanagerd` temporary exceptions, and takes the daily-driver Mac copy out
-  of the bundle-id collision with the macOS UI test suite. Blocked today because
-  Release signs into the Production CloudKit environment.
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
@@ -31,7 +38,6 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).
 - Sort by last opened.
-- Production CloudKit schema deploy for `lastOpenedAt` before Production-signed Untuck release (if not already done at ship time).
 
 ### Product differentiation ideas (2026-07-30)
 
@@ -62,6 +68,13 @@ These items were explicitly excluded from v1 and are not release blockers or com
 _Earlier v1 work landed before TODO.md tracked completions with dates._
 
 - [x] Files-importer image import (Mac) — shipped as `File ▸ Add Images…` (2026-08-28).
+- [x] Text snippets, the `snippets` key in JSON backup, and Mac image import —
+      brings the Swift app back to parity with the Glaze port (2026-08-28).
+- [x] Production CloudKit schema carries `lastOpenedAt` and `snippetBody`.
+      Verified on device: a snippet created on the Mac reached the iPhone and
+      iPad, and Get Info showed a correct Last Opened date (2026-08-28).
+- [x] Release configuration installs cleanly to Mac, iPhone, and iPad via
+      `CONFIGURATION=Release scripts/install-all-devices.sh` (2026-08-28).
 
 - [x] Give the Mac a real install step: `scripts/install-mac.sh` installs to
       `/Applications/Tucked.app` instead of launching the build product in
