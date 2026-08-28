@@ -222,7 +222,7 @@ struct LibraryGridView: View {
                 ContentUnavailableView(
                     "No Snippets",
                     systemImage: "text.quote",
-                    description: Text("Save a paragraph of text to find it here.")
+                    description: Text("Save a piece of text to find it here.")
                 )
             case .allItems:
                 ContentUnavailableView(
