@@ -404,6 +404,141 @@ final class ImportExportTests: XCTestCase {
         XCTAssertEqual(snippets.count, 2)
     }
 
+    func testJSONImportAcceptsDatesWithFractionalSeconds() throws {
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "1970-01-01T00:00:03.000Z",
+          "collections": [],
+          "bookmarks": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000E1",
+              "urlString": "https://example.com/fractional",
+              "normalizedURLString": "https://example.com/fractional",
+              "title": "Fractional",
+              "domain": "example.com",
+              "isFavorite": false,
+              "collectionID": null,
+              "createdAt": "1970-01-01T00:00:01.500Z",
+              "modifiedAt": "1970-01-01T00:00:02.250Z",
+              "deletedAt": null,
+              "lastOpenedAt": "1970-01-01T00:00:02.750Z"
+            }
+          ]
+        }
+        """
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+
+        let summary = try LibraryImportService(context: container.mainContext)
+            .importJSON(Data(json.utf8))
+
+        XCTAssertEqual(summary.newCount, 1)
+        let restored = try XCTUnwrap(
+            container.mainContext.fetch(FetchDescriptor<Bookmark>()).first
+        )
+        XCTAssertEqual(restored.createdAt, Date(timeIntervalSince1970: 1.5))
+        XCTAssertEqual(restored.modifiedAt, Date(timeIntervalSince1970: 2.25))
+        XCTAssertEqual(restored.lastOpenedAt, Date(timeIntervalSince1970: 2.75))
+    }
+
+    func testJSONImportAcceptsDatesWithoutFractionalSeconds() throws {
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "1970-01-01T00:00:03Z",
+          "collections": [],
+          "bookmarks": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000E2",
+              "urlString": "https://example.com/whole",
+              "normalizedURLString": "https://example.com/whole",
+              "title": "Whole",
+              "domain": "example.com",
+              "isFavorite": false,
+              "collectionID": null,
+              "createdAt": "1970-01-01T00:00:01Z",
+              "modifiedAt": "1970-01-01T00:00:02Z",
+              "deletedAt": null,
+              "lastOpenedAt": "1970-01-01T00:00:02Z"
+            }
+          ]
+        }
+        """
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+
+        let summary = try LibraryImportService(context: container.mainContext)
+            .importJSON(Data(json.utf8))
+
+        XCTAssertEqual(summary.newCount, 1)
+        let restored = try XCTUnwrap(
+            container.mainContext.fetch(FetchDescriptor<Bookmark>()).first
+        )
+        XCTAssertEqual(restored.createdAt, Date(timeIntervalSince1970: 1))
+        XCTAssertEqual(restored.modifiedAt, Date(timeIntervalSince1970: 2))
+        XCTAssertEqual(restored.lastOpenedAt, Date(timeIntervalSince1970: 2))
+    }
+
+    func testASnippetSharingALinksIDIsReportedRatherThanApplied() throws {
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "1970-01-01T00:00:03.000Z",
+          "collections": [],
+          "bookmarks": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000F1",
+              "urlString": "https://example.com/keep-me",
+              "normalizedURLString": "https://example.com/keep-me",
+              "title": "Keep Me",
+              "domain": "example.com",
+              "isFavorite": false,
+              "collectionID": null,
+              "createdAt": "1970-01-01T00:00:01.000Z",
+              "modifiedAt": "1970-01-01T00:00:02.000Z",
+              "deletedAt": null,
+              "lastOpenedAt": null
+            }
+          ],
+          "snippets": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000F1",
+              "title": "Collides",
+              "body": "This snippet reuses the link's id.",
+              "sourceUrl": null,
+              "isFavorite": true,
+              "collectionID": null,
+              "createdAt": "1970-01-01T00:00:01.000Z",
+              "modifiedAt": "1970-01-01T00:00:02.000Z",
+              "deletedAt": null,
+              "lastOpenedAt": null
+            }
+          ]
+        }
+        """
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+
+        let summary = try LibraryImportService(context: container.mainContext)
+            .importJSON(Data(json.utf8))
+
+        let bookmarks = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+        XCTAssertEqual(bookmarks.count, 1)
+        let link = try XCTUnwrap(bookmarks.first)
+        XCTAssertEqual(link.kind, .link)
+        XCTAssertEqual(link.urlString, "https://example.com/keep-me")
+        XCTAssertEqual(link.normalizedURLString, "https://example.com/keep-me")
+        XCTAssertEqual(link.title, "Keep Me")
+        XCTAssertEqual(link.snippetBody, "")
+        XCTAssertFalse(link.isFavorite)
+        XCTAssertEqual(summary.newCount, 1)
+        XCTAssertEqual(summary.duplicateCount, 0)
+        XCTAssertEqual(summary.restoredCount, 0)
+        XCTAssertEqual(summary.failedLines.count, 1)
+        XCTAssertTrue(
+            try XCTUnwrap(summary.failedLines.first)
+                .localizedCaseInsensitiveContains("00000000-0000-0000-0000-0000000000F1")
+        )
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult
