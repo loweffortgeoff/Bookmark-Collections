@@ -8,3 +8,9 @@ xcuserdata/
 
 docs/superpowers/scratch/*
 !docs/superpowers/scratch/README.md
+
+# Obsidian
+.obsidian/
+.smart-env/
+.trash/
+.obsidian.vimrc
