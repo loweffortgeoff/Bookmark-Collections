@@ -275,6 +275,11 @@ struct LibraryRootView: View {
                 guard let bookmark = visibleCommandBookmark else { return }
                 sheet = .shareBookmark(bookmark)
             },
+            canCopyTextSelected: visibleCommandBookmark?.kind == .text,
+            copyTextSelected: {
+                guard let bookmark = visibleCommandBookmark, bookmark.kind == .text else { return }
+                SnippetPasteboard.copy(bookmark.snippetBody)
+            },
             deleteSelected: {
                 guard let bookmark = visibleCommandBookmark,
                       bookmark.deletedAt == nil else { return }

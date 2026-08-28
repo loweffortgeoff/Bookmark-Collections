@@ -11,6 +11,8 @@ struct BookmarkCommandActions {
     let canDeleteSelected: Bool
     let openSelected: () -> Void
     let shareSelected: () -> Void
+    let canCopyTextSelected: Bool
+    let copyTextSelected: () -> Void
     let deleteSelected: () -> Void
     let surpriseMe: () -> Void
     let canSurpriseMe: Bool
@@ -59,6 +61,8 @@ struct BookmarkCommands: Commands {
                 .disabled(actions?.selectedBookmark == nil)
             Button("Share") { actions?.shareSelected() }
                 .disabled(actions?.selectedBookmark == nil)
+            Button("Copy Text") { actions?.copyTextSelected() }
+                .disabled(actions?.canCopyTextSelected != true)
             Button("Surprise Me") { actions?.surpriseMe() }
                 .disabled(actions?.canSurpriseMe != true)
             Divider()

@@ -36,12 +36,7 @@ struct BookmarkActions: View {
             Button("Edit", systemImage: "pencil") { onEdit() }
             if bookmark.kind == .text {
                 Button("Copy Text", systemImage: "doc.on.doc") {
-                    #if os(macOS)
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(bookmark.snippetBody, forType: .string)
-                    #else
-                    UIPasteboard.general.string = bookmark.snippetBody
-                    #endif
+                    SnippetPasteboard.copy(bookmark.snippetBody)
                 }
             }
             if bookmark.kind == .link {
