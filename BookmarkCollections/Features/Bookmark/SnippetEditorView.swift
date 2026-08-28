@@ -43,7 +43,7 @@ struct SnippetEditorView: View {
                     Toggle("Favorite", isOn: $isFavorite)
                 }
                 if let openableSource {
-                    Button("Open Link", systemImage: "safari") { openURL(openableSource) }
+                    Button("Open Link", systemImage: "safari") { open(openableSource) }
                 }
                 if let errorMessage {
                     Text(errorMessage).foregroundStyle(.red)
@@ -67,9 +67,25 @@ struct SnippetEditorView: View {
         .onAppear(perform: load)
     }
 
+    /// Validated the same way saving validates it, so the button never offers
+    /// to open a source link that `applySource` would silently discard.
     private var openableSource: URL? {
-        guard !sourceURL.isEmpty else { return nil }
-        return URL(string: sourceURL)
+        let trimmed = sourceURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return (try? NormalizedURL(trimmed))?.url
+    }
+
+    /// Opening the source counts as opening the snippet, on the same terms as
+    /// any link, so it does not sit in Forgotten forever.
+    private func open(_ url: URL) {
+        if let bookmark {
+            do {
+                try BookmarkRepository(context: modelContext).markOpened(bookmark)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+        openURL(url)
     }
 
     private func load() {
