@@ -3,6 +3,7 @@ import SwiftUI
 @MainActor
 struct BookmarkCommandActions {
     let addLink: () -> Void
+    let addImages: () -> Void
     let focusSearch: () -> Void
     let newCollection: () -> Void
     let newSnippet: () -> Void
@@ -37,6 +38,10 @@ struct BookmarkCommands: Commands {
             Button("New Snippet") { actions?.newSnippet() }
                 .keyboardShortcut("t", modifiers: .command)
                 .disabled(actions == nil)
+            #if os(macOS)
+            Button("Add Images…") { actions?.addImages() }
+                .disabled(actions == nil)
+            #endif
             Button("New Collection") { actions?.newCollection() }
                 .keyboardShortcut("n", modifiers: [.command, .shift])
                 .disabled(actions == nil)

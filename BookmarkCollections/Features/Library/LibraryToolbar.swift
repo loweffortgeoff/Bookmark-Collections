@@ -5,6 +5,7 @@ struct LibraryToolbar: ToolbarContent {
     @Binding var ascending: Bool
     let onAdd: () -> Void
     let onNewSnippet: () -> Void
+    let onAddImages: () -> Void
     let onNewCollection: () -> Void
     let onSettings: () -> Void
     let showEmptyRecentlyDeleted: Bool
@@ -44,6 +45,9 @@ struct LibraryToolbar: ToolbarContent {
             Menu {
                 Button("Add Link", systemImage: "link", action: onAdd)
                 Button("New Snippet", systemImage: "text.quote", action: onNewSnippet)
+                #if os(macOS)
+                Button("Add Images…", systemImage: "photo.badge.plus", action: onAddImages)
+                #endif
                 Button("New Collection", systemImage: "folder.badge.plus", action: onNewCollection)
                 Divider()
                 Button("Settings", systemImage: "gear", action: onSettings)

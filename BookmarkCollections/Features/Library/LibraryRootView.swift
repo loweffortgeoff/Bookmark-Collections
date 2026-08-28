@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct LibraryRootView: View {
     @Environment(\.modelContext) private var modelContext
@@ -20,6 +21,9 @@ struct LibraryRootView: View {
     @State private var deletingCollection: BookmarkCollection?
     @State private var errorMessage: String?
     @State private var commandBookmark: Bookmark?
+    #if os(macOS)
+    @State private var isAddingImages = false
+    #endif
 
     var body: some View {
         navigationView
@@ -69,6 +73,25 @@ struct LibraryRootView: View {
             .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
                 if bookmarkID == nil { commandBookmark = nil }
             }
+            #if os(macOS)
+            .fileImporter(
+                isPresented: $isAddingImages,
+                allowedContentTypes: [.image],
+                allowsMultipleSelection: true
+            ) { result in
+                switch result {
+                case let .success(urls):
+                    perform {
+                        let summary = try ImageImportService(context: modelContext).importImages(at: urls)
+                        if !summary.failedLines.isEmpty {
+                            errorMessage = "Could not add \(summary.failedLines.count) of \(urls.count) images."
+                        }
+                    }
+                case let .failure(error):
+                    errorMessage = error.localizedDescription
+                }
+            }
+            #endif
     }
 
     private var navigationView: some View {
@@ -106,6 +129,7 @@ struct LibraryRootView: View {
                     ascending: $ascending,
                     onAdd: { sheet = .addBookmark },
                     onNewSnippet: { sheet = .snippetEditor(nil) },
+                    onAddImages: addImages,
                     onNewCollection: { sheet = .newCollection },
                     onSettings: { sheet = .settings },
                     showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
@@ -191,6 +215,12 @@ struct LibraryRootView: View {
         )
     }
 
+    private func addImages() {
+        #if os(macOS)
+        isAddingImages = true
+        #endif
+    }
+
     private func perform(_ action: () throws -> Void) {
         do {
             try action()
@@ -231,6 +261,7 @@ struct LibraryRootView: View {
     private var commandActions: BookmarkCommandActions {
         BookmarkCommandActions(
             addLink: { sheet = .addBookmark },
+            addImages: addImages,
             focusSearch: { isSearchPresented = true },
             newCollection: { sheet = .newCollection },
             newSnippet: { sheet = .snippetEditor(nil) },
