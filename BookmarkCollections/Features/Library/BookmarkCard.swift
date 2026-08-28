@@ -128,11 +128,22 @@ struct BookmarkCard: View {
     private var accessibilityValue: String {
         [
             bookmark.domain,
+            snippetAccessibilityExcerpt,
             bookmark.collection?.name,
             bookmark.isFavorite ? "Favorite" : nil
         ]
         .compactMap { $0 }
         .joined(separator: ", ")
+    }
+
+    /// `SnippetExcerpt` is `accessibilityHidden` so the card reads as one
+    /// element — a snippet's body has to surface here instead, bounded so
+    /// VoiceOver doesn't announce an unbounded wall of text.
+    private var snippetAccessibilityExcerpt: String? {
+        guard bookmark.kind == .text else { return nil }
+        let trimmed = bookmark.snippetBody.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return trimmed.count > 200 ? "\(trimmed.prefix(200))…" : trimmed
     }
 
     private var cardIdentifier: String {

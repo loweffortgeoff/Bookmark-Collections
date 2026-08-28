@@ -90,10 +90,10 @@ struct SnippetEditorView: View {
                     bookmark,
                     title: title,
                     body: snippetBody,
-                    sourceURL: sourceURL
+                    sourceURL: sourceURL,
+                    collection: collection,
+                    isFavorite: isFavorite
                 )
-                try repository.move(bookmark, to: collection)
-                try repository.setFavorite(bookmark, to: isFavorite)
             } else {
                 try repository.saveSnippet(
                     title: title,

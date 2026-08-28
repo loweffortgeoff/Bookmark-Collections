@@ -10,10 +10,12 @@ enum SaveResult {
 extension BookmarkRepository {
     enum SnippetError: Swift.Error, LocalizedError, Equatable {
         case emptyBody
+        case notASnippet
 
         var errorDescription: String? {
             switch self {
             case .emptyBody: "A snippet needs some text."
+            case .notASnippet: "That bookmark is not a snippet."
             }
         }
     }
@@ -133,14 +135,19 @@ struct BookmarkRepository {
         _ bookmark: Bookmark,
         title: String,
         body: String,
-        sourceURL: String?
+        sourceURL: String?,
+        collection: BookmarkCollection?,
+        isFavorite: Bool
     ) throws {
+        guard bookmark.kind == .text else { throw SnippetError.notASnippet }
         let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedBody.isEmpty else { throw SnippetError.emptyBody }
 
         bookmark.snippetBody = trimmedBody
         bookmark.title = Self.deriveSnippetTitle(title, body: trimmedBody)
         Self.applySource(sourceURL, to: bookmark)
+        bookmark.collection = collection
+        bookmark.isFavorite = isFavorite
         bookmark.modifiedAt = Date()
         try context.save()
     }

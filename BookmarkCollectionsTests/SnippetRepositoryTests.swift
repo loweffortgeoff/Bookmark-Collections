@@ -109,7 +109,14 @@ final class SnippetRepositoryTests: XCTestCase {
         let repository = BookmarkRepository(context: container.mainContext)
         let snippet = try repository.saveSnippet(title: "Original", body: "First body")
 
-        try repository.updateSnippet(snippet, title: "", body: "Replacement body", sourceURL: nil)
+        try repository.updateSnippet(
+            snippet,
+            title: "",
+            body: "Replacement body",
+            sourceURL: nil,
+            collection: nil,
+            isFavorite: false
+        )
 
         XCTAssertEqual(snippet.snippetBody, "Replacement body")
         XCTAssertEqual(snippet.title, "Replacement body")
@@ -121,8 +128,43 @@ final class SnippetRepositoryTests: XCTestCase {
         let snippet = try repository.saveSnippet(body: "Original body")
 
         XCTAssertThrowsError(
-            try repository.updateSnippet(snippet, title: "", body: "  ", sourceURL: nil)
+            try repository.updateSnippet(
+                snippet,
+                title: "",
+                body: "  ",
+                sourceURL: nil,
+                collection: nil,
+                isFavorite: false
+            )
         )
         XCTAssertEqual(snippet.snippetBody, "Original body")
+    }
+
+    func testUpdateSnippetRejectsANonTextBookmarkAndLeavesItUnmodified() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let result = try repository.save(url: "https://example.com/article")
+        guard case let .created(link) = result else {
+            return XCTFail("Expected a newly created link bookmark")
+        }
+        let originalTitle = link.title
+        let originalURLString = link.urlString
+
+        XCTAssertThrowsError(
+            try repository.updateSnippet(
+                link,
+                title: "New Title",
+                body: "New body",
+                sourceURL: nil,
+                collection: nil,
+                isFavorite: true
+            )
+        ) { error in
+            XCTAssertEqual(error as? BookmarkRepository.SnippetError, .notASnippet)
+        }
+        XCTAssertEqual(link.title, originalTitle)
+        XCTAssertEqual(link.urlString, originalURLString)
+        XCTAssertEqual(link.snippetBody, "")
+        XCTAssertFalse(link.isFavorite)
     }
 }
