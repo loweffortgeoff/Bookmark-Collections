@@ -27,8 +27,8 @@ struct BackupDocument: Codable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(Int.self, forKey: .version)
         exportedAt = try container.decode(Date.self, forKey: .exportedAt)
-        collections = try container.decodeIfPresent([CollectionRecord].self, forKey: .collections) ?? []
-        bookmarks = try container.decodeIfPresent([BookmarkRecord].self, forKey: .bookmarks) ?? []
+        collections = try container.decode([CollectionRecord].self, forKey: .collections)
+        bookmarks = try container.decode([BookmarkRecord].self, forKey: .bookmarks)
         snippets = try container.decodeIfPresent([SnippetRecord].self, forKey: .snippets) ?? []
     }
 

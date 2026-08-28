@@ -347,6 +347,63 @@ final class ImportExportTests: XCTestCase {
         )
     }
 
+    func testImportRejectsABackupMissingBookmarksKey() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let truncated = """
+        {
+          "version": 1,
+          "exportedAt": "2026-08-01T09:00:00Z",
+          "collections": []
+        }
+        """
+        let service = LibraryImportService(context: container.mainContext)
+
+        XCTAssertThrowsError(try service.importJSON(Data(truncated.utf8))) { error in
+            XCTAssertTrue(error is DecodingError)
+        }
+    }
+
+    func testImportingASoftDeletedSnippetAgainRestoresIt() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let url = try XCTUnwrap(
+            Bundle(for: Self.self).url(forResource: "glaze-export", withExtension: "json")
+        )
+        let data = try Data(contentsOf: url)
+        let service = LibraryImportService(context: container.mainContext)
+        _ = try service.importJSON(data)
+
+        let repository = BookmarkRepository(context: container.mainContext)
+        let snippets = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+            .filter { $0.kind == .text }
+        let toDelete = try XCTUnwrap(snippets.first { $0.title == "A kept paragraph" })
+        try repository.softDelete(toDelete)
+
+        let summary = try service.importJSON(data)
+
+        XCTAssertEqual(summary.restoredCount, 1)
+        let restored = try XCTUnwrap(
+            try container.mainContext.fetch(FetchDescriptor<Bookmark>())
+                .first { $0.id == toDelete.id }
+        )
+        XCTAssertNil(restored.deletedAt)
+    }
+
+    func testImportedSnippetsArePersistedNotMerelyPending() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let url = try XCTUnwrap(
+            Bundle(for: Self.self).url(forResource: "glaze-export", withExtension: "json")
+        )
+        let data = try Data(contentsOf: url)
+        let service = LibraryImportService(context: container.mainContext)
+
+        _ = try service.importJSON(data)
+
+        let otherContext = ModelContext(container)
+        let snippets = try otherContext.fetch(FetchDescriptor<Bookmark>())
+            .filter { $0.kind == .text }
+        XCTAssertEqual(snippets.count, 2)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult

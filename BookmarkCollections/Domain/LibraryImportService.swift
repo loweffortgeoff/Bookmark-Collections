@@ -127,10 +127,14 @@ struct LibraryImportService {
 
             let existing = bookmarksByID[record.id]
 
-            if existing == nil {
-                summary.newCount += 1
+            if let existing {
+                if existing.deletedAt != nil && record.deletedAt == nil {
+                    summary.restoredCount += 1
+                } else {
+                    summary.duplicateCount += 1
+                }
             } else {
-                summary.duplicateCount += 1
+                summary.newCount += 1
             }
 
             let snippet = existing ?? Bookmark(
