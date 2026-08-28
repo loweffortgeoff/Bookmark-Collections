@@ -166,8 +166,14 @@ struct BookmarkRepository {
     }
 
     func reconcileDuplicates() throws {
+        // The empty check is not redundant with the kind filter. A build that
+        // predates a kind maps that unknown raw value to `.link`, so a synced
+        // snippet arrives here looking like a link. Every such record shares an
+        // empty normalized URL, so grouping would treat them all as duplicates
+        // of one another and hard-delete every one but the oldest. Only records
+        // with a real normalized URL can ever be link duplicates.
         let bookmarks = try context.fetch(FetchDescriptor<Bookmark>())
-            .filter { $0.kind == .link }
+            .filter { $0.kind == .link && !$0.normalizedURLString.isEmpty }
         let groups = Dictionary(grouping: bookmarks, by: \Bookmark.normalizedURLString)
         var changed = false
 

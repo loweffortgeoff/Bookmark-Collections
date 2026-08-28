@@ -167,4 +167,38 @@ final class SnippetRepositoryTests: XCTestCase {
         XCTAssertEqual(link.snippetBody, "")
         XCTAssertFalse(link.isFavorite)
     }
+
+    /// A build that predates the `text` kind reads a synced snippet as a
+    /// `.link` with an empty normalized URL. Reconciliation must leave those
+    /// records alone rather than treat them as duplicates of one another.
+    func testReconcileDuplicatesLeavesRecordsWithNoNormalizedURLAlone() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let context = container.mainContext
+        let first = Bookmark(
+            urlString: "",
+            normalizedURLString: "",
+            createdAt: Date(timeIntervalSince1970: 1_000)
+        )
+        let second = Bookmark(
+            urlString: "",
+            normalizedURLString: "",
+            createdAt: Date(timeIntervalSince1970: 2_000)
+        )
+        let third = Bookmark(
+            urlString: "",
+            normalizedURLString: "",
+            createdAt: Date(timeIntervalSince1970: 3_000)
+        )
+        context.insert(first)
+        context.insert(second)
+        context.insert(third)
+        try context.save()
+        XCTAssertEqual(first.kind, .link)
+
+        try BookmarkRepository(context: context).reconcileDuplicates()
+
+        let remaining = try context.fetch(FetchDescriptor<Bookmark>())
+        XCTAssertEqual(remaining.count, 3)
+        XCTAssertEqual(Set(remaining.map(\.id)), Set([first.id, second.id, third.id]))
+    }
 }
