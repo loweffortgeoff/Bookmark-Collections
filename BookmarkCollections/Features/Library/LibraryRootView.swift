@@ -89,7 +89,9 @@ struct LibraryRootView: View {
                 sort: sort,
                 ascending: ascending,
                 onAdd: { sheet = .addBookmark },
-                onEdit: { sheet = .editBookmark($0) },
+                onEdit: { bookmark in
+                    sheet = bookmark.kind == .text ? .snippetEditor(bookmark) : .editBookmark(bookmark)
+                },
                 onInfo: { sheet = .bookmarkInfo($0) },
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
@@ -103,6 +105,7 @@ struct LibraryRootView: View {
                     sort: $sort,
                     ascending: $ascending,
                     onAdd: { sheet = .addBookmark },
+                    onNewSnippet: { sheet = .snippetEditor(nil) },
                     onNewCollection: { sheet = .newCollection },
                     onSettings: { sheet = .settings },
                     showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
@@ -150,6 +153,8 @@ struct LibraryRootView: View {
             SettingsView()
         case let .shareBookmark(bookmark):
             ShareBookmarkSheet(bookmark: bookmark)
+        case let .snippetEditor(bookmark):
+            SnippetEditorView(bookmark: bookmark)
         }
     }
 
@@ -200,6 +205,11 @@ struct LibraryRootView: View {
             sheet = .imageViewer(bookmark)
             return
         }
+        if bookmark.kind == .text {
+            perform { try BookmarkRepository(context: modelContext).markOpened(bookmark) }
+            sheet = .snippetEditor(bookmark)
+            return
+        }
         guard let url = URL(string: bookmark.urlString), !bookmark.urlString.isEmpty else { return }
         perform { try BookmarkRepository(context: modelContext).markOpened(bookmark) }
         openURL(url)
@@ -223,6 +233,7 @@ struct LibraryRootView: View {
             addLink: { sheet = .addBookmark },
             focusSearch: { isSearchPresented = true },
             newCollection: { sheet = .newCollection },
+            newSnippet: { sheet = .snippetEditor(nil) },
             selectedBookmark: visibleCommandBookmark,
             canDeleteSelected: visibleCommandBookmark?.deletedAt == nil,
             openSelected: {
@@ -265,6 +276,7 @@ private enum SheetDestination: Identifiable {
     case editCollection(BookmarkCollection)
     case settings
     case shareBookmark(Bookmark)
+    case snippetEditor(Bookmark?)
 
     var id: String {
         switch self {
@@ -276,6 +288,7 @@ private enum SheetDestination: Identifiable {
         case let .editCollection(collection): "collection-\(collection.id)"
         case .settings: "settings"
         case let .shareBookmark(bookmark): "share-\(bookmark.id)"
+        case let .snippetEditor(bookmark): "snippet-\(bookmark?.id.uuidString ?? "new")"
         }
     }
 }

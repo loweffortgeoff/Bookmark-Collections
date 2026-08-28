@@ -85,6 +85,16 @@ struct BookmarkCollectionsApp: App {
         image.metadataState = .ready
         image.previewImageData = solidPreviewData(width: 640, height: 480, red: 0.85, green: 0.60, blue: 0.20)
         context.insert(image)
+        let snippet = Bookmark(
+            id: UUID(uuidString: "22222222-2222-2222-2222-222222222222")!,
+            urlString: "",
+            normalizedURLString: ""
+        )
+        snippet.kind = .text
+        snippet.title = "Seeded Snippet"
+        snippet.snippetBody = "The part of the article worth keeping, saved as text."
+        snippet.metadataState = .ready
+        context.insert(snippet)
         try? context.save()
     }
 

@@ -5,6 +5,7 @@ struct BookmarkCommandActions {
     let addLink: () -> Void
     let focusSearch: () -> Void
     let newCollection: () -> Void
+    let newSnippet: () -> Void
     let selectedBookmark: Bookmark?
     let canDeleteSelected: Bool
     let openSelected: () -> Void
@@ -32,6 +33,9 @@ struct BookmarkCommands: Commands {
         CommandGroup(replacing: .newItem) {
             Button("Add Link") { actions?.addLink() }
                 .keyboardShortcut("n", modifiers: .command)
+                .disabled(actions == nil)
+            Button("New Snippet") { actions?.newSnippet() }
+                .keyboardShortcut("t", modifiers: .command)
                 .disabled(actions == nil)
             Button("New Collection") { actions?.newCollection() }
                 .keyboardShortcut("n", modifiers: [.command, .shift])

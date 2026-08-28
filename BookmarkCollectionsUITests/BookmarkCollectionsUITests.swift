@@ -137,6 +137,16 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertFalse(identified("bookmark.seeded-active").exists)
     }
 
+    func testSnippetsDestinationShowsOnlyTextItems() {
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.snippets"))
+
+        let snippetCard = identified("bookmark.22222222-2222-2222-2222-222222222222")
+        XCTAssertTrue(snippetCard.waitForExistence(timeout: 5))
+        XCTAssertFalse(identified("bookmark.seeded-active").exists)
+        XCTAssertFalse(identified("bookmark.11111111-1111-1111-1111-111111111111").exists)
+    }
+
     func testAppLaunches() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]

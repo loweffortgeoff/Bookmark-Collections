@@ -4,6 +4,7 @@ struct LibraryToolbar: ToolbarContent {
     @Binding var sort: BookmarkSort
     @Binding var ascending: Bool
     let onAdd: () -> Void
+    let onNewSnippet: () -> Void
     let onNewCollection: () -> Void
     let onSettings: () -> Void
     let showEmptyRecentlyDeleted: Bool
@@ -42,6 +43,7 @@ struct LibraryToolbar: ToolbarContent {
 
             Menu {
                 Button("Add Link", systemImage: "link", action: onAdd)
+                Button("New Snippet", systemImage: "text.quote", action: onNewSnippet)
                 Button("New Collection", systemImage: "folder.badge.plus", action: onNewCollection)
                 Divider()
                 Button("Settings", systemImage: "gear", action: onSettings)

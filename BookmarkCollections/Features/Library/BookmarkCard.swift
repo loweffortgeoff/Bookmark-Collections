@@ -73,7 +73,9 @@ struct BookmarkCard: View {
 
     @ViewBuilder
     private var preview: some View {
-        if let previewImage {
+        if bookmark.kind == .text {
+            SnippetExcerpt(text: bookmark.snippetBody)
+        } else if let previewImage {
             previewImage
                 .resizable()
                 .scaledToFill()
@@ -105,9 +107,14 @@ struct BookmarkCard: View {
     }
 
     private var subtitle: String {
-        bookmark.kind == .image
-            ? bookmark.createdAt.formatted(date: .abbreviated, time: .omitted)
-            : bookmark.domain
+        switch bookmark.kind {
+        case .text:
+            bookmark.domain.isEmpty ? "Snippet" : bookmark.domain
+        case .image:
+            bookmark.createdAt.formatted(date: .abbreviated, time: .omitted)
+        case .link:
+            bookmark.domain
+        }
     }
 
     private var displayTitle: String {
