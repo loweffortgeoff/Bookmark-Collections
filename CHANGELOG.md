@@ -23,6 +23,9 @@ All notable project changes are recorded here.
 - Forgotten library destination: never-opened items older than 30 days.
 - Surprise me toolbar action: opens a random item from the current visible set.
 - Track `lastOpenedAt` when opening links or the image viewer; include it in JSON backups.
+- Text snippets: a third bookmark kind holding a piece of text with an optional source link, its own Snippets sidebar destination, a text-excerpt card, and Copy Text. Search matches snippet bodies.
+- JSON backup carries snippets under a top-level `snippets` key. A backup written before this change still restores.
+- `File ▸ Add Images…` on macOS adds images from a file picker rather than only through the Share menu.
 
 ### Changed — 2026-08-12
 
