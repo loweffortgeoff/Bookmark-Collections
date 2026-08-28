@@ -74,6 +74,10 @@ features.
 - Snippets appear under **All Items**, **Favorites**, their collection,
   **Forgotten**, and **Recently Deleted** on the same terms as any other
   bookmark. They do not appear under **Links** or **Images**.
+- Opening a snippet's editor calls `markOpened`, exactly as opening the image
+  viewer does today. Without this a snippet the user reads every week still
+  falls into **Forgotten** after 30 days and can never leave it. **Open Link**
+  on a snippet's source marks it opened too, on the same terms as any link.
 - Search matches the snippet body in addition to the existing title, domain,
   URL, and collection-name fields.
 
@@ -250,6 +254,10 @@ After the existing bookmark loop, add a snippet loop:
 - Resolve `collectionID` against the collections just imported; an unknown id
   becomes `nil`.
 - Set `kind = .text`, `metadataState = .ready`, `normalizedURLString = ""`.
+- Set `urlString` from `sourceUrl`, or `""` when it is absent. Derive `domain`
+  from that link's host, leaving it `""` when the link is absent or
+  unparseable. Glaze's exporter writes no `domain` for a snippet, so it is
+  always derived on import, never read.
 - Derive the title when the record's title is empty.
 
 Both sides already use `.iso8601` date strategies and Glaze writes ISO-8601
