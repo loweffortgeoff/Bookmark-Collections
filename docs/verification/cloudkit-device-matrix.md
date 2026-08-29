@@ -1,12 +1,12 @@
 # CloudKit and Release Verification Matrix
 
-Last updated: 2026-07-23 (America/New_York)
+Last updated: 2026-08-29 (America/New_York)
 
 ## Release status
 
 Automated implementation verification is complete. Most of the real-device same-account matrix below is confirmed across iPhone, iPad, and Mac, but Mac-originated create-bookmark propagation remains pending. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are also still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
 
-Mac-originated changes (collection rename, permanent delete, favorite toggle, move to collection) initially required backgrounding/relaunching a receiving iPhone or iPad to appear, while iPhone-originated changes always appeared live. Root cause: the app was never actually receiving CloudKit's silent push notifications, because the Push Notifications capability (and `aps-environment` entitlement) was never enabled on the target — `registerForRemoteNotifications()` alone is a no-op without it. The only sync trigger was the app becoming active. Fixed in `e2b1b24` by enabling the Push Notifications capability, adding `aps-environment: development` to the entitlements, and adding registration/receipt logging to `AppDelegate`. Retested on real devices post-fix: live sync now works without backgrounding. Note the entitlement is currently `development` — confirm it flips to `production` automatically at archive/TestFlight time (standard Xcode behavior via the distribution provisioning profile), and treat that as part of the CloudKit Production release gate below.
+Mac-originated changes (collection rename, permanent delete, favorite toggle, move to collection) initially required backgrounding/relaunching a receiving iPhone or iPad to appear, while iPhone-originated changes always appeared live. Root cause: the app was never actually receiving CloudKit's silent push notifications, because the Push Notifications capability (and `aps-environment` entitlement) was never enabled on the target — `registerForRemoteNotifications()` alone is a no-op without it. The only sync trigger was the app becoming active. Fixed in `e2b1b24` by enabling the Push Notifications capability, adding `aps-environment: development` to the entitlements, and adding registration/receipt logging to `AppDelegate`. Retested on real devices post-fix: live sync now works without backgrounding. Note the entitlement is currently `development` in source, but that's expected — the flip to `production` happens at export/upload, not in the local `.xcarchive`. Confirmed indirectly on 2026-08-29: iOS and Mac TestFlight builds were archived and uploaded, and a Mac-originated image change synced live to a second device that was never reopened/foregrounded — the same live-push behavior the `e2b1b24` fix produced in development, now reproduced on the Production TestFlight build. This closes the aps-environment open question from the CloudKit Production release gate below.
 
 ## Completed evidence
 
@@ -189,7 +189,7 @@ Use one iPhone, one iPad, and one Mac signed into the same development iCloud ac
 
 - [ ] Inspect the Development schema in CloudKit Console.
 - [ ] Verify only intended bookmark and collection record types/fields exist.
-- [ ] Deploy the schema to Production.
-- [ ] Archive and upload a TestFlight build.
-- [ ] With a fresh iCloud account, create the first bookmark and verify Production sync to a second device.
+- [x] Deploy the schema to Production. (Confirmed on device 2026-08-28: Production schema carries `lastOpenedAt` and `snippetBody`.)
+- [x] Archive and upload a TestFlight build. (2026-08-29: iOS and Mac archives both uploaded and finished processing; internal TestFlight is live.)
+- [ ] With a fresh iCloud account, create the first bookmark and verify Production sync to a second device. (2026-08-29 live-sync check used the existing dev account, not a fresh one — still open.)
 - [ ] Date and sign off this document before marking v1 release-ready.
