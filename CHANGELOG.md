@@ -38,6 +38,10 @@ All notable project changes are recorded here.
 - Fixed the macOS application menu name. It used `CFBundleName`, which still
   expanded to the internal `BookmarkCollections` target name despite the
   display name already being Tucked.
+- Fixed the multi-select bottom bar's action labels wrapping into a
+  letter-stack ("Fa/vo/rit/e") under space pressure — switched to icon-only
+  buttons, spread full-width with `Spacer()`s, with the surrounding
+  background removed (see DECISIONS.md, 2026-08-29).
 
 ### Fixed — 2026-07-25
 

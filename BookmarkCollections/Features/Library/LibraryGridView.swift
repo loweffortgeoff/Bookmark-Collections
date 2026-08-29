@@ -113,13 +113,15 @@ struct LibraryGridView: View {
     }
 
     private var selectionBar: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 0) {
             Button("Favorite", systemImage: "star") {
                 updateSelection { $0.isFavorite = true }
             }
+            Spacer()
             Button("Unfavorite", systemImage: "star.slash") {
                 updateSelection { $0.isFavorite = false }
             }
+            Spacer()
             Menu {
                 Button("Unfiled") { moveSelection(to: nil) }
                 ForEach(collections) { collection in
@@ -128,9 +130,11 @@ struct LibraryGridView: View {
             } label: {
                 Label("Move", systemImage: "folder")
             }
+            Spacer()
             ShareLink(items: selectedBookmarks.compactMap { URL(string: $0.urlString) }) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
+            Spacer()
             Button("Delete", systemImage: "trash", role: .destructive) {
                 let now = Date()
                 updateSelection {
@@ -140,10 +144,11 @@ struct LibraryGridView: View {
             }
             .accessibilityIdentifier("selection.delete")
         }
+        .labelStyle(.iconOnly)
+        .buttonStyle(.plain)
         .disabled(selection.isEmpty)
-        .padding(.horizontal, 18)
-        .padding(.vertical, 10)
-        .background(.bar)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 6)
     }
 
     private func toggleSelection(_ bookmark: Bookmark) {
