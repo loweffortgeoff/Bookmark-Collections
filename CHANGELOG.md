@@ -33,6 +33,12 @@ All notable project changes are recorded here.
   sidebar selection now follow the system (macOS system accent; iOS
   default blue).
 
+### Fixed — 2026-08-29
+
+- Fixed the macOS application menu name. It used `CFBundleName`, which still
+  expanded to the internal `BookmarkCollections` target name despite the
+  display name already being Tucked.
+
 ### Fixed — 2026-07-25
 
 - Fixed the Mac never actually installing. `scripts/install-all-devices.sh`
