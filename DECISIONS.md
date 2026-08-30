@@ -2,6 +2,18 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-08-30 (Distribution product uses the public app name)
+
+- **Decision:** Keep the Xcode target, bundle identifier, and Swift module as
+  `BookmarkCollections`, but set the app product name and executable to
+  `Tucked`. The archive now contains `Tucked.app`.
+- **Why:** macOS TestFlight and LaunchServices use the packaged application
+  name for the Applications/Launchpad entry. `CFBundleDisplayName` and
+  `CFBundleName` already said Tucked, but the package was still
+  `BookmarkCollections.app`.
+- **Alternative considered:** Change only another Info.plist name — rejected
+  because the archive path would remain `BookmarkCollections.app`.
+
 ## 2026-08-29 (Share storage failures are safe for people, detailed for debugging)
 
 - **Decision:** Keep the underlying shared-store error in local logs. Show a safe recovery message in the Share extension instead of raw storage details.

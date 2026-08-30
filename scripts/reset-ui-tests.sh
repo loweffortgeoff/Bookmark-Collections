@@ -13,7 +13,7 @@ cd "$(dirname "$0")/.."
 echo "Killing any leftover app/runner processes..."
 # Scoped to DerivedData so this never kills the /Applications copy installed by
 # scripts/install-mac.sh — same bundle id, but not a test artifact.
-pkill -f "DerivedData/.*BookmarkCollections.app/Contents/MacOS/BookmarkCollections" 2>/dev/null || true
+pkill -f "DerivedData/.*(BookmarkCollections|Tucked)\.app/Contents/MacOS/(BookmarkCollections|Tucked)" 2>/dev/null || true
 pkill -f "BookmarkCollectionsUITests-Runner" 2>/dev/null || true
 
 echo "Removing project DerivedData..."

@@ -45,6 +45,13 @@ All notable project changes are recorded here.
   buttons, spread full-width with `Spacer()`s, with the surrounding
   background removed (see DECISIONS.md, 2026-08-29).
 
+### Fixed — 2026-08-30
+
+- Renamed the packaged app product to `Tucked.app` while keeping the internal
+  target, bundle identifier, and Swift module names unchanged. macOS
+  TestFlight installs now use Tucked in Applications and Launchpad instead of
+  the internal `BookmarkCollections` name.
+
 ### Fixed — 2026-07-25
 
 - Fixed the Mac never actually installing. `scripts/install-all-devices.sh`
