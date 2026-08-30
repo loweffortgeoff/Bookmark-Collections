@@ -47,6 +47,9 @@ struct PaywallView: View {
                 }
             }
         }
+        #if os(macOS)
+        .frame(minWidth: 520, idealWidth: 520, minHeight: 560, idealHeight: 620)
+        #endif
         .accessibilityIdentifier("paywall")
     }
 }
