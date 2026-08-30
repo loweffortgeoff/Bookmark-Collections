@@ -45,6 +45,8 @@ struct BookmarkCollectionsApp: App {
         .commands {
             #if os(macOS)
             BookmarkCommands()
+            #else
+            EmptyCommands()
             #endif
         }
     }
