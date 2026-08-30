@@ -77,6 +77,7 @@
 				Domain/ImageDownsampler.swift,
 				Domain/MetadataProvider.swift,
 				Domain/NormalizedURL.swift,
+				Domain/ShareStorageDiagnostics.swift,
 			);
 			target = A1E000000000000000000030 /* BookmarkShareExtension */;
 		};

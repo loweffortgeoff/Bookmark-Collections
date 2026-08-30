@@ -5,6 +5,19 @@ import XCTest
 
 @MainActor
 final class ShareCaptureModelTests: XCTestCase {
+    func testShareStorageRecoveryMessageDoesNotExposeTechnicalError() {
+        let error = NSError(
+            domain: "Store",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Database at /private/var/mobile failed to open."]
+        )
+
+        let message = ShareStorageDiagnostics.recoveryMessage(for: error)
+
+        XCTAssertEqual(message, "Tucked could not open its shared library. Open Tucked, then try sharing again.")
+        XCTAssertFalse(message.contains("/private"))
+    }
+
     func testURLAttachmentLoadsImmediately() async throws {
         let model = try makeModel()
         let url = try XCTUnwrap(URL(string: "https://example.com/article"))

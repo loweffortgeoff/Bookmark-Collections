@@ -2,6 +2,12 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-08-29 (Share storage failures are safe for people, detailed for debugging)
+
+- **Decision:** Keep the underlying shared-store error in local logs. Show a safe recovery message in the Share extension instead of raw storage details.
+- **Why:** Raw SwiftData and CloudKit errors are not useful in a Share Sheet. The local log preserves the evidence needed to diagnose a real failure.
+- **Alternative considered:** Expose the technical error in the Share Sheet. Rejected because it leaks implementation details without telling the person what to do.
+
 ## 2026-07-18 (Local-first SwiftData with private CloudKit mirroring)
 
 - **Decision:** Every supported device keeps a complete local SwiftData library. User mutations save to SwiftData before metadata enrichment or CloudKit work begins. CloudKit mirrors the private store rather than acting as an online API dependency.

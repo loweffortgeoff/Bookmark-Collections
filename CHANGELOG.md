@@ -35,6 +35,8 @@ All notable project changes are recorded here.
 
 ### Fixed — 2026-08-29
 
+- Share-extension storage failures now show a clear recovery step and log the
+  underlying local error instead of showing an unexplained Retry action.
 - Fixed the macOS application menu name. It used `CFBundleName`, which still
   expanded to the internal `BookmarkCollections` target name despite the
   display name already being Tucked.
