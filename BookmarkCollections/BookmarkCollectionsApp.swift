@@ -20,6 +20,7 @@ struct BookmarkCollectionsApp: App {
 
     init() {
         let runtime = AppRuntimeConfiguration()
+        BookmarkLimit.freeBookmarkLimitOverride = runtime.freeBookmarkLimitOverride
         container = try! ModelContainerFactory.make(
             inMemory: runtime.usesInMemoryStore,
             cloudKit: runtime.usesCloudKit
@@ -156,6 +157,7 @@ struct AppRuntimeConfiguration {
     let usesInMemoryStore: Bool
     let usesCloudKit: Bool
     let isUITesting: Bool
+    let freeBookmarkLimitOverride: Int?
 
     init(
         arguments: [String] = ProcessInfo.processInfo.arguments,
@@ -164,5 +166,17 @@ struct AppRuntimeConfiguration {
         isUITesting = arguments.contains("-ui-testing")
         usesInMemoryStore = environment["XCTestConfigurationFilePath"] != nil || isUITesting
         usesCloudKit = !usesInMemoryStore
+        freeBookmarkLimitOverride = Self.parseFreeLimit(from: arguments)
+    }
+
+    /// Reads `-free-limit N`. Ignores a missing, non-numeric, or negative value.
+    private static func parseFreeLimit(from arguments: [String]) -> Int? {
+        guard let flag = arguments.firstIndex(of: "-free-limit") else { return nil }
+        let valueIndex = arguments.index(after: flag)
+        guard valueIndex < arguments.endIndex,
+              let value = Int(arguments[valueIndex]),
+              value >= 0
+        else { return nil }
+        return value
     }
 }

@@ -41,6 +41,31 @@ final class ModelContainerTests: XCTestCase {
         XCTAssertFalse(configuration.usesCloudKit)
     }
 
+    func testRuntimeConfigurationReadsTheFreeLimitLaunchArgument() {
+        let configuration = AppRuntimeConfiguration(
+            arguments: ["Tucked", "-free-limit", "1"],
+            environment: [:]
+        )
+
+        XCTAssertEqual(configuration.freeBookmarkLimitOverride, 1)
+    }
+
+    func testRuntimeConfigurationIgnoresAMalformedFreeLimitArgument() {
+        for arguments in [["-free-limit"], ["-free-limit", "lots"], ["-free-limit", "-3"]] {
+            let configuration = AppRuntimeConfiguration(arguments: arguments, environment: [:])
+            XCTAssertNil(
+                configuration.freeBookmarkLimitOverride,
+                "Expected \(arguments) to be ignored."
+            )
+        }
+    }
+
+    func testRuntimeConfigurationHasNoFreeLimitOverrideByDefault() {
+        let configuration = AppRuntimeConfiguration(arguments: [], environment: [:])
+
+        XCTAssertNil(configuration.freeBookmarkLimitOverride)
+    }
+
     func testRuntimeConfigurationUsesTheSharedCloudStoreNormally() {
         let configuration = AppRuntimeConfiguration(arguments: [], environment: [:])
 

@@ -1,7 +1,19 @@
 import Foundation
 
 enum BookmarkLimit {
-    static let freeBookmarkLimit = 10
+    static let defaultFreeBookmarkLimit = 10
+
+    /// Set from the `-free-limit N` launch argument so the paywall can be reached without
+    /// saving eleven bookmarks by hand. Nil in every normal launch.
+    ///
+    /// `nonisolated(unsafe)` because this is written once in `BookmarkCollectionsApp.init` before any
+    /// concurrent work starts, and only read afterwards. Making it `@MainActor` would push
+    /// isolation onto `canCreate` and every caller, including the share extension.
+    nonisolated(unsafe) static var freeBookmarkLimitOverride: Int?
+
+    static var freeBookmarkLimit: Int {
+        freeBookmarkLimitOverride ?? defaultFreeBookmarkLimit
+    }
 
     static func canCreate(activeBookmarkCount: Int, isUnlocked: Bool) -> Bool {
         isUnlocked || activeBookmarkCount < freeBookmarkLimit

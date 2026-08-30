@@ -4,6 +4,25 @@ import XCTest
 
 @MainActor
 final class BookmarkLimitTests: XCTestCase {
+    override func tearDown() {
+        BookmarkLimit.freeBookmarkLimitOverride = nil
+        super.tearDown()
+    }
+
+    func testFreeLimitOverrideLowersTheGate() {
+        BookmarkLimit.freeBookmarkLimitOverride = 1
+
+        XCTAssertEqual(BookmarkLimit.freeBookmarkLimit, 1)
+        XCTAssertTrue(BookmarkLimit.canCreate(activeBookmarkCount: 0, isUnlocked: false))
+        XCTAssertFalse(BookmarkLimit.canCreate(activeBookmarkCount: 1, isUnlocked: false))
+    }
+
+    func testFreeLimitFallsBackToTenWithoutAnOverride() {
+        BookmarkLimit.freeBookmarkLimitOverride = nil
+
+        XCTAssertEqual(BookmarkLimit.freeBookmarkLimit, BookmarkLimit.defaultFreeBookmarkLimit)
+    }
+
     func testFreeTierAllowsTenActiveBookmarks() {
         XCTAssertTrue(BookmarkLimit.canCreate(activeBookmarkCount: 10, isUnlocked: true))
         XCTAssertTrue(BookmarkLimit.canCreate(activeBookmarkCount: 9, isUnlocked: false))
