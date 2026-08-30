@@ -2,6 +2,9 @@
 
 ## Next
 
+- After the next macOS TestFlight upload, verify that the Applications and
+  Launchpad entries show `Tucked`; the archive product-name fix landed on
+  2026-08-30.
 - Reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
 - The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.

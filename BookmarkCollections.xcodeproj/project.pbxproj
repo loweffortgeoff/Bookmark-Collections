@@ -54,7 +54,7 @@
 /* Begin PBXFileReference section */
 		404742BB54C83E8B300ABCBA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		759D749C74AFDC52A1E9FA93 /* BookmarkCollectionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		86E66F242DB106C4B82B72FA /* BookmarkCollections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookmarkCollections.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86E66F242DB106C4B82B72FA /* Tucked.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tucked.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1E000000000000000000005 /* BookmarkShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookmarkShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A730ACF3F1742FEFDD86791C /* BookmarkCollectionsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookmarkCollectionsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -194,7 +194,7 @@
 		E79618C129729AC2A70CFD5E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				86E66F242DB106C4B82B72FA /* BookmarkCollections.app */,
+				86E66F242DB106C4B82B72FA /* Tucked.app */,
 				759D749C74AFDC52A1E9FA93 /* BookmarkCollectionsTests.xctest */,
 				A730ACF3F1742FEFDD86791C /* BookmarkCollectionsUITests.xctest */,
 				A1E000000000000000000005 /* BookmarkShareExtension.appex */,
@@ -223,8 +223,8 @@
 				AA10000000000000000000A1 /* BookmarkCollections */,
 			);
 			name = BookmarkCollections;
-			productName = BookmarkCollections;
-			productReference = 86E66F242DB106C4B82B72FA /* BookmarkCollections.app */;
+			productName = Tucked;
+			productReference = 86E66F242DB106C4B82B72FA /* Tucked.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6E01A790BBA2AFE30D13A486 /* BookmarkCollectionsTests */ = {
@@ -428,7 +428,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BookmarkCollections.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BookmarkCollections";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tucked.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tucked";
 			};
 			name = Debug;
 		};
@@ -447,7 +447,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BookmarkCollections.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BookmarkCollections";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tucked.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tucked";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -486,7 +486,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.loweffortapps.BookmarkCollections;
-				PRODUCT_NAME = BookmarkCollections;
+				PRODUCT_MODULE_NAME = BookmarkCollections;
+				PRODUCT_NAME = Tucked;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -753,7 +754,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.loweffortapps.BookmarkCollections;
-				PRODUCT_NAME = BookmarkCollections;
+				PRODUCT_MODULE_NAME = BookmarkCollections;
+				PRODUCT_NAME = Tucked;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

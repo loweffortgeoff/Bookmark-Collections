@@ -13,6 +13,7 @@ cd "$PROJECT_DIR"
 
 PROJECT="BookmarkCollections.xcodeproj"
 SCHEME="BookmarkCollections"
+APP_NAME="Tucked"
 BUNDLE_ID="com.loweffortapps.BookmarkCollections"
 CONFIGURATION="${CONFIGURATION:-Debug}"
 DERIVED_DATA_PATH="build/DerivedData"
@@ -45,7 +46,7 @@ if xcodebuild build \
     -destination 'generic/platform=iOS' \
     -allowProvisioningUpdates \
     -derivedDataPath "$DERIVED_DATA_PATH"; then
-  IOS_APP_PATH="$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION-iphoneos/$SCHEME.app"
+  IOS_APP_PATH="$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION-iphoneos/$APP_NAME.app"
 
   install_and_launch() {
     local device_name="$1"

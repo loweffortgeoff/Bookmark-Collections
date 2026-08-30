@@ -19,14 +19,15 @@ cd "$PROJECT_DIR"
 
 PROJECT="BookmarkCollections.xcodeproj"
 SCHEME="BookmarkCollections"
+APP_NAME="Tucked"
 BUNDLE_ID="com.loweffortapps.BookmarkCollections"
 CONFIGURATION="${CONFIGURATION:-Debug}"
 DERIVED_DATA_PATH="build/DerivedData"
 
-# Installed as Tucked.app, not BookmarkCollections.app. Finder and Spotlight
+# Installed as Tucked.app. Finder and Spotlight
 # match apps on the bundle's file name, not CFBundleDisplayName — installing
 # under the build product's name means searching "Tucked" finds nothing.
-INSTALL_PATH="/Applications/Tucked.app"
+INSTALL_PATH="/Applications/$APP_NAME.app"
 
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 
@@ -41,7 +42,7 @@ if ! xcodebuild build \
   exit 1
 fi
 
-BUILT_APP="$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/$SCHEME.app"
+BUILT_APP="$DERIVED_DATA_PATH/Build/Products/$CONFIGURATION/$APP_NAME.app"
 if [ ! -d "$BUILT_APP" ]; then
   echo "build succeeded but $BUILT_APP is missing"
   exit 1
@@ -49,7 +50,7 @@ fi
 
 echo "== Quitting any running copy =="
 osascript -e "tell application id \"$BUNDLE_ID\" to quit" 2>/dev/null
-pkill -f "^$INSTALL_PATH/Contents/MacOS/$SCHEME$" 2>/dev/null
+pkill -f "^$INSTALL_PATH/Contents/MacOS/$APP_NAME$" 2>/dev/null
 
 echo "== Installing to $INSTALL_PATH =="
 rm -rf "$INSTALL_PATH"
@@ -64,7 +65,7 @@ fi
 # the copy that actually exists.
 echo "== Refreshing LaunchServices =="
 "$LSREGISTER" -dump 2>/dev/null \
-  | grep -E "^[[:space:]]*path:.*$SCHEME.*\.app " \
+  | grep -E "^[[:space:]]*path:.*($SCHEME|$APP_NAME).*\.app " \
   | sed -E 's/^[[:space:]]*path:[[:space:]]*(.*) \(0x[0-9a-f]+\)$/\1/' \
   | sort -u \
   | while IFS= read -r stale; do

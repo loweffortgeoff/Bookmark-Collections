@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "317F4694532C67B8968B4636"
-               BuildableName = "BookmarkCollections.app"
+               BuildableName = "Tucked.app"
                BlueprintName = "BookmarkCollections"
                ReferencedContainer = "container:BookmarkCollections.xcodeproj">
             </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "317F4694532C67B8968B4636"
-            BuildableName = "BookmarkCollections.app"
+            BuildableName = "Tucked.app"
             BlueprintName = "BookmarkCollections"
             ReferencedContainer = "container:BookmarkCollections.xcodeproj">
          </BuildableReference>
