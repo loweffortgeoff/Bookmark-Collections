@@ -1,11 +1,17 @@
 import SwiftData
 import SwiftUI
+import OSLog
 
 #if os(iOS)
 import UIKit
 #elseif os(macOS)
 import AppKit
 #endif
+
+private let shareStorageLogger = Logger(
+    subsystem: "com.loweffortapps.BookmarkCollections",
+    category: "ShareStorage"
+)
 
 #if os(iOS)
 @MainActor
@@ -38,8 +44,10 @@ final class ShareViewController: UIViewController {
                 )
             )
         } catch {
+            shareStorageLogger.error("Could not open shared storage: \(error.localizedDescription, privacy: .public)")
             host(
                 ShareStoreFailureView(
+                    message: ShareStorageDiagnostics.recoveryMessage(for: error),
                     onRetry: { [weak self] in self?.configureCapture() },
                     onCancel: { [weak self] in self?.cancelRequest() }
                 )
@@ -124,8 +132,10 @@ final class ShareViewController: NSViewController {
                 )
             )
         } catch {
+            shareStorageLogger.error("Could not open shared storage: \(error.localizedDescription, privacy: .public)")
             host(
                 ShareStoreFailureView(
+                    message: ShareStorageDiagnostics.recoveryMessage(for: error),
                     onRetry: { [weak self] in self?.configureCapture() },
                     onCancel: { [weak self] in self?.cancelRequest() }
                 )
@@ -174,6 +184,7 @@ final class ShareViewController: NSViewController {
 #endif
 
 private struct ShareStoreFailureView: View {
+    let message: String
     let onRetry: () -> Void
     let onCancel: () -> Void
 
@@ -182,7 +193,7 @@ private struct ShareStoreFailureView: View {
             ContentUnavailableView {
                 Label("Couldn’t Open Bookmark Storage", systemImage: "externaldrive.badge.exclamationmark")
             } description: {
-                Text("The bookmark was not saved. Check storage access and try again.")
+                Text(message)
             } actions: {
                 Button("Retry", action: onRetry)
                     .buttonStyle(.borderedProminent)

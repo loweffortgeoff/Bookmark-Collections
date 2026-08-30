@@ -2,6 +2,8 @@
 
 ## Next
 
+- Reproduce the iOS Share-extension storage failure and inspect its new
+  `ShareStorage` log before changing storage or entitlement configuration.
 - The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.
   Merged `main` is byte-identical to the tree whose UI suite passed on
   2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
