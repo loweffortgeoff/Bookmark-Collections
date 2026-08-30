@@ -12,6 +12,12 @@
       <BuildableProductRunnable runnableDebuggingMode="0">
          <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="317F4694532C67B8968B4636" BuildableName="BookmarkCollections.app" BlueprintName="BookmarkCollections" ReferencedContainer="container:BookmarkCollections.xcodeproj"/>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference identifier = "../../../../Tucked.storekit">
+      </StoreKitConfigurationFileReference>
+      <CommandLineArguments>
+         <CommandLineArgument argument = "-free-limit 1" isEnabled = "NO">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction buildConfiguration="Beta" shouldUseLaunchSchemeArgsEnv="YES" savedToolIdentifier="" useCustomWorkingDirectory="NO" debugDocumentVersioning="YES"/>
    <AnalyzeAction buildConfiguration="Debug"/>
