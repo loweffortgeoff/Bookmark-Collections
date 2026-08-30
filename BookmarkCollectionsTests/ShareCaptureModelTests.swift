@@ -191,6 +191,22 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertTrue(message.localizedCaseInsensitiveContains("save"))
     }
 
+    func testLimitReachedTellsThePersonToOpenTucked() async throws {
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { _, _, _ in throw BookmarkRepository.LimitError.limitReached },
+            onComplete: {}
+        )
+        await model.load(from: [NSItemProvider(object: NSURL(string: "https://example.com/limit")!)])
+
+        model.save(collectionID: nil, favorite: false)
+
+        guard case let .failed(message) = model.state else {
+            return XCTFail("Expected the free-tier limit to remain visible")
+        }
+        XCTAssertTrue(message.localizedCaseInsensitiveContains("open tucked"))
+    }
+
     func testDuplicateSaveUpdatesTheExistingBookmark() async throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let repository = BookmarkRepository(context: container.mainContext)

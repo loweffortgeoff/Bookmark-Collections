@@ -32,6 +32,8 @@ All notable project changes are recorded here.
 - Text snippets: a third bookmark kind holding a piece of text with an optional source link, its own Snippets sidebar destination, a text-excerpt card, and Copy Text. Search matches snippet bodies.
 - JSON backup carries snippets under a top-level `snippets` key. A backup written before this change still restores.
 - `File ▸ Add Images…` on macOS adds images from a file picker rather than only through the Share menu.
+- Tucked Pro paywall: save 10 active bookmarks free, then unlock unlimited links, images, and snippets with a $7.99 lifetime non-consumable purchase. Existing bookmarks, export, and deletion remain free.
+- `Tucked Beta` bypasses monetization for ordinary TestFlight builds. `Tucked Release` enables the paywall for release and sandbox-purchase testing.
 
 #### Changed — 2026-08-12
 

@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    let onPaywall: () -> Void
 
     @StateObject private var syncHealth = SyncHealthMonitor()
     @State private var isImporting = false
@@ -99,7 +100,11 @@ struct SettingsView: View {
                 importSummary = try LibraryImportService(context: modelContext).importText(text)
             }
         } catch {
-            errorMessage = error.localizedDescription
+            if error as? BookmarkRepository.LimitError == .limitReached {
+                onPaywall()
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 

@@ -73,6 +73,7 @@
 				Data/Bookmark.swift,
 				Data/BookmarkCollection.swift,
 				Data/ModelContainerFactory.swift,
+				Domain/BookmarkLimit.swift,
 				Domain/BookmarkRepository.swift,
 				Domain/ImageDownsampler.swift,
 				Domain/MetadataProvider.swift,
@@ -485,6 +486,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
+				PAYWALL_ENABLED = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.loweffortapps.BookmarkCollections;
 				PRODUCT_MODULE_NAME = BookmarkCollections;
 				PRODUCT_NAME = Tucked;
@@ -496,6 +498,35 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		B0A000000000000000000001 /* Beta */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = BookmarkCollections/BookmarkCollections.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
+				ENABLE_FILE_ACCESS_PICTURE_FOLDER = readwrite;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BookmarkCollections/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PAYWALL_ENABLED = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.loweffortapps.BookmarkCollections;
+				PRODUCT_NAME = BookmarkCollections;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Beta;
 		};
 		A1E000000000000000000031 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -516,6 +547,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
+				PAYWALL_ENABLED = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.loweffortapps.BookmarkCollections.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -559,6 +591,33 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		B0A000000000000000000002 /* Beta */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = BookmarkShareExtension/BookmarkShareExtension.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = BookmarkShareExtension/BookmarkShareExtensionMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BookmarkShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PAYWALL_ENABLED = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.loweffortapps.BookmarkCollections.ShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Beta;
 		};
 		A97220B92C27135D1A465257 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -720,6 +779,14 @@
 			};
 			name = Release;
 		};
+		B0A000000000000000000003 /* Beta */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 2R5TZD4XAH;
+				PAYWALL_ENABLED = NO;
+			};
+			name = Beta;
+		};
 		E86FF17494F4188F4527F479 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -790,6 +857,7 @@
 			buildConfigurations = (
 				A1E000000000000000000032 /* Release */,
 				A1E000000000000000000031 /* Debug */,
+				B0A000000000000000000002 /* Beta */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -799,6 +867,7 @@
 			buildConfigurations = (
 				9838A13347E11C65B28063CB /* Release */,
 				E86FF17494F4188F4527F479 /* Debug */,
+				B0A000000000000000000001 /* Beta */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -808,6 +877,7 @@
 			buildConfigurations = (
 				DAB47BC6C2C7165AAFF1916D /* Debug */,
 				E14EEAAD5D8A7F1E76CC18A1 /* Release */,
+				B0A000000000000000000003 /* Beta */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

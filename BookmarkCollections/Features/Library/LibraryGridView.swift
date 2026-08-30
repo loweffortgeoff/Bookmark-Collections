@@ -16,6 +16,7 @@ struct LibraryGridView: View {
     let onOpen: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
+    let onLimitReached: () -> Void
     let onCommandSelection: (Bookmark) -> Void
 
     @State private var isSelecting = false
@@ -93,7 +94,11 @@ struct LibraryGridView: View {
                                 }
                                 return true
                             } catch {
-                                onError(error.localizedDescription)
+                                if error as? BookmarkRepository.LimitError == .limitReached {
+                                    onLimitReached()
+                                } else {
+                                    onError(error.localizedDescription)
+                                }
                                 return false
                             }
                         }

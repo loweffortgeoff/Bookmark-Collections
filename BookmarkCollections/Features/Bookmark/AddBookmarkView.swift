@@ -6,6 +6,8 @@ struct AddBookmarkView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \BookmarkCollection.sortPosition) private var collections: [BookmarkCollection]
 
+    let onPaywall: () -> Void
+
     @State private var urlString = ""
     @State private var selectedCollectionID: UUID?
     @State private var isFavorite = false
@@ -51,7 +53,11 @@ struct AddBookmarkView: View {
             )
             dismiss()
         } catch {
-            errorMessage = error.localizedDescription
+            if error as? BookmarkRepository.LimitError == .limitReached {
+                onPaywall()
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 }

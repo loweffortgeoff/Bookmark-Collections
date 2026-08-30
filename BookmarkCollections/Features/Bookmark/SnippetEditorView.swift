@@ -10,6 +10,7 @@ struct SnippetEditorView: View {
     @Query(sort: \BookmarkCollection.sortPosition) private var collections: [BookmarkCollection]
 
     let bookmark: Bookmark?
+    let onPaywall: () -> Void
 
     @State private var title = ""
     @State private var snippetBody = ""
@@ -121,7 +122,11 @@ struct SnippetEditorView: View {
             }
             dismiss()
         } catch {
-            errorMessage = error.localizedDescription
+            if error as? BookmarkRepository.LimitError == .limitReached {
+                onPaywall()
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ struct RecentlyDeletedView: View {
             onOpen: { _ in },
             onPermanentDelete: onPermanentDelete,
             onError: onError,
+            onLimitReached: {},
             onCommandSelection: { _ in }
         )
     }

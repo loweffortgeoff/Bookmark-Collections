@@ -119,6 +119,7 @@ struct LibraryRootView: View {
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
+                onLimitReached: { sheet = .paywall },
                 onCommandSelection: { commandBookmark = $0 }
             )
             .navigationTitle(navigationTitle)
@@ -162,7 +163,7 @@ struct LibraryRootView: View {
     private func sheetContent(for destination: SheetDestination) -> some View {
         switch destination {
         case .addBookmark:
-            AddBookmarkView()
+            AddBookmarkView(onPaywall: { sheet = .paywall })
         case let .editBookmark(bookmark):
             BookmarkEditorView(bookmark: bookmark)
         case let .bookmarkInfo(bookmark):
@@ -174,11 +175,13 @@ struct LibraryRootView: View {
         case let .editCollection(collection):
             CollectionEditor(collection: collection)
         case .settings:
-            SettingsView()
+            SettingsView(onPaywall: { sheet = .paywall })
         case let .shareBookmark(bookmark):
             ShareBookmarkSheet(bookmark: bookmark)
         case let .snippetEditor(bookmark):
-            SnippetEditorView(bookmark: bookmark)
+            SnippetEditorView(bookmark: bookmark, onPaywall: { sheet = .paywall })
+        case .paywall:
+            PaywallView()
         }
     }
 
@@ -225,7 +228,11 @@ struct LibraryRootView: View {
         do {
             try action()
         } catch {
-            errorMessage = error.localizedDescription
+            if error as? BookmarkRepository.LimitError == .limitReached {
+                sheet = .paywall
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -313,6 +320,7 @@ private enum SheetDestination: Identifiable {
     case settings
     case shareBookmark(Bookmark)
     case snippetEditor(Bookmark?)
+    case paywall
 
     var id: String {
         switch self {
@@ -325,6 +333,7 @@ private enum SheetDestination: Identifiable {
         case .settings: "settings"
         case let .shareBookmark(bookmark): "share-\(bookmark.id)"
         case let .snippetEditor(bookmark): "snippet-\(bookmark?.id.uuidString ?? "new")"
+        case .paywall: "paywall"
         }
     }
 }

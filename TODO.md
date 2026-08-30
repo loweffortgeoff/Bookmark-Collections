@@ -64,7 +64,6 @@ These items were explicitly excluded from v1 and are not release blockers or com
 - Browser extensions.
 - Custom accounts or non-CloudKit sync servers.
 - Analytics or telemetry SDKs.
-- StoreKit monetization.
 
 ## Done
 

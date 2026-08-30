@@ -8,6 +8,14 @@ enum SaveResult {
 }
 
 extension BookmarkRepository {
+    enum LimitError: Swift.Error, LocalizedError, Equatable {
+        case limitReached
+
+        var errorDescription: String? {
+            "You can save up to 10 bookmarks free. Unlock Tucked Pro to save more."
+        }
+    }
+
     enum SnippetError: Swift.Error, LocalizedError, Equatable {
         case emptyBody
         case notASnippet
@@ -24,6 +32,18 @@ extension BookmarkRepository {
 @MainActor
 struct BookmarkRepository {
     let context: ModelContext
+    let isUnlocked: Bool
+    let paywallEnabled: Bool
+
+    init(
+        context: ModelContext,
+        isUnlocked: Bool = PurchaseAccess.isUnlocked,
+        paywallEnabled: Bool = PaywallConfiguration.isEnabled
+    ) {
+        self.context = context
+        self.isUnlocked = isUnlocked
+        self.paywallEnabled = paywallEnabled
+    }
 
     func save(
         url value: String,
@@ -48,12 +68,14 @@ struct BookmarkRepository {
             existing.modifiedAt = now
             result = .updated(existing)
         } else if let deleted = matches.first {
+            try assertCanCreate()
             deleted.deletedAt = nil
             deleted.collection = collection
             deleted.isFavorite = favorite
             deleted.modifiedAt = now
             result = .restored(deleted)
         } else {
+            try assertCanCreate()
             let bookmark = Bookmark(
                 urlString: value,
                 normalizedURLString: normalizedString,
@@ -78,6 +100,7 @@ struct BookmarkRepository {
         collection: BookmarkCollection? = nil,
         favorite: Bool = false
     ) throws -> Bookmark {
+        try assertCanCreate()
         let now = Date()
         let bookmark = Bookmark(urlString: "", normalizedURLString: "", createdAt: now)
         bookmark.kind = .image
@@ -112,6 +135,7 @@ struct BookmarkRepository {
         collection: BookmarkCollection? = nil,
         favorite: Bool = false
     ) throws -> Bookmark {
+        try assertCanCreate()
         let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedBody.isEmpty else { throw SnippetError.emptyBody }
 
@@ -234,6 +258,7 @@ struct BookmarkRepository {
     }
 
     func restore(_ bookmark: Bookmark) throws {
+        try assertCanCreate()
         bookmark.deletedAt = nil
         bookmark.modifiedAt = Date()
         try context.save()
@@ -259,5 +284,14 @@ struct BookmarkRepository {
             try context.save()
         }
         return expired.count
+    }
+
+    private func assertCanCreate() throws {
+        guard paywallEnabled else { return }
+        let bookmarks = try context.fetch(FetchDescriptor<Bookmark>())
+        let activeBookmarkCount = bookmarks.lazy.filter { $0.deletedAt == nil }.count
+        guard BookmarkLimit.canCreate(activeBookmarkCount: activeBookmarkCount, isUnlocked: isUnlocked) else {
+            throw LimitError.limitReached
+        }
     }
 }

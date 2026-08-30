@@ -142,6 +142,8 @@ final class ShareCaptureModel: ObservableObject {
             _ = try saveAction(capture, collectionID, favorite)
             state = .saved
             onComplete()
+        } catch let error as BookmarkRepository.LimitError where error == .limitReached {
+            state = .failed("You’ve saved 10 bookmarks free. Open Tucked to unlock Tucked Pro.")
         } catch {
             state = .failed("The bookmark wasn’t saved. Check storage access and try again.")
         }

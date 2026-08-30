@@ -39,6 +39,8 @@ struct LibraryImportService {
                 case .restored:
                     summary.restoredCount += 1
                 }
+            } catch let error as BookmarkRepository.LimitError {
+                throw error
             } catch {
                 summary.failedLines.append(line)
             }
@@ -91,6 +93,7 @@ struct LibraryImportService {
         }
 
         let existingBookmarks = try context.fetch(FetchDescriptor<Bookmark>())
+        try assertCanImport(document, existingBookmarks: existingBookmarks)
         var bookmarksByID = Dictionary(uniqueKeysWithValues: existingBookmarks.map { ($0.id, $0) })
         var bookmarksByNormalizedURL = Dictionary(
             grouping: existingBookmarks,
@@ -204,5 +207,34 @@ struct LibraryImportService {
         try BookmarkRepository(context: context).reconcileDuplicates()
         return summary
     }
-}
 
+    private func assertCanImport(_ document: BackupDocument, existingBookmarks: [Bookmark]) throws {
+        guard PaywallConfiguration.isEnabled, !PurchaseAccess.isUnlocked else { return }
+        let activeBookmarkCount = existingBookmarks.lazy.filter { $0.deletedAt == nil }.count
+        let existingBookmarksByID = Dictionary(uniqueKeysWithValues: existingBookmarks.map { ($0.id, $0) })
+
+        let restoredOrNewLinks = document.bookmarks.reduce(into: 0) { count, record in
+            guard record.deletedAt == nil else { return }
+            guard let existing = existingBookmarksByID[record.id] else {
+                count += 1
+                return
+            }
+            if existing.deletedAt != nil { count += 1 }
+        }
+        let restoredOrNewSnippets = document.snippets.reduce(into: 0) { count, record in
+            guard !record.body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  record.deletedAt == nil else { return }
+            guard let existing = existingBookmarksByID[record.id] else {
+                count += 1
+                return
+            }
+            if existing.deletedAt != nil { count += 1 }
+        }
+        guard BookmarkLimit.canCreate(
+            activeBookmarkCount: activeBookmarkCount + restoredOrNewLinks + restoredOrNewSnippets - 1,
+            isUnlocked: false
+        ) else {
+            throw BookmarkRepository.LimitError.limitReached
+        }
+    }
+}
