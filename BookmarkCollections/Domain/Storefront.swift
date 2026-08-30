@@ -34,10 +34,10 @@ final class Storefront {
             product = try await Product.products(for: [Self.lifetimeProductID]).first
             await refreshEntitlement()
             if product == nil {
-                errorMessage = "Tucked Pro is not available right now."
+                errorMessage = "Tucked for Life is not available right now."
             }
         } catch {
-            errorMessage = "Tucked Pro is not available right now."
+            errorMessage = "Tucked for Life is not available right now."
         }
     }
 
@@ -71,7 +71,7 @@ final class Storefront {
             try await AppStore.sync()
             await refreshEntitlement()
             if !isUnlocked {
-                errorMessage = "No Tucked Pro purchase was found for this Apple Account."
+                errorMessage = "No Tucked for Life purchase was found for this Apple Account."
             }
         } catch {
             errorMessage = error.localizedDescription

@@ -12,7 +12,7 @@ extension BookmarkRepository {
         case limitReached
 
         var errorDescription: String? {
-            "You can save up to 10 bookmarks free. Unlock Tucked Pro to save more."
+            "You can save up to 10 bookmarks free. Unlock Tucked for Life to save more."
         }
     }
 
