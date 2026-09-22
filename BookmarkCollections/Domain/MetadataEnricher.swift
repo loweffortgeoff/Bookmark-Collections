@@ -3,6 +3,10 @@ import SwiftData
 
 @MainActor
 struct MetadataEnricher {
+    /// A failed link is retried only after this delay, so a broken URL is not
+    /// refetched on every scene activation.
+    static let failedRetryInterval: TimeInterval = 60 * 60
+
     let context: ModelContext
     let provider: any MetadataProviding
 
@@ -14,13 +18,28 @@ struct MetadataEnricher {
                 SortDescriptor(\Bookmark.id)
             ])
         )
-        let pending = bookmarks.lazy
-            .filter { $0.kind == .link && $0.metadataState == .pending }
-            .prefix(limit)
+        let now = Date()
+        // Never-fetched links come first so a library with many failures still
+        // drains its new saves before retrying old ones.
+        let pending = bookmarks.filter { $0.kind == .link && $0.metadataState == .pending }
+        let retryable = bookmarks.filter { bookmark in
+            bookmark.kind == .link
+                && bookmark.metadataState == .failed
+                && Self.isRetryDue(bookmark, now: now, interval: Self.failedRetryInterval)
+        }
 
-        for bookmark in pending {
+        for bookmark in (pending + retryable).prefix(limit) {
             try await refresh(bookmark)
         }
+    }
+
+    private static func isRetryDue(
+        _ bookmark: Bookmark,
+        now: Date,
+        interval: TimeInterval
+    ) -> Bool {
+        guard let lastAttempt = bookmark.lastMetadataRefreshAt else { return true }
+        return now.timeIntervalSince(lastAttempt) >= interval
     }
 
     func refresh(_ bookmark: Bookmark) async throws {
@@ -40,8 +59,14 @@ struct MetadataEnricher {
             if !metadata.domain.isEmpty {
                 bookmark.domain = metadata.domain
             }
-            bookmark.faviconData = metadata.faviconData
-            bookmark.previewImageData = metadata.previewImageData
+            // A fetch can succeed without an image (many pages have no
+            // og:image). Keep any preview already stored instead of erasing it.
+            if let faviconData = metadata.faviconData {
+                bookmark.faviconData = faviconData
+            }
+            if let previewImageData = metadata.previewImageData {
+                bookmark.previewImageData = previewImageData
+            }
             bookmark.metadataState = .ready
             bookmark.lastMetadataRefreshAt = refreshDate
             bookmark.modifiedAt = refreshDate

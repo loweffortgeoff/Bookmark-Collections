@@ -2,6 +2,40 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-09-21 (The Mac app needs outgoing network access)
+
+- **Decision:** Set `ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES` for the
+  `BookmarkCollections` target. Xcode then emits
+  `com.apple.security.network.client` for the sandboxed macOS app.
+- **Why:** The main app fetches link metadata with `LPMetadataProvider`. With
+  outgoing network disabled, every Mac fetch failed, so Mac-created bookmarks
+  showed a blank preview and a domain-only title. The previews that did appear
+  on Mac came from iOS enrichment or the Share Extension over CloudKit. The
+  Share Extension already declared the entitlement, which is why share-sheet
+  saves kept their previews.
+- **Alternative considered:** Let iOS own all enrichment and keep the Mac app
+  offline — rejected because the Mac is a first-class platform and must
+  populate its own previews.
+
+## 2026-09-21 (Failed metadata is retryable, and empty metadata never clears a preview)
+
+- **Decision:** `MetadataEnricher` retries a `.failed` link after one hour, and
+  it fetches never-fetched `.pending` links before retries. A successful fetch
+  that returns no preview or favicon keeps the stored image instead of clearing
+  it.
+- **Why:** LinkPresentation fails transiently (timeouts, `LPErrorDomain`
+  "Frame load interrupted", rate limits). The old code marked such a link
+  `.failed`, and `enrichPending` only selected `.pending`, so one temporary
+  failure left the bookmark blank permanently. In a real library, six of seven
+  blank link previews fetched successfully on the next attempt. Many pages also
+  have no `og:image`, so a nil image is a normal result, not a reason to erase a
+  good preview.
+- **Alternative considered:** Retrying every failed link on every scene
+  activation — rejected because it refetches dead URLs on each launch and
+  rewrites `lastMetadataRefreshAt` each time. An `og:image` HTML fallback for
+  pages LinkPresentation cannot preview is a separate change, not part of this
+  retry fix.
+
 ## 2026-08-30 (Distribution product uses the public app name)
 
 - **Decision:** Keep the Xcode target, bundle identifier, and Swift module as

@@ -33,6 +33,17 @@ All notable project changes are recorded here.
   sidebar selection now follow the system (macOS system accent; iOS
   default blue).
 
+### Fixed — 2026-09-21
+
+- Link previews recover after a temporary metadata failure. A failed fetch now
+  retries after one hour instead of staying blank forever. New saves are always
+  fetched before old failures. A metadata fetch that returns no image no longer
+  erases a preview that is already stored.
+- Fixed blank link previews and domain-only titles on Mac. The sandboxed Mac app
+  had outgoing network access disabled, so it could not fetch any link metadata.
+  The app target now enables outgoing network connections, matching the Share
+  Extension.
+
 ### Fixed — 2026-08-29
 
 - Share-extension storage failures now show a clear recovery step and log the

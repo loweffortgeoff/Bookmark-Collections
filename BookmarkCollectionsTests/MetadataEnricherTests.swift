@@ -47,6 +47,72 @@ final class MetadataEnricherTests: XCTestCase {
         XCTAssertEqual(bookmark.metadataState, .ready)
     }
 
+    func testPendingEnrichmentRetriesFailedBookmarksAfterInterval() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = try makeBookmark(in: container)
+        let provider = StubMetadataProvider(results: [
+            .failure(.failed),
+            .success(LinkMetadata(
+                title: "Recovered",
+                domain: "example.com",
+                previewImageData: Data([3, 4])
+            ))
+        ])
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.refresh(bookmark)
+        XCTAssertEqual(bookmark.metadataState, .failed)
+
+        bookmark.lastMetadataRefreshAt = Date(
+            timeIntervalSinceNow: -(MetadataEnricher.failedRetryInterval + 60)
+        )
+        try container.mainContext.save()
+
+        try await enricher.enrichPending(limit: 10)
+
+        XCTAssertEqual(bookmark.metadataState, .ready)
+        XCTAssertEqual(bookmark.title, "Recovered")
+        XCTAssertEqual(bookmark.previewImageData, Data([3, 4]))
+        let retryCallCount = await provider.callCount
+        XCTAssertEqual(retryCallCount, 2)
+    }
+
+    func testPendingEnrichmentSkipsFreshFailures() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = try makeBookmark(in: container)
+        let provider = StubMetadataProvider(results: [
+            .failure(.failed),
+            .success(LinkMetadata(title: "Should not load", domain: "example.com"))
+        ])
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.refresh(bookmark)
+        try await enricher.enrichPending(limit: 10)
+
+        XCTAssertEqual(bookmark.metadataState, .failed)
+        let skippedCallCount = await provider.callCount
+        XCTAssertEqual(skippedCallCount, 1)
+    }
+
+    func testRefreshKeepsExistingPreviewWhenMetadataOmitsOne() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = try makeBookmark(in: container)
+        bookmark.faviconData = Data([7])
+        bookmark.previewImageData = Data([9, 9])
+        bookmark.metadataState = .ready
+        try container.mainContext.save()
+        let provider = StubMetadataProvider(results: [
+            .success(LinkMetadata(title: "No image", domain: "example.com"))
+        ])
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.refresh(bookmark)
+
+        XCTAssertEqual(bookmark.faviconData, Data([7]))
+        XCTAssertEqual(bookmark.previewImageData, Data([9, 9]))
+        XCTAssertEqual(bookmark.metadataState, .ready)
+    }
+
     func testPendingEnrichmentRespectsLimit() async throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         _ = try makeBookmark(in: container, path: "one")
