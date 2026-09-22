@@ -2,6 +2,25 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-09-21 (Failed metadata is retryable, and empty metadata never clears a preview)
+
+- **Decision:** `MetadataEnricher` retries a `.failed` link after one hour, and
+  it fetches never-fetched `.pending` links before retries. A successful fetch
+  that returns no preview or favicon keeps the stored image instead of clearing
+  it.
+- **Why:** LinkPresentation fails transiently (timeouts, `LPErrorDomain`
+  "Frame load interrupted", rate limits). The old code marked such a link
+  `.failed`, and `enrichPending` only selected `.pending`, so one temporary
+  failure left the bookmark blank permanently. In a real library, six of seven
+  blank link previews fetched successfully on the next attempt. Many pages also
+  have no `og:image`, so a nil image is a normal result, not a reason to erase a
+  good preview.
+- **Alternative considered:** Retrying every failed link on every scene
+  activation — rejected because it refetches dead URLs on each launch and
+  rewrites `lastMetadataRefreshAt` each time. An `og:image` HTML fallback for
+  pages LinkPresentation cannot preview is a separate change, not part of this
+  retry fix.
+
 ## 2026-08-30 (Distribution product uses the public app name)
 
 - **Decision:** Keep the Xcode target, bundle identifier, and Swift module as
