@@ -175,7 +175,7 @@ simulator, for example:
 xcodebuild test \
   -project BookmarkCollections.xcodeproj \
   -scheme BookmarkCollections \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' \
   -only-testing:BookmarkCollectionsTests
 ```
 

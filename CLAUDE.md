@@ -7,11 +7,12 @@ Project notes for BookmarkCollections. General guidelines live in `../CLAUDE.md`
 ## Build Verification
 
 Both schemes must build — `BookmarkCollections` (app) and `BookmarkShareExtension`
-(share extension). Seven app files compile into the extension target:
+(share extension). Eight app files compile into the extension target:
 
 - `Data/Bookmark.swift`, `Data/BookmarkCollection.swift`, `Data/ModelContainerFactory.swift`
 - `Domain/BookmarkRepository.swift`, `Domain/ImageDownsampler.swift`,
-  `Domain/MetadataProvider.swift`, `Domain/NormalizedURL.swift`
+  `Domain/MetadataProvider.swift`, `Domain/NormalizedURL.swift`,
+  `Domain/ShareStorageDiagnostics.swift`
 
 So an app-only build passes while the share extension is broken. Always verify
 both. This is the whole save path — the extension writes bookmarks through the
