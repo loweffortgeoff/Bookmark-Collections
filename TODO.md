@@ -2,9 +2,6 @@
 
 ## Next
 
-- After the next macOS TestFlight upload, verify that the Applications and
-  Launchpad entries show `Tucked`; the archive product-name fix landed on
-  2026-08-30.
 - Reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
 - The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.
@@ -72,6 +69,8 @@ These items were explicitly excluded from v1 and are not release blockers or com
 
 _Earlier v1 work landed before TODO.md tracked completions with dates._
 
+- [x] Verified after macOS TestFlight upload that Applications and Launchpad
+      entries show `Tucked` (2026-10-14).
 - [x] Files-importer image import (Mac) — shipped as `File ▸ Add Images…` (2026-08-28).
 - [x] Text snippets, the `snippets` key in JSON backup, and Mac image import —
       brings the Swift app back to parity with the Glaze port (2026-08-28).
