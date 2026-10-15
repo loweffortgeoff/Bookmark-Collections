@@ -2,6 +2,10 @@
 
 ## Next
 
+- Finish the Tucked for Life paywall (branch `feature/paywall`, 2026-10-15). The ASC IAP is created and complete.
+  Left: (1) sandbox test purchase on a real iPhone — run `Tucked Release` from Xcode, sign in under Settings ▸ Developer ▸ Sandbox Apple Account, save past ten, buy, then check Restore Purchases; (2) attach the IAP to the next app version at submission; (3) merge the branch after the purchase works.
+  The `Tucked Beta` scheme points at a StoreKit path Xcode cannot find (`../../../../Tucked.storekit`); repoint it, or add `Tucked.storekit` to the project, as a small separate commit. Do not commit Xcode's scheme reformatting.
+
 - Reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
 - The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.

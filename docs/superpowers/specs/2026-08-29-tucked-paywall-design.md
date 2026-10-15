@@ -28,4 +28,4 @@ The iOS/iPad archive and macOS archive remain separate. They use the same bundle
 - SwiftUI and StoreKit 2 only. Do not add dependencies, analytics, accounts, subscriptions, or trials.
 - Respect Dynamic Type, VoiceOver, light and dark mode, and system tint.
 - Bundle ID: `com.loweffortapps.BookmarkCollections`.
-- Do not merge this branch.
+- Merge only after a sandbox test purchase succeeds on a real device.

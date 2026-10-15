@@ -231,5 +231,6 @@ Significant decisions made during development, logged for future reference.
 ## 2026-10-15 (Revive the paywall at $4.99 with a new product ID)
 
 - **Decision:** The paywall branch is rebased onto v1.0 `main`. The price drops from $7.99 to $4.99. The product ID changes to `com.loweffortapps.BookmarkCollections.tuckedforlife`. "Tucked Pro" wording becomes "Tucked for Life".
-- **Why:** The first IAP was deleted in App Store Connect, and Apple does not let a deleted Product ID be created again. The paywall ships before v1.0 reaches other users, so nobody needs an existing-user exemption.
+- **Why:** The first IAP was deleted in App Store Connect, and Apple does not let a deleted Product ID be created again. v1.0 has no users other than the owner, so nobody needs an existing-user exemption and the paywall can land before the first public release.
 - **Alternative considered:** Keep $7.99. Rejected by the owner in favor of an impulse-friendly one-time price.
+- **Also:** The paywall copy leads with support for an independent developer (a fifth row) and adds a footnote that existing bookmarks stay accessible. The App Store Connect IAP review screenshot is the iPhone 6.9" paywall captured with `Tucked.storekit` attached to a run of `Tucked Release`.
