@@ -27,9 +27,14 @@ struct PaywallView: View {
                             detail: "Your collections sync across your devices."
                         )
                         PaywallFeatureRow(
-                            symbol: "heart",
+                            symbol: "creditcard",
                             title: "One payment, no subscription",
                             detail: "Pay once. It stays unlocked."
+                        )
+                        PaywallFeatureRow(
+                            symbol: "heart",
+                            title: "Supports an independent developer",
+                            detail: "Tucked is made by one person. Thank you."
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -48,7 +53,7 @@ struct PaywallView: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 520, idealWidth: 520, minHeight: 560, idealHeight: 620)
+        .frame(minWidth: 520, idealWidth: 520, minHeight: 620, idealHeight: 720)
         #endif
         .accessibilityIdentifier("paywall")
     }
@@ -140,6 +145,11 @@ private struct PaywallPurchaseSection: View {
                 Task { await storefront.restorePurchases() }
             }
             .disabled(storefront.isLoading)
+
+            Text("Your existing bookmarks stay put. You can still view, edit, and delete them. Deleting frees up room.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
         }
     }
 }
