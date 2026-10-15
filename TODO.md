@@ -26,6 +26,7 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
+- Larger Text needs work (2026-10-14). 1.0 claims Larger Text on iPhone and iPad, not Mac. Check the library grid, bookmark cards, sidebar and editor sheets at the largest accessibility text sizes on iPhone and iPad, and fix anything that cuts off or breaks. Then decide again whether to claim Larger Text on Mac.
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
