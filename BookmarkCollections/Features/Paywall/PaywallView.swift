@@ -107,7 +107,7 @@ private struct PaywallPurchaseSection: View {
     var body: some View {
         VStack(spacing: 16) {
             VStack(spacing: 4) {
-                Text(storefront.product?.displayPrice ?? "$7.99")
+                Text(storefront.product?.displayPrice ?? "$4.99")
                     .font(.title3.weight(.semibold))
                 Text("One time. Yours forever.")
                     .font(.subheadline)

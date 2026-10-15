@@ -4,7 +4,7 @@ import StoreKit
 @MainActor
 @Observable
 final class Storefront {
-    static let lifetimeProductID = "com.loweffortapps.BookmarkCollections.lifetime"
+    static let lifetimeProductID = "com.loweffortapps.BookmarkCollections.tuckedforlife"
 
     private(set) var product: Product?
     private(set) var isUnlocked = PurchaseAccess.isUnlocked

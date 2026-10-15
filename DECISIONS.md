@@ -223,7 +223,13 @@ Significant decisions made during development, logged for future reference.
 
 ## 2026-08-29 (Ten free active bookmarks, then one lifetime unlock)
 
-- **Decision:** Tucked allows 10 active bookmarks for free, then offers Tucked Pro as a $7.99 universal non-consumable purchase. Links, images, and snippets share the same cap; deleting frees a slot. Export and existing-bookmark access remain free.
+- **Decision:** Tucked allows 10 active bookmarks for free, then offers Tucked for Life as a $4.99 universal non-consumable purchase. Links, images, and snippets share the same cap; deleting frees a slot. Export and existing-bookmark access remain free.
 - **Why:** Ten saved items gives a practical trial without a subscription or a time-limited trial. A single purchase keeps the product and support surface small across iPhone, iPad, and Mac.
-- **Alternative considered:** A one-week free trial or separate per-platform unlocks — rejected. The free library already lets people evaluate the app, and universal purchase avoids asking the same customer to buy Tucked Pro again on another device.
+- **Alternative considered:** A one-week free trial or separate per-platform unlocks — rejected. The free library already lets people evaluate the app, and universal purchase avoids asking the same customer to buy Tucked for Life again on another device.
 - **Release handling:** Beta archives compile with the cap disabled. Release archives compile with it enabled. The app does not infer TestFlight status from a receipt.
+
+## 2026-10-15 (Revive the paywall at $4.99 with a new product ID)
+
+- **Decision:** The paywall branch is rebased onto v1.0 `main`. The price drops from $7.99 to $4.99. The product ID changes to `com.loweffortapps.BookmarkCollections.tuckedforlife`. "Tucked Pro" wording becomes "Tucked for Life".
+- **Why:** The first IAP was deleted in App Store Connect, and Apple does not let a deleted Product ID be created again. The paywall ships before v1.0 reaches other users, so nobody needs an existing-user exemption.
+- **Alternative considered:** Keep $7.99. Rejected by the owner in favor of an impulse-friendly one-time price.

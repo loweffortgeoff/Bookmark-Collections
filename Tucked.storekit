@@ -5,7 +5,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "7.99",
+      "displayPrice" : "4.99",
       "familyShareable" : false,
       "internalID" : "6806686430",
       "localizations" : [
@@ -15,7 +15,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.loweffortapps.BookmarkCollections.lifetime",
+      "productID" : "com.loweffortapps.BookmarkCollections.tuckedforlife",
       "referenceName" : "Tucked for Life",
       "type" : "NonConsumable"
     }

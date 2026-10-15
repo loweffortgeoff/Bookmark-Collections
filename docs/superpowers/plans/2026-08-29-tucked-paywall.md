@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a 10-bookmark free tier and a $7.99 lifetime StoreKit unlock to Tucked.
+**Goal:** Add a 10-bookmark free tier and a $4.99 lifetime StoreKit unlock to Tucked.
 
 **Architecture:** A shared pure limit rule protects every create path. A StoreKit 2 storefront exposes the lifetime entitlement to SwiftUI. The containing app presents the paywall; the Share extension returns a clear limit-reached error.
 
@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Support iOS 18 and macOS 15 with one shared non-consumable product: `com.loweffortapps.BookmarkCollections.lifetime`.
+- Support iOS 18 and macOS 15 with one shared non-consumable product: `com.loweffortapps.BookmarkCollections.tuckedforlife`.
 - Count active links, images, and snippets; do not charge for export, deletion, or access.
 - Do not show StoreKit purchase UI from the Share extension.
 - Use a compiled `PAYWALL_ENABLED` build setting. Beta disables it and Release enables it.
