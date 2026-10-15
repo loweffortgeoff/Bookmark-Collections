@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(Storefront.self) private var storefront
     let onPaywall: () -> Void
 
     @StateObject private var syncHealth = SyncHealthMonitor()
@@ -20,6 +21,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                if storefront.isUnlocked {
+                    Section { ProBadgeRow() }
+                }
+
                 Section("Library Data") {
                     Button("Import Links", systemImage: "square.and.arrow.down", action: beginImport)
                         .accessibilityIdentifier("settings.importLinks")
