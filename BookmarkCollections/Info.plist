@@ -18,10 +18,10 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>PaywallEnabled</key>
-	<string>$(PAYWALL_ENABLED)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
+	<key>PaywallEnabled</key>
+	<string>$(PAYWALL_ENABLED)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
