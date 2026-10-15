@@ -10,6 +10,7 @@ All notable project changes are recorded here.
 - Paywall lists an "independent developer" support row and a footnote that existing bookmarks stay put.
 - `Tucked Beta` bypasses monetization for ordinary TestFlight builds. `Tucked Release` enables the paywall for release and sandbox-purchase testing.
 - `Tucked.storekit` local configuration for purchase testing.
+- Settings shows a "Tucked for Life" seal row at the top once the purchase is unlocked.
 
 ---
 
