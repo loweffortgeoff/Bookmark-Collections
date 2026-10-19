@@ -4,6 +4,9 @@
 
 - Reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
+  The failure message is "Tucked could not open its shared library," and it
+  blocks every share, including links and images. Highlighted-text share is
+  the separate v1.1.0 item below unless that storage message is what appears.
 - The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.
   Merged `main` is byte-identical to the tree whose UI suite passed on
   2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
@@ -20,6 +23,16 @@
 
 The remaining v1 release gates (real-device CloudKit matrix, Production schema, TestFlight/new-account check) are tracked in `docs/verification/cloudkit-device-matrix.md`, not here.
 
+## v1.1.0
+
+After the initial release is approved. None of this blocks 1.0.
+
+- Review `dev/card-shadow-experiment`: iPhone light/dark captures and three focused UI checks pass with an iOS 18 test-build override. Mac builds with temporary ad hoc signing, but its preview opens no window. Mac selection and iPad live resize remain unverified.
+- Save highlighted text with Save to Tucked. The Mac Share menu can offer the item for a text selection, but `ShareCaptureModel` only keeps a web URL, a URL found inside text, or an image. Prose with no URL fails with "Share a web link or an image." When the share also includes the page URL, that URL wins and the selection is dropped. Confirm which result actually happens, then save a snippet, using the page URL as the optional source link when one is present. The same loader runs on iOS; plain-text share-to-snippet was left out of the 2026-08-28 parity pass. Treat this as the Next storage failure only when the message is "Tucked could not open its shared library." If this share path can create a snippet, clipboard capture is unnecessary for this case.
+- Add text snippets from the clipboard, only if highlighted-text share cannot cover it. The menu bar extra below is the home for that command.
+- Mac menu bar extra, using the Stash menu as the reference: Search, Links, Photos, Add from Clipboard, Open, Settings, Quit. Tucked's version is Search, Links, Images, Snippets, Add from Clipboard as a snippet, Open Tucked, Settings, and Quit. No tags. This replaces the Glaze-style quick-capture panel, which the 2026-08-28 pass skipped because the Share menu was assumed to cover Mac capture.
+- Destructive confirmation. Moving a bookmark to Recently Deleted has no prompt: context-menu Delete, the selection-bar Delete, and Bookmark > Move to Recently Deleted. v1 left that unconfirmed because the item stays recoverable for 30 days. Delete Collection, Delete Permanently, and Empty Recently Deleted already confirm. Decide whether soft-delete should ask, and fix any destructive path that skips a confirmation it should have.
+
 ## Backlog
 
 The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
@@ -34,8 +47,7 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
 - Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
 - Make the macOS Share menu command kind-aware for snippets. Share still assumes a URL, so it shows “URL invalid” for a snippet with no source link. Open already routes a snippet to the editor, and Copy Text is on the Bookmark menu.
-- Sharing plain non-URL text from the iOS Share Sheet to create a snippet. Deliberately out of scope in the 2026-08-28 parity pass; snippets are created in-app only.
-- Mac quick-capture panel with a global shortcut and clipboard detection, as in the Glaze build. Out of scope in the 2026-08-28 parity pass because macOS already captures through the Share menu.
+- Sharing plain non-URL text, clipboard snippet capture, and a Mac menu bar extra are in v1.1.0 above.
 - `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
