@@ -45,6 +45,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApplication.shared.registerForRemoteNotifications()
     }
 
+    /// Single-window app: closing the library window quits, so there is never
+    /// a running app with no window to reopen (App Review guideline 4).
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
+    }
+
     func application(
         _ application: NSApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
