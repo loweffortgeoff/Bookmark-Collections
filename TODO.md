@@ -2,12 +2,18 @@
 
 ## Next
 
-- Reproduce the iOS Share-extension storage failure and inspect its new
+Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
+
+- [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
+
+  Prior investigation: reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
   The failure message is "Tucked could not open its shared library," and it
   blocks every share, including links and images. Highlighted-text share is
   the separate v1.1.0 item below unless that storage message is what appears.
-- The macOS UI test suite fails wholesale (11 of 11) and it is not the app code.
+- [ ] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+
+  Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
   Merged `main` is byte-identical to the tree whose UI suite passed on
   2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
   and all code signatures are valid. The runner attaches to the app and gets a
@@ -27,11 +33,16 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 After the initial release is approved. None of this blocks 1.0.
 
-- Review `dev/card-shadow-experiment`: iPhone light/dark captures and three focused UI checks pass with an iOS 18 test-build override. Mac builds with temporary ad hoc signing, but its preview opens no window. Mac selection and iPad live resize remain unverified.
-- Save highlighted text with Save to Tucked. The Mac Share menu can offer the item for a text selection, but `ShareCaptureModel` only keeps a web URL, a URL found inside text, or an image. Prose with no URL fails with "Share a web link or an image." When the share also includes the page URL, that URL wins and the selection is dropped. Confirm which result actually happens, then save a snippet, using the page URL as the optional source link when one is present. The same loader runs on iOS; plain-text share-to-snippet was left out of the 2026-08-28 parity pass. Treat this as the Next storage failure only when the message is "Tucked could not open its shared library." If this share path can create a snippet, clipboard capture is unnecessary for this case.
-- Add text snippets from the clipboard, only if highlighted-text share cannot cover it. The menu bar extra below is the home for that command.
-- Mac menu bar extra, using the Stash menu as the reference: Search, Links, Photos, Add from Clipboard, Open, Settings, Quit. Tucked's version is Search, Links, Images, Snippets, Add from Clipboard as a snippet, Open Tucked, Settings, and Quit. No tags. This replaces the Glaze-style quick-capture panel, which the 2026-08-28 pass skipped because the Share menu was assumed to cover Mac capture.
-- Destructive confirmation. Moving a bookmark to Recently Deleted has no prompt: context-menu Delete, the selection-bar Delete, and Bookmark > Move to Recently Deleted. v1 left that unconfirmed because the item stays recoverable for 30 days. Delete Collection, Delete Permanently, and Empty Recently Deleted already confirm. Decide whether soft-delete should ask, and fix any destructive path that skips a confirmation it should have.
+- [ ] **3. Complete the v1.1 card-style checks** (Things: Feature Work). Keep the accepted outlines, shadows, and native sidebar selection. Check Mac selection and iPad live resize.
+  Prior iPhone light/dark captures and three focused UI checks passed with an iOS 18 test-build override. Mac built with temporary ad hoc signing, but its preview opened no window; Mac selection and iPad resize remain unverified.
+- [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
+  The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
+- [ ] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
+  Reported 2026-10-14. The 1.0 Larger Text claim covers iPhone and iPad only.
+- [ ] **6. Add the Mac menu bar helper** (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
+  Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
+
+Shortcuts remains an idea from Tucked Testing. Clipboard capture is the remaining scope question; settle it from task 4 before task 6.
 
 ## Backlog
 
@@ -39,7 +50,6 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
-- Larger Text needs work (2026-10-14). 1.0 claims Larger Text on iPhone and iPad, not Mac. Check the library grid, bookmark cards, sidebar and editor sheets at the largest accessibility text sizes on iPhone and iPad, and fix anything that cuts off or breaks. Then decide again whether to claim Larger Text on Mac.
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
