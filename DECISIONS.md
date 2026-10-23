@@ -2,6 +2,12 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-10-23 (The Mac share view sets its own size)
+
+- **Decision:** The macOS `ShareViewController.loadView` creates its view with an explicit 360 x 200 frame. Mac failure screens use a plain-stack `MacShareFailureView` inside that frame. One `Color(nsColor: .windowBackgroundColor)` background is applied where the controller hosts SwiftUI content. The iOS `ShareStoreFailureView` stays under `#if os(iOS)`.
+- **Why:** Mac Share ▸ "Save to Tucked" looked like a silent failure. Two causes. First, the free-bookmark limit (10 active) blocked the saves: the TestFlight build read Pro as locked. The likely reason is that the earlier test purchase went through the local `Tucked.storekit` file, which does not carry to TestFlight (not confirmed). After a TestFlight sandbox purchase, saves worked, so the share code had not regressed. Second, the failure was invisible: `loadView` created `NSView()` with a zero frame and set only `preferredContentSize`, and ShareKit does not size the view from it. The log showed `view={{0, 0}, {0, 0}}`, so nothing was visible and Safari only dimmed. With the frame set, the log shows `{{0, 0}, {360, 200}}` and the failure card draws. `MacShareFailureView` is the version seen drawing and fits 200 pt. `ContentUnavailableView` was never tried at that size and would probably need more height.
+- **Alternative considered:** Raising or floating the share window. Rejected, and do not retry: ShareKit resets the window level within 0.3 ms, the extension window reports not-on-screen even on a normal share, and the view is drawn remotely in Safari. An offscreen `ImageRenderer` test suggested `ContentUnavailableView` draws nothing, but that was a limit of `ImageRenderer`, not the cause.
+
 ## 2026-09-21 (The Mac app needs outgoing network access)
 
 - **Decision:** Set `ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES` for the

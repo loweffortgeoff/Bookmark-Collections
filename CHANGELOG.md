@@ -4,6 +4,17 @@ All notable project changes are recorded here.
 
 ## In Progress
 
+### Fixed — 2026-10-23
+
+- Mac Share ▸ "Save to Tucked" no longer fails silently. The Mac share view was created with a zero-size frame, so nothing the extension showed was visible and Safari only dimmed. The view now has a 360 x 200 frame, and the failure card appears with its title, message, Cancel, and Retry.
+- Mac share failure screens use a plain-stack `MacShareFailureView` that fits the fixed frame. The iOS `ShareStoreFailureView` is unchanged.
+- The Mac Share controller applies one window background where it hosts SwiftUI content.
+
+### Added — 2026-10-23
+
+- Share diagnostics: a `ShareSave` log category. `ShareStorageDiagnostics.logSummary` logs the error domain and code down the underlying-error chain. The full error is logged as private. A notice records when the free-bookmark limit blocks a save. Item type identifiers are logged when a share holds nothing to save. A "Share view appeared" entry logs the view and window frames.
+- Unit tests for the free-limit failure and `logSummary`.
+
 ### Added — 2026-10-15
 
 - Tucked for Life paywall: save 10 active bookmarks free, then unlock unlimited links, images, and snippets with a $4.99 lifetime non-consumable purchase (`com.loweffortapps.BookmarkCollections.tuckedforlife`). Existing bookmarks, export, and deletion remain free.
