@@ -127,6 +127,8 @@ final class ShareCaptureModel: ObservableObject {
                 fetchMetadata(for: loaded)
             }
         } else {
+            let types = providers.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
+            shareSaveLogger.notice("Nothing to save in the shared item. Types: \(types, privacy: .public)")
             state = .failed("Share a web link or an image.")
         }
     }
@@ -152,8 +154,10 @@ final class ShareCaptureModel: ObservableObject {
             shareSaveLogger.notice("Save blocked by the free bookmark limit")
             state = .failed("You’ve saved 10 bookmarks free. Open Tucked to unlock Tucked for Life.")
         } catch {
-            let nsError = error as NSError
-            shareSaveLogger.error("Save failed: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public)")
+            shareSaveLogger.error("""
+                Save failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
             state = .failed("The bookmark wasn’t saved. Check storage access and try again.")
         }
     }

@@ -18,6 +18,23 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertFalse(message.contains("/private"))
     }
 
+    func testLogSummaryFollowsUnderlyingErrorsWithoutPathsOrDescriptions() {
+        let underlying = NSError(domain: NSPOSIXErrorDomain, code: 1)
+        let error = NSError(
+            domain: NSCocoaErrorDomain,
+            code: 513,
+            userInfo: [
+                NSUnderlyingErrorKey: underlying,
+                NSLocalizedDescriptionKey: "Could not open /Users/someone/Library/store."
+            ]
+        )
+
+        let summary = ShareStorageDiagnostics.logSummary(for: error)
+
+        XCTAssertEqual(summary, "NSCocoaErrorDomain 513 <- NSPOSIXErrorDomain 1")
+        XCTAssertFalse(summary.contains("/Users"))
+    }
+
     func testURLAttachmentLoadsImmediately() async throws {
         let model = try makeModel()
         let url = try XCTUnwrap(URL(string: "https://example.com/article"))

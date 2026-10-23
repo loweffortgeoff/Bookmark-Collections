@@ -44,8 +44,10 @@ final class ShareViewController: UIViewController {
                 )
             )
         } catch {
-            let nsError = error as NSError
-            shareStorageLogger.error("Could not open shared storage: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public) \(error.localizedDescription, privacy: .public)")
+            shareStorageLogger.error("""
+                Could not open shared storage: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
             host(
                 ShareStoreFailureView(
                     message: ShareStorageDiagnostics.recoveryMessage(for: error),
@@ -133,8 +135,10 @@ final class ShareViewController: NSViewController {
                 )
             )
         } catch {
-            let nsError = error as NSError
-            shareStorageLogger.error("Could not open shared storage: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public) \(error.localizedDescription, privacy: .public)")
+            shareStorageLogger.error("""
+                Could not open shared storage: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
             host(
                 ShareStoreFailureView(
                     message: ShareStorageDiagnostics.recoveryMessage(for: error),
