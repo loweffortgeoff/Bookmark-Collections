@@ -27,6 +27,9 @@ struct MacQuickSaveView: View {
             }
         }
         .frame(minWidth: 360, minHeight: 200)
+        // ShareKit draws only what the view paints. Without a background the
+        // text sits directly on the dimmed Safari window.
+        .background(Color(nsColor: .windowBackgroundColor))
         .task {
             guard model.state == .idle else { return }
             await model.quickSave(from: providers)
@@ -34,11 +37,9 @@ struct MacQuickSaveView: View {
     }
 }
 
-/// A plain stack, not `ContentUnavailableView`. On a failed Mac share the
-/// Safari window dimmed and no message was drawn. An offscreen `ImageRenderer`
-/// draw of the `ContentUnavailableView` version was empty and a plain stack
-/// drew normally, but `ImageRenderer` has its own limits. Whether this changes
-/// what ShareKit shows has not been confirmed on a Mac.
+/// A plain stack. It was seen drawing in Safari's share panel once the
+/// extension view had a real size (see `ShareViewController.loadView`).
+/// `ContentUnavailableView` was never tried at that size.
 struct MacShareFailureView: View {
     let title: String
     let message: String
@@ -48,7 +49,7 @@ struct MacShareFailureView: View {
     var body: some View {
         VStack(spacing: 12) {
             Label(title, systemImage: "exclamationmark.triangle")
-                .font(.largeTitle) // TEMP experiment: large title on a yellow background
+                .font(.headline)
             Text(message)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -61,7 +62,6 @@ struct MacShareFailureView: View {
         }
         .padding(20)
         .frame(minWidth: 360, minHeight: 200)
-        .background(Color.yellow) // TEMP experiment
     }
 }
 #endif

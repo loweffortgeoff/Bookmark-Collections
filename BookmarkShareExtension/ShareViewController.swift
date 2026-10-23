@@ -112,25 +112,11 @@ final class ShareViewController: NSViewController {
         let size = NSSize(width: 360, height: 200)
         view = NSView(frame: NSRect(origin: .zero, size: size))
         preferredContentSize = size
-        // TEMP experiment: a solid red layer shows whether anything the
-        // extension draws reaches Safari. Remove once the cause is known.
-        view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.systemRed.cgColor
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCapture()
-    }
-
-    // TEMP experiment: time the end of the view against the dim in Safari.
-    override func viewWillDisappear() {
-        super.viewWillDisappear()
-        shareStorageLogger.notice("Share view will disappear")
-    }
-
-    deinit {
-        shareStorageLogger.notice("Share view controller deinit")
     }
 
     override func viewDidAppear() {
