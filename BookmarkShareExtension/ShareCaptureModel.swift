@@ -24,11 +24,6 @@ enum ShareCaptureState: Equatable {
     case saving
     case saved
     case failed(String)
-
-    var isFailure: Bool {
-        if case .failed = self { return true }
-        return false
-    }
 }
 
 enum ShareCaptureError: Error {

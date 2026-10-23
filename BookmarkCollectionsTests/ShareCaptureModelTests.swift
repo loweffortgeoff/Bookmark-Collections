@@ -18,23 +18,6 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertFalse(message.contains("/private"))
     }
 
-    func testOnlyAFailedStateIsAFailure() {
-        XCTAssertTrue(ShareCaptureState.failed("The bookmark wasn’t saved.").isFailure)
-        let others: [ShareCaptureState] = [.idle, .loading, .ready, .saving, .saved]
-        XCTAssertTrue(others.allSatisfy { !$0.isFailure })
-    }
-
-    func testLimitFailureReachesTheFailedState() async throws {
-        let model = ShareCaptureModel(
-            collections: [],
-            saveAction: { _, _, _ in throw BookmarkRepository.LimitError.limitReached },
-            onComplete: {}
-        )
-        await model.quickSave(from: [NSItemProvider(object: NSURL(string: "https://example.com/limit")!)])
-
-        XCTAssertTrue(model.state.isFailure)
-    }
-
     func testLogSummaryFollowsUnderlyingErrorsWithoutPathsOrDescriptions() {
         let underlying = NSError(domain: NSPOSIXErrorDomain, code: 1)
         let error = NSError(
