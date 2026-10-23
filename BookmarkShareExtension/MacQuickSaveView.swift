@@ -48,7 +48,7 @@ struct MacShareFailureView: View {
     var body: some View {
         VStack(spacing: 12) {
             Label(title, systemImage: "exclamationmark.triangle")
-                .font(.headline)
+                .font(.largeTitle) // TEMP experiment: large title on a yellow background
             Text(message)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -61,6 +61,7 @@ struct MacShareFailureView: View {
         }
         .padding(20)
         .frame(minWidth: 360, minHeight: 200)
+        .background(Color.yellow) // TEMP experiment
     }
 }
 #endif
