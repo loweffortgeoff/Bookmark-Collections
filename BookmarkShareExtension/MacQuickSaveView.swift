@@ -27,9 +27,6 @@ struct MacQuickSaveView: View {
             }
         }
         .frame(minWidth: 360, minHeight: 200)
-        // ShareKit draws only what the view paints. Without a background the
-        // text sits directly on the dimmed Safari window.
-        .background(Color(nsColor: .windowBackgroundColor))
         .task {
             guard model.state == .idle else { return }
             await model.quickSave(from: providers)
@@ -37,9 +34,8 @@ struct MacQuickSaveView: View {
     }
 }
 
-/// A plain stack. It was seen drawing in Safari's share panel once the
-/// extension view had a real size (see `ShareViewController.loadView`).
-/// `ContentUnavailableView` was never tried at that size.
+/// A plain stack sized to fit the fixed 360 by 200 share view.
+/// `ContentUnavailableView` would probably need more height.
 struct MacShareFailureView: View {
     let title: String
     let message: String

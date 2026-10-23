@@ -26,9 +26,10 @@ final class ShareCaptureModelTests: XCTestCase {
         )
         await model.quickSave(from: [NSItemProvider(object: NSURL(string: "https://example.com/limit")!)])
 
-        guard case .failed = model.state else {
+        guard case let .failed(message) = model.state else {
             return XCTFail("Expected the limit error to leave the model in a failed state")
         }
+        XCTAssertTrue(message.localizedCaseInsensitiveContains("open tucked"))
     }
 
     func testLogSummaryFollowsUnderlyingErrorsWithoutPathsOrDescriptions() {

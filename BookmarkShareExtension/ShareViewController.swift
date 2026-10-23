@@ -106,9 +106,10 @@ final class ShareViewController: NSViewController {
 
     override func loadView() {
         // A plain NSView() has a zero frame, and ShareKit does not size the
-        // view from preferredContentSize. A failed share dimmed Safari and drew
-        // nothing: the log showed view={{0, 0}, {0, 0}} in a full-screen window.
-        // The template's nib view has a fixed size, so give this one a frame.
+        // view from preferredContentSize. Every share view was zero-sized, so
+        // nothing the extension showed was visible. The failure screen made
+        // that obvious: Safari dimmed and no message appeared. Give the view a
+        // real frame.
         let size = NSSize(width: 360, height: 200)
         view = NSView(frame: NSRect(origin: .zero, size: size))
         preferredContentSize = size
@@ -121,8 +122,8 @@ final class ShareViewController: NSViewController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
-        // A failed share once dimmed Safari and drew nothing. Record what
-        // ShareKit gave us, so a repeat shows the size and visibility.
+        // Record the size ShareKit gives the view. A zero size here means
+        // nothing the extension shows can be seen.
         if let window = view.window {
             shareStorageLogger.notice("""
                 Share view appeared. view=\(NSStringFromRect(self.view.frame), privacy: .public) \
@@ -185,7 +186,12 @@ final class ShareViewController: NSViewController {
     }
 
     private func host<Content: View>(_ content: Content) {
-        let controller = NSHostingController(rootView: content)
+        // ShareKit draws only what the view paints. Give every screen a window
+        // background so its text does not sit directly on the dimmed Safari
+        // window. Not yet seen on a Mac; remove it if the card looks doubled.
+        let controller = NSHostingController(
+            rootView: content.background(Color(nsColor: .windowBackgroundColor))
+        )
         addChild(controller)
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(controller.view)
