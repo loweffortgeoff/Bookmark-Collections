@@ -105,8 +105,13 @@ final class ShareViewController: NSViewController {
     private var hostedController: NSViewController?
 
     override func loadView() {
-        view = NSView()
-        preferredContentSize = NSSize(width: 360, height: 200)
+        // A plain NSView() has a zero frame, and ShareKit does not size the
+        // view from preferredContentSize. A failed share dimmed Safari and drew
+        // nothing: the log showed view={{0, 0}, {0, 0}} in a full-screen window.
+        // The template's nib view has a fixed size, so give this one a frame.
+        let size = NSSize(width: 360, height: 200)
+        view = NSView(frame: NSRect(origin: .zero, size: size))
+        preferredContentSize = size
         // TEMP experiment: a solid red layer shows whether anything the
         // extension draws reaches Safari. Remove once the cause is known.
         view.wantsLayer = true
