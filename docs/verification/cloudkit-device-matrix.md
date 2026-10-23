@@ -1,8 +1,12 @@
 # CloudKit and Release Verification Matrix
 
-Last updated: 2026-08-29 (America/New_York)
+Last updated: 2026-10-23 (local validation only; device evidence retains its original dates)
 
-## Release status
+## Current local validation — 2026-10-23
+
+The paywall/JSON fix package passes 169 checks on Mac and 169 on iPhone 18 Pro / iOS 27.0, with signed Release builds and independent review. See the [audit follow-up](2026-10-23-branch-paywall-audit.md#approved-fix-follow-up). Physical Share capture, current-build sandbox/TestFlight purchase/restore and cross-device access, fresh-account Production sync, and offline/conflict checks remain acceptance gates. No device or CloudKit gate was closed by local tests.
+
+## Historical release status
 
 Automated implementation verification is complete. Most of the real-device same-account matrix below is confirmed across iPhone, iPad, and Mac, but Mac-originated create-bookmark propagation remains pending. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are also still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
 

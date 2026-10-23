@@ -55,6 +55,26 @@ final class ImageImportTests: XCTestCase {
         XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<Bookmark>()).count, 1)
     }
 
+    func testLockedImageBatchStopsAtTenWithoutCreatingAnEleventh() throws {
+        let oldAccess = PurchaseAccess.isUnlocked
+        PurchaseAccess.setUnlocked(false)
+        defer { PurchaseAccess.setUnlocked(oldAccess) }
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext, isUnlocked: true)
+        for index in 0..<9 { _ = try repository.save(url: "https://audit.example/image-batch/\(index)") }
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let first = directory.appendingPathComponent("First.png")
+        let second = directory.appendingPathComponent("Second.png")
+        try Self.pngData(width: 20, height: 20).write(to: first)
+        try Self.pngData(width: 20, height: 20).write(to: second)
+        XCTAssertThrowsError(try ImageImportService(context: container.mainContext).importImages(at: [first, second])) {
+            XCTAssertEqual($0 as? BookmarkRepository.LimitError, .limitReached)
+        }
+        XCTAssertEqual(try container.mainContext.fetchCount(FetchDescriptor<Bookmark>()), 10)
+    }
+
     /// A minimal opaque PNG, built through the platform image encoder so the
     /// bytes are whatever ImageDownsampler actually accepts.
     private static func pngData(width: Int, height: Int) throws -> Data {

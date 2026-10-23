@@ -1,0 +1,41 @@
+{
+  "identifier" : "A1F4C2D8",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6806686430",
+      "localizations" : [
+        {
+          "description" : "Save unlimited bookmarks, images, and snippets. One payment, no subscription.",
+          "displayName" : "Tucked for Life",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.loweffortapps.BookmarkCollections.tuckedforlife",
+      "referenceName" : "Tucked for Life",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6806686430",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

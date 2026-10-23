@@ -2,9 +2,13 @@
 
 ## Next
 
+- [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
+
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
 
 - [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
+
+  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified.
 
   Prior investigation: reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
@@ -14,7 +18,9 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
   The 2026-10-23 macOS share fix did not resolve this iOS failure. The `ShareStorage`
   log now records the error domain and code down the underlying-error chain, which
   should make the cause diagnosable.
-- [ ] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+- [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+
+  2026-10-23 follow-up: all 15 Mac UI cases pass. Numeric free-limit launch arguments suppressed the initial window under native XCTest; filling the real ten-item cap through UI saves resolves that harness gap. Local purchase closes the paywall and shows the unlocked Settings badge.
 
   Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
   Merged `main` is byte-identical to the tree whose UI suite passed on
@@ -32,7 +38,9 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 
 - [ ] **Finish verifying the Mac share failure card** (unnumbered; follow-up to the 2026-10-23 Mac share fix). On a Mac, check four things: the free-limit message text in the share sheet, light mode, the largest accessibility text size (the fixed 360 x 200 frame could clip the buttons), and the storage-failure screen. The window background is unverified: if the card looks doubled, remove the one `.background` line in `ShareViewController.host`.
 
-  Seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
+  2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
+
+  Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
 
   > **Branch state:** not yet merged; the four checks above are pending. Squash at merge, because the history holds a removed window-raise experiment and a removed TEMP experiment.
 

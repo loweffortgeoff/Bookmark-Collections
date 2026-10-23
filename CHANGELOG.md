@@ -6,12 +6,16 @@ All notable project changes are recorded here.
 
 ### Fixed — 2026-10-23
 
+- Verified lifetime purchases unlock the active Mac app before transaction completion. Ownership checks survive product-catalog failures; successful purchase, approval, and restore clear obsolete errors and close the paywall.
+- JSON import checks reconciled capacity before changing data. Duplicate-only updates remain free, rejected imports preserve collections and pending edits, and sync duplicates cannot hide new growth past ten.
+
 - Mac Share ▸ "Save to Tucked" no longer fails silently. The Mac share view was created with a zero-size frame, so nothing the extension showed was visible and Safari only dimmed. The view now has a 360 x 200 frame, and the failure card appears with its title, message, Cancel, and Retry.
 - Mac share failure screens use a plain-stack `MacShareFailureView` that fits the fixed frame. The iOS `ShareStoreFailureView` is unchanged.
 - The Mac Share controller applies one window background where it hosts SwiftUI content.
 
 ### Added — 2026-10-23
 
+- Release audit adds gate, import, StoreKit, and UI regression coverage. Confirmed defects and submission gaps are recorded in [the branch audit](docs/verification/2026-10-23-branch-paywall-audit.md). The initial audit preceded the approved fixes above.
 - Share diagnostics: a `ShareSave` log category. `ShareStorageDiagnostics.logSummary` logs the error domain and code down the underlying-error chain. The full error is logged as private. A notice records when the free-bookmark limit blocks a save. Item type identifiers are logged when a share holds nothing to save. A "Share view appeared" entry logs the view and window frames.
 - Unit tests for the free-limit failure and `logSummary`.
 

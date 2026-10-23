@@ -2,6 +2,12 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-10-23 (Verified lifetime transactions deliver access)
+
+- **Decision:** Apply verified lifetime purchase/update transactions before finishing them. Use the latest verified transaction, including its revocation state, for startup and restore. Close the paywall when access becomes unlocked.
+- **Why:** Local Mac testing exposed an empty `currentEntitlements` projection for about 0.7 seconds after a verified purchase. Reading that projection once left access locked; product-catalog availability must also remain independent of ownership.
+- **Alternative considered:** Wait or retry the projection before granting access. Rejected because the verified lifetime transaction already provides the required ownership evidence.
+
 ## 2026-10-23 (The Mac share view sets its own size)
 
 - **Decision:** The macOS `ShareViewController.loadView` creates its view with an explicit 360 x 200 frame. Mac failure screens use a plain-stack `MacShareFailureView` inside that frame. One `Color(nsColor: .windowBackgroundColor)` background is applied where the controller hosts SwiftUI content. The iOS `ShareStoreFailureView` stays under `#if os(iOS)`.
