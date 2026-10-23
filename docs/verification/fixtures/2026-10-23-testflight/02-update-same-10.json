@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "exportedAt": "2026-10-23T13:00:00Z",
+  "collections": [
+    {
+      "id": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "name": "TF Updated Collection",
+      "sortPosition": 0,
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T13:00:00Z"
+    }
+  ],
+  "bookmarks": [
+    {
+      "id": "DC9217AE-CC82-5E2D-B9F4-449B9A6F1BFB",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/01",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/01",
+      "title": "TF Updated Link 01",
+      "domain": "example.com",
+      "isFavorite": true,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T13:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "885D9F4B-9346-529D-999B-FFB28EA5463D",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/02",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/02",
+      "title": "TF Seed Link 02",
+      "domain": "example.com",
+      "isFavorite": true,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T13:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "9A85002D-38D4-5302-8349-C179E391B9D1",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/03",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/03",
+      "title": "TF Seed Link 03",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "9BB73E8F-12F0-5840-A3A7-A25B5BB4F93C",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/04",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/04",
+      "title": "TF Seed Link 04",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "7A733B2D-E6D1-570C-8343-170CF75849C5",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/05",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/05",
+      "title": "TF Seed Link 05",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "2A0BB5A5-33F7-52DC-8CB2-DBE14A6211A7",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/06",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/06",
+      "title": "TF Seed Link 06",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "4DAE15B7-2D7C-58FC-B865-30F41E850142",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/07",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/07",
+      "title": "TF Seed Link 07",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "E5C3D778-260D-5AF6-9227-866C0AB5286F",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/08",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/08",
+      "title": "TF Seed Link 08",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "C5223FE1-4A24-5254-8155-BEC327A89870",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/09",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/09",
+      "title": "TF Seed Link 09",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    }
+  ],
+  "snippets": [
+    {
+      "id": "5271D53B-EB0C-5049-9108-539985742954",
+      "title": "TF Updated Snippet",
+      "body": "Updated body. The active item count must stay at ten.",
+      "sourceUrl": null,
+      "isFavorite": true,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T13:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    }
+  ]
+}
