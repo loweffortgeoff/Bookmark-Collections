@@ -18,6 +18,19 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertFalse(message.contains("/private"))
     }
 
+    func testLimitFailureReachesTheFailedState() async throws {
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { _, _, _ in throw BookmarkRepository.LimitError.limitReached },
+            onComplete: {}
+        )
+        await model.quickSave(from: [NSItemProvider(object: NSURL(string: "https://example.com/limit")!)])
+
+        guard case .failed = model.state else {
+            return XCTFail("Expected the limit error to leave the model in a failed state")
+        }
+    }
+
     func testLogSummaryFollowsUnderlyingErrorsWithoutPathsOrDescriptions() {
         let underlying = NSError(domain: NSPOSIXErrorDomain, code: 1)
         let error = NSError(

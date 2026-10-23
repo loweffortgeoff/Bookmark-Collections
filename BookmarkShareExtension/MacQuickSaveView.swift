@@ -35,9 +35,10 @@ struct MacQuickSaveView: View {
 }
 
 /// A plain stack, not `ContentUnavailableView`. On a failed Mac share the
-/// Safari window dimmed and no message was drawn. An offscreen render of the
-/// `ContentUnavailableView` version also drew nothing, while a plain stack
-/// drew normally.
+/// Safari window dimmed and no message was drawn. An offscreen `ImageRenderer`
+/// draw of the `ContentUnavailableView` version was empty and a plain stack
+/// drew normally, but `ImageRenderer` has its own limits. Whether this changes
+/// what ShareKit shows has not been confirmed on a Mac.
 struct MacShareFailureView: View {
     let title: String
     let message: String
