@@ -14,7 +14,10 @@ final class Storefront {
     @ObservationIgnored private var transactionUpdates: Task<Void, Never>?
     private var entitlementRevision = 0
 
-    init() {
+    init(arguments: [String] = ProcessInfo.processInfo.arguments) {
+        // UI tests use a disposable library. Outside the local StoreKit audit,
+        // a real purchase on the test machine would unlock it and hide the paywall.
+        guard !arguments.contains("-ui-testing") || arguments.contains("-storekit-audit") else { return }
         transactionUpdates = Task { [weak self] in
             for await result in Transaction.updates {
                 guard case let .verified(transaction) = result else { continue }

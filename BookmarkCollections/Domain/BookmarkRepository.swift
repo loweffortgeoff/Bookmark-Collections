@@ -50,28 +50,78 @@ struct BookmarkRepository {
         collection: BookmarkCollection? = nil,
         favorite: Bool = false
     ) throws -> SaveResult {
+        try saveLink(url: value, collection: collection, favorite: favorite)
+    }
+
+    /// Share capture may preserve organization while normal editor/import saves keep explicit defaults.
+    func saveSharedLink(
+        url: String,
+        collection: BookmarkCollection?,
+        favorite: Bool,
+        preserveOrganization: Bool,
+        suggestedTitle: String?,
+        faviconData: Data?,
+        previewImageData: Data?,
+        metadataWasFetched: Bool
+    ) throws -> SaveResult {
+        try saveLink(
+            url: url, collection: collection, favorite: favorite,
+            preserveOrganization: preserveOrganization
+        ) { bookmark in
+            if bookmark.title.isEmpty, let suggestedTitle, !suggestedTitle.isEmpty {
+                bookmark.title = suggestedTitle
+            }
+            if bookmark.faviconData == nil { bookmark.faviconData = faviconData }
+            if bookmark.previewImageData == nil { bookmark.previewImageData = previewImageData }
+            if metadataWasFetched {
+                bookmark.metadataState = .ready
+                bookmark.lastMetadataRefreshAt = Date()
+            }
+        }
+    }
+
+    func sharedLinkMatch(url: String) throws -> Bookmark? {
+        let normalizedString = try NormalizedURL(url).string
+        let matches = try context.fetch(FetchDescriptor<Bookmark>(
+            predicate: #Predicate { $0.normalizedURLString == normalizedString },
+            sortBy: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)]
+        ))
+        return matches.first(where: { $0.deletedAt == nil }) ?? matches.first
+    }
+
+    private func saveLink(
+        url value: String,
+        collection: BookmarkCollection?,
+        favorite: Bool,
+        preserveOrganization: Bool = false,
+        prepare: (Bookmark) -> Void = { _ in }
+    ) throws -> SaveResult {
         let normalized = try NormalizedURL(value)
         let normalizedString = normalized.string
         let descriptor = FetchDescriptor<Bookmark>(
             predicate: #Predicate { bookmark in
                 bookmark.normalizedURLString == normalizedString
             },
-            sortBy: [SortDescriptor(\Bookmark.createdAt)]
+            sortBy: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)]
         )
         let matches = try context.fetch(descriptor)
         let now = Date()
 
         let result: SaveResult
         if let existing = matches.first(where: { $0.deletedAt == nil }) {
-            existing.collection = collection
-            existing.isFavorite = favorite
+            if !preserveOrganization {
+                existing.collection = collection
+                existing.isFavorite = favorite
+            }
             existing.modifiedAt = now
             result = .updated(existing)
         } else if let deleted = matches.first {
             try assertCanCreate()
             deleted.deletedAt = nil
-            deleted.collection = collection
-            deleted.isFavorite = favorite
+            if !preserveOrganization {
+                deleted.collection = collection
+                deleted.isFavorite = favorite
+            }
             deleted.modifiedAt = now
             result = .restored(deleted)
         } else {
@@ -89,6 +139,10 @@ struct BookmarkRepository {
             result = .created(bookmark)
         }
 
+        switch result {
+        case let .created(bookmark), let .updated(bookmark), let .restored(bookmark):
+            prepare(bookmark)
+        }
         try context.save()
         return result
     }

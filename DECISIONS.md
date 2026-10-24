@@ -2,6 +2,17 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-10-24 (Share intent and accessible recovery)
+
+- **Decision:** Keep Share-specific preservation in repository mutations. Quick Save preserves organization; interactive controls load existing values. Fill only missing title/image fields in the durable primary save.
+- **Why:** Share defaults and missing metadata must not erase saved user data or consume a second slot. Generic import/editor defaults keep their current semantics.
+- **Alternative considered:** Change every repository save default. Rejected because explicit None/off and imports must still work.
+
+- **Decision:** Use one full-width card column at accessibility text sizes. Start the Mac Share surface at 420 x 320 with a scrolling message; typed free-limit recovery opens the exact containing app and cancels the unsaved request.
+- **Why:** Running iPhone captures showed word fragments in narrow cards. Mac recovery must keep actions reachable and must not report an unsaved item as complete. Live Mac host sizing/opening remains an acceptance gate.
+- **Alternative considered:** Shrink fonts, retain fixed 360 x 200 content, or open by display name. Rejected because each weakens accessibility or can select another build.
+
+
 ## 2026-10-23 (Verified lifetime transactions deliver access)
 
 - **Decision:** Apply verified lifetime purchase/update transactions before finishing them. Use the latest verified transaction, including its revocation state, for startup and restore. Close the paywall when access becomes unlocked.
@@ -246,3 +257,9 @@ Significant decisions made during development, logged for future reference.
 - **Why:** The first IAP was deleted in App Store Connect, and Apple does not let a deleted Product ID be created again. v1.0 has no users other than the owner, so nobody needs an existing-user exemption and the paywall can land before the first public release.
 - **Alternative considered:** Keep $7.99. Rejected by the owner in favor of an impulse-friendly one-time price.
 - **Also:** The paywall copy leads with support for an independent developer (a fifth row) and adds a footnote that existing bookmarks stay accessible. The App Store Connect IAP review screenshot is the iPhone 6.9" paywall captured with `Tucked.storekit` attached to a run of `Tucked Release`.
+
+## 2026-10-24 (Mac Bookmark menu commands target the last item acted on, not hover)
+
+- **Decision:** On Mac, Open, Share, Copy Text, and Move to Recently Deleted act on the item the user last clicked, focused with the keyboard, or used Edit or Get Info on. The card under the pointer no longer becomes the target.
+- **Why:** With hover targeting, moving the pointer to the menu bar crossed other cards and retargeted the command, and ⌘⌫ moved whatever card the pointer rested on to Recently Deleted. The spec requires commands to use the selected item.
+- **Alternative considered:** A visible Finder-style selection (click selects, double-click opens) — deferred. It changes grid click behavior and is a redesign outside the bug block. The current target has no visible indicator.

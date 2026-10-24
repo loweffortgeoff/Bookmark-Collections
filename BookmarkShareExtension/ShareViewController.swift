@@ -110,7 +110,7 @@ final class ShareViewController: NSViewController {
         // nothing the extension showed was visible. The failure screen made
         // that obvious: Safari dimmed and no message appeared. Give the view a
         // real frame.
-        let size = NSSize(width: 360, height: 200)
+        let size = NSSize(width: 420, height: 320)
         view = NSView(frame: NSRect(origin: .zero, size: size))
         preferredContentSize = size
     }
@@ -150,7 +150,8 @@ final class ShareViewController: NSViewController {
                 MacQuickSaveView(
                     model: model,
                     providers: inputProviders,
-                    onCancel: { [weak self] in self?.cancelRequest() }
+                    onCancel: { [weak self] in self?.cancelRequest() },
+                    openContainingApp: Self.openContainingApp
                 )
             )
         } catch {
@@ -167,6 +168,21 @@ final class ShareViewController: NSViewController {
                 )
             )
         }
+    }
+
+    private static func openContainingApp() async throws {
+        // Resolve the actual containing app, never a similarly named registered build.
+        let appURL = Bundle.main.bundleURL
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        guard appURL.pathExtension == "app",
+              Bundle(url: appURL)?.bundleIdentifier == "com.loweffortapps.BookmarkCollections" else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        _ = try await NSWorkspace.shared.openApplication(
+            at: appURL, configuration: NSWorkspace.OpenConfiguration()
+        )
     }
 
     private var inputProviders: [NSItemProvider] {

@@ -112,10 +112,16 @@ struct LibraryRootView: View {
                 sort: sort,
                 ascending: ascending,
                 onAdd: { sheet = .addBookmark },
+                // Menu commands target the item the user last acted on, never
+                // the card under the pointer.
                 onEdit: { bookmark in
+                    commandBookmark = bookmark
                     sheet = bookmark.kind == .text ? .snippetEditor(bookmark) : .editBookmark(bookmark)
                 },
-                onInfo: { sheet = .bookmarkInfo($0) },
+                onInfo: { bookmark in
+                    commandBookmark = bookmark
+                    sheet = .bookmarkInfo(bookmark)
+                },
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
@@ -273,7 +279,7 @@ struct LibraryRootView: View {
             newCollection: { sheet = .newCollection },
             newSnippet: { sheet = .snippetEditor(nil) },
             selectedBookmark: visibleCommandBookmark,
-            canDeleteSelected: visibleCommandBookmark?.deletedAt == nil,
+            canDeleteSelected: visibleCommandBookmark != nil && visibleCommandBookmark?.deletedAt == nil,
             openSelected: {
                 guard let bookmark = visibleCommandBookmark else { return }
                 openBookmark(bookmark)
@@ -335,42 +341,5 @@ private enum SheetDestination: Identifiable {
         case let .snippetEditor(bookmark): "snippet-\(bookmark?.id.uuidString ?? "new")"
         case .paywall: "paywall"
         }
-    }
-}
-
-/// Mac menu command Share destination — must always expose Cancel so the sheet can be dismissed.
-private struct ShareBookmarkSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    let bookmark: Bookmark
-
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.largeTitle)
-                    .foregroundStyle(.secondary)
-                if let url = URL(string: bookmark.urlString) {
-                    ShareLink(item: url) {
-                        Label("Share Bookmark", systemImage: "square.and.arrow.up")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                } else {
-                    ContentUnavailableView(
-                        "Bookmark URL Is Invalid",
-                        systemImage: "exclamationmark.triangle"
-                    )
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(28)
-            .navigationTitle("Share")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-            }
-        }
-        .frame(minWidth: 360, minHeight: 260)
     }
 }

@@ -1,6 +1,6 @@
 # Tucked remaining bug fixes
 
-**Status:** Draft for Geoff's approval. No implementation is authorized by this document alone.
+**Status:** Implemented, verified locally, and merged to `main` on 2026-10-24. Device acceptance runs on the next TestFlight build; see the [device matrix](../../verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24).
 **Execution:** Use `full-send` after approval, with the [implementation plan](../plans/2026-10-23-remaining-bug-fixes.md). One explicit approval and handoff can authorize both documents; do not add another routine approval gate during execution.
 **Baseline:** `fix/mac-save-to-tucked`, inspected at `54ed538`. App fixes in `f34b8c6` shipped to internal TestFlight as 1.0 (9). Later fixes require new verification and separately authorized uploads.
 

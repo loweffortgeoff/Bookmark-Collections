@@ -13,9 +13,6 @@ struct ShareCaptureView: View {
     let providers: [NSItemProvider]
     let onCancel: () -> Void
 
-    @State private var selectedCollectionID: UUID?
-    @State private var isFavorite = false
-
     var body: some View {
         NavigationStack {
             #if os(macOS)
@@ -26,7 +23,7 @@ struct ShareCaptureView: View {
                     Button("Cancel", action: onCancel)
                     Spacer()
                     Button(saveButtonTitle) {
-                        model.save(collectionID: selectedCollectionID, favorite: isFavorite)
+                        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
                     }
                     .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                 }
@@ -40,7 +37,7 @@ struct ShareCaptureView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(saveButtonTitle) {
-                        model.save(collectionID: selectedCollectionID, favorite: isFavorite)
+                        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
                     }
                     .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                 }
@@ -57,13 +54,13 @@ struct ShareCaptureView: View {
         Form {
             captureSection
             if model.capture != nil {
-                Picker("Collection", selection: $selectedCollectionID) {
+                Picker("Collection", selection: $model.selectedCollectionID) {
                     Text("None").tag(nil as UUID?)
                     ForEach(model.collections) { collection in
                         Text(collection.name).tag(collection.id as UUID?)
                     }
                 }
-                Toggle("Favorite", isOn: $isFavorite)
+                Toggle("Favorite", isOn: $model.isFavorite)
             }
             if case let .failed(message) = model.state {
                 Section {

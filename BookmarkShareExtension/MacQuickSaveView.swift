@@ -5,6 +5,7 @@ struct MacQuickSaveView: View {
     @ObservedObject var model: ShareCaptureModel
     let providers: [NSItemProvider]
     let onCancel: () -> Void
+    let openContainingApp: () async throws -> Void
 
     var body: some View {
         Group {
@@ -17,7 +18,10 @@ struct MacQuickSaveView: View {
                             await model.quickSave(from: providers)
                         }
                     },
-                    onCancel: onCancel
+                    onCancel: onCancel,
+                    onOpenTucked: model.failureReason == .limitReached ? {
+                        Task { await model.openContainingApp(using: openContainingApp, onCancel: onCancel) }
+                    } : nil
                 )
             } else {
                 VStack(spacing: 12) {
@@ -26,7 +30,7 @@ struct MacQuickSaveView: View {
                 }
             }
         }
-        .frame(minWidth: 360, minHeight: 200)
+        .frame(minWidth: 360, minHeight: 240)
         .task {
             guard model.state == .idle else { return }
             await model.quickSave(from: providers)
@@ -34,30 +38,4 @@ struct MacQuickSaveView: View {
     }
 }
 
-/// A plain stack sized to fit the fixed 360 by 200 share view.
-/// `ContentUnavailableView` would probably need more height.
-struct MacShareFailureView: View {
-    let title: String
-    let message: String
-    let onRetry: () -> Void
-    let onCancel: () -> Void
-
-    var body: some View {
-        VStack(spacing: 12) {
-            Label(title, systemImage: "exclamationmark.triangle")
-                .font(.headline)
-            Text(message)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 12) {
-                Button("Cancel", action: onCancel)
-                Button("Retry", action: onRetry)
-                    .buttonStyle(.borderedProminent)
-            }
-        }
-        .padding(20)
-        .frame(minWidth: 360, minHeight: 200)
-    }
-}
 #endif

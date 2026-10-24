@@ -60,11 +60,6 @@ struct BookmarkCard: View {
         .onChange(of: isFocused) { _, focused in
             if focused { onCommandSelection?() }
         }
-        #if os(macOS)
-        .onHover { hovering in
-            if hovering { onCommandSelection?() }
-        }
-        #endif
         .accessibilityElement(children: .combine)
         .accessibilityLabel(displayTitle)
         .accessibilityValue(accessibilityValue)

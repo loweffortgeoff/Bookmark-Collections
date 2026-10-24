@@ -15,6 +15,8 @@ struct ShareCapture: Equatable {
     var suggestedTitle: String?
     var faviconData: Data?
     var previewImageData: Data?
+    var metadataWasFetched = false
+    var preserveOrganization = false
 }
 
 enum ShareCaptureState: Equatable {
@@ -24,6 +26,12 @@ enum ShareCaptureState: Equatable {
     case saving
     case saved
     case failed(String)
+}
+
+enum ShareFailureReason: Equatable {
+    case unsupportedInput
+    case limitReached
+    case saveFailed
 }
 
 enum ShareCaptureError: Error {
@@ -36,8 +44,14 @@ final class ShareCaptureModel: ObservableObject {
 
     @Published private(set) var state: ShareCaptureState = .idle
     @Published private(set) var capture: ShareCapture?
+    @Published private(set) var failureReason: ShareFailureReason?
     let collections: [BookmarkCollection]
+    @Published var selectedCollectionID: UUID?
+    @Published var isFavorite = false
 
+    private var lookup: ((String) throws -> Bookmark?)?
+    private var loadID = UUID()
+    private var existingLookupFailed = false
     private let saveAction: SaveAction
     private let metadataProvider: (any MetadataProviding)?
     private let onComplete: () -> Void
@@ -71,26 +85,16 @@ final class ShareCaptureModel: ObservableObject {
                 )
                 return .created(bookmark)
             }
-            let result = try BookmarkRepository(context: context).save(
-                url: capture.urlString,
-                collection: collection,
-                favorite: favorite
+            return try BookmarkRepository(context: context).saveSharedLink(
+                url: capture.urlString, collection: collection, favorite: favorite,
+                preserveOrganization: capture.preserveOrganization,
+                suggestedTitle: capture.suggestedTitle,
+                faviconData: capture.faviconData,
+                previewImageData: capture.previewImageData,
+                metadataWasFetched: capture.metadataWasFetched
             )
-            let bookmark = switch result {
-            case let .created(bookmark), let .updated(bookmark), let .restored(bookmark): bookmark
-            }
-            if let title = capture.suggestedTitle, !title.isEmpty {
-                bookmark.title = title
-            }
-            bookmark.faviconData = capture.faviconData
-            bookmark.previewImageData = capture.previewImageData
-            if capture.suggestedTitle != nil || capture.faviconData != nil || capture.previewImageData != nil {
-                bookmark.metadataState = .ready
-                bookmark.lastMetadataRefreshAt = Date()
-                try? context.save()
-            }
-            return result
         }
+        lookup = { try BookmarkRepository(context: context).sharedLinkMatch(url: $0) }
         self.metadataProvider = metadataProvider
         self.onComplete = onComplete
     }
@@ -98,18 +102,26 @@ final class ShareCaptureModel: ObservableObject {
     init(
         collections: [BookmarkCollection],
         saveAction: @escaping SaveAction,
+        lookup: ((String) throws -> Bookmark?)? = nil,
         metadataProvider: (any MetadataProviding)? = nil,
         onComplete: @escaping () -> Void
     ) {
         self.collections = collections
         self.saveAction = saveAction
+        self.lookup = lookup
         self.metadataProvider = metadataProvider
         self.onComplete = onComplete
     }
 
     func load(from providers: [NSItemProvider]) async {
+        let requestID = UUID()
+        loadID = requestID
         state = .loading
+        failureReason = nil
+        existingLookupFailed = false
         capture = nil
+        selectedCollectionID = nil
+        isFavorite = false
 
         let directURL = await firstURL(from: providers)
         let loaded: ShareCapture?
@@ -120,15 +132,17 @@ final class ShareCaptureModel: ObservableObject {
         } else {
             loaded = await firstImage(from: providers)
         }
+        guard loadID == requestID else { return }
         if let loaded {
             capture = loaded
-            state = .ready
             if loaded.kind == .link {
                 fetchMetadata(for: loaded)
             }
+            loadExistingOrganization()
         } else {
             let types = providers.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
             shareSaveLogger.notice("Nothing to save in the shared item. Types: \(types, privacy: .public)")
+            failureReason = .unsupportedInput
             state = .failed("Share a web link or an image.")
         }
     }
@@ -136,29 +150,75 @@ final class ShareCaptureModel: ObservableObject {
     func quickSave(from providers: [NSItemProvider]) async {
         await load(from: providers)
         guard state == .ready else { return }
+        capture?.preserveOrganization = true
         save(collectionID: nil, favorite: false)
     }
 
     func save(collectionID: UUID?, favorite: Bool) {
         guard let capture else {
+            failureReason = .unsupportedInput
             state = .failed("Load a valid web link before saving.")
+            return
+        }
+        // Retry the saved-value lookup first. Saving the form's defaults now
+        // would clear the existing link's collection and Favorite.
+        guard !existingLookupFailed else {
+            loadExistingOrganization()
             return
         }
 
         state = .saving
+        failureReason = nil
         do {
             _ = try saveAction(capture, collectionID, favorite)
             state = .saved
             onComplete()
         } catch let error as BookmarkRepository.LimitError where error == .limitReached {
             shareSaveLogger.notice("Save blocked by the free bookmark limit")
+            failureReason = .limitReached
             state = .failed("You’ve saved 10 bookmarks free. Open Tucked to unlock Tucked for Life.")
         } catch {
             shareSaveLogger.error("""
                 Save failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
                 detail: \(String(reflecting: error), privacy: .private)
                 """)
+            failureReason = .saveFailed
             state = .failed("The bookmark wasn’t saved. Check storage access and try again.")
+        }
+    }
+
+    #if os(macOS)
+    func openContainingApp(
+        using open: () async throws -> Void,
+        onCancel: () -> Void
+    ) async {
+        guard failureReason == .limitReached else { return }
+        do {
+            try await open()
+            onCancel()
+        } catch {
+            state = .failed("Tucked could not be opened. Open it from Applications, then share again.")
+        }
+    }
+    #endif
+
+    private func loadExistingOrganization() {
+        guard let capture else { return }
+        do {
+            if capture.kind == .link, let existing = try lookup?(capture.urlString) {
+                selectedCollectionID = existing.collection?.id
+                isFavorite = existing.isFavorite
+            }
+            existingLookupFailed = false
+            failureReason = nil
+            state = .ready
+        } catch {
+            shareSaveLogger.error("""
+                Existing-link lookup failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public)
+                """)
+            existingLookupFailed = true
+            failureReason = .saveFailed
+            state = .failed("The bookmark could not be loaded. Check storage access and try again.")
         }
     }
 
@@ -269,10 +329,13 @@ final class ShareCaptureModel: ObservableObject {
         guard let metadataProvider,
               let url = URL(string: loaded.urlString) else { return }
 
+        let requestID = loadID
         Task { [weak self] in
             guard let metadata = try? await metadataProvider.metadata(for: url),
+                  self?.loadID == requestID,
                   var capture = self?.capture,
                   capture.urlString == loaded.urlString else { return }
+            capture.metadataWasFetched = true
             capture.suggestedTitle = metadata.title ?? capture.suggestedTitle
             capture.faviconData = metadata.faviconData
             capture.previewImageData = metadata.previewImageData

@@ -6,6 +6,10 @@ import XCTest
 /// These tests use Xcode's local StoreKit server, never a real purchase.
 @MainActor
 final class StorefrontAuditTests: XCTestCase {
+    private enum AuditIsolationError: Error {
+        case historyDidNotClear
+    }
+
     private func session() async throws -> SKTestSession {
         try XCTSkipUnless(ProcessInfo.processInfo.arguments.contains("-storekit-audit"), "Run StorefrontAuditTests with the Tucked Audit scheme.")
         let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "Audit", withExtension: "storekit"))
@@ -20,7 +24,8 @@ final class StorefrontAuditTests: XCTestCase {
             try await Task.sleep(for: .milliseconds(50))
         }
         XCTFail("Local StoreKit history did not clear before the scenario.")
-        return session
+        // Do not let a failed local setup proceed to purchase/restore calls.
+        throw AuditIsolationError.historyDidNotClear
     }
 
     private func waitUntil(_ condition: () -> Bool, file: StaticString = #filePath, line: UInt = #line) async throws {
