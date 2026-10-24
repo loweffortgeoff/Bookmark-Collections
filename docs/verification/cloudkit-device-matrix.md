@@ -1,15 +1,40 @@
 # CloudKit and Release Verification Matrix
 
-## Remaining bug package — 2026-10-24 local work
+## Remaining bug package — 2026-10-24
 
-Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`. Implementation covers Share re-save preservation, accessibility-size grid/editor corrections, Mac failure recovery and kind-aware sharing, and explicit build settings. Build 9 does not validate this changed source. Local evidence and exact failures are in `.superpowers/sdd/2026-10-23-remaining-bug-fixes/`; the implementation plan tracks unfinished local verification.
+Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`, merged locally to `main` on 2026-10-24. Implementation covers Share re-save preservation, accessibility-size grid/editor corrections, Mac failure recovery and kind-aware sharing, Mac command targeting, and explicit build settings. Build 9 does not validate this changed source. Local evidence is in `.superpowers/sdd/2026-10-23-remaining-bug-fixes/`.
+
+**Local verification (Mac mini, Xcode 27.1):**
+
+- Mac unit and UI tests: 173 pass, 0 fail, 1 expected skip (purchase UI outside Audit). StoreKit audit cases were excluded.
+- iPhone 18 Pro / iOS 27.0: Audit unit tests (166) pass. The Share suites, accessibility layout tests, and Audit paywall UI tests pass, including the local purchase flow.
+- Dark-mode layout at accessibility XXXL is captured on iPhone.
+- Signed Release builds pass for both platforms.
+- The Mac StoreKit audit cannot run on this Mac. Its Apple Account owns Tucked for Life through TestFlight, and the app sees that Sandbox purchase. This branch changes no StoreKit code.
+
+**Next acceptance: the next TestFlight build.** Geoff's account owns Tucked for Life, so the locked path needs testers who never bought it. They follow the [first-time tester checklist](2026-10-24-testflight-fresh-tester-checklist.md). Geoff checks the following on his own devices:
+
+| Check | iPhone | iPad | Mac |
+| --- | --- | --- | --- |
+| Physical Share storage failure (B2): Safari link and Photos image; on failure, capture `ShareStorage`/`ShareSave` logs | Pending | Pending | — |
+| Re-share a saved link keeps title, collection, Favorite | Pending | Pending | Pending |
+| Bookmark menu Open/Share for image, snippet, link; the last item clicked is the target | — | — | Pending |
+| Largest text and dark mode, including Share failure screens | Pending | Pending | Pending |
+| Narrow/wide window and live resize | — | Pending | — |
+
+| First-time tester check | iPhone | Mac |
+| --- | --- | --- |
+| Free limit at 10 across links, images, snippets | Pending | Pending |
+| Paywall appears and closes | Pending | Pending |
+| Share at the limit is refused; Mac shows Open Tucked and Cancel | Pending | Pending |
+| Purchase unlocks; Restore unlocks a second device | Pending | Pending |
 
 Physical iPhone B2 remains **pending**. On the changed build, record device/OS/build/host, test Safari links and Photos images, and capture `ShareStorage`/`ShareSave` error domain/code chains if storage fails. Inspect app/extension App Group and CloudKit entitlements for that exact build. No store reset, schema change, or signing change was made as a speculative repair.
 
-Acceptance still needs real-host duplicate re-share on each platform; Mac free-limit Open Tucked/Cancel and failed-open behavior; failure surfaces in light/dark and supported text sizes; and physical iPad long-content/narrow/wide/live-resize checks. Use an approved disposable library. Production purchase/restore, immediate Mac unlock, cross-platform ownership, fresh-account sync, and offline conflicts remain separate submission gates. No new upload, merge, push, or review submission is authorized by this package.
+Acceptance still needs real-host duplicate re-share on each platform; Mac free-limit Open Tucked/Cancel and failed-open behavior; failure surfaces in light/dark and supported text sizes; and physical iPad long-content/narrow/wide/live-resize checks. Use an approved disposable library. Production purchase/restore, immediate Mac unlock, cross-platform ownership, fresh-account sync, and offline conflicts remain separate submission gates. Geoff approved the local merge on 2026-10-24. The TestFlight upload needs its own release pass. No review submission is authorized by this package.
 
 
-Last updated: 2026-10-23 (TestFlight availability verified; device evidence retains its original dates)
+Last updated: 2026-10-24 (remaining bug package merged locally; TestFlight acceptance listed above. Device evidence retains its original dates.)
 
 ## Current local validation — 2026-10-23
 

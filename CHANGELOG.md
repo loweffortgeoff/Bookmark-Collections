@@ -4,11 +4,18 @@ All notable project changes are recorded here.
 
 ## In Progress
 
-### Fixed — 2026-10-24 (local implementation; acceptance pending)
+### Fixed — 2026-10-24 (merged to `main`; device acceptance through TestFlight pending)
 
 - Re-sharing keeps saved titles, organization, and previews. Interactive Share loads existing choices; explicit None/off still applies. Suggested names no longer mark metadata complete.
+- iOS Share offers Retry when it cannot read an already-saved link. Retry reads the saved values again before it saves, so the form's defaults never clear them.
 - Accessibility text sizes use full-width cards. The link editor applies its minimum width only on Mac. Mac failure messages scroll; free-limit failures offer Open Tucked and Cancel.
 - Mac menu Share uses the selected link, image, or snippet. Missing images show an image error; stale selection disables commands. Extension paywall values and test deployment floors are explicit.
+- Mac Bookmark menu commands act on the item last clicked, focused, or used with Edit or Get Info. The card under the pointer no longer becomes the target.
+
+### Changed — 2026-10-24
+
+- UI-test launches without `-storekit-audit` no longer query StoreKit, so a Mac that owns Tucked cannot unlock the test library. The Mac StoreKit audit cannot run on a Mac whose Apple Account owns Tucked for Life.
+- Added a [first-time tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md) for the next TestFlight build.
 
 
 ### Fixed — 2026-10-23
