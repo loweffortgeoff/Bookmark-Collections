@@ -44,7 +44,10 @@ final class ShareViewController: UIViewController {
                 )
             )
         } catch {
-            shareStorageLogger.error("Could not open shared storage: \(error.localizedDescription, privacy: .public)")
+            shareStorageLogger.error("""
+                Could not open shared storage: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
             host(
                 ShareStoreFailureView(
                     message: ShareStorageDiagnostics.recoveryMessage(for: error),
@@ -102,13 +105,32 @@ final class ShareViewController: NSViewController {
     private var hostedController: NSViewController?
 
     override func loadView() {
-        view = NSView()
-        preferredContentSize = NSSize(width: 360, height: 200)
+        // A plain NSView() has a zero frame, and ShareKit does not size the
+        // view from preferredContentSize. Every share view was zero-sized, so
+        // nothing the extension showed was visible. The failure screen made
+        // that obvious: Safari dimmed and no message appeared. Give the view a
+        // real frame.
+        let size = NSSize(width: 360, height: 200)
+        view = NSView(frame: NSRect(origin: .zero, size: size))
+        preferredContentSize = size
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCapture()
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        // Record the size ShareKit gives the view. A zero size here means
+        // nothing the extension shows can be seen.
+        if let window = view.window {
+            shareStorageLogger.notice("""
+                Share view appeared. view=\(NSStringFromRect(self.view.frame), privacy: .public) \
+                window=\(NSStringFromRect(window.frame), privacy: .public) \
+                visible=\(window.isVisible) appActive=\(NSApp.isActive)
+                """)
+        }
     }
 
     private func configureCapture() {
@@ -132,9 +154,13 @@ final class ShareViewController: NSViewController {
                 )
             )
         } catch {
-            shareStorageLogger.error("Could not open shared storage: \(error.localizedDescription, privacy: .public)")
+            shareStorageLogger.error("""
+                Could not open shared storage: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
             host(
-                ShareStoreFailureView(
+                MacShareFailureView(
+                    title: "Couldn’t Open Bookmark Storage",
                     message: ShareStorageDiagnostics.recoveryMessage(for: error),
                     onRetry: { [weak self] in self?.configureCapture() },
                     onCancel: { [weak self] in self?.cancelRequest() }
@@ -160,7 +186,12 @@ final class ShareViewController: NSViewController {
     }
 
     private func host<Content: View>(_ content: Content) {
-        let controller = NSHostingController(rootView: content)
+        // ShareKit draws only what the view paints. Give every screen a window
+        // background so its text does not sit directly on the dimmed Safari
+        // window. Not yet seen on a Mac; remove it if the card looks doubled.
+        let controller = NSHostingController(
+            rootView: content.background(Color(nsColor: .windowBackgroundColor))
+        )
         addChild(controller)
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(controller.view)
@@ -183,6 +214,7 @@ final class ShareViewController: NSViewController {
 }
 #endif
 
+#if os(iOS)
 private struct ShareStoreFailureView: View {
     let message: String
     let onRetry: () -> Void
@@ -203,3 +235,4 @@ private struct ShareStoreFailureView: View {
         }
     }
 }
+#endif

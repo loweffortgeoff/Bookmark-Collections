@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "exportedAt": "2026-10-23T13:00:00Z",
+  "collections": [
+    {
+      "id": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "name": "TF REJECTED - must not appear",
+      "sortPosition": 0,
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z"
+    }
+  ],
+  "bookmarks": [
+    {
+      "id": "B1203DC4-5225-597F-8BE3-FD332CBE9202",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/01",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/01",
+      "title": "TF Rejected Link 01",
+      "domain": "example.com",
+      "isFavorite": true,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "A74C79A0-88BD-546F-89DC-EF6FE1DF4C80",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/02",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/02",
+      "title": "TF Rejected Link 02",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "35ED5EA5-71CE-5EF0-B550-12545DB22F57",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/03",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/03",
+      "title": "TF Rejected Link 03",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "FE697AC0-4704-5339-A5B4-FAA7941D9FAB",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/04",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/04",
+      "title": "TF Rejected Link 04",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "9A659877-84BB-5612-B838-0F5BFA26ABA8",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/05",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/05",
+      "title": "TF Rejected Link 05",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "C0AD1064-9AD8-5133-BBD3-B88FAD13B67C",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/06",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/06",
+      "title": "TF Rejected Link 06",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "76C14683-E2B1-5C7F-B1C8-EB9E4C0C8B31",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/07",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/07",
+      "title": "TF Rejected Link 07",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "81FCD3F6-8DCC-5585-B97A-001278A01390",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/08",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/08",
+      "title": "TF Rejected Link 08",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "08C741AB-27AD-5E72-968B-5D5EDBE94044",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/09",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/09",
+      "title": "TF Rejected Link 09",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "A14985C5-CC04-52A1-AA73-8C18E00746CE",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/10",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/10",
+      "title": "TF Rejected Link 10",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    },
+    {
+      "id": "434AD4B5-4F81-5C9E-9884-56AFE41DF819",
+      "urlString": "https://example.com/tucked-testflight-20261023/rejected/11",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/rejected/11",
+      "title": "TF Rejected Link 11",
+      "domain": "example.com",
+      "isFavorite": false,
+      "collectionID": "6D841BE7-C104-5D98-A199-2D75ED3F6344",
+      "createdAt": "2026-10-23T12:00:00Z",
+      "modifiedAt": "2026-10-23T12:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    }
+  ],
+  "snippets": []
+}

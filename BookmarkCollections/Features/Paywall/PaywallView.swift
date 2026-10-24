@@ -56,6 +56,9 @@ struct PaywallView: View {
         .frame(minWidth: 520, idealWidth: 520, minHeight: 620, idealHeight: 720)
         #endif
         .accessibilityIdentifier("paywall")
+        .onChange(of: storefront.isUnlocked, initial: true) { _, unlocked in
+            if unlocked { dismiss() }
+        }
     }
 }
 

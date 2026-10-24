@@ -2,16 +2,27 @@
 
 ## Next
 
+- [ ] **Review the remaining-bug spec.** [Draft spec](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md) and [full-send plan](docs/superpowers/plans/2026-10-23-remaining-bug-fixes.md) cover Share data preservation/storage diagnosis, accessible layouts, Mac actions, and configuration cleanup. Implementation awaits approval.
+
+- [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (9) is available internally for iPhone and native Mac from `f34b8c6`; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
+
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
 
 - [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
+
+  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified.
 
   Prior investigation: reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
   The failure message is "Tucked could not open its shared library," and it
   blocks every share, including links and images. Highlighted-text share is
   the separate v1.1.0 item below unless that storage message is what appears.
-- [ ] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+  The 2026-10-23 macOS share fix did not resolve this iOS failure. The `ShareStorage`
+  log now records the error domain and code down the underlying-error chain, which
+  should make the cause diagnosable.
+- [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+
+  2026-10-23 follow-up: all 15 Mac UI cases pass. Numeric free-limit launch arguments suppressed the initial window under native XCTest; filling the real ten-item cap through UI saves resolves that harness gap. Local purchase closes the paywall and shows the unlocked Settings badge.
 
   Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
   Merged `main` is byte-identical to the tree whose UI suite passed on
@@ -27,6 +38,14 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
   Security → Accessibility for Xcode and Terminal. Release builds drop
   `get-task-allow`, so installing Release may clear this on its own.
 
+- [ ] **Finish verifying the Mac share failure card** (unnumbered; follow-up to the 2026-10-23 Mac share fix). On a Mac, check four things: the free-limit message text in the share sheet, light mode, the largest accessibility text size (the fixed 360 x 200 frame could clip the buttons), and the storage-failure screen. The window background is unverified: if the card looks doubled, remove the one `.background` line in `ShareViewController.host`.
+
+  2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
+
+  Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
+
+  > **Branch state:** not yet merged; the four checks above are pending. Squash at merge, because the history holds a removed window-raise experiment and a removed TEMP experiment.
+
 The remaining v1 release gates (real-device CloudKit matrix, Production schema, TestFlight/new-account check) are tracked in `docs/verification/cloudkit-device-matrix.md`, not here.
 
 ## v1.1.0
@@ -35,6 +54,7 @@ After the initial release is approved. None of this blocks 1.0.
 
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
   The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
+  Found 2026-10-23: a plain-text selection in Safari reaches the Mac share extension with no attachments (probably the text sits in the extension item's text content, not an attachment). It is a deterministic Mac repro for the share failure card and needs no paywall state.
 - [ ] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
   Reported 2026-10-14. The 1.0 Larger Text claim covers iPhone and iPad only.
 - [ ] **6. Add the Mac menu bar helper** (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
@@ -48,6 +68,10 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
+- Share failure on the free-limit screen: Retry always fails the same way. Polish: replace Retry with an "Open Tucked" action for that failure (2026-10-23).
+- Re-sharing a URL that is already saved sets its collection to none and Favorite off. A Mac quick save also overwrites its favicon and preview with nil and marks metadata ready though none was fetched. Preserve the existing values on a re-share (2026-10-23).
+- `PaywallEnabled` is an empty string in the share extension target's Info.plist, because `PAYWALL_ENABLED` is unset for that target. Code treats empty as enabled. Set it explicitly for the extension (2026-10-23).
+- The test target's `IPHONEOS_DEPLOYMENT_TARGET` is 17.0 but the app needs 18.0, so simulator tests need an `IPHONEOS_DEPLOYMENT_TARGET=18.0` override. Raise the setting in the project (2026-10-23).
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.

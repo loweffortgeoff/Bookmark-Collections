@@ -9,22 +9,16 @@ struct MacQuickSaveView: View {
     var body: some View {
         Group {
             if case let .failed(message) = model.state {
-                ContentUnavailableView {
-                    Label(
-                        "Couldn’t Save to Tucked",
-                        systemImage: "exclamationmark.triangle"
-                    )
-                } description: {
-                    Text(message)
-                } actions: {
-                    Button("Retry") {
+                MacShareFailureView(
+                    title: "Couldn’t Save to Tucked",
+                    message: message,
+                    onRetry: {
                         Task {
                             await model.quickSave(from: providers)
                         }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    Button("Cancel", action: onCancel)
-                }
+                    },
+                    onCancel: onCancel
+                )
             } else {
                 VStack(spacing: 12) {
                     ProgressView()
@@ -37,6 +31,33 @@ struct MacQuickSaveView: View {
             guard model.state == .idle else { return }
             await model.quickSave(from: providers)
         }
+    }
+}
+
+/// A plain stack sized to fit the fixed 360 by 200 share view.
+/// `ContentUnavailableView` would probably need more height.
+struct MacShareFailureView: View {
+    let title: String
+    let message: String
+    let onRetry: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Label(title, systemImage: "exclamationmark.triangle")
+                .font(.headline)
+            Text(message)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 12) {
+                Button("Cancel", action: onCancel)
+                Button("Retry", action: onRetry)
+                    .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(20)
+        .frame(minWidth: 360, minHeight: 200)
     }
 }
 #endif

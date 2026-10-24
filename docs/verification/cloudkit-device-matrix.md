@@ -1,8 +1,22 @@
 # CloudKit and Release Verification Matrix
 
-Last updated: 2026-08-29 (America/New_York)
+Last updated: 2026-10-23 (TestFlight availability verified; device evidence retains its original dates)
 
-## Release status
+## Current local validation — 2026-10-23
+
+The paywall/JSON fix package passes 169 checks on Mac and 169 on iPhone 18 Pro / iOS 27.0, with signed Release builds and independent review. See the [audit follow-up](2026-10-23-branch-paywall-audit.md#approved-fix-follow-up). Physical Share capture, current-build sandbox/TestFlight purchase/restore and cross-device access, fresh-account Production sync, and offline/conflict checks remain acceptance gates. No device or CloudKit gate was closed by local tests.
+
+## TestFlight candidate — 2026-10-23
+
+Source `f34b8c6`, scheme **Tucked Release**, configuration Release: iOS and native macOS **1.0 (9)** uploaded, processed `VALID`, and verified `IN_BETA_TESTING` in the existing internal group. What to Test and export compliance are saved. Both packages remain App Store eligible. No App Review submission, build selection for App Review, push, or merge occurred.
+
+Built on the Mac mini, macOS 27.0.1 / Xcode 27.1. Distribution signatures and app/extension identifiers, versions, paywall configuration, App Group, and Production CloudKit entitlements pass inspection; iOS push uses production. Build number 9 was a command-line override. App source and project remain unchanged from `f34b8c6`.
+
+The [JSON test pack](fixtures/Tucked-TestFlight-1.0-9-JSON-tests.zip) contains five numbered files and [device instructions](fixtures/2026-10-23-testflight/README.md). One targeted native Mac test exercised all five files through the actual importer and passed. Its first invocation hit the test target's macOS 14 default; overriding the test deployment target to 15 resolved compilation. No app code changed. Evidence: `.superpowers/sdd/2026-10-23-testflight/` (ignored).
+
+Device purchase/restore, the Mac same-session unlock, Share capture, cross-platform purchase access, and Production CloudKit gates remain open. Tucked for Life is `READY_TO_SUBMIT`; both App Store platform versions remain `DEVELOPER_REJECTED`. These states are separate from internal TestFlight availability.
+
+## Historical release status
 
 Automated implementation verification is complete. Most of the real-device same-account matrix below is confirmed across iPhone, iPad, and Mac, but Mac-originated create-bookmark propagation remains pending. Destructive offline conflict exercises, CloudKit Production schema deployment, Safari HTML import, and the new-account TestFlight check are also still pending. Simulator or local build success is not recorded as CloudKit synchronization evidence.
 

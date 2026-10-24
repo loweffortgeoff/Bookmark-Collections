@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "exportedAt": "2026-10-23T13:00:00Z",
+  "collections": [],
+  "bookmarks": [
+    {
+      "id": "801B9C6C-040E-5D4D-8F6E-B4C980844E96",
+      "urlString": "https://example.com/tucked-testflight-20261023/seed/01?utm_source=testflight#duplicate",
+      "normalizedURLString": "https://example.com/tucked-testflight-20261023/seed/01",
+      "title": "TF Duplicate Updated Link 01",
+      "domain": "example.com",
+      "isFavorite": true,
+      "collectionID": "A9A80BCF-AE4E-5B76-8262-FC1B32C5678D",
+      "createdAt": "2026-10-23T12:30:00Z",
+      "modifiedAt": "2026-10-23T14:00:00Z",
+      "deletedAt": null,
+      "lastOpenedAt": null
+    }
+  ],
+  "snippets": []
+}

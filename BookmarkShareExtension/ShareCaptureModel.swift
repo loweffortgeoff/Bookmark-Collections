@@ -1,7 +1,13 @@
 import Combine
 import Foundation
+import OSLog
 import SwiftData
 import UniformTypeIdentifiers
+
+private let shareSaveLogger = Logger(
+    subsystem: "com.loweffortapps.BookmarkCollections",
+    category: "ShareSave"
+)
 
 struct ShareCapture: Equatable {
     var kind: Bookmark.Kind = .link
@@ -121,6 +127,8 @@ final class ShareCaptureModel: ObservableObject {
                 fetchMetadata(for: loaded)
             }
         } else {
+            let types = providers.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
+            shareSaveLogger.notice("Nothing to save in the shared item. Types: \(types, privacy: .public)")
             state = .failed("Share a web link or an image.")
         }
     }
@@ -143,8 +151,13 @@ final class ShareCaptureModel: ObservableObject {
             state = .saved
             onComplete()
         } catch let error as BookmarkRepository.LimitError where error == .limitReached {
+            shareSaveLogger.notice("Save blocked by the free bookmark limit")
             state = .failed("You’ve saved 10 bookmarks free. Open Tucked to unlock Tucked for Life.")
         } catch {
+            shareSaveLogger.error("""
+                Save failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
             state = .failed("The bookmark wasn’t saved. Check storage access and try again.")
         }
     }
