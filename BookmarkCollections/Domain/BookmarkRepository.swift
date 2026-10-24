@@ -102,7 +102,7 @@ struct BookmarkRepository {
             predicate: #Predicate { bookmark in
                 bookmark.normalizedURLString == normalizedString
             },
-            sortBy: [SortDescriptor(\Bookmark.createdAt)]
+            sortBy: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)]
         )
         let matches = try context.fetch(descriptor)
         let now = Date()

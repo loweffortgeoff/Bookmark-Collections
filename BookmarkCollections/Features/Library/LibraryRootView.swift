@@ -273,7 +273,7 @@ struct LibraryRootView: View {
             newCollection: { sheet = .newCollection },
             newSnippet: { sheet = .snippetEditor(nil) },
             selectedBookmark: visibleCommandBookmark,
-            canDeleteSelected: visibleCommandBookmark?.deletedAt == nil,
+            canDeleteSelected: visibleCommandBookmark != nil && visibleCommandBookmark?.deletedAt == nil,
             openSelected: {
                 guard let bookmark = visibleCommandBookmark else { return }
                 openBookmark(bookmark)
@@ -337,4 +337,3 @@ private enum SheetDestination: Identifiable {
         }
     }
 }
-
