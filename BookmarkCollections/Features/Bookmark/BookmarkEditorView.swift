@@ -46,7 +46,9 @@ struct BookmarkEditorView: View {
                 }
             }
         }
+        #if os(macOS)
         .frame(minWidth: 380, minHeight: 280)
+        #endif
     }
 
     private func save() {

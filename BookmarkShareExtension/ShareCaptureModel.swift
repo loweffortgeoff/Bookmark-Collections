@@ -28,6 +28,12 @@ enum ShareCaptureState: Equatable {
     case failed(String)
 }
 
+enum ShareFailureReason: Equatable {
+    case unsupportedInput
+    case limitReached
+    case saveFailed
+}
+
 enum ShareCaptureError: Error {
     case missingImageData
 }
@@ -38,6 +44,7 @@ final class ShareCaptureModel: ObservableObject {
 
     @Published private(set) var state: ShareCaptureState = .idle
     @Published private(set) var capture: ShareCapture?
+    @Published private(set) var failureReason: ShareFailureReason?
     let collections: [BookmarkCollection]
     @Published var selectedCollectionID: UUID?
     @Published var isFavorite = false
@@ -107,6 +114,7 @@ final class ShareCaptureModel: ObservableObject {
         let requestID = UUID()
         loadID = requestID
         state = .loading
+        failureReason = nil
         capture = nil
         selectedCollectionID = nil
         isFavorite = false
@@ -128,6 +136,7 @@ final class ShareCaptureModel: ObservableObject {
                     isFavorite = existing.isFavorite
                 }
             } catch {
+                failureReason = .saveFailed
                 state = .failed("The bookmark could not be loaded. Check storage access and try again.")
                 return
             }
@@ -139,6 +148,7 @@ final class ShareCaptureModel: ObservableObject {
         } else {
             let types = providers.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
             shareSaveLogger.notice("Nothing to save in the shared item. Types: \(types, privacy: .public)")
+            failureReason = .unsupportedInput
             state = .failed("Share a web link or an image.")
         }
     }
@@ -152,26 +162,45 @@ final class ShareCaptureModel: ObservableObject {
 
     func save(collectionID: UUID?, favorite: Bool) {
         guard let capture else {
+            failureReason = .unsupportedInput
             state = .failed("Load a valid web link before saving.")
             return
         }
 
         state = .saving
+        failureReason = nil
         do {
             _ = try saveAction(capture, collectionID, favorite)
             state = .saved
             onComplete()
         } catch let error as BookmarkRepository.LimitError where error == .limitReached {
             shareSaveLogger.notice("Save blocked by the free bookmark limit")
+            failureReason = .limitReached
             state = .failed("You’ve saved 10 bookmarks free. Open Tucked to unlock Tucked for Life.")
         } catch {
             shareSaveLogger.error("""
                 Save failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
                 detail: \(String(reflecting: error), privacy: .private)
                 """)
+            failureReason = .saveFailed
             state = .failed("The bookmark wasn’t saved. Check storage access and try again.")
         }
     }
+
+    #if os(macOS)
+    func openContainingApp(
+        using open: () async throws -> Void,
+        onCancel: () -> Void
+    ) async {
+        guard failureReason == .limitReached else { return }
+        do {
+            try await open()
+            onCancel()
+        } catch {
+            state = .failed("Tucked could not be opened. Open it from Applications, then share again.")
+        }
+    }
+    #endif
 
     private func firstURL(from providers: [NSItemProvider]) async -> ShareCapture? {
         for provider in providers where provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {

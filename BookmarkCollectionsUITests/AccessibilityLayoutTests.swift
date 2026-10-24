@@ -1,0 +1,61 @@
+import XCTest
+
+#if os(iOS)
+@MainActor
+final class AccessibilityLayoutTests: XCTestCase {
+    func testLargestTextUsesReadableCardsAndReachableSnippetControls() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        let card = app.buttons["bookmark.22222222-2222-2222-2222-222222222222"]
+        XCTAssertTrue(card.waitForExistence(timeout: 5))
+        XCTAssertGreaterThan(card.frame.width, app.frame.width * 0.8)
+        let grid = XCTAttachment(screenshot: app.screenshot())
+        grid.name = "Largest text populated grid"
+        grid.lifetime = .keepAlways
+        add(grid)
+        card.tap()
+        XCTAssertTrue(app.buttons["Save"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["Cancel"].isHittable)
+        XCTAssertTrue(app.buttons["Save"].isHittable)
+        let editor = XCTAttachment(screenshot: app.screenshot())
+        editor.name = "Largest text snippet editor"
+        editor.lifetime = .keepAlways
+        add(editor)
+        app.buttons["Cancel"].tap()
+        XCTAssertTrue(card.waitForExistence(timeout: 3))
+    }
+
+    func testLargestTextDarkLinkEditorAndSettingsRemainReachable() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL", "-AppleInterfaceStyle", "Dark"]
+        app.launch()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText("Seeded Active")
+        let card = app.buttons["bookmark.seeded-active"]
+        XCTAssertTrue(card.waitForExistence(timeout: 3))
+        card.press(forDuration: 1)
+        app.buttons["Edit"].tap()
+        XCTAssertTrue(app.buttons["Save"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["Cancel"].isHittable)
+        XCTAssertTrue(app.buttons["Save"].isHittable)
+        let editor = XCTAttachment(screenshot: app.screenshot())
+        editor.name = "Largest text dark link editor"
+        editor.lifetime = .keepAlways
+        add(editor)
+        app.buttons["Cancel"].tap()
+        app.buttons["Add"].tap()
+        app.buttons["Settings"].tap()
+        XCTAssertTrue(app.buttons["settings.importLinks"].waitForExistence(timeout: 3))
+        let settings = XCTAttachment(screenshot: app.screenshot())
+        settings.name = "Largest text dark Settings"
+        settings.lifetime = .keepAlways
+        add(settings)
+        XCTAssertTrue(app.buttons["Done"].isHittable)
+        app.buttons["Done"].tap()
+    }
+
+}
+#endif

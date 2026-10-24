@@ -3,6 +3,7 @@ import SwiftUI
 
 struct LibraryGridView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     let bookmarks: [Bookmark]
     let collections: [BookmarkCollection]
@@ -187,10 +188,13 @@ struct LibraryGridView: View {
     }
 
     private var columns: [GridItem] {
+        if dynamicTypeSize.isAccessibilitySize {
+            return [GridItem(.flexible(), spacing: 18)]
+        }
         #if os(macOS)
-        [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 18)]
+        return [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 18)]
         #else
-        [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 14)]
+        return [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 14)]
         #endif
     }
 
