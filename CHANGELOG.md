@@ -15,6 +15,7 @@ All notable project changes are recorded here.
 
 ### Added — 2026-10-23
 
+- Draft spec and full-send plan scope the remaining bug block. No app changes or device-gate completion are claimed.
 - TestFlight 1.0 (9) from `f34b8c6` is available internally on iPhone and native Mac with the Release paywall enabled. Five validated JSON fixtures cover capacity, duplicate updates, rejection without mutations, and unlocked expansion.
 - Release audit adds gate, import, StoreKit, and UI regression coverage. Confirmed defects and submission gaps are recorded in [the branch audit](docs/verification/2026-10-23-branch-paywall-audit.md). The initial audit preceded the approved fixes above.
 - Share diagnostics: a `ShareSave` log category. `ShareStorageDiagnostics.logSummary` logs the error domain and code down the underlying-error chain. The full error is logged as private. A notice records when the free-bookmark limit blocks a save. Item type identifiers are logged when a share holds nothing to save. A "Share view appeared" entry logs the view and window frames.

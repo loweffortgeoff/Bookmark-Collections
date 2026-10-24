@@ -2,6 +2,8 @@
 
 ## Next
 
+- [ ] **Review the remaining-bug spec.** [Draft spec](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md) and [full-send plan](docs/superpowers/plans/2026-10-23-remaining-bug-fixes.md) cover Share data preservation/storage diagnosis, accessible layouts, Mac actions, and configuration cleanup. Implementation awaits approval.
+
 - [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (9) is available internally for iPhone and native Mac from `f34b8c6`; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
 
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
