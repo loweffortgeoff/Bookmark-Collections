@@ -108,6 +108,8 @@ final class PaywallFlowAuditTests: XCTestCase {
         session.disableDialogs = true
         defer { session.clearTransactions() }
         application.terminate()
+        // The app consults StoreKit under UI testing only for the local audit.
+        application.launchArguments.append("-storekit-audit")
         application.launch()
         let app = launch()
         add("Add Link", app: app)
