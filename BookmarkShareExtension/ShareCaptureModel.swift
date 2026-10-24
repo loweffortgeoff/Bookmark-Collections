@@ -15,6 +15,8 @@ struct ShareCapture: Equatable {
     var suggestedTitle: String?
     var faviconData: Data?
     var previewImageData: Data?
+    var metadataWasFetched = false
+    var preserveOrganization = false
 }
 
 enum ShareCaptureState: Equatable {
@@ -37,7 +39,11 @@ final class ShareCaptureModel: ObservableObject {
     @Published private(set) var state: ShareCaptureState = .idle
     @Published private(set) var capture: ShareCapture?
     let collections: [BookmarkCollection]
+    @Published var selectedCollectionID: UUID?
+    @Published var isFavorite = false
 
+    private var lookup: ((String) throws -> Bookmark?)?
+    private var loadID = UUID()
     private let saveAction: SaveAction
     private let metadataProvider: (any MetadataProviding)?
     private let onComplete: () -> Void
@@ -71,26 +77,16 @@ final class ShareCaptureModel: ObservableObject {
                 )
                 return .created(bookmark)
             }
-            let result = try BookmarkRepository(context: context).save(
-                url: capture.urlString,
-                collection: collection,
-                favorite: favorite
+            return try BookmarkRepository(context: context).saveSharedLink(
+                url: capture.urlString, collection: collection, favorite: favorite,
+                preserveOrganization: capture.preserveOrganization,
+                suggestedTitle: capture.suggestedTitle,
+                faviconData: capture.faviconData,
+                previewImageData: capture.previewImageData,
+                metadataWasFetched: capture.metadataWasFetched
             )
-            let bookmark = switch result {
-            case let .created(bookmark), let .updated(bookmark), let .restored(bookmark): bookmark
-            }
-            if let title = capture.suggestedTitle, !title.isEmpty {
-                bookmark.title = title
-            }
-            bookmark.faviconData = capture.faviconData
-            bookmark.previewImageData = capture.previewImageData
-            if capture.suggestedTitle != nil || capture.faviconData != nil || capture.previewImageData != nil {
-                bookmark.metadataState = .ready
-                bookmark.lastMetadataRefreshAt = Date()
-                try? context.save()
-            }
-            return result
         }
+        lookup = { try BookmarkRepository(context: context).sharedLinkMatch(url: $0) }
         self.metadataProvider = metadataProvider
         self.onComplete = onComplete
     }
@@ -108,8 +104,12 @@ final class ShareCaptureModel: ObservableObject {
     }
 
     func load(from providers: [NSItemProvider]) async {
+        let requestID = UUID()
+        loadID = requestID
         state = .loading
         capture = nil
+        selectedCollectionID = nil
+        isFavorite = false
 
         let directURL = await firstURL(from: providers)
         let loaded: ShareCapture?
@@ -120,7 +120,17 @@ final class ShareCaptureModel: ObservableObject {
         } else {
             loaded = await firstImage(from: providers)
         }
+        guard loadID == requestID else { return }
         if let loaded {
+            do {
+                if loaded.kind == .link, let existing = try lookup?(loaded.urlString) {
+                    selectedCollectionID = existing.collection?.id
+                    isFavorite = existing.isFavorite
+                }
+            } catch {
+                state = .failed("The bookmark could not be loaded. Check storage access and try again.")
+                return
+            }
             capture = loaded
             state = .ready
             if loaded.kind == .link {
@@ -136,6 +146,7 @@ final class ShareCaptureModel: ObservableObject {
     func quickSave(from providers: [NSItemProvider]) async {
         await load(from: providers)
         guard state == .ready else { return }
+        capture?.preserveOrganization = true
         save(collectionID: nil, favorite: false)
     }
 
@@ -269,10 +280,13 @@ final class ShareCaptureModel: ObservableObject {
         guard let metadataProvider,
               let url = URL(string: loaded.urlString) else { return }
 
+        let requestID = loadID
         Task { [weak self] in
             guard let metadata = try? await metadataProvider.metadata(for: url),
+                  self?.loadID == requestID,
                   var capture = self?.capture,
                   capture.urlString == loaded.urlString else { return }
+            capture.metadataWasFetched = true
             capture.suggestedTitle = metadata.title ?? capture.suggestedTitle
             capture.faviconData = metadata.faviconData
             capture.previewImageData = metadata.previewImageData

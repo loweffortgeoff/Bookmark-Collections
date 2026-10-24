@@ -5,6 +5,7 @@ import XCTest
 
 @MainActor
 final class ShareCaptureModelTests: XCTestCase {
+    private var retainedContainer: ModelContainer?
     func testShareStorageRecoveryMessageDoesNotExposeTechnicalError() {
         let error = NSError(
             domain: "Store",
@@ -356,6 +357,7 @@ final class ShareCaptureModelTests: XCTestCase {
 
     private func makeModel() throws -> ShareCaptureModel {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        retainedContainer = container
         return ShareCaptureModel(context: container.mainContext, onComplete: {})
     }
 
