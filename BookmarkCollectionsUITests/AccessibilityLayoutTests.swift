@@ -27,8 +27,14 @@ final class AccessibilityLayoutTests: XCTestCase {
     }
 
     func testLargestTextDarkLinkEditorAndSettingsRemainReachable() {
+        // iOS ignores an -AppleInterfaceStyle launch argument. Set the
+        // simulator's appearance, and restore it for the next test.
+        let device = XCUIDevice.shared
+        let originalAppearance = device.appearance
+        device.appearance = .dark
+        addTeardownBlock { @MainActor in device.appearance = originalAppearance }
         let app = XCUIApplication()
-        app.launchArguments = ["-ui-testing", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL", "-AppleInterfaceStyle", "Dark"]
+        app.launchArguments = ["-ui-testing", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         app.launch()
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5))

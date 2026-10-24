@@ -51,6 +51,7 @@ final class ShareCaptureModel: ObservableObject {
 
     private var lookup: ((String) throws -> Bookmark?)?
     private var loadID = UUID()
+    private var existingLookupFailed = false
     private let saveAction: SaveAction
     private let metadataProvider: (any MetadataProviding)?
     private let onComplete: () -> Void
@@ -101,11 +102,13 @@ final class ShareCaptureModel: ObservableObject {
     init(
         collections: [BookmarkCollection],
         saveAction: @escaping SaveAction,
+        lookup: ((String) throws -> Bookmark?)? = nil,
         metadataProvider: (any MetadataProviding)? = nil,
         onComplete: @escaping () -> Void
     ) {
         self.collections = collections
         self.saveAction = saveAction
+        self.lookup = lookup
         self.metadataProvider = metadataProvider
         self.onComplete = onComplete
     }
@@ -115,6 +118,7 @@ final class ShareCaptureModel: ObservableObject {
         loadID = requestID
         state = .loading
         failureReason = nil
+        existingLookupFailed = false
         capture = nil
         selectedCollectionID = nil
         isFavorite = false
@@ -130,21 +134,11 @@ final class ShareCaptureModel: ObservableObject {
         }
         guard loadID == requestID else { return }
         if let loaded {
-            do {
-                if loaded.kind == .link, let existing = try lookup?(loaded.urlString) {
-                    selectedCollectionID = existing.collection?.id
-                    isFavorite = existing.isFavorite
-                }
-            } catch {
-                failureReason = .saveFailed
-                state = .failed("The bookmark could not be loaded. Check storage access and try again.")
-                return
-            }
             capture = loaded
-            state = .ready
             if loaded.kind == .link {
                 fetchMetadata(for: loaded)
             }
+            loadExistingOrganization()
         } else {
             let types = providers.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
             shareSaveLogger.notice("Nothing to save in the shared item. Types: \(types, privacy: .public)")
@@ -164,6 +158,12 @@ final class ShareCaptureModel: ObservableObject {
         guard let capture else {
             failureReason = .unsupportedInput
             state = .failed("Load a valid web link before saving.")
+            return
+        }
+        // Retry the saved-value lookup first. Saving the form's defaults now
+        // would clear the existing link's collection and Favorite.
+        guard !existingLookupFailed else {
+            loadExistingOrganization()
             return
         }
 
@@ -201,6 +201,26 @@ final class ShareCaptureModel: ObservableObject {
         }
     }
     #endif
+
+    private func loadExistingOrganization() {
+        guard let capture else { return }
+        do {
+            if capture.kind == .link, let existing = try lookup?(capture.urlString) {
+                selectedCollectionID = existing.collection?.id
+                isFavorite = existing.isFavorite
+            }
+            existingLookupFailed = false
+            failureReason = nil
+            state = .ready
+        } catch {
+            shareSaveLogger.error("""
+                Existing-link lookup failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public)
+                """)
+            existingLookupFailed = true
+            failureReason = .saveFailed
+            state = .failed("The bookmark could not be loaded. Check storage access and try again.")
+        }
+    }
 
     private func firstURL(from providers: [NSItemProvider]) async -> ShareCapture? {
         for provider in providers where provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {

@@ -143,4 +143,44 @@ final class ShareResaveTests: XCTestCase {
         XCTAssertEqual(saved.metadataState, .ready)
     }
 
+    func testFailedExistingLookupOffersRetryWithoutSavingDefaults() async throws {
+        struct LookupFailure: Error {}
+        let existing = Bookmark(urlString: "https://example.com/lookup", normalizedURLString: "https://example.com/lookup")
+        existing.isFavorite = true
+        var lookupFails = true
+        var saves: [Bool] = []
+        var completions = 0
+        let model = ShareCaptureModel(
+            collections: [],
+            saveAction: { capture, _, favorite in
+                saves.append(favorite)
+                return .updated(Bookmark(urlString: capture.urlString, normalizedURLString: capture.urlString))
+            },
+            lookup: { _ in
+                if lookupFails { throw LookupFailure() }
+                return existing
+            },
+            onComplete: { completions += 1 }
+        )
+        await model.load(from: [NSItemProvider(object: NSURL(string: existing.urlString)!)])
+        XCTAssertEqual(model.failureReason, .saveFailed)
+        XCTAssertNotNil(model.capture, "A failed lookup must leave a retryable capture.")
+
+        // Retry while storage still fails: no save with unknown organization.
+        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+        XCTAssertEqual(model.failureReason, .saveFailed)
+        XCTAssertTrue(saves.isEmpty)
+
+        // Retry after storage recovers loads the saved values before any save.
+        lookupFails = false
+        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+        XCTAssertEqual(model.state, .ready)
+        XCTAssertTrue(model.isFavorite)
+        XCTAssertTrue(saves.isEmpty)
+        XCTAssertEqual(completions, 0)
+
+        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+        XCTAssertEqual(saves, [true])
+        XCTAssertEqual(completions, 1)
+    }
 }

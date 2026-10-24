@@ -13,9 +13,9 @@ final class PaywallFlowAuditTests: XCTestCase {
         #else
         application.launchArguments = ["-ui-testing", "-free-limit", "0"]
         #endif
-        #if !os(macOS)
+        // Start locked on both platforms. A Mac that owns Tucked would
+        // otherwise read its real shared unlock flag and skip the paywall.
         application.launchArguments += ["-tuckedProUnlocked", "NO"]
-        #endif
         application.launch()
     }
 
