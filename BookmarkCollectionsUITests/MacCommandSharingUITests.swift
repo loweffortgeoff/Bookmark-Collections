@@ -19,7 +19,8 @@ final class MacCommandSharingUITests: XCTestCase {
 
         let snippet = app.buttons["bookmark.22222222-2222-2222-2222-222222222222"]
         snippet.click()
-        XCTAssertTrue(app.descendants(matching: .any)["snippet.editor"].waitForExistence(timeout: 3))
+        // The Mac sheet does not expose the editor's root identifier.
+        XCTAssertTrue(app.textViews["Snippet text"].waitForExistence(timeout: 3))
         app.buttons["Cancel"].click()
         shareFromMenu(app)
         XCTAssertTrue(app.buttons["Share Snippet"].waitForExistence(timeout: 3))

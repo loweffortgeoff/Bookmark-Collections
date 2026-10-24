@@ -112,10 +112,16 @@ struct LibraryRootView: View {
                 sort: sort,
                 ascending: ascending,
                 onAdd: { sheet = .addBookmark },
+                // Menu commands target the item the user last acted on, never
+                // the card under the pointer.
                 onEdit: { bookmark in
+                    commandBookmark = bookmark
                     sheet = bookmark.kind == .text ? .snippetEditor(bookmark) : .editBookmark(bookmark)
                 },
-                onInfo: { sheet = .bookmarkInfo($0) },
+                onInfo: { bookmark in
+                    commandBookmark = bookmark
+                    sheet = .bookmarkInfo(bookmark)
+                },
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
