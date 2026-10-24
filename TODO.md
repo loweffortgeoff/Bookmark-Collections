@@ -68,19 +68,14 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 
 - The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
-- Share failure on the free-limit screen: Retry always fails the same way. Polish: replace Retry with an "Open Tucked" action for that failure (2026-10-23).
-- Re-sharing a URL that is already saved sets its collection to none and Favorite off. A Mac quick save also overwrites its favicon and preview with nil and marks metadata ready though none was fetched. Preserve the existing values on a re-share (2026-10-23).
-- `PaywallEnabled` is an empty string in the share extension target's Info.plist, because `PAYWALL_ENABLED` is unset for that target. Code treats empty as enabled. Set it explicitly for the extension (2026-10-23).
-- The test target's `IPHONEOS_DEPLOYMENT_TARGET` is 17.0 but the app needs 18.0, so simulator tests need an `IPHONEOS_DEPLOYMENT_TARGET=18.0` override. Raise the setting in the project (2026-10-23).
+- Verify current Mac Share free-limit Open Tucked/Cancel, failed-open recovery, and scrolling failure messages in real hosts. Local typed recovery tests pass; host behavior remains pending (2026-10-24).
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).
 - `pageDescription` field + og:description fetch for the info panel.
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
-- Make macOS menu commands kind-aware for image bookmarks (Open silently no-ops, Share shows "URL invalid").
-- Make the macOS Share menu command kind-aware for snippets. Share still assumes a URL, so it shows “URL invalid” for a snippet with no source link. Open already routes a snippet to the editor, and Copy Text is on the Bookmark menu.
+- Verify Mac menu Open/Share for links, images, and snippets, plus Cancel and stale selection. Kind-aware Share is implemented; native UI runner acceptance remains pending (2026-10-24).
 - Sharing plain non-URL text, clipboard snippet capture, and a Mac menu bar extra are in v1.1.0 above.
-- `BookmarkEditorView` still applies `minWidth` 380 unconditionally — wrap in `#if os(macOS)` like the newer sheets.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).

@@ -46,6 +46,10 @@ final class AccessibilityLayoutTests: XCTestCase {
         editor.lifetime = .keepAlways
         add(editor)
         app.buttons["Cancel"].tap()
+        // Search mode hides Add. Relaunch the disposable library for Settings.
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.buttons["Add"].waitForExistence(timeout: 5))
         app.buttons["Add"].tap()
         app.buttons["Settings"].tap()
         XCTAssertTrue(app.buttons["settings.importLinks"].waitForExistence(timeout: 3))
