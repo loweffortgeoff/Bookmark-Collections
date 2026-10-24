@@ -113,6 +113,8 @@ No App Store Connect state, IAP review status, build attachment, or submission s
 
 Run domain tests with `BookmarkCollections` and `-only-testing:BookmarkCollectionsTests`, excluding `StorefrontAuditTests`. Run purchase tests with `Tucked Audit` and `-only-testing:BookmarkCollectionsTests/StorefrontAuditTests`. Keep StoreKit cases serial. This scheme attaches the local configuration and supplies `-storekit-audit`; ordinary schemes skip these purchase tests to prevent accidental use of a real StoreKit environment.
 
+**Owner Macs (added 2026-10-24).** Do not run the Mac StoreKit audit on a Mac with a TestFlight or App Store Tucked that holds a lifetime purchase. The test app then sees that Sandbox entitlement instead of the local session, and setup stops with "Local StoreKit history did not clear before the scenario." Run it on a Mac without that purchase, or rely on the iPhone simulator audit. Ordinary UI-test launches (`-ui-testing` without `-storekit-audit`) no longer query StoreKit, so the paywall UI tests run on any Mac.
+
 Use `MACOSX_DEPLOYMENT_TARGET=15.0` for native Mac tests, or `IPHONEOS_DEPLOYMENT_TARGET=18.0` with `-destination 'platform=iOS Simulator,id=A529490C-F919-4603-A516-FB3ECEDB09B1'`. Both are temporary command-line overrides. [Apple documents the shared StoreKit test environment and serial execution requirement](https://developer.apple.com/documentation/storekittest/sktestsession).
 
 ## Live iPhone Share follow-up
