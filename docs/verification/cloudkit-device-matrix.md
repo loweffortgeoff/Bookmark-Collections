@@ -12,7 +12,7 @@ Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`, merge
 - Signed Release builds pass for both platforms.
 - The Mac StoreKit audit cannot run on this Mac. Its Apple Account owns Tucked for Life through TestFlight, and the app sees that Sandbox purchase. This branch changes no StoreKit code.
 
-**Next acceptance: the next TestFlight build.** Geoff's account owns Tucked for Life, so the locked path needs testers who never bought it. They follow the [first-time tester checklist](2026-10-24-testflight-fresh-tester-checklist.md). Geoff checks the following on his own devices:
+**Next acceptance: TestFlight 1.0 (10).** Geoff's account owns Tucked for Life, so the locked path needs testers who never bought it. They follow the [first-time tester checklist](2026-10-24-testflight-fresh-tester-checklist.md). Geoff checks the following on his own devices:
 
 | Check | iPhone | iPad | Mac |
 | --- | --- | --- | --- |
@@ -31,10 +31,18 @@ Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`, merge
 
 Physical iPhone B2 remains **pending**. On the changed build, record device/OS/build/host, test Safari links and Photos images, and capture `ShareStorage`/`ShareSave` error domain/code chains if storage fails. Inspect app/extension App Group and CloudKit entitlements for that exact build. No store reset, schema change, or signing change was made as a speculative repair.
 
-Acceptance still needs real-host duplicate re-share on each platform; Mac free-limit Open Tucked/Cancel and failed-open behavior; failure surfaces in light/dark and supported text sizes; and physical iPad long-content/narrow/wide/live-resize checks. Use an approved disposable library. Production purchase/restore, immediate Mac unlock, cross-platform ownership, fresh-account sync, and offline conflicts remain separate submission gates. Geoff approved the local merge on 2026-10-24. The TestFlight upload needs its own release pass. No review submission is authorized by this package.
+Acceptance still needs real-host duplicate re-share on each platform; Mac free-limit Open Tucked/Cancel and failed-open behavior; failure surfaces in light/dark and supported text sizes; and physical iPad long-content/narrow/wide/live-resize checks. Use an approved disposable library. Production purchase/restore, immediate Mac unlock, cross-platform ownership, fresh-account sync, and offline conflicts remain separate submission gates. Geoff approved the local merge on 2026-10-24. The release pass on 2026-10-24 delivered TestFlight 1.0 (10) (see below). No review submission is authorized by this package.
 
 
-Last updated: 2026-10-24 (remaining bug package merged locally; TestFlight acceptance listed above. Device evidence retains its original dates.)
+Last updated: 2026-10-24 (TestFlight 1.0 (10) delivered; acceptance listed above. Device evidence retains its original dates.)
+
+## TestFlight candidate — 2026-10-24
+
+Source `a17ab86`, scheme **Tucked Release**, configuration Release: iOS and native macOS **1.0 (10)** uploaded, processed `VALID`, and verified `IN_BETA_TESTING` in the internal Low Effort group, which has access to all builds. What to Test is saved and read back on both builds. Export compliance is saved as no non-exempt encryption, per Geoff on 2026-10-24.
+
+Built on the Mac mini, macOS 27.0.1 / Xcode 27.1 (27A9275). Build number 10 was a command-line override; the project stays at 1.0 (1). App and extension identifiers, version 1.0 (10), team `2R5TZD4XAH`, and `PaywallEnabled = YES` pass inspection on both platforms; the extension value is now explicit. Distribution signing uses Production CloudKit and `get-task-allow = false`; iOS push uses production. Evidence: `.superpowers/sdd/2026-10-24-testflight-build10/` (ignored).
+
+Both App Store platform versions read `PREPARE_FOR_SUBMISSION` with no build attached. No build was attached to a version, no external group was changed, and no App Review submission occurred. The device checks above are still pending.
 
 ## Current local validation — 2026-10-23
 

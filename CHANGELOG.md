@@ -4,13 +4,17 @@ All notable project changes are recorded here.
 
 ## In Progress
 
-### Fixed — 2026-10-24 (merged to `main`; device acceptance through TestFlight pending)
+### Fixed — 2026-10-24 (in TestFlight 1.0 (10); device acceptance pending)
 
 - Re-sharing keeps saved titles, organization, and previews. Interactive Share loads existing choices; explicit None/off still applies. Suggested names no longer mark metadata complete.
 - iOS Share offers Retry when it cannot read an already-saved link. Retry reads the saved values again before it saves, so the form's defaults never clear them.
 - Accessibility text sizes use full-width cards. The link editor applies its minimum width only on Mac. Mac failure messages scroll; free-limit failures offer Open Tucked and Cancel.
 - Mac menu Share uses the selected link, image, or snippet. Missing images show an image error; stale selection disables commands. Extension paywall values and test deployment floors are explicit.
 - Mac Bookmark menu commands act on the item last clicked, focused, or used with Edit or Get Info. The card under the pointer no longer becomes the target.
+
+### Added — 2026-10-24
+
+- TestFlight 1.0 (10) from `a17ab86` is available internally on iPhone and native Mac with the Release paywall enabled. Both builds are `VALID` and In Beta Testing in the internal group, with What to Test and export compliance saved. Not attached to an App Store version or submitted. See [the matrix](docs/verification/cloudkit-device-matrix.md#testflight-candidate--2026-10-24).
 
 ### Changed — 2026-10-24
 
