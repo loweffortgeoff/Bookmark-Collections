@@ -100,4 +100,13 @@
 
 - Final attempts: dark iPhone layout assertions/interactions reached teardown after the Search-mode fixture repair, then XCTest timed out during teardown; no full pass is claimed. Final Mac non-StoreKit rerun also stalled before tests. Fresh Mac UI diagnostic: `Timed out after 120.0s while initiating control session with daemon.` Stalled runs were stopped.
 - Cleanup readback selects `/Applications/Tucked.app/Contents/PlugIns/BookmarkShareExtension.appex`; no installed binary was replaced. Mac shared entitlement preference restoration remains unverified because protected-file access failed and the audit observed Sandbox instead of Xcode. Do not claim unchanged live ownership state from these tests.
-- Next action: restore a working Mac XCTest control session and prove the Audit app uses Xcode transactions before rerunning purchase tests. Then run complete Mac unit/UI suites and the pending iPhone UI cases on the allowed UDID. Keep physical-device and real-host Share checks open until that changed build is explicitly approved for installation.
+### Verification and fix pass — 2026-10-24 (Mac mini, Xcode 27.1 27A9275)
+
+- Mac XCTest control sessions work again. Mac unit, default settings, StoreKit audit excluded: 158 pass at `f5e371e`. Mac UI cases execute: 12 pass, 3 fail, 1 expected skip.
+- `f5e371e`: iOS Share no longer dead-ends when the saved-link lookup fails. Retry re-runs the lookup before saving. Red, then green, regression in `ShareResaveTests`. iPhone Share suites: 28 pass.
+- Mac menu Share test fails. Bookmark menu commands follow pointer hover (`BookmarkCard.swift:64-66`, on `main` since `1ecc105`), so the pointer's path to the menu bar re-targets Share. Geoff decides the product behavior.
+- Mac paywall UI tests now start locked. The cap holds. The paywall closes itself because this Mac's app Storefront sees the real Sandbox purchase from TestFlight build 9. That needs StoreKit isolation, which is Geoff's decision. The Mac StoreKit audit stays blocked for the same reason (receipt installed 2026-10-23 19:15, after the last passing audit at 18:53).
+- The dark layout test now uses `XCUIDevice.appearance`. The iOS 27.0 simulator still renders light, even after `simctl ui appearance dark`. Dark capture is blocked by tooling. Shared unlock flag restoration stays unverified because macOS blocks reads of the group container.
+- Earlier "dark" captures were light. They are not dark-mode evidence.
+
+- Next action (superseded in part above): restore a working Mac XCTest control session and prove the Audit app uses Xcode transactions before rerunning purchase tests. Then run complete Mac unit/UI suites and the pending iPhone UI cases on the allowed UDID. Keep physical-device and real-host Share checks open until that changed build is explicitly approved for installation.
