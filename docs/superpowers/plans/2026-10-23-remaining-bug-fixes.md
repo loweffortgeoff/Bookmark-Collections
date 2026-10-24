@@ -10,7 +10,7 @@
 ## Global Constraints
 
 - Support iOS/iPadOS 18 and macOS 15. Use Swift 6 and system frameworks only.
-- Work stays on `fix/mac-save-to-tucked`; inspect current HEAD and preserve unrelated changes. Planning baseline is `54ed538`; TestFlight 1.0 (9) app source is `f34b8c6`.
+- Work uses `fix/remaining-bug-fixes` from `main` at `158fbb3`, as approved on 2026-10-24; preserve unrelated changes. Planning baseline is `54ed538`; TestFlight 1.0 (9) app source is `f34b8c6`.
 - Preserve the ten-item cap, lifetime ownership, Beta bypass, normalized identity, local durability, and current CloudKit schema.
 - Use only iPhone 18 Pro (iOS 27.0). Resolve its UDID and pass it explicitly on every simulator operation. Do not use an iPad simulator.
 - Do not reset live stores, alter real purchase history, install over TestFlight, push, merge, upload, submit, or change external trackers.
@@ -85,5 +85,5 @@
 
 - Drafted 2026-10-23 at `54ed538`. No implementation started. No device gate closed by planning.
 - Fresh read-only builder check: no material questions remained.
-- Approval and full-send execution handoff: pending.
+- Approval and execution handoff: approved 2026-10-24. Native sequential implementation, with independent final build and review agents.
 - Record actual execution commits, checks, blockers, and next action here when execution starts.
