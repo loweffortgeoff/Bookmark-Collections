@@ -257,3 +257,9 @@ Significant decisions made during development, logged for future reference.
 - **Why:** The first IAP was deleted in App Store Connect, and Apple does not let a deleted Product ID be created again. v1.0 has no users other than the owner, so nobody needs an existing-user exemption and the paywall can land before the first public release.
 - **Alternative considered:** Keep $7.99. Rejected by the owner in favor of an impulse-friendly one-time price.
 - **Also:** The paywall copy leads with support for an independent developer (a fifth row) and adds a footnote that existing bookmarks stay accessible. The App Store Connect IAP review screenshot is the iPhone 6.9" paywall captured with `Tucked.storekit` attached to a run of `Tucked Release`.
+
+## 2026-10-24 (Mac Bookmark menu commands target the last item acted on, not hover)
+
+- **Decision:** On Mac, Open, Share, Copy Text, and Move to Recently Deleted act on the item the user last clicked, focused with the keyboard, or used Edit or Get Info on. The card under the pointer no longer becomes the target.
+- **Why:** With hover targeting, moving the pointer to the menu bar crossed other cards and retargeted the command, and ⌘⌫ moved whatever card the pointer rested on to Recently Deleted. The spec requires commands to use the selected item.
+- **Alternative considered:** A visible Finder-style selection (click selects, double-click opens) — deferred. It changes grid click behavior and is a redesign outside the bug block. The current target has no visible indicator.
