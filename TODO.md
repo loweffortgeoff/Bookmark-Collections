@@ -33,8 +33,6 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 After the initial release is approved. None of this blocks 1.0.
 
-- [ ] **3. Complete the v1.1 card-style checks** (Things: Feature Work). Keep the accepted outlines, shadows, and native sidebar selection. Check Mac selection and iPad live resize.
-  Prior iPhone light/dark captures and three focused UI checks passed with an iOS 18 test-build override. Mac built with temporary ad hoc signing, but its preview opened no window; Mac selection and iPad resize remain unverified.
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
   The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
 - [ ] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
