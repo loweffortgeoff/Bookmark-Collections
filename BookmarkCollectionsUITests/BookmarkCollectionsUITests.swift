@@ -125,6 +125,9 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("settings.exportHTML").exists)
         XCTAssertTrue(identified("settings.exportJSON").exists)
         XCTAssertTrue(identified("settings.syncStatus").exists)
+        XCTAssertTrue(identified("settings.privacyPolicy").exists)
+        XCTAssertTrue(identified("settings.support").exists)
+        XCTAssertTrue(identified("settings.website").exists)
         XCTAssertFalse(identified("settings.accentColor").exists)
     }
 

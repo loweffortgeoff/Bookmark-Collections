@@ -56,6 +56,8 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 After the initial release is approved. None of this blocks 1.0.
 
+- [ ] **Merge Settings → About links** as the first 1.1 change, or sooner if App Review asks for them in the app. `feature/settings-about-links` adds Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0.
+
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
   The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
   Found 2026-10-23: a plain-text selection in Safari reaches the Mac share extension with no attachments (probably the text sits in the extension item's text content, not an attachment). It is a deterministic Mac repro for the share failure card and needs no paywall state.

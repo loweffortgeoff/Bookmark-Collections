@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## In Progress
 
+### Added — 2026-10-25
+
+- Settings → About links to the Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0 so this can ship with a 1.0 resubmission or as the first 1.1 change.
+
 ### Fixed — 2026-10-24 (in TestFlight 1.0 (10); device acceptance pending)
 
 - Re-sharing keeps saved titles, organization, and previews. Interactive Share loads existing choices; explicit None/off still applies. Suggested names no longer mark metadata complete.

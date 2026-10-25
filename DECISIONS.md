@@ -2,6 +2,12 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-10-25 (Settings links for review)
+
+- **Decision:** Settings → About opens three live pages: Privacy Policy (`https://www.loweffortapps.app/privacy/`), Support (`https://www.loweffortapps.app/support/`), and the company site (`https://www.loweffortapps.app/`). The marketing version stays 1.0.
+- **Why:** App Review can reject a build whose Settings screen has no way to reach the privacy policy, support, or the developer site. The pages already exist. Leaving the version at 1.0 means the same change can resubmit with 1.0 or land as the first 1.1 merge.
+- **Alternative considered:** A Tucked product page, a `mailto:` support row, or a 1.1 version bump now. Rejected because the product page is not the launch page yet, Support is the page already used as the support URL, and a version bump would force this onto 1.1 before Review asks.
+
 ## 2026-10-24 (Share intent and accessible recovery)
 
 - **Decision:** Keep Share-specific preservation in repository mutations. Quick Save preserves organization; interactive controls load existing values. Fill only missing title/image fields in the durable primary save.

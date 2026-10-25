@@ -41,6 +41,15 @@ struct SettingsView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
+
+                Section("About") {
+                    ForEach(AboutLink.allCases) { link in
+                        Link(destination: link.url) {
+                            Label(link.title, systemImage: link.systemImage)
+                        }
+                        .accessibilityIdentifier(link.accessibilityIdentifier)
+                    }
+                }
             }
             #if os(macOS)
             .formStyle(.grouped)
@@ -155,6 +164,45 @@ struct SettingsView: View {
             get: { errorMessage != nil },
             set: { if !$0 { errorMessage = nil } }
         )
+    }
+}
+
+enum AboutLink: String, CaseIterable, Identifiable {
+    case privacyPolicy = "https://www.loweffortapps.app/privacy/"
+    case support = "https://www.loweffortapps.app/support/"
+    case website = "https://www.loweffortapps.app/"
+
+    var id: String { rawValue }
+
+    var url: URL {
+        guard let url = URL(string: rawValue) else {
+            preconditionFailure("About link is not a URL: \(rawValue)")
+        }
+        return url
+    }
+
+    var title: String {
+        switch self {
+        case .privacyPolicy: "Privacy Policy"
+        case .support: "Support"
+        case .website: "Low Effort Apps"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .privacyPolicy: "hand.raised"
+        case .support: "questionmark.circle"
+        case .website: "globe"
+        }
+    }
+
+    var accessibilityIdentifier: String {
+        switch self {
+        case .privacyPolicy: "settings.privacyPolicy"
+        case .support: "settings.support"
+        case .website: "settings.website"
+        }
     }
 }
 
