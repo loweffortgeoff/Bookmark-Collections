@@ -56,7 +56,7 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 After the initial release is approved. None of this blocks 1.0.
 
-- [ ] **Merge Settings → About links** as the first 1.1 change, or sooner if App Review asks for them in the app. `feature/settings-about-links` adds Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0.
+- [x] **Merge Settings → About links** ✅ 2026-10-25 (`b33aecd` on `main`). Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0 so a rejection can ship them in a new 1.0 build. Active 1.1 visual work is on `dev/visual-polish`.
 
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
   The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
