@@ -14,13 +14,16 @@ struct CollectionListView: View {
 
     var body: some View {
         List(selection: $selection) {
-            Section("Library") {
+            Section {
                 destinationRow(.allItems, title: "All Items", identifier: "destination.allItems", showsCount: true)
                 destinationRow(.images, title: "Images", identifier: "destination.images", showsCount: true)
                 destinationRow(.links, title: "Links", identifier: "destination.links", showsCount: true)
                 destinationRow(.snippets, title: "Snippets", identifier: "destination.snippets", showsCount: true)
                 destinationRow(.favorites, title: "Favorites", identifier: "destination.favorites", showsCount: true)
                 destinationRow(.forgotten, title: "Forgotten", identifier: "destination.forgotten", showsCount: true)
+            } header: {
+                Text("Library")
+                    .padding(.top, 2)
             }
 
             Section {
@@ -53,6 +56,7 @@ struct CollectionListView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel("New Collection")
                 }
+                .padding(.top, 2)
             }
 
             Section {
@@ -77,7 +81,16 @@ struct CollectionListView: View {
         identifier: String,
         showsCount: Bool
     ) -> some View {
-        Label(title, systemImage: destination.systemImage)
+        Label {
+            Text(title)
+        } icon: {
+            if selection == destination {
+                Image(systemName: destination.systemImage)
+            } else {
+                Image(systemName: destination.systemImage)
+                    .foregroundStyle(Color.accentColor)
+            }
+        }
             .modifier(OptionalCountBadge(count: showsCount ? count(for: destination) : nil))
             .tag(destination)
             // The identifier must ride on the whole row: SwiftUI List labels

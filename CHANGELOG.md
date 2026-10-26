@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## In Progress
 
+### Changed — 2026-10-26
+
+- Added subtle card shadows and refined the native sidebar with accent-colored icons and section spacing.
+
 ### Added — 2026-10-25
 
 - Settings → About links to the Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0 so this can ship with a 1.0 resubmission or as the first 1.1 change.

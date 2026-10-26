@@ -8,6 +8,7 @@ import UIKit
 
 struct BookmarkCard: View {
     @Environment(\.openURL) private var openURL
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState private var isFocused: Bool
     let bookmark: Bookmark
     let onOpen: (() -> Void)?
@@ -52,7 +53,11 @@ struct BookmarkCard: View {
                 }
                 .padding([.horizontal, .bottom], 12)
             }
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(.regularMaterial)
+                    .shadow(color: .black.opacity(colorScheme == .dark ? 0.10 : 0.08), radius: 4, y: 2)
+            }
             .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)
