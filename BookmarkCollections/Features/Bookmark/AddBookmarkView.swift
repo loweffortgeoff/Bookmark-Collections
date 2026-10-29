@@ -18,12 +18,7 @@ struct AddBookmarkView: View {
             Form {
                 TextField("Web Address", text: $urlString, prompt: Text("https://example.com"))
                     .textContentType(.URL)
-                Picker("Collection", selection: $selectedCollectionID) {
-                    Text("None").tag(nil as UUID?)
-                    ForEach(collections) { collection in
-                        Text(collection.name).tag(collection.id as UUID?)
-                    }
-                }
+                CollectionPicker(collections: collections, selection: $selectedCollectionID)
                 Toggle("Favorite", isOn: $isFavorite)
                 if let errorMessage {
                     Text(errorMessage).foregroundStyle(.red)

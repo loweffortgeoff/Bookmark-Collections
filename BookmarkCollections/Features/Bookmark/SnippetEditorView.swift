@@ -7,6 +7,7 @@ struct SnippetEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.openURL) private var openURL
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Query(sort: \BookmarkCollection.sortPosition) private var collections: [BookmarkCollection]
 
     let bookmark: Bookmark?
@@ -29,18 +30,15 @@ struct SnippetEditorView: View {
                 }
                 Section {
                     TextField("Title", text: $title, prompt: Text("Optional"))
+                    // The field shrinks a placeholder that overflows its width,
+                    // so accessibility sizes get one short enough to stay full size.
                     TextField(
                         "Source Link",
                         text: $sourceURL,
-                        prompt: Text("Optional — where this came from")
+                        prompt: Text(dynamicTypeSize.isAccessibilitySize ? "Source link" : "Optional — where this came from")
                     )
                     .textContentType(.URL)
-                    Picker("Collection", selection: $selectedCollectionID) {
-                        Text("None").tag(nil as UUID?)
-                        ForEach(collections) { collection in
-                            Text(collection.name).tag(collection.id as UUID?)
-                        }
-                    }
+                    CollectionPicker(collections: collections, selection: $selectedCollectionID)
                     Toggle("Favorite", isOn: $isFavorite)
                 }
                 if let openableSource {

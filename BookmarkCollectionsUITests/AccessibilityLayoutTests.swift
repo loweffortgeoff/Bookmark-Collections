@@ -39,7 +39,9 @@ final class AccessibilityLayoutTests: XCTestCase {
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.tap()
-        search.typeText("Seeded Active")
+        // Submit so the keyboard closes; at this size the context menu's
+        // lower items otherwise sit under it.
+        search.typeText("Seeded Active\n")
         let card = app.buttons["bookmark.seeded-active"]
         XCTAssertTrue(card.waitForExistence(timeout: 3))
         card.press(forDuration: 1)

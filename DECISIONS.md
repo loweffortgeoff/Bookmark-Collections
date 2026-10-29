@@ -1,5 +1,7 @@
 # Architecture Decisions
 
+For current work and approval dependencies see [TODO](TODO.md); the [verification matrix](docs/verification/cloudkit-device-matrix.md) records acceptance evidence. Decisions below retain their historical context.
+
 Significant decisions made during development, logged for future reference.
 
 ## 2026-10-29 (Explicit grid widths replace the width-bucketed `.id()`)
@@ -33,6 +35,8 @@ Significant decisions made during development, logged for future reference.
 - **Alternative considered:** Wait or retry the projection before granting access. Rejected because the verified lifetime transaction already provides the required ownership evidence.
 
 ## 2026-10-23 (The Mac share view sets its own size)
+
+Historical: the 2026-10-24 accessible recovery decision above supersedes the fixed 360 x 200 frame and free-limit Retry behavior.
 
 - **Decision:** The macOS `ShareViewController.loadView` creates its view with an explicit 360 x 200 frame. Mac failure screens use a plain-stack `MacShareFailureView` inside that frame. One `Color(nsColor: .windowBackgroundColor)` background is applied where the controller hosts SwiftUI content. The iOS `ShareStoreFailureView` stays under `#if os(iOS)`.
 - **Why:** Mac Share ▸ "Save to Tucked" looked like a silent failure. Two causes. First, the free-bookmark limit (10 active) blocked the saves: the TestFlight build read Pro as locked. The likely reason is that the earlier test purchase went through the local `Tucked.storekit` file, which does not carry to TestFlight (not confirmed). After a TestFlight sandbox purchase, saves worked, so the share code had not regressed. Second, the failure was invisible: `loadView` created `NSView()` with a zero frame and set only `preferredContentSize`, and ShareKit does not size the view from it. The log showed `view={{0, 0}, {0, 0}}`, so nothing was visible and Safari only dimmed. With the frame set, the log shows `{{0, 0}, {360, 200}}` and the failure card draws. `MacShareFailureView` is the version seen drawing and fits 200 pt. `ContentUnavailableView` was never tried at that size and would probably need more height.
@@ -276,3 +280,9 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** On Mac, Open, Share, Copy Text, and Move to Recently Deleted act on the item the user last clicked, focused with the keyboard, or used Edit or Get Info on. The card under the pointer no longer becomes the target.
 - **Why:** With hover targeting, moving the pointer to the menu bar crossed other cards and retargeted the command, and ⌘⌫ moved whatever card the pointer rested on to Recently Deleted. The spec requires commands to use the selected item.
 - **Alternative considered:** A visible Finder-style selection (click selects, double-click opens) — deferred. It changes grid click behavior and is a redesign outside the bug block. The current target has no visible indicator.
+
+## 2026-10-29 (System bars keep system sizing at accessibility text sizes)
+
+- **Decision:** Leave the searchable "Search bookmarks" placeholder and the toolbar Cancel/Save buttons at system sizing. They do not grow with accessibility text sizes. Rely on the system's Large Content Viewer for these controls.
+- **Why:** iOS caps the size of navigation and toolbar controls on purpose and offers Large Content Viewer instead. Overriding them would fight the system and risk clipped bars.
+- **Alternative considered:** Replace the system search field and toolbar buttons with custom scaling views. Rejected because it breaks native behavior and adds layout risk for little gain.

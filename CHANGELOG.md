@@ -1,6 +1,6 @@
 # Changelog
 
-All notable project changes are recorded here.
+All notable project changes are recorded here. For current queue and approval dependencies, see [TODO](TODO.md); TODO takes precedence over this history. Entries retain their status as recorded on their dates.
 
 ## In Progress
 
@@ -8,6 +8,13 @@ All notable project changes are recorded here.
 
 - The library grid no longer rebuilds itself every 20pt during an iPad window resize. Fixed columns and an explicit card width resize cells in place, which should stop the resize shudder.
 - Card previews decode off the main thread at card size and stay cached, so scrolling and resizing no longer decode full-size stored images on every render.
+### Changed — 2026-10-29
+
+- Cards no longer reserve a second title line at accessibility text sizes (one-column grid), which removes the gap between title and subtitle.
+- Add Link, Edit, Get Info, and the snippet editor share one collection picker. At accessibility sizes it stacks the label over a flush-leading menu instead of the system row's indented wrap.
+- The snippet source field uses a short "Source link" placeholder at accessibility sizes, so it no longer shrinks.
+- The dark-mode editor accessibility test now submits its search so the keyboard does not cover context-menu items. Both accessibility UI tests pass.
+- Left as is: the "Search bookmarks" placeholder and toolbar Cancel/Save do not scale at accessibility sizes. See [the decision](DECISIONS.md#2026-10-29-system-bars-keep-system-sizing-at-accessibility-text-sizes).
 
 ### Changed — 2026-10-26
 
@@ -63,6 +70,8 @@ All notable project changes are recorded here.
 ---
 
 ## Shipped
+
+The dated entries below are historical change records, not evidence that each change shipped in a particular platform build. iOS 1.0 is publicly available; native macOS 1.0 approval remains pending per the latest user update. See [TODO](TODO.md#next).
 
 ### 1.0 — 2026-10-14
 

@@ -13,7 +13,7 @@ The project has no third-party dependencies. Reads and writes use the local Swif
 
 ## Project status
 
-The v1 implementation and simulator/native-Mac automated suites are complete. Distribution remains gated on the real-device CloudKit matrix, CloudKit Production schema deployment, and the final TestFlight/new-account check recorded in [the verification matrix](docs/verification/cloudkit-device-matrix.md).
+iOS 1.0 is publicly available (confirmed October 2026). Native macOS 1.0 approval is pending per the latest user update. The [TODO](TODO.md) is the current work queue, including follow-up after Mac approval. The [verification matrix](docs/verification/cloudkit-device-matrix.md) preserves device and release evidence; pending entries are not proof of failure or completion. See [decisions](DECISIONS.md) for product choices and [changelog](CHANGELOG.md) for change history.
 
 ## Requirements
 

@@ -9,6 +9,7 @@ import UIKit
 struct BookmarkCard: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @FocusState private var isFocused: Bool
     let bookmark: Bookmark
     let onOpen: (() -> Void)?
@@ -45,7 +46,9 @@ struct BookmarkCard: View {
                     Text(displayTitle)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                        .lineLimit(2, reservesSpace: true)
+                        // Reserving a second line keeps grid rows even; the
+                        // accessibility layout is one column, so it only adds a gap.
+                        .lineLimit(2, reservesSpace: !dynamicTypeSize.isAccessibilitySize)
                     Text(subtitle)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)

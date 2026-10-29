@@ -45,12 +45,7 @@ struct BookmarkInfoView: View {
                         .font(.headline)
                 }
                 Section("Organization") {
-                    Picker("Collection", selection: collectionSelection) {
-                        Text("None").tag(nil as UUID?)
-                        ForEach(collections) { collection in
-                            Text(collection.name).tag(collection.id as UUID?)
-                        }
-                    }
+                    CollectionPicker(collections: collections, selection: collectionSelection)
                     Toggle("Favorite", isOn: favoriteSelection)
                 }
                 Section("Details") {
