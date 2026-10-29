@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## In Progress
 
+### Fixed — 2026-10-29 (unverified on device)
+
+- The library grid no longer rebuilds itself every 20pt during an iPad window resize. Fixed columns and an explicit card width resize cells in place, which should stop the resize shudder.
+
 ### Changed — 2026-10-26
 
 - Added subtle card shadows and refined the native sidebar with accent-colored icons and section spacing.

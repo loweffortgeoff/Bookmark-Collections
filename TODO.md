@@ -73,7 +73,7 @@ Shortcuts remains an idea from Tucked Testing. Clipboard capture is the remainin
 
 The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
 
-- The library grid's width-bucketed `.id()` relayout workaround (2026-07-19) uses a 20pt bucket, chosen conservatively without testing finer granularity. Revisit if resize still feels janky or visible bucket-boundary snapping shows up.
+- Verify on a physical iPad that window resize no longer shudders or shows the 2026-07-19 "window shade" clipping now that the grid uses explicit widths (2026-10-29).
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).

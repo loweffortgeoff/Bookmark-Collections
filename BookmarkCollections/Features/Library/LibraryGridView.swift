@@ -50,8 +50,9 @@ struct LibraryGridView: View {
                     emptyState
                 } else {
                     GeometryReader { proxy in
+                        let layout = GridLayout(width: proxy.size.width, isAccessibilitySize: dynamicTypeSize.isAccessibilitySize)
                         ScrollView {
-                            LazyVGrid(columns: columns, spacing: 18) {
+                            LazyVGrid(columns: layout.columns, spacing: 18) {
                                 ForEach(visibleBookmarks) { bookmark in
                                     ZStack(alignment: .topTrailing) {
                                         BookmarkCard(
@@ -59,6 +60,7 @@ struct LibraryGridView: View {
                                             onOpen: cardOpenAction(for: bookmark),
                                             onCommandSelection: { onCommandSelection(bookmark) }
                                         )
+                                        .frame(width: layout.cellWidth)
                                         if isSelecting {
                                             Image(systemName: selection.contains(bookmark.id) ? "checkmark.circle.fill" : "circle")
                                                 .font(.title2)
@@ -79,14 +81,8 @@ struct LibraryGridView: View {
                                     }
                                 }
                             }
-                            .padding()
+                            .padding(GridLayout.padding)
                         }
-                        // iPadOS windowed resize doesn't reliably re-propose width to
-                        // already-materialized LazyVGrid cells, leaving stale/clipped
-                        // geometry ("window shade" effect). Forcing a fresh grid
-                        // identity when the available width crosses a coarse bucket
-                        // discards the stale cells instead of relaying them out in place.
-                        .id(Int(proxy.size.width / 20))
                         .dropDestination(for: URL.self) { urls, _ in
                             do {
                                 let repository = BookmarkRepository(context: modelContext)
@@ -187,17 +183,6 @@ struct LibraryGridView: View {
         }
     }
 
-    private var columns: [GridItem] {
-        if dynamicTypeSize.isAccessibilitySize {
-            return [GridItem(.flexible(), spacing: 18)]
-        }
-        #if os(macOS)
-        return [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 18)]
-        #else
-        return [GridItem(.adaptive(minimum: 160, maximum: 210), spacing: 14)]
-        #endif
-    }
-
     @ViewBuilder
     private var emptyState: some View {
         VStack(spacing: 16) {
@@ -255,5 +240,41 @@ struct LibraryGridView: View {
             }
         }
         .padding()
+    }
+}
+
+/// Column count and cell width derived from the grid's available width.
+///
+/// iPadOS windowed resize doesn't reliably re-propose width to
+/// already-materialized LazyVGrid cells, leaving stale/clipped geometry
+/// ("window shade" effect). Fixed columns plus an explicit card frame make
+/// width an input every cell re-renders with, so cells resize in place
+/// instead of the grid being torn down and rebuilt as the width changes.
+private struct GridLayout {
+    static let padding: CGFloat = 16
+    static let minimumCellWidth: CGFloat = 160
+    static let maximumCellWidth: CGFloat = 210
+    #if os(macOS)
+    static let spacing: CGFloat = 18
+    #else
+    static let spacing: CGFloat = 14
+    #endif
+
+    let columns: [GridItem]
+    let cellWidth: CGFloat
+
+    init(width: CGFloat, isAccessibilitySize: Bool) {
+        let available = max(width - Self.padding * 2, 1)
+        if isAccessibilitySize {
+            cellWidth = available
+            columns = [GridItem(.fixed(available))]
+            return
+        }
+        let count = max(1, Int((available + Self.spacing) / (Self.minimumCellWidth + Self.spacing)))
+        let fitted = (available - Self.spacing * CGFloat(count - 1)) / CGFloat(count)
+        // Rounded down to whole points so neighbouring widths don't re-render
+        // every cell for sub-point changes during a resize drag.
+        cellWidth = min(Self.maximumCellWidth, fitted.rounded(.down))
+        columns = Array(repeating: GridItem(.fixed(cellWidth), spacing: Self.spacing), count: count)
     }
 }
