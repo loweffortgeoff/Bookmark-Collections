@@ -147,7 +147,12 @@ struct LibraryGridView: View {
         .buttonStyle(.plain)
         .disabled(selection.isEmpty)
         .padding(.horizontal, 24)
-        .padding(.vertical, 6)
+        .padding(.vertical, 12)
+        // Without a backing the icons sat on whatever card scrolled under them.
+        .background(.regularMaterial, in: Capsule())
+        .shadow(color: .black.opacity(0.08), radius: 6, y: 2)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 
     private func toggleSelection(_ bookmark: Bookmark) {
