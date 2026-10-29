@@ -77,7 +77,7 @@ Geoff intends to get right on this follow-up after native macOS 1.0 approval. Vi
 **1.1.0 visual polish leftovers (2026-10-29 review):**
 
 - [x] **Show the preview image in Get Info.** The Get Info sheet shows the URL, title, and metadata, but not the bookmark's preview image. Done 2026-10-29 in `3b31022`: the cached card thumbnail heads the sheet; snippets and links without a preview skip it.
-- [ ] **Decide card footer spacing (needs Geoff).** One-line titles leave a blank band above the domain and date, because `lineLimit(2, reservesSpace: true)` keeps grid rows even. Choose: even rows, or tight footers.
+- [x] **Decide card footer spacing (needs Geoff).** One-line titles leave a blank band above the domain and date, because `lineLimit(2, reservesSpace: true)` keeps grid rows even. Choose: even rows, or tight footers. Decided 2026-10-29: keep even rows ([decision](DECISIONS.md#2026-10-29-card-footers-keep-even-rows)); no code change.
 - [x] **Move "Select" into the toolbar.** On every list, "Select" sits alone on its own row under the large title. Consider moving it into the toolbar. Done 2026-10-29 in `ca39de2`: Select/Done is in the library toolbar next to Add.
 - [x] **Focus the Add Link URL field and use a URL keyboard.** The field is not focused when the sheet opens, and it shows the default keyboard. Done 2026-10-29 in `ca39de2`: focused on open, URL keyboard, no autocapitalization or autocorrection, Return saves.
 - [x] **Give the selection action bar a background.** In Select mode the Favorite, Unfavorite, Move, Share, and Delete bar floats over the last card and the search field with no background. Seen 2026-10-29; predates moving Select. Done 2026-10-29 in `b663635`: floating material capsule; the last row scrolls clear of it.

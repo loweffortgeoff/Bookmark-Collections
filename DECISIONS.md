@@ -286,3 +286,9 @@ Historical: the 2026-10-24 accessible recovery decision above supersedes the fix
 - **Decision:** Leave the searchable "Search bookmarks" placeholder and the toolbar Cancel/Save buttons at system sizing. They do not grow with accessibility text sizes. Rely on the system's Large Content Viewer for these controls.
 - **Why:** iOS caps the size of navigation and toolbar controls on purpose and offers Large Content Viewer instead. Overriding them would fight the system and risk clipped bars.
 - **Alternative considered:** Replace the system search field and toolbar buttons with custom scaling views. Rejected because it breaks native behavior and adds layout risk for little gain.
+
+## 2026-10-29 (Card footers keep even rows)
+
+- **Decision:** Keep reserving a second title line on library cards at standard text sizes, so every grid row is the same height and the domain or date sits on the same line across a row.
+- **Why:** Geoff compared both layouts on iPhone and iPad (`Visual Verification/Tucked/2026-10-29-1.1.0-review/final/footer-even-*` and `footer-tight-*`) and chose the uniform grid.
+- **Alternative considered:** Tight footers: drop the reserved line and stretch each card to its row height, so the domain or date sits under the title and spare space moves to the card bottom. Rows of one-line titles get shorter, so row heights vary. Not adopted.
