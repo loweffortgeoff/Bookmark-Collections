@@ -109,6 +109,42 @@ final class LibraryFilteringTests: XCTestCase {
         XCTAssertEqual(LibraryDestination.allItems.count(in: []), 0)
     }
 
+    func testOnePassCountsMatchEachDestinationsOwnCount() {
+        let development = BookmarkCollection(name: "Development", sortPosition: 0)
+        let link = makeBookmark(path: "link", favorite: true, collection: development)
+        let image = makeBookmark(path: "image")
+        image.kind = .image
+        let snippet = makeBookmark(path: "snippet", collection: development)
+        snippet.kind = .text
+        let forgotten = makeBookmark(path: "forgotten")
+        forgotten.createdAt = Date().addingTimeInterval(-(UntuckRules.forgottenAge + 60))
+        let deleted = makeBookmark(path: "deleted", favorite: true, collection: development, deletedAt: Date())
+        let bookmarks = [link, image, snippet, forgotten, deleted]
+
+        let counts = LibraryDestination.counts(in: bookmarks)
+        let destinations: [LibraryDestination] = [
+            .allItems, .favorites, .links, .images, .snippets,
+            .collection(development.id), .collection(UUID()), .forgotten, .recentlyDeleted
+        ]
+        for destination in destinations {
+            XCTAssertEqual(
+                counts[destination, default: 0],
+                destination.count(in: bookmarks),
+                String(describing: destination)
+            )
+        }
+    }
+
+    func testPretrimmedQueryMatchesLikeSearchText() {
+        let bookmark = makeBookmark(path: "swiftdata")
+        bookmark.title = "Persistence Guide"
+        let query = LibraryDestination.searchQuery("  persistence \n")
+
+        XCTAssertEqual(query, "persistence")
+        XCTAssertTrue(LibraryDestination.allItems.matches(bookmark, query: query))
+        XCTAssertFalse(LibraryDestination.allItems.matches(bookmark, query: "photography"))
+    }
+
     func testForgottenDestinationMembership() {
         let ancient = makeBookmark(path: "ancient")
         ancient.createdAt = Date().addingTimeInterval(-(UntuckRules.forgottenAge + 60))

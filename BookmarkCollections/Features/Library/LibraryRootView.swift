@@ -142,7 +142,7 @@ struct LibraryRootView: View {
                     showEmptyRecentlyDeleted: destination == .recentlyDeleted && hasRecentlyDeletedBookmarks,
                     onEmptyRecentlyDeleted: { emptyingRecentlyDeleted = true },
                     showSurpriseMe: destination != .recentlyDeleted,
-                    canSurpriseMe: !surpriseCandidates.isEmpty,
+                    canSurpriseMe: hasSurpriseCandidates,
                     onSurpriseMe: surpriseMe
                 )
             }
@@ -266,20 +266,31 @@ struct LibraryRootView: View {
         )
     }
 
+    private var hasSurpriseCandidates: Bool {
+        UntuckRules.hasSurpriseCandidates(
+            in: bookmarks,
+            destination: destination ?? .allItems,
+            searchText: searchText
+        )
+    }
+
     private func surpriseMe() {
         guard let bookmark = surpriseCandidates.randomElement() else { return }
         openBookmark(bookmark)
     }
 
     private var commandActions: BookmarkCommandActions {
-        BookmarkCommandActions(
+        // Looked up once for the flags below; the actions look it up again
+        // when they run, since the selection can change in between.
+        let selected = visibleCommandBookmark
+        return BookmarkCommandActions(
             addLink: { sheet = .addBookmark },
             addImages: addImages,
             focusSearch: { isSearchPresented = true },
             newCollection: { sheet = .newCollection },
             newSnippet: { sheet = .snippetEditor(nil) },
-            selectedBookmark: visibleCommandBookmark,
-            canDeleteSelected: visibleCommandBookmark != nil && visibleCommandBookmark?.deletedAt == nil,
+            selectedBookmark: selected,
+            canDeleteSelected: selected != nil && selected?.deletedAt == nil,
             openSelected: {
                 guard let bookmark = visibleCommandBookmark else { return }
                 openBookmark(bookmark)
@@ -288,7 +299,7 @@ struct LibraryRootView: View {
                 guard let bookmark = visibleCommandBookmark else { return }
                 sheet = .shareBookmark(bookmark)
             },
-            canCopyTextSelected: visibleCommandBookmark?.kind == .text,
+            canCopyTextSelected: selected?.kind == .text,
             copyTextSelected: {
                 guard let bookmark = visibleCommandBookmark, bookmark.kind == .text else { return }
                 SnippetPasteboard.copy(bookmark.snippetBody)
@@ -302,7 +313,7 @@ struct LibraryRootView: View {
                 }
             },
             surpriseMe: surpriseMe,
-            canSurpriseMe: destination != .recentlyDeleted && !surpriseCandidates.isEmpty
+            canSurpriseMe: destination != .recentlyDeleted && hasSurpriseCandidates
         )
     }
 

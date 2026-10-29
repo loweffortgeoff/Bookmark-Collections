@@ -52,6 +52,10 @@ final class UntuckRulesTests: XCTestCase {
             in: all, destination: .recentlyDeleted, searchText: "nope"
         )
         XCTAssertTrue(empty.isEmpty)
+
+        XCTAssertTrue(UntuckRules.hasSurpriseCandidates(in: all, destination: .forgotten, searchText: ""))
+        XCTAssertTrue(UntuckRules.hasSurpriseCandidates(in: all, destination: .allItems, searchText: "swift"))
+        XCTAssertFalse(UntuckRules.hasSurpriseCandidates(in: all, destination: .recentlyDeleted, searchText: "nope"))
     }
 
     private func makeBookmark(

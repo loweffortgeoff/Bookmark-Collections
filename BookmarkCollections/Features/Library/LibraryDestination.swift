@@ -74,9 +74,46 @@ enum LibraryDestination: Hashable {
         bookmarks.filter { includes($0) }.count
     }
 
+    /// Every sidebar count from one walk of the library. Each bookmark is
+    /// tallied under exactly the destinations whose `includes` accepts it.
+    static func counts(in bookmarks: [Bookmark], now: Date = Date()) -> [LibraryDestination: Int] {
+        var counts: [LibraryDestination: Int] = [:]
+        for bookmark in bookmarks {
+            guard bookmark.deletedAt == nil else {
+                counts[.recentlyDeleted, default: 0] += 1
+                continue
+            }
+            counts[.allItems, default: 0] += 1
+            switch bookmark.kind {
+            case .link: counts[.links, default: 0] += 1
+            case .image: counts[.images, default: 0] += 1
+            case .text: counts[.snippets, default: 0] += 1
+            }
+            if bookmark.isFavorite {
+                counts[.favorites, default: 0] += 1
+            }
+            if let id = bookmark.collection?.id {
+                counts[.collection(id), default: 0] += 1
+            }
+            if UntuckRules.isForgotten(bookmark, now: now) {
+                counts[.forgotten, default: 0] += 1
+            }
+        }
+        return counts
+    }
+
     func matches(_ bookmark: Bookmark, searchText: String) -> Bool {
+        matches(bookmark, query: Self.searchQuery(searchText))
+    }
+
+    /// Trim once per search, not once per bookmark.
+    static func searchQuery(_ searchText: String) -> String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// `query` must already be trimmed with `searchQuery(_:)`.
+    func matches(_ bookmark: Bookmark, query: String) -> Bool {
         guard includes(bookmark) else { return false }
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return true }
 
         return bookmark.title.localizedCaseInsensitiveContains(query)

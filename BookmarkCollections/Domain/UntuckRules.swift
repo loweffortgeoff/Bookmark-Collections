@@ -14,6 +14,18 @@ enum UntuckRules {
         destination: LibraryDestination,
         searchText: String
     ) -> [Bookmark] {
-        bookmarks.filter { destination.matches($0, searchText: searchText) }
+        let query = LibraryDestination.searchQuery(searchText)
+        return bookmarks.filter { destination.matches($0, query: query) }
+    }
+
+    /// Whether Surprise Me has anything to pick, stopping at the first match
+    /// instead of building the full candidate list on every redraw.
+    static func hasSurpriseCandidates(
+        in bookmarks: [Bookmark],
+        destination: LibraryDestination,
+        searchText: String
+    ) -> Bool {
+        let query = LibraryDestination.searchQuery(searchText)
+        return bookmarks.contains { destination.matches($0, query: query) }
     }
 }

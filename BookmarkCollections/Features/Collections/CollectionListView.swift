@@ -13,14 +13,15 @@ struct CollectionListView: View {
     let onDelete: (BookmarkCollection) -> Void
 
     var body: some View {
+        let counts = LibraryDestination.counts(in: bookmarks)
         List(selection: $selection) {
             Section {
-                destinationRow(.allItems, title: "All Items", identifier: "destination.allItems", showsCount: true)
-                destinationRow(.images, title: "Images", identifier: "destination.images", showsCount: true)
-                destinationRow(.links, title: "Links", identifier: "destination.links", showsCount: true)
-                destinationRow(.snippets, title: "Snippets", identifier: "destination.snippets", showsCount: true)
-                destinationRow(.favorites, title: "Favorites", identifier: "destination.favorites", showsCount: true)
-                destinationRow(.forgotten, title: "Forgotten", identifier: "destination.forgotten", showsCount: true)
+                destinationRow(.allItems, title: "All Items", identifier: "destination.allItems", count: counts[.allItems, default: 0])
+                destinationRow(.images, title: "Images", identifier: "destination.images", count: counts[.images, default: 0])
+                destinationRow(.links, title: "Links", identifier: "destination.links", count: counts[.links, default: 0])
+                destinationRow(.snippets, title: "Snippets", identifier: "destination.snippets", count: counts[.snippets, default: 0])
+                destinationRow(.favorites, title: "Favorites", identifier: "destination.favorites", count: counts[.favorites, default: 0])
+                destinationRow(.forgotten, title: "Forgotten", identifier: "destination.forgotten", count: counts[.forgotten, default: 0])
             } header: {
                 Text("Library")
                     .padding(.top, 2)
@@ -38,7 +39,7 @@ struct CollectionListView: View {
                             identifier: index == 0
                                 ? "destination.collections"
                                 : "destination.collection.\(collection.id)",
-                            showsCount: true
+                            count: counts[destination, default: 0]
                         )
                         .contextMenu {
                             Button("Rename") { onEdit(collection) }
@@ -64,22 +65,18 @@ struct CollectionListView: View {
                     .recentlyDeleted,
                     title: "Recently Deleted",
                     identifier: "destination.recentlyDeleted",
-                    showsCount: false
+                    count: nil
                 )
             }
         }
         .listStyle(.sidebar)
     }
 
-    private func count(for destination: LibraryDestination) -> Int {
-        destination.count(in: bookmarks)
-    }
-
     private func destinationRow(
         _ destination: LibraryDestination,
         title: String,
         identifier: String,
-        showsCount: Bool
+        count: Int?
     ) -> some View {
         Label {
             Text(title)
@@ -91,7 +88,7 @@ struct CollectionListView: View {
                     .foregroundStyle(Color.accentColor)
             }
         }
-            .modifier(OptionalCountBadge(count: showsCount ? count(for: destination) : nil))
+            .modifier(OptionalCountBadge(count: count))
             .tag(destination)
             // The identifier must ride on the whole row: SwiftUI List labels
             // otherwise let the SF Symbol image claim it, and the test taps a

@@ -12,11 +12,17 @@ struct MetadataEnricher {
 
     func enrichPending(limit: Int) async throws {
         guard limit > 0 else { return }
+        // Only unfinished bookmarks are loaded; a large, fully enriched
+        // library no longer costs a whole-store fetch on every activation.
+        let ready = Bookmark.MetadataState.ready.rawValue
         let bookmarks = try context.fetch(
-            FetchDescriptor<Bookmark>(sortBy: [
-                SortDescriptor(\Bookmark.createdAt),
-                SortDescriptor(\Bookmark.id)
-            ])
+            FetchDescriptor<Bookmark>(
+                predicate: #Predicate { $0.metadataStateRawValue != ready },
+                sortBy: [
+                    SortDescriptor(\Bookmark.createdAt),
+                    SortDescriptor(\Bookmark.id)
+                ]
+            )
         )
         let now = Date()
         // Never-fetched links come first so a library with many failures still
@@ -28,9 +34,15 @@ struct MetadataEnricher {
                 && Self.isRetryDue(bookmark, now: now, interval: Self.failedRetryInterval)
         }
 
-        for bookmark in (pending + retryable).prefix(limit) {
-            try await refresh(bookmark)
+        let batch = (pending + retryable).prefix(limit)
+        guard !batch.isEmpty else { return }
+        // Each card observes its own bookmark, so previews still appear one
+        // by one; saving once at the end spares the library a full redraw
+        // per refreshed link.
+        for bookmark in batch {
+            await apply(to: bookmark)
         }
+        try context.save()
     }
 
     private static func isRetryDue(
@@ -44,14 +56,19 @@ struct MetadataEnricher {
 
     func refresh(_ bookmark: Bookmark) async throws {
         guard bookmark.kind == .link else { return }
+        await apply(to: bookmark)
+        try context.save()
+    }
+
+    /// Fetches and stores one link's metadata without saving the context.
+    private func apply(to bookmark: Bookmark) async {
         let refreshDate = Date()
+        guard let url = URL(string: bookmark.urlString) else {
+            bookmark.metadataState = .failed
+            bookmark.lastMetadataRefreshAt = refreshDate
+            return
+        }
         do {
-            guard let url = URL(string: bookmark.urlString) else {
-                bookmark.metadataState = .failed
-                bookmark.lastMetadataRefreshAt = refreshDate
-                try context.save()
-                return
-            }
             let metadata = try await provider.metadata(for: url)
             if let title = metadata.title, !title.isEmpty {
                 bookmark.title = title
@@ -74,7 +91,5 @@ struct MetadataEnricher {
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
         }
-        try context.save()
     }
 }
-
