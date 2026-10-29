@@ -56,6 +56,10 @@ actor LinkPresentationMetadataProvider: MetadataProviding {
             }
         }
         guard let data else { return nil }
-        return ImageDownsampler.downsample(data, maximumPixelSize: 1_200)
+        return ImageDownsampler.downsample(
+            data,
+            maximumPixelSize: 1_200,
+            encoding: .jpegUnlessTransparent
+        )
     }
 }
