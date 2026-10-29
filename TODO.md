@@ -1,6 +1,12 @@
 # Tucked TODO
 
+Next holds the agreed work queue. Deferred holds work with a firm deadline. Backlog holds unscheduled work. Watch List items move only when their stated trigger occurs. Canceled items need a new product decision before they return.
+
+Start here for current work; [decisions](DECISIONS.md), [change history](CHANGELOG.md), and the [device matrix](docs/verification/cloudkit-device-matrix.md) explain why, what landed, and what still needs verification. If TODO and changelog disagree, TODO is the queue authority.
+
 ## Next
+
+**Release context (2026-10-29):** iOS 1.0 is publicly available. Native macOS 1.0 approval is still pending per the latest user update; do not infer approval from TestFlight or a version number. The checks below are recorded as pending; confirm current results before repeating them. Geoff intends to get right on the [v1.1.0 follow-up](#v110) after native macOS 1.0 approval. Visual polish has already started, and Share diagnosis remains in the current queue.
 
 - [ ] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
   - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
@@ -54,16 +60,30 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 ## v1.1.0
 
-After the initial release is approved. None of this blocks 1.0.
+Geoff intends to get right on this follow-up after native macOS 1.0 approval. Visual polish has already started; Share diagnosis remains in [Next](#next). None of this blocks 1.0. The approved numbered order starts with Share storage; task 2 is done and task 3 was dropped. The following items keep their existing order.
+
+**Already started:** `dev/visual-polish` contains card shadows and sidebar changes (`bee97be`), not yet merged to `main`. Finish and verify Mac selection, iPad live resize, and light/dark appearance; Larger Text layout leftovers and Mac failure-card appearance fit this branch. See [change history](CHANGELOG.md#changed--2026-10-26) and the [testing note](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). This does not include Share storage, highlighted-text capture, the menu bar helper, or Shortcuts.
 
 - [x] **Merge Settings → About links** ✅ 2026-10-25 (`b33aecd` on `main`). Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0 so a rejection can ship them in a new 1.0 build. Active 1.1 visual work is on `dev/visual-polish`.
 
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
-  The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
+  The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure. Existing snippet behavior and its historical design are in the [snippet decision](DECISIONS.md#2026-08-28-snippets-reuse-the-bookmark-model-rather-than-getting-their-own) and [design](docs/superpowers/archive/2026-08-28-glaze-parity-snippets-design.md).
   Found 2026-10-23: a plain-text selection in Safari reaches the Mac share extension with no attachments (probably the text sits in the extension item's text content, not an attachment). It is a deterministic Mac repro for the share failure card and needs no paywall state.
 - [ ] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
   Reported 2026-10-14. The 1.0 Larger Text claim covers iPhone and iPad only.
-  2026-10-24: iPhone grid, link editor, snippet editor, and Settings pass at accessibility XXXL in light and dark (simulator). iPad and Mac remain in the TestFlight device checks.
+  2026-10-24: iPhone grid, link editor, snippet editor, and Settings pass at accessibility XXXL in light and dark (simulator). iPad and Mac remain in the [TestFlight device checks](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24); see the [layout acceptance criteria](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md#b3-accessible-layouts-and-mac-failure-recovery).
+  2026-10-29: a visual review on iPhone 18 Pro Max and iPad Pro 13" M5 (iOS 27.0) found layout leftovers. Screenshots are in `~/Documents/Dev Workstation/Visual Verification/Tucked/2026-10-29-1.1.0-review/`. Fixed in `e7f6eec`: cards no longer reserve a second title line at accessibility sizes, the collection picker is shared across the editors, and the snippet source field keeps its size. See [change history](CHANGELOG.md#changed--2026-10-29). The search placeholder and toolbar Cancel/Save do not scale by design ([decision](DECISIONS.md#2026-10-29-system-bars-keep-system-sizing-at-accessibility-text-sizes)).
+
+**1.1.0 visual polish leftovers (2026-10-29 review):**
+
+- [ ] **Show the preview image in Get Info.** The Get Info sheet shows the URL, title, and metadata, but not the bookmark's preview image.
+- [ ] **Decide card footer spacing (needs Geoff).** One-line titles leave a blank band above the domain and date, because `lineLimit(2, reservesSpace: true)` keeps grid rows even. Choose: even rows, or tight footers.
+- [ ] **Move "Select" into the toolbar.** On every list, "Select" sits alone on its own row under the large title. Consider moving it into the toolbar.
+- [ ] **Focus the Add Link URL field and use a URL keyboard.** The field is not focused when the sheet opens, and it shows the default keyboard.
+- [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
+- Settings shows "iCloud temporarily unavailable" under the in-memory test store. This is expected; no action.
+- iPad captures show the real status-bar clock. This is a simulator capture setting, not an app bug; no action.
+
 - [ ] **6. Add the Mac menu bar helper** (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
   Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
 
@@ -99,6 +119,8 @@ Captured during the post-v1 uniqueness brainstorm. Untuck (Forgotten + Surprise 
 **Deprioritize / skip for now** (crowded or fights brand): multi-label tags as the main differentiator, browser extensions, collaborative/social collections, full offline page archives, cloud “AI summarize every page.”
 
 ## Deferred Beyond v1
+
+Historical v1 exclusions, not firm deadlines or committed work:
 
 These items were explicitly excluded from v1 and are not release blockers or committed roadmap work:
 
