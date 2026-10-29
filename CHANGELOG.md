@@ -4,6 +4,11 @@ All notable project changes are recorded here. For current queue and approval de
 
 ## In Progress
 
+### Fixed — 2026-10-29
+
+- The library grid no longer rebuilds itself every 20pt during an iPad window resize. Fixed columns and an explicit card width resize cells in place, which should stop the resize shudder.
+- Card previews decode off the main thread at card size and stay cached, so scrolling and resizing no longer decode full-size stored images on every render.
+
 ### Changed — 2026-10-29
 
 - Cards no longer reserve a second title line at accessibility text sizes (one-column grid), which removes the gap between title and subtitle.

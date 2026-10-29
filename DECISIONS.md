@@ -4,6 +4,13 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-10-29 (Explicit grid widths replace the width-bucketed `.id()`)
+
+- **Decision:** The library grid computes its column count and cell width from the `GeometryReader` width, uses `.fixed` `GridItem`s, and gives each card `.frame(width:)`. The `.id(Int(width / 20))` reset is removed. Column bounds (160–210pt) and spacing are unchanged.
+- **Why:** Geoff reported the grid shuddering during iPad resize. Every 20pt the `.id()` reset tore down the grid, reset its scroll state, and re-decoded every visible preview. An explicit width is a view input, so cells re-render at the new width instead of depending on LazyVGrid re-proposing size, which was the original stale-geometry bug.
+- **Alternative considered:** Keying `.id()` on column count only — rejected, it would keep the stale-geometry bug for every resize that stays within one column count.
+- **Status:** Needs physical iPad resize verification against the 2026-07-19 "window shade" artifact below.
+
 ## 2026-10-25 (Settings links for review)
 
 - **Decision:** Settings → About opens three live pages: Privacy Policy (`https://www.loweffortapps.app/privacy/`), Support (`https://www.loweffortapps.app/support/`), and the company site (`https://www.loweffortapps.app/`). The marketing version stays 1.0.
