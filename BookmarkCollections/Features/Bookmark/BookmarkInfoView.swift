@@ -19,6 +19,18 @@ struct BookmarkInfoView: View {
     var body: some View {
         NavigationStack {
             Form {
+                // Same cached thumbnail as the card. Snippets have no image,
+                // and a link without a preview skips the row entirely.
+                if bookmark.kind != .text && bookmark.previewImageData != nil {
+                    Section {
+                        Color.clear
+                            .aspectRatio(16 / 9, contentMode: .fit)
+                            .overlay { PreviewThumbnail(bookmark: bookmark) { EmptyView() } }
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .listRowInsets(EdgeInsets())
+                            .accessibilityHidden(true)
+                    }
+                }
                 if bookmark.kind == .link {
                     Section {
                         Button {
