@@ -11,6 +11,7 @@ All notable project changes are recorded here. For current queue and approval de
 - The library list is filtered and sorted once per redraw instead of up to five times, and search trims its text once rather than once per bookmark. Surprise Me's enabled state stops at the first match instead of building the full candidate list.
 - Link preview refresh on launch and return to the app saves once per batch instead of once per bookmark, so the library no longer redraws up to 20 times in a row. It also loads only unfinished bookmarks instead of the whole library.
 - Sidebar counts come from one pass over the library instead of one pass per row.
+- New link previews are stored as JPEG (quality 0.8) instead of PNG, which is usually several times smaller for photos. Previews with transparency stay PNG. Saved images are unchanged: they stay lossless PNG, since share and export hand them back as stored. Existing previews are not converted.
 
 ### Changed — 2026-10-29
 
