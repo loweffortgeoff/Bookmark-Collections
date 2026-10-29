@@ -31,20 +31,6 @@ struct LibraryGridView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if destination != .recentlyDeleted && !visibleBookmarks.isEmpty {
-                HStack {
-                    Spacer()
-                    Button(isSelecting ? "Done" : "Select") {
-                        isSelecting.toggle()
-                        if !isSelecting { selection.removeAll() }
-                    }
-                    .buttonStyle(.bordered)
-                    .accessibilityIdentifier("selection.toggle")
-                }
-                .padding(.horizontal)
-                .padding(.top, 10)
-            }
-
             Group {
                 if visibleBookmarks.isEmpty {
                     emptyState
@@ -106,6 +92,17 @@ struct LibraryGridView: View {
         .safeAreaInset(edge: .bottom) {
             if isSelecting {
                 selectionBar
+            }
+        }
+        .toolbar {
+            if destination != .recentlyDeleted && !visibleBookmarks.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(isSelecting ? "Done" : "Select") {
+                        isSelecting.toggle()
+                        if !isSelecting { selection.removeAll() }
+                    }
+                    .accessibilityIdentifier("selection.toggle")
+                }
             }
         }
     }
