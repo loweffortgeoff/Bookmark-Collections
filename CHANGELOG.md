@@ -7,6 +7,7 @@ All notable project changes are recorded here.
 ### Fixed — 2026-10-29 (unverified on device)
 
 - The library grid no longer rebuilds itself every 20pt during an iPad window resize. Fixed columns and an explicit card width resize cells in place, which should stop the resize shudder.
+- Card previews decode off the main thread at card size and stay cached, so scrolling and resizing no longer decode full-size stored images on every render.
 
 ### Changed — 2026-10-26
 

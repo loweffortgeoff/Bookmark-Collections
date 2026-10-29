@@ -75,35 +75,21 @@ struct BookmarkCard: View {
     private var preview: some View {
         if bookmark.kind == .text {
             SnippetExcerpt(text: bookmark.snippetBody)
-        } else if let previewImage {
-            previewImage
-                .resizable()
-                .scaledToFill()
-                .accessibilityHidden(true)
         } else {
-            ZStack {
-                Rectangle().fill(.quaternary)
-                VStack(spacing: 8) {
-                    Image(systemName: "bookmark.fill")
-                        .font(.title)
-                    Text(siteInitial)
-                        .font(.largeTitle.weight(.semibold))
+            PreviewThumbnail(bookmark: bookmark) {
+                ZStack {
+                    Rectangle().fill(.quaternary)
+                    VStack(spacing: 8) {
+                        Image(systemName: "bookmark.fill")
+                            .font(.title)
+                        Text(siteInitial)
+                            .font(.largeTitle.weight(.semibold))
+                    }
+                    .foregroundStyle(.secondary)
                 }
-                .foregroundStyle(.secondary)
             }
             .accessibilityHidden(true)
         }
-    }
-
-    private var previewImage: Image? {
-        guard let data = bookmark.previewImageData else { return nil }
-        #if os(macOS)
-        guard let image = NSImage(data: data) else { return nil }
-        return Image(nsImage: image)
-        #else
-        guard let image = UIImage(data: data) else { return nil }
-        return Image(uiImage: image)
-        #endif
     }
 
     private var subtitle: String {
