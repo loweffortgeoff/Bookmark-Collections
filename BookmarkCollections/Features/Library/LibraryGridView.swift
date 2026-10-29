@@ -24,22 +24,26 @@ struct LibraryGridView: View {
     @State private var selection: Set<UUID> = []
 
     private var visibleBookmarks: [Bookmark] {
-        bookmarks
-            .filter { destination.matches($0, searchText: searchText) }
+        let query = LibraryDestination.searchQuery(searchText)
+        return bookmarks
+            .filter { destination.matches($0, query: query) }
             .sorted(using: sort.descriptors(ascending: ascending))
     }
 
     var body: some View {
+        // Filtering and sorting walks the whole library, so do it once per
+        // body pass rather than once for each place that reads the result.
+        let visible = visibleBookmarks
         VStack(spacing: 0) {
             Group {
-                if visibleBookmarks.isEmpty {
+                if visible.isEmpty {
                     emptyState
                 } else {
                     GeometryReader { proxy in
                         let layout = GridLayout(width: proxy.size.width, isAccessibilitySize: dynamicTypeSize.isAccessibilitySize)
                         ScrollView {
                             LazyVGrid(columns: layout.columns, spacing: 18) {
-                                ForEach(visibleBookmarks) { bookmark in
+                                ForEach(visible) { bookmark in
                                     ZStack(alignment: .topTrailing) {
                                         BookmarkCard(
                                             bookmark: bookmark,
@@ -95,7 +99,7 @@ struct LibraryGridView: View {
             }
         }
         .toolbar {
-            if destination != .recentlyDeleted && !visibleBookmarks.isEmpty {
+            if destination != .recentlyDeleted && !visible.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
                     Button(isSelecting ? "Done" : "Select") {
                         isSelecting.toggle()

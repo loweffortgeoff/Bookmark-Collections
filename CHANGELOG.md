@@ -8,6 +8,9 @@ All notable project changes are recorded here. For current queue and approval de
 
 - The library grid no longer rebuilds itself every 20pt during an iPad window resize. Fixed columns and an explicit card width resize cells in place, which should stop the resize shudder.
 - Card previews decode off the main thread at card size and stay cached, so scrolling and resizing no longer decode full-size stored images on every render.
+- The library list is filtered and sorted once per redraw instead of up to five times, and search trims its text once rather than once per bookmark. Surprise Me's enabled state stops at the first match instead of building the full candidate list.
+- Link preview refresh on launch and return to the app saves once per batch instead of once per bookmark, so the library no longer redraws up to 20 times in a row. It also loads only unfinished bookmarks instead of the whole library.
+- Sidebar counts come from one pass over the library instead of one pass per row.
 
 ### Changed — 2026-10-29
 

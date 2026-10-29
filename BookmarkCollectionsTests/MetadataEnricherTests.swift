@@ -131,6 +131,7 @@ final class MetadataEnricherTests: XCTestCase {
         XCTAssertEqual(bookmarks.filter { $0.metadataState == .ready }.count, 2)
         XCTAssertEqual(bookmarks.filter { $0.metadataState == .pending }.count, 1)
         XCTAssertEqual(callCount, 2)
+        XCTAssertFalse(container.mainContext.hasChanges, "The batch must be saved once it finishes")
     }
 
     func testEnrichmentSkipsImageBookmarks() async throws {
