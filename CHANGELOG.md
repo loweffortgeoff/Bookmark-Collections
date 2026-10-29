@@ -17,6 +17,8 @@ All notable project changes are recorded here. For current queue and approval de
 - The dark-mode editor accessibility test now submits its search so the keyboard does not cover context-menu items. Both accessibility UI tests pass.
 - Add Link focuses its address field when it opens and uses the URL keyboard, with autocapitalization and autocorrection off. Return saves when the field has text.
 - Select/Done moves from its own row under the large title into the library toolbar, next to Add.
+- The Select-mode action bar (Favorite, Unfavorite, Move, Share, Delete) now sits on a floating material capsule instead of directly over the cards.
+- Get Info shows the bookmark's preview image at the top, using the same cached thumbnail as the card. Snippets and links without a preview skip it.
 - Left as is: the "Search bookmarks" placeholder and toolbar Cancel/Save do not scale at accessibility sizes. See [the decision](DECISIONS.md#2026-10-29-system-bars-keep-system-sizing-at-accessibility-text-sizes).
 
 ### Changed — 2026-10-26
