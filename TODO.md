@@ -78,8 +78,9 @@ Geoff intends to get right on this follow-up after native macOS 1.0 approval. Vi
 
 - [ ] **Show the preview image in Get Info.** The Get Info sheet shows the URL, title, and metadata, but not the bookmark's preview image.
 - [ ] **Decide card footer spacing (needs Geoff).** One-line titles leave a blank band above the domain and date, because `lineLimit(2, reservesSpace: true)` keeps grid rows even. Choose: even rows, or tight footers.
-- [ ] **Move "Select" into the toolbar.** On every list, "Select" sits alone on its own row under the large title. Consider moving it into the toolbar.
-- [ ] **Focus the Add Link URL field and use a URL keyboard.** The field is not focused when the sheet opens, and it shows the default keyboard.
+- [x] **Move "Select" into the toolbar.** On every list, "Select" sits alone on its own row under the large title. Consider moving it into the toolbar. Done 2026-10-29 in `ca39de2`: Select/Done is in the library toolbar next to Add.
+- [x] **Focus the Add Link URL field and use a URL keyboard.** The field is not focused when the sheet opens, and it shows the default keyboard. Done 2026-10-29 in `ca39de2`: focused on open, URL keyboard, no autocapitalization or autocorrection, Return saves.
+- [ ] **Give the selection action bar a background.** In Select mode the Favorite, Unfavorite, Move, Share, and Delete bar floats over the last card and the search field with no background. Seen 2026-10-29; predates moving Select.
 - [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
 - Settings shows "iCloud temporarily unavailable" under the in-memory test store. This is expected; no action.
 - iPad captures show the real status-bar clock. This is a simulator capture setting, not an app bug; no action.

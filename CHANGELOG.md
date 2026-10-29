@@ -15,6 +15,8 @@ All notable project changes are recorded here. For current queue and approval de
 - Add Link, Edit, Get Info, and the snippet editor share one collection picker. At accessibility sizes it stacks the label over a flush-leading menu instead of the system row's indented wrap.
 - The snippet source field uses a short "Source link" placeholder at accessibility sizes, so it no longer shrinks.
 - The dark-mode editor accessibility test now submits its search so the keyboard does not cover context-menu items. Both accessibility UI tests pass.
+- Add Link focuses its address field when it opens and uses the URL keyboard, with autocapitalization and autocorrection off. Return saves when the field has text.
+- Select/Done moves from its own row under the large title into the library toolbar, next to Add.
 - Left as is: the "Search bookmarks" placeholder and toolbar Cancel/Save do not scale at accessibility sizes. See [the decision](DECISIONS.md#2026-10-29-system-bars-keep-system-sizing-at-accessibility-text-sizes).
 
 ### Changed — 2026-10-26
