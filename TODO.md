@@ -6,9 +6,17 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
+<<<<<<< Updated upstream
 **Release context (2026-10-31):** Build 11: iOS is App Store live; macOS is Waiting for Review. The Oct-24 remaining-bug-package / TestFlight 1.0 (10) device checklist is retired (2026-10-31); Pending rows were not marked Passed. Do not infer native macOS 1.0 approval from TestFlight or a version number. Geoff intends to get right on the [v1.1.0 follow-up](#v110) after native macOS 1.0 approval. Visual polish continues on this branch; Share diagnosis remains in the current queue.
 
 - [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. Still needed independently of the retired Oct-24 matrix: the [JSON pack](docs/verification/fixtures/2026-10-23-testflight/README.md), current-build purchase/restore and cross-device access, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
+=======
+- [x] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
+  - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
+  - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
+
+- [x] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (10) from `a17ab86` (2026-10-24) supersedes 1.0 (9) and carries these fixes; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
+>>>>>>> Stashed changes
 
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
 
