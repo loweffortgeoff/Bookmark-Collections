@@ -12,7 +12,7 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 
 - [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
 
-  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified.
+  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified. Physical-device B2 Share storage is still Pending in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24); device acceptance is still pending on TestFlight 1.0 (10).
 
   Prior investigation: reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
@@ -22,41 +22,12 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
   The 2026-10-23 macOS share fix did not resolve this iOS failure. The `ShareStorage`
   log now records the error domain and code down the underlying-error chain, which
   should make the cause diagnosable.
-- [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
-
-  2026-10-23 follow-up: all 15 Mac UI cases pass. Numeric free-limit launch arguments suppressed the initial window under native XCTest; filling the real ten-item cap through UI saves resolves that harness gap. Local purchase closes the paywall and shows the unlocked Settings badge.
-
-  Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
-  Merged `main` is byte-identical to the tree whose UI suite passed on
-  2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
-  and all code signatures are valid. The runner attaches to the app and gets a
-  pid, but reads zero accessibility identifiers from it — an empty tree, not a
-  missing element. Ruled out: stale runner signature, leftover processes, a
-  clean DerivedData rebuild, and moving `/Applications/Tucked.app` aside.
-  Leading explanation is macOS withholding Accessibility/Automation permission
-  after a second binary claimed the same bundle identifier. First thing to try:
-  `tccutil reset All com.loweffortapps.BookmarkCollections`, re-run the suite,
-  and grant control when macOS prompts. Then check System Settings → Privacy &
-  Security → Accessibility for Xcode and Terminal. Release builds drop
-  `get-task-allow`, so installing Release may clear this on its own.
-
-- [ ] **Finish verifying the Mac share failure card** (unnumbered; follow-up to the 2026-10-23 Mac share fix). On a Mac, check four things: the free-limit message text in the share sheet, light mode, the largest accessibility text size (the fixed 360 x 200 frame could clip the buttons), and the storage-failure screen. The window background is unverified: if the card looks doubled, remove the one `.background` line in `ShareViewController.host`.
-
-  2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
-
-  2026-10-24: the fixed 360 x 200 frame is gone; the card now scrolls. The free-limit card offers Open Tucked and Cancel instead of Retry. Typed recovery tests pass. The real-host checks move to the next TestFlight build (see Next).
-
-  Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
-
-  > **Branch state:** `fix/mac-save-to-tucked` was merged before `158fbb3`. The remaining checks above are the TestFlight checks in Next.
 
 The remaining v1 release gates (real-device CloudKit matrix, Production schema, TestFlight/new-account check) are tracked in `docs/verification/cloudkit-device-matrix.md`, not here.
 
-## v1.1.0
+### v1.1.0
 
 After the initial release is approved. None of this blocks 1.0.
-
-- [ ] **Merge Settings → About links** as the first 1.1 change, or sooner if App Review asks for them in the app. `feature/settings-about-links` adds Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0.
 
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
   The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
@@ -112,6 +83,36 @@ These items were explicitly excluded from v1 and are not release blockers or com
 ## Done
 
 _Earlier v1 work landed before TODO.md tracked completions with dates._
+
+- [x] **Merge Settings → About links** as the first 1.1 change. Privacy Policy, Support, and the Low Effort Apps website now open from Settings. Landed on `main` at `b33aecd` (2026-10-25). Marketing version stays 1.0.
+
+- [x] **Finish verifying the Mac share failure card** (unnumbered; follow-up to the 2026-10-23 Mac share fix). On a Mac, check four things: the free-limit message text in the share sheet, light mode, the largest accessibility text size (the fixed 360 x 200 frame could clip the buttons), and the storage-failure screen. The window background is unverified: if the card looks doubled, remove the one `.background` line in `ShareViewController.host`.
+
+  2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
+
+  2026-10-24: the fixed 360 x 200 frame is gone; the card now scrolls. The free-limit card offers Open Tucked and Cancel instead of Retry. Typed recovery tests pass. Leftover real-host checks live under the TestFlight 1.0 (10) acceptance in Next.
+
+  Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
+
+  > **Branch state:** `fix/mac-save-to-tucked` was merged before `158fbb3`. The remaining checks above are the TestFlight checks in Next.
+
+- [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+
+  2026-10-23 follow-up: all 15 Mac UI cases pass. Numeric free-limit launch arguments suppressed the initial window under native XCTest; filling the real ten-item cap through UI saves resolves that harness gap. Local purchase closes the paywall and shows the unlocked Settings badge.
+
+  Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
+  Merged `main` is byte-identical to the tree whose UI suite passed on
+  2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
+  and all code signatures are valid. The runner attaches to the app and gets a
+  pid, but reads zero accessibility identifiers from it — an empty tree, not a
+  missing element. Ruled out: stale runner signature, leftover processes, a
+  clean DerivedData rebuild, and moving `/Applications/Tucked.app` aside.
+  Leading explanation is macOS withholding Accessibility/Automation permission
+  after a second binary claimed the same bundle identifier. First thing to try:
+  `tccutil reset All com.loweffortapps.BookmarkCollections`, re-run the suite,
+  and grant control when macOS prompts. Then check System Settings → Privacy &
+  Security → Accessibility for Xcode and Terminal. Release builds drop
+  `get-task-allow`, so installing Release may clear this on its own.
 
 - [x] Remaining bug block implemented, verified locally, and merged to `main`. [Spec](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md), [plan](docs/superpowers/plans/2026-10-23-remaining-bug-fixes.md) (2026-10-24).
 - [x] Mac menu Open/Share for links, images, and snippets, plus Cancel and stale selection, pass the native Mac UI test. Commands now target the last item acted on, not hover (2026-10-24).
