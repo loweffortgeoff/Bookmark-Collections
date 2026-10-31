@@ -2,6 +2,8 @@
 
 ## Remaining bug package — 2026-10-24
 
+> **Superseded / retired 2026-10-31.** Geoffrey retired this package acceptance checklist. iOS Build 11 is App Store live; macOS Build 11 is Waiting for Review. Visual/performance work continued on `dev/visual-polish` (not merged here). Pending rows below are a historical record — they were not executed as a pass/fail gate and are not current Next work. This marks the *package acceptance checklist* retired, not every row Passed.
+
 Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`, merged locally to `main` on 2026-10-24. Implementation covers Share re-save preservation, accessibility-size grid/editor corrections, Mac failure recovery and kind-aware sharing, Mac command targeting, and explicit build settings. Build 9 does not validate this changed source. Local evidence is in `.superpowers/sdd/2026-10-23-remaining-bug-fixes/`.
 
 **Local verification (Mac mini, Xcode 27.1):**
@@ -12,7 +14,7 @@ Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`, merge
 - Signed Release builds pass for both platforms.
 - The Mac StoreKit audit cannot run on this Mac. Its Apple Account owns Tucked for Life through TestFlight, and the app sees that Sandbox purchase. This branch changes no StoreKit code.
 
-**Next acceptance: TestFlight 1.0 (10).** Geoff's account owns Tucked for Life, so the locked path needs testers who never bought it. They follow the [first-time tester checklist](2026-10-24-testflight-fresh-tester-checklist.md). Geoff checks the following on his own devices:
+**Retired acceptance (was TestFlight 1.0 (10)).** Historical checklist only. Geoff's account owns Tucked for Life, so the locked path needed testers who never bought it. The 2026-10-24 plan used the [first-time tester checklist](2026-10-24-testflight-fresh-tester-checklist.md) and had Geoff check the following on his own devices:
 
 | Check | iPhone | iPad | Mac |
 | --- | --- | --- | --- |
@@ -29,20 +31,21 @@ Approved package: `fix/remaining-bug-fixes`, based on `main` at `158fbb3`, merge
 | Share at the limit is refused; Mac shows Open Tucked and Cancel | Pending | Pending |
 | Purchase unlocks; Restore unlocks a second device | Pending | Pending |
 
-Physical iPhone B2 remains **pending**. On the changed build, record device/OS/build/host, test Safari links and Photos images, and capture `ShareStorage`/`ShareSave` error domain/code chains if storage fails. Inspect app/extension App Group and CloudKit entitlements for that exact build. No store reset, schema change, or signing change was made as a speculative repair.
+As recorded on 2026-10-24, physical iPhone B2 remained **pending**. On the changed build, record device/OS/build/host, test Safari links and Photos images, and capture `ShareStorage`/`ShareSave` error domain/code chains if storage fails. Inspect app/extension App Group and CloudKit entitlements for that exact build. No store reset, schema change, or signing change was made as a speculative repair.
 
-Acceptance still needs real-host duplicate re-share on each platform; Mac free-limit Open Tucked/Cancel and failed-open behavior; failure surfaces in light/dark and supported text sizes; and physical iPad long-content/narrow/wide/live-resize checks. Use an approved disposable library. Production purchase/restore, immediate Mac unlock, cross-platform ownership, fresh-account sync, and offline conflicts remain separate submission gates. Geoff approved the local merge on 2026-10-24. The release pass on 2026-10-24 delivered TestFlight 1.0 (10) (see below). No review submission is authorized by this package.
+As of 2026-10-24, acceptance still needed real-host duplicate re-share on each platform; Mac free-limit Open Tucked/Cancel and failed-open behavior; failure surfaces in light/dark and supported text sizes; and physical iPad long-content/narrow/wide/live-resize checks. Use an approved disposable library. Those leftover checks were retired with this package on 2026-10-31; they were not marked Passed. Geoff approved the local merge on 2026-10-24. The release pass on 2026-10-24 delivered TestFlight 1.0 (10) (see below).
 
-
-Last updated: 2026-10-24 (TestFlight 1.0 (10) delivered; acceptance listed above. Device evidence retains its original dates.)
+Last updated: 2026-10-31 (package acceptance retired by Geoffrey; iOS Build 11 App Store live, macOS Waiting for Review. Historical device evidence retains its original dates.)
 
 ## TestFlight candidate — 2026-10-24
+
+> **Superseded / retired 2026-10-31.** This TestFlight 1.0 (10) candidate is no longer the current acceptance train. iOS Build 11 is App Store live; macOS Build 11 is Waiting for Review. The device checks referenced below are the retired Oct-24 package, not current gates.
 
 Source `a17ab86`, scheme **Tucked Release**, configuration Release: iOS and native macOS **1.0 (10)** uploaded, processed `VALID`, and verified `IN_BETA_TESTING` in the internal Low Effort group, which has access to all builds. What to Test is saved and read back on both builds. Export compliance is saved as no non-exempt encryption, per Geoff on 2026-10-24.
 
 Built on the Mac mini, macOS 27.0.1 / Xcode 27.1 (27A9275). Build number 10 was a command-line override; the project stays at 1.0 (1). App and extension identifiers, version 1.0 (10), team `2R5TZD4XAH`, and `PaywallEnabled = YES` pass inspection on both platforms; the extension value is now explicit. Distribution signing uses Production CloudKit and `get-task-allow = false`; iOS push uses production. Evidence: `.superpowers/sdd/2026-10-24-testflight-build10/` (ignored).
 
-Both App Store platform versions read `PREPARE_FOR_SUBMISSION` with no build attached. No build was attached to a version, no external group was changed, and no App Review submission occurred. The device checks above are still pending.
+Both App Store platform versions read `PREPARE_FOR_SUBMISSION` with no build attached. No build was attached to a version, no external group was changed, and no App Review submission occurred. The device checks above were still pending when this candidate was recorded; the package acceptance was retired 2026-10-31.
 
 ## Current local validation — 2026-10-23
 
