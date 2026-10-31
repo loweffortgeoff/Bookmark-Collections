@@ -16,6 +16,9 @@ final class PaywallFlowAuditTests: XCTestCase {
         // Start locked on both platforms. A Mac that owns Tucked would
         // otherwise read its real shared unlock flag and skip the paywall.
         application.launchArguments += ["-tuckedProUnlocked", "NO"]
+        // The cap only applies once the App Store has returned the product.
+        // UI tests skip StoreKit, so state that it is on sale.
+        application.launchArguments += ["-tuckedForLifeProductAvailable", "YES"]
         application.launch()
     }
 

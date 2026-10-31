@@ -4,6 +4,11 @@ All notable project changes are recorded here.
 
 ## In Progress
 
+### Fixed — 2026-10-31 (iOS 1.0.1 hotfix, branch `hotfix/1.0.1` from `v1.0-build10`, the source of live build 11)
+
+- The free ten-bookmark cap applies only after the App Store returns Tucked for Life. Until then the app and the Share extension save without a limit. The app records the answer in the app group, and the extension reads it from there. An empty catalog answer lifts the cap; a failed lookup (offline) keeps the last answer. Bookmarks saved past ten while the product was unavailable are kept. When the product loads, only new saves past ten reach the paywall, and existing items can still be edited and re-shared.
+- Version 1.0.1 (12). The live iOS build 11 has the same source as build 10 (no Settings About links).
+
 ### Fixed — 2026-10-24 (in TestFlight 1.0 (10); device acceptance pending)
 
 - Re-sharing keeps saved titles, organization, and previews. Interactive Share loads existing choices; explicit None/off still applies. Suggested names no longer mark metadata complete.
