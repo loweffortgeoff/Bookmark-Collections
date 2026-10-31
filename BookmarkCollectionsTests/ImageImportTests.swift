@@ -57,8 +57,13 @@ final class ImageImportTests: XCTestCase {
 
     func testLockedImageBatchStopsAtTenWithoutCreatingAnEleventh() throws {
         let oldAccess = PurchaseAccess.isUnlocked
+        let oldAvailability = PurchaseAccess.isProductAvailable
         PurchaseAccess.setUnlocked(false)
-        defer { PurchaseAccess.setUnlocked(oldAccess) }
+        PurchaseAccess.setProductAvailable(true)
+        defer {
+            PurchaseAccess.setUnlocked(oldAccess)
+            PurchaseAccess.setProductAvailable(oldAvailability)
+        }
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let repository = BookmarkRepository(context: container.mainContext, isUnlocked: true)
         for index in 0..<9 { _ = try repository.save(url: "https://audit.example/image-batch/\(index)") }

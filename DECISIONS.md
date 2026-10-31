@@ -2,6 +2,12 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-10-31 (iOS 1.0.1: cap only when Tucked for Life is on sale)
+
+- **Decision:** Enforce the free cap only after StoreKit has returned the Tucked for Life product. The app's Storefront writes `tuckedForLifeProductAvailable` to the app group; the repository default and JSON import preflight read `PaywallConfiguration.isEnforced`. Ship as iOS 1.0.1 from `v1.0-build10` with nothing from `main` or `dev/visual-polish`.
+- **Why:** iOS 1.0 went live while the IAP sat in the Mac review, so users hit the paywall at link #11 with nothing to buy. This lifts the cap now and restores it with no further update when the IAP is approved.
+- **Alternative considered:** Turn the cap off in 1.0.1 and turn it back on in a later update. Rejected because it needs a second review, and its timing depends on two separate App Review queues.
+
 ## 2026-10-24 (Share intent and accessible recovery)
 
 - **Decision:** Keep Share-specific preservation in repository mutations. Quick Save preserves organization; interactive controls load existing values. Fill only missing title/image fields in the durable primary save.

@@ -38,7 +38,7 @@ struct BookmarkRepository {
     init(
         context: ModelContext,
         isUnlocked: Bool = PurchaseAccess.isUnlocked,
-        paywallEnabled: Bool = PaywallConfiguration.isEnabled
+        paywallEnabled: Bool = PaywallConfiguration.isEnforced
     ) {
         self.context = context
         self.isUnlocked = isUnlocked

@@ -43,6 +43,9 @@ final class Storefront {
         await refreshEntitlement()
         do {
             product = try await Product.products(for: [Self.lifetimeProductID]).first
+            // An empty answer means the product is not on sale, so lift the cap.
+            // A thrown error (offline, App Store unreachable) keeps the last answer.
+            PurchaseAccess.setProductAvailable(product != nil)
             if product == nil && !isUnlocked {
                 errorMessage = "Tucked for Life is not available right now."
             }
