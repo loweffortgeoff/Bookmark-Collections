@@ -2,17 +2,17 @@
 
 ## Next
 
-- [ ] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
-  - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
+- [ ] **Run the remaining Build 11 / App Store device checks.** iOS Build 11 is App Store live; macOS Build 11 is Waiting for Review.
+  - **Geoff (owner account):** run the still-open device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
   - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
 
-- [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (10) from `a17ab86` (2026-10-24) supersedes 1.0 (9) and carries these fixes; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
+- [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. Verify on Build 11 (iOS App Store live; macOS Waiting for Review); use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Still needed: current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
 
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
 
 - [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
 
-  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified. Physical-device B2 Share storage is still Pending in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24); device acceptance is still pending on TestFlight 1.0 (10).
+  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified. Physical-device B2 Share storage is still Pending in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). iOS Build 11 is App Store live; that physical-device B2 check remains Pending.
 
   Prior investigation: reproduce the iOS Share-extension storage failure and inspect its new
   `ShareStorage` log before changing storage or entitlement configuration.
@@ -34,7 +34,7 @@ After the initial release is approved. None of this blocks 1.0.
   Found 2026-10-23: a plain-text selection in Safari reaches the Mac share extension with no attachments (probably the text sits in the extension item's text content, not an attachment). It is a deterministic Mac repro for the share failure card and needs no paywall state.
 - [ ] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
   Reported 2026-10-14. The 1.0 Larger Text claim covers iPhone and iPad only.
-  2026-10-24: iPhone grid, link editor, snippet editor, and Settings pass at accessibility XXXL in light and dark (simulator). iPad and Mac remain in the TestFlight device checks.
+  2026-10-24: iPhone grid, link editor, snippet editor, and Settings pass at accessibility XXXL in light and dark (simulator). iPad and Mac remain in the Build 11 / App Store device checks.
 - [ ] **6. Add the Mac menu bar helper** (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
   Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
 
@@ -90,11 +90,11 @@ _Earlier v1 work landed before TODO.md tracked completions with dates._
 
   2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
 
-  2026-10-24: the fixed 360 x 200 frame is gone; the card now scrolls. The free-limit card offers Open Tucked and Cancel instead of Retry. Typed recovery tests pass. Leftover real-host checks live under the TestFlight 1.0 (10) acceptance in Next.
+  2026-10-24: the fixed 360 x 200 frame is gone; the card now scrolls. The free-limit card offers Open Tucked and Cancel instead of Retry. Typed recovery tests pass. Leftover real-host checks live under the remaining Build 11 / App Store device checks in Next.
 
   Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
 
-  > **Branch state:** `fix/mac-save-to-tucked` was merged before `158fbb3`. The remaining checks above are the TestFlight checks in Next.
+  > **Branch state:** `fix/mac-save-to-tucked` was merged before `158fbb3`. The remaining checks above are the Build 11 / App Store device checks in Next.
 
 - [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
 
@@ -116,7 +116,7 @@ _Earlier v1 work landed before TODO.md tracked completions with dates._
 
 - [x] Remaining bug block implemented, verified locally, and merged to `main`. [Spec](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md), [plan](docs/superpowers/plans/2026-10-23-remaining-bug-fixes.md) (2026-10-24).
 - [x] Mac menu Open/Share for links, images, and snippets, plus Cancel and stale selection, pass the native Mac UI test. Commands now target the last item acted on, not hover (2026-10-24).
-- [x] Mac Share free-limit Open Tucked/Cancel and failed-open recovery pass typed recovery tests. Real-host checks moved to the TestFlight acceptance in Next (2026-10-24).
+- [x] Mac Share free-limit Open Tucked/Cancel and failed-open recovery pass typed recovery tests. Real-host checks moved to the remaining Build 11 / App Store device checks in Next (2026-10-24).
 
 - [x] Privacy policy on loweffortapps.app covers the Tucked for Life purchase, and 1.0 was submitted for review with the IAP (2026-10-15). Tucked's own product page waits for launch (2026-10-16).
 - [x] Tucked for Life paywall merged to `main`; Restore Purchases confirmed on a second device (2026-10-15).
