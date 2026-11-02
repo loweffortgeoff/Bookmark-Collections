@@ -2,6 +2,12 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-02 (Paywall must be reachable without hitting the limit)
+
+- **Decision:** Settings shows Unlock and Restore Purchases while Tucked for Life is locked. The iOS Share sheet explains the free limit as a neutral message with no Save/Retry. Ship as 1.0.2 before the `dev/visual-polish` merge, which becomes 1.1.0.
+- **Why:** The IAP was approved with the Mac review, so the cap now applies everywhere. The paywall appeared only after a failing in-app save, Restore existed only inside the paywall, and the Share sheet's red error looked like a bug. A device test found no purchase path outside a failing save.
+- **Alternative considered:** An Open Tucked button in the iOS Share sheet, and bundling visual-polish into 1.0.2. Rejected: opening the app from an iOS extension is unreliable, and visual-polish is a large, device-untested change that would sit under a revenue fix.
+
 ## 2026-10-25 (Settings links for review)
 
 - **Decision:** Settings → About opens three live pages: Privacy Policy (`https://www.loweffortapps.app/privacy/`), Support (`https://www.loweffortapps.app/support/`), and the company site (`https://www.loweffortapps.app/`). The marketing version stays 1.0.
