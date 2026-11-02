@@ -22,10 +22,12 @@ struct ShareCaptureView: View {
                 HStack {
                     Button("Cancel", action: onCancel)
                     Spacer()
-                    Button(saveButtonTitle) {
-                        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+                    if !isLimitReached {
+                        Button(saveButtonTitle) {
+                            model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+                        }
+                        .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                     }
-                    .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                 }
                 .padding()
             }
@@ -35,11 +37,13 @@ struct ShareCaptureView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: onCancel)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(saveButtonTitle) {
-                        model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+                if !isLimitReached {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(saveButtonTitle) {
+                            model.save(collectionID: model.selectedCollectionID, favorite: model.isFavorite)
+                        }
+                        .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                     }
-                    .disabled(model.capture == nil || model.state == .saving || model.state == .saved)
                 }
             }
             #endif
@@ -64,8 +68,12 @@ struct ShareCaptureView: View {
             }
             if case let .failed(message) = model.state {
                 Section {
-                    Label(message, systemImage: "exclamationmark.triangle")
-                        .foregroundStyle(.red)
+                    if isLimitReached {
+                        Label(message, systemImage: "lock")
+                    } else {
+                        Label(message, systemImage: "exclamationmark.triangle")
+                            .foregroundStyle(.red)
+                    }
                 }
             }
         }
@@ -109,6 +117,10 @@ struct ShareCaptureView: View {
                 }
             }
         }
+    }
+
+    private var isLimitReached: Bool {
+        model.failureReason == .limitReached
     }
 
     private var saveButtonTitle: String {

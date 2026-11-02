@@ -4,9 +4,20 @@ All notable project changes are recorded here.
 
 ## In Progress
 
+### Added — 2026-11-02 (iOS/Mac 1.0.2 (13), branch `fix/paywall-discoverability`)
+
+- Settings has a "Tucked for Life" section while locked: **Unlock Tucked for Life** opens the paywall and **Restore Purchases** works without hitting the limit first. Unlocked users still see the badge.
+- The Share sheet at the free limit now explains it in plain text ("Your 10 free bookmarks are used, so this wasn't saved…") instead of a red error, and hides Save/Retry, which cannot succeed there. Mac keeps its Open Tucked and Cancel buttons.
+- Includes the 1.0.1 free-cap hotfix merged into `main`. Version 1.0.2 (13). Device-checked on iPhone: Settings row, paywall, and Share limit message. Purchase completion and Restore on a second device remain to check.
+
 ### Added — 2026-10-25
 
 - Settings → About links to the Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0 so this can ship with a 1.0 resubmission or as the first 1.1 change.
+
+### Fixed — 2026-10-31 (iOS 1.0.1 hotfix, branch `hotfix/1.0.1` from `v1.0-build10`, the source of live build 11)
+
+- The free ten-bookmark cap applies only after the App Store returns Tucked for Life. Until then the app and the Share extension save without a limit. The app records the answer in the app group, and the extension reads it from there. An empty catalog answer lifts the cap; a failed lookup (offline) keeps the last answer. Bookmarks saved past ten while the product was unavailable are kept. When the product loads, only new saves past ten reach the paywall, and existing items can still be edited and re-shared.
+- Version 1.0.1 (12). The live iOS build 11 has the same source as build 10 (no Settings About links).
 
 ### Fixed — 2026-10-24 (in TestFlight 1.0 (10); device acceptance pending)
 

@@ -28,10 +28,21 @@ enum PaywallConfiguration {
         if let value = value as? Bool { return value }
         return (value as? String) != "NO"
     }
+
+    /// Whether saving is actually capped right now. The cap only applies once the
+    /// App Store has returned the Tucked for Life product, so nobody hits a paywall
+    /// they cannot pay through (1.0.1: the product was attached to a different
+    /// review and was not on sale when iOS 1.0 went live). Bookmarks saved past ten
+    /// while the product was unavailable are kept; only new saves are blocked
+    /// once it loads.
+    static var isEnforced: Bool {
+        isEnabled && PurchaseAccess.isProductAvailable
+    }
 }
 
 enum PurchaseAccess {
     private static let entitlementKey = "tuckedProUnlocked"
+    private static let productAvailableKey = "tuckedForLifeProductAvailable"
     private static let appGroupIdentifier = "group.com.loweffortapps.BookmarkCollections"
 
     private static var defaults: UserDefaults {
@@ -44,5 +55,17 @@ enum PurchaseAccess {
 
     static func setUnlocked(_ isUnlocked: Bool) {
         defaults.set(isUnlocked, forKey: entitlementKey)
+    }
+
+    /// Last answer from the App Store about whether Tucked for Life can be bought.
+    /// Written by the app's Storefront and read through the app group by the share
+    /// extension, which never loads StoreKit products itself. False until the app
+    /// has seen the product at least once.
+    static var isProductAvailable: Bool {
+        defaults.bool(forKey: productAvailableKey)
+    }
+
+    static func setProductAvailable(_ isAvailable: Bool) {
+        defaults.set(isAvailable, forKey: productAvailableKey)
     }
 }

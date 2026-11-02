@@ -2,6 +2,8 @@
 
 ## Next
 
+- [ ] **Ship 1.0.2 (13)** from `fix/paywall-discoverability` (Settings Unlock/Restore, Share limit message, merged 1.0.1 hotfix). Still to check on device: sandbox purchase unlocks and a share then saves; Restore on a second device; Mac Settings row. Then archive, TestFlight, submit. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see v1.1.0).
+
 - [ ] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
   - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
   - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
