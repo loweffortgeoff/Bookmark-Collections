@@ -1,4 +1,4 @@
-# App Store Connect — Current Listing (v1.0)
+# App Store Connect — Current Listing (v1.0.2)
 
 Initial release listing for Tucked 1.0. Bundle ID `com.loweffortapps.BookmarkCollections`. Primary locale `en-US`.
 
@@ -11,13 +11,11 @@ Rationale: The app name ("Tucked") does not contain any category keywords, so th
 Save links, screenshots, and text snippets from the Share Sheet on iPhone, iPad, and Mac. Forgotten and Surprise me bring back what you tucked away and never opened. — 165 characters
 
 ## What's New
-Welcome to Tucked 1.0 — a native library for your links, images, and text snippets across iPhone, iPad, and Mac.
+Unlocking Tucked for Life is easier to find.
 
-• Save links and images from the Share Sheet on iPhone and iPad, or in one click with Quick Save on Mac.
-• Keep text snippets alongside your bookmarks with an optional source link and one-tap Copy Text.
-• Organize with Collections and Favorites, or browse by Links, Images, and Snippets.
-• Rediscover neglected saves with the Forgotten view and the Surprise me button.
-• Back up and move your library anytime with JSON backups, plain-text URL import, and HTML bookmark export.
+• Unlock Tucked for Life or Restore Purchases from Settings, any time.
+• When Save to Tucked reaches the free limit, the Share Sheet now explains it clearly instead of showing an error.
+• Settings now links to the Privacy Policy, Support, and the Low Effort Apps website.
 
 ## Description
 Tucked — Save it now. Actually find it later.

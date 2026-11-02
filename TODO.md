@@ -2,7 +2,7 @@
 
 ## Next
 
-- [ ] **Ship 1.0.2 (13)** from `fix/paywall-discoverability` (Settings Unlock/Restore, Share limit message, merged 1.0.1 hotfix). Still to check on device: sandbox purchase unlocks and a share then saves; Restore on a second device; Mac Settings row. Then archive, TestFlight, submit. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see v1.1.0).
+- [ ] **Ship iOS 1.0.2 (13)** (Settings Unlock/Restore, Share limit message, Settings About links, 1.0.1 cap hotfix; merged to `main` in #7). Device-checked on iPhone 2026-11-02: Settings row, paywall, sandbox purchase, Restore, and a saved link after unlock. Build 13 archived and uploaded 2026-11-02 16:28 (Tucked is not in the ASC API key scope, so check processing in the ASC web UI). Remaining: confirm processing, paste the 1.0.2 What's New, attach the build and the IAP to the iOS version, submit. Mac stays on 1.0. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see v1.1.0).
 
 - [ ] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
   - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
@@ -58,8 +58,6 @@ The remaining v1 release gates (real-device CloudKit matrix, Production schema, 
 
 After the initial release is approved. None of this blocks 1.0.
 
-- [ ] **Merge Settings → About links** as the first 1.1 change, or sooner if App Review asks for them in the app. `feature/settings-about-links` adds Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0.
-
 - [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
   The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure.
   Found 2026-10-23: a plain-text selection in Safari reaches the Mac share extension with no attachments (probably the text sits in the extension item's text content, not an attachment). It is a deterministic Mac repro for the share failure card and needs no paywall state.
@@ -112,6 +110,9 @@ These items were explicitly excluded from v1 and are not release blockers or com
 - Analytics or telemetry SDKs.
 
 ## Done
+
+- [x] Settings → About links (Privacy Policy, Support, company site) shipped in iOS 1.0.2 (2026-11-02).
+- [x] Settings Unlock Tucked for Life and Restore Purchases; Share sheet explains the free limit. Merged in #7, device-checked on iPhone (2026-11-02).
 
 _Earlier v1 work landed before TODO.md tracked completions with dates._
 

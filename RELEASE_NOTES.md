@@ -1,3 +1,28 @@
+# Release Notes — v1.0.2
+
+Theme: Easier to unlock, clearer about the free limit.
+
+## NEW
+
+- **Unlock Tucked for Life** and **Restore Purchases** now live in Settings, so you can buy or restore without waiting to hit the limit.
+- Settings → About links to the Privacy Policy, Support, and the Low Effort Apps website.
+
+## IMPROVED
+
+- When Save to Tucked reaches the 10 free bookmarks, the Share Sheet now says so plainly and explains how to unlock, instead of showing a red error with a Retry button that could not work.
+
+## FIXED
+
+- The 10-bookmark limit applies only once Tucked for Life can be purchased, so nobody hits a paywall they cannot pay through.
+
+## What to Test — 1.0.2
+
+- **Settings unlock:** With a locked library, open Settings and tap Unlock Tucked for Life. Confirm the paywall opens, then try Restore Purchases.
+- **Share at the limit:** With 10 bookmarks saved and Tucked locked, share a link from Safari. Confirm the message explains the limit and only Cancel is offered.
+- **After unlocking:** Share a link again and confirm it saves.
+
+---
+
 # Release Notes — v1.0
 
 Theme: Save links, images, and text snippets in one native library across iPhone, iPad, and Mac, with tools that bring forgotten saves back into view.
