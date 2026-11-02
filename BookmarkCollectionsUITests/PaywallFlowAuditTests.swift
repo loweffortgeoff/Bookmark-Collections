@@ -83,6 +83,17 @@ final class PaywallFlowAuditTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Ten Bookmarks Is Not Enough"].waitForExistence(timeout: 5))
     }
 
+    func testSettingsUnlockRowOpensPaywallAndOffersRestoreWhenLocked() {
+        let app = launch()
+        add("Settings", app: app)
+        let restore = app.buttons["settings.restorePurchases"]
+        XCTAssertTrue(restore.waitForExistence(timeout: 5), app.debugDescription)
+        let unlock = app.buttons["settings.unlock"]
+        XCTAssertTrue(unlock.exists)
+        unlock.clickOrTap()
+        XCTAssertTrue(app.staticTexts["Ten Bookmarks Is Not Enough"].waitForExistence(timeout: 5))
+    }
+
     func testExportRemainsAvailableWhenLocked() {
         let app = launch()
         add("Settings", app: app)

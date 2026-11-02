@@ -23,6 +23,20 @@ struct SettingsView: View {
             Form {
                 if storefront.isUnlocked {
                     Section { ProBadgeRow() }
+                } else if PaywallConfiguration.isEnabled {
+                    Section("Tucked for Life") {
+                        Button("Unlock Tucked for Life", systemImage: "lock.open", action: onPaywall)
+                            .accessibilityIdentifier("settings.unlock")
+                        Button("Restore Purchases", systemImage: "arrow.clockwise") {
+                            Task { await storefront.restorePurchases() }
+                        }
+                        .accessibilityIdentifier("settings.restorePurchases")
+                        if let message = storefront.errorMessage {
+                            Text(message)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
 
                 Section("Library Data") {
