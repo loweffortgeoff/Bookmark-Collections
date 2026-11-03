@@ -1,6 +1,6 @@
 # Tucked
 
-Tucked is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links, text links, images, and screenshots from the iOS Share Sheet and macOS Share menus, holds text snippets created directly in Tucked, enriches links with webpage metadata, organizes every item into zero or one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit. Links and images can be captured on both platforms; Images/Links/Snippets sidebar filters, a full-screen zoomable image viewer, and a Get Info panel on the bookmark context menu keep the mixed library browsable. A Forgotten sidebar destination surfaces never-opened items older than 30 days, and Surprise me opens a random item from the current visible set.
+Tucked is a native, local-first bookmark manager for iPhone, iPad, and Mac. It captures links, text links, images, and screenshots from the iOS Share Sheet and macOS Share menus, captures selected text as snippets through Share or directly in Tucked, enriches links with webpage metadata, organizes every item into zero or one collection plus an independent Favorite state, and mirrors the private library through SwiftData and CloudKit. Links, images, and text can be captured on both platforms; Images/Links/Snippets sidebar filters, a full-screen zoomable image viewer, and a Get Info panel on the bookmark context menu keep the mixed library browsable. A Forgotten sidebar destination surfaces never-opened items older than 30 days, and Surprise me opens a random item from the current visible set.
 
 On Mac, **Save to Tucked** is a capture-first action: it saves immediately
 with no collection and Favorite off, then dismisses. Collection and Favorite
@@ -56,6 +56,8 @@ in `build/DerivedData`, where the next build or test run replaces it. Defaults t
 `Debug` (Development CloudKit environment, matching the device installs); set
 `CONFIGURATION=Release` once the Production schema is deployed.
 `scripts/install-all-devices.sh` calls this script for its Mac step.
+
+The current local Release copy is `~/Applications/Tucked.app` (2026-11-03). macOS protected the older App Store copy in `/Applications`; PlugInKit now selects the user-installed Share extension. Running a new app from Xcode alone does not prove the host uses its extension.
 
 The macOS UI runner must remain code signed. After a clean build, disabling signing can cause XCTest to kill the runner before it bootstraps. If the macOS UI suite starts failing wholesale — element queries timing out even on known-good code — the runner's signature has gone stale; run `scripts/reset-ui-tests.sh` to clear DerivedData and rerun the suite from a clean rebuild.
 

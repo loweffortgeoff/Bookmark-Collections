@@ -4,6 +4,18 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Added 2026-11-03
+
+- Share selected text into a snippet on iPhone, iPad, and Mac. Keep paragraphs, embedded links, and a separately supplied source URL. iPhone and iPad show the text before saving; Mac retains Quick Save.
+- Ordinary Safari page shares remain links. Image captions do not replace images. Snippets use the existing local save, free limit, Collection, and Favorite behavior without a schema change.
+- Verification on macOS 27.2 with Xcode 27.2: signed iOS Release build passes; Mac unit suite runs 196 cases and iPhone unit suite runs 192, each with 13 expected StoreKit audit skips and zero failures.
+- Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0: 17 and 18 cases, each with one expected purchase-audit skip and zero failures. Final Mac and simulator builds pass.
+- Live Safari selection capture, Cancel, Save, and relaunch persistence pass on iPhone 18 Pro with iOS 27.0. Geoff confirms iOS and native Mac text sharing; Step 4 is closed. iPad and source-bearing host combinations remain integrated 1.1.0 checks. Evidence is in Tucked Testing and `build/highlight-*`.
+
+### Mac Share installation corrected 2026-11-03
+
+- Geoff confirms iOS snippet capture. Mac Safari invoked the old `/Applications/Tucked.app` extension while the new app ran from Xcode. Installed current Release in `~/Applications/Tucked.app`; signature and binary match pass, and PlugInKit selects that copy. Geoff confirms Mac text sharing works after the installation correction.
+
 ### Share diagnosis closed 2026-11-03
 
 - Geoff confirms sharing works on the current polish build. The old free-limit UI likely explains the Save/Retry symptom; original device logs are absent. No app-code or storage change is needed.

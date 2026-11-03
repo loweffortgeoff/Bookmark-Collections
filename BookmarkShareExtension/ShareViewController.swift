@@ -39,7 +39,7 @@ final class ShareViewController: UIViewController {
             host(
                 ShareCaptureView(
                     model: model,
-                    providers: inputProviders,
+                    items: inputItems,
                     onCancel: { [weak self] in self?.cancelRequest() }
                 )
             )
@@ -58,9 +58,8 @@ final class ShareViewController: UIViewController {
         }
     }
 
-    private var inputProviders: [NSItemProvider] {
-        (extensionContext?.inputItems as? [NSExtensionItem])?
-            .flatMap { $0.attachments ?? [] } ?? []
+    private var inputItems: [NSExtensionItem] {
+        extensionContext?.inputItems as? [NSExtensionItem] ?? []
     }
 
     private func cancelRequest() {
@@ -149,7 +148,7 @@ final class ShareViewController: NSViewController {
             host(
                 MacQuickSaveView(
                     model: model,
-                    providers: inputProviders,
+                    items: inputItems,
                     onCancel: { [weak self] in self?.cancelRequest() },
                     openContainingApp: Self.openContainingApp
                 )
@@ -185,9 +184,8 @@ final class ShareViewController: NSViewController {
         )
     }
 
-    private var inputProviders: [NSItemProvider] {
-        (extensionContext?.inputItems as? [NSExtensionItem])?
-            .flatMap { $0.attachments ?? [] } ?? []
+    private var inputItems: [NSExtensionItem] {
+        extensionContext?.inputItems as? [NSExtensionItem] ?? []
     }
 
     private func cancelRequest() {

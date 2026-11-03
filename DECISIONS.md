@@ -4,6 +4,18 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-03 (Use the current installed Mac Share extension)
+
+- **Decision:** Install the current Mac Release build in `~/Applications/Tucked.app` and register its extension. Keep the protected App Store copy in `/Applications` unchanged.
+- **Why:** Safari was running the old extension despite the new app running from Xcode. macOS denied replacing or moving the protected copy. PlugInKit selects the user-installed extension, and Geoff confirms Mac text sharing works (2026-11-03).
+- **Alternative considered:** Change capture logic for the old error message. Rejected because the running extension predated highlighted-text support.
+
+## 2026-11-03 (Share text as snippets without guessing a source)
+
+- **Decision:** Explicit text attachments become snippets unless the whole value is a web URL. Preserve a separate URL from the same extension item as the source. Content text alone is supported; URL-only descriptions remain link metadata.
+- **Why:** Live Safari shares use `public.plain-text` for a selection and `public.url` plus page-title content text for an ordinary page. The tested selection supplies no source URL. Image attachments retain precedence over captions.
+- **Alternative considered:** Prefer every item description over URLs, or replace the capture model with an enum. Rejected because the first misclassifies normal Safari shares and the second adds unnecessary changes. Mac keeps Quick Save.
+
 ## 2026-11-03 (Close the Share report without a speculative storage fix)
 
 - **Decision:** Close Step 3 after Geoff confirms sharing works. Keep the old free-limit block as the likely Save/Retry cause. The separate historical container-open error remains unexplained.

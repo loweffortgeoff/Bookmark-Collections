@@ -60,13 +60,15 @@ final class ShareCaptureModelTests: XCTestCase {
         XCTAssertEqual(model.state, .ready)
     }
 
-    func testPlainTextContainingAURLLoads() async throws {
+    func testPlainTextContainingAURLLoadsAsSnippet() async throws {
         let model = try makeModel()
         let provider = NSItemProvider(object: "Read https://example.com/from-text later" as NSString)
 
         await model.load(from: [provider])
 
-        XCTAssertEqual(model.capture?.urlString, "https://example.com/from-text")
+        XCTAssertEqual(model.capture?.kind, .text)
+        XCTAssertEqual(model.capture?.snippetBody, "Read https://example.com/from-text later")
+        XCTAssertEqual(model.capture?.urlString, "")
         XCTAssertEqual(model.state, .ready)
     }
 

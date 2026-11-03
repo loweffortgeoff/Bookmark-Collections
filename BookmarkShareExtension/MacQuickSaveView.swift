@@ -3,7 +3,7 @@ import SwiftUI
 #if os(macOS)
 struct MacQuickSaveView: View {
     @ObservedObject var model: ShareCaptureModel
-    let providers: [NSItemProvider]
+    let items: [NSExtensionItem]
     let onCancel: () -> Void
     let openContainingApp: () async throws -> Void
 
@@ -15,7 +15,7 @@ struct MacQuickSaveView: View {
                     message: message,
                     onRetry: {
                         Task {
-                            await model.quickSave(from: providers)
+                            await model.quickSave(items: items)
                         }
                     },
                     onCancel: onCancel,
@@ -33,7 +33,7 @@ struct MacQuickSaveView: View {
         .frame(minWidth: 360, minHeight: 240)
         .task {
             guard model.state == .idle else { return }
-            await model.quickSave(from: providers)
+            await model.quickSave(items: items)
         }
     }
 }

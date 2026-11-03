@@ -17,6 +17,7 @@ struct ShareCapture: Equatable {
     var previewImageData: Data?
     var metadataWasFetched = false
     var preserveOrganization = false
+    var snippetBody = ""
 }
 
 enum ShareCaptureState: Equatable {
@@ -67,6 +68,14 @@ final class ShareCaptureModel: ObservableObject {
         saveAction = { capture, collectionID, favorite in
             let collection = try context.fetch(FetchDescriptor<BookmarkCollection>())
                 .first(where: { $0.id == collectionID })
+            if capture.kind == .text {
+                return .created(try BookmarkRepository(context: context).saveSnippet(
+                    body: capture.snippetBody,
+                    sourceURL: capture.urlString,
+                    collection: collection,
+                    favorite: favorite
+                ))
+            }
             if capture.kind == .image {
                 guard let data = capture.previewImageData else {
                     throw ShareCaptureError.missingImageData
@@ -114,6 +123,12 @@ final class ShareCaptureModel: ObservableObject {
     }
 
     func load(from providers: [NSItemProvider]) async {
+        let item = NSExtensionItem()
+        item.attachments = providers
+        await load(items: [item])
+    }
+
+    func load(items: [NSExtensionItem]) async {
         let requestID = UUID()
         loadID = requestID
         state = .loading
@@ -123,14 +138,15 @@ final class ShareCaptureModel: ObservableObject {
         selectedCollectionID = nil
         isFavorite = false
 
-        let directURL = await firstURL(from: providers)
-        let loaded: ShareCapture?
-        if let directURL {
-            loaded = directURL
-        } else if let textURL = await firstURL(inTextFrom: providers) {
-            loaded = textURL
-        } else {
-            loaded = await firstImage(from: providers)
+        var loaded: ShareCapture?
+        for item in items {
+            let candidate = await capture(from: item)
+            guard loadID == requestID else { return }
+            if candidate?.kind == .text {
+                loaded = candidate
+                break
+            }
+            if loaded == nil { loaded = candidate }
         }
         guard loadID == requestID else { return }
         if let loaded {
@@ -140,15 +156,21 @@ final class ShareCaptureModel: ObservableObject {
             }
             loadExistingOrganization()
         } else {
-            let types = providers.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
+            let types = items.flatMap { $0.attachments ?? [] }.flatMap(\.registeredTypeIdentifiers).joined(separator: ", ")
             shareSaveLogger.notice("Nothing to save in the shared item. Types: \(types, privacy: .public)")
             failureReason = .unsupportedInput
-            state = .failed("Share a web link or an image.")
+            state = .failed("Share a web link, an image, or text.")
         }
     }
 
     func quickSave(from providers: [NSItemProvider]) async {
-        await load(from: providers)
+        let item = NSExtensionItem()
+        item.attachments = providers
+        await quickSave(items: [item])
+    }
+
+    func quickSave(items: [NSExtensionItem]) async {
+        await load(items: items)
         guard state == .ready else { return }
         capture?.preserveOrganization = true
         save(collectionID: nil, favorite: false)
@@ -157,7 +179,7 @@ final class ShareCaptureModel: ObservableObject {
     func save(collectionID: UUID?, favorite: Bool) {
         guard let capture else {
             failureReason = .unsupportedInput
-            state = .failed("Load a valid web link before saving.")
+            state = .failed("Load a valid web link, image, or text before saving.")
             return
         }
         // Retry the saved-value lookup first. Saving the form's defaults now
@@ -261,25 +283,56 @@ final class ShareCaptureModel: ObservableObject {
         return nil
     }
 
-    private func firstURL(inTextFrom providers: [NSItemProvider]) async -> ShareCapture? {
-        let textTypes = [UTType.plainText.identifier, UTType.text.identifier]
-        for provider in providers {
-            for typeIdentifier in textTypes where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
-                guard let item = try? await provider.loadItem(forTypeIdentifier: typeIdentifier),
-                      let text = text(from: item),
-                      let value = firstValidURL(in: text),
-                      let normalized = try? NormalizedURL(value) else {
-                    continue
-                }
-                return ShareCapture(
-                    urlString: normalized.url.absoluteString,
-                    suggestedTitle: provider.suggestedName,
-                    faviconData: nil,
-                    previewImageData: nil
-                )
-            }
+    private func capture(from item: NSExtensionItem) async -> ShareCapture? {
+        let providers = item.attachments ?? []
+        let directURL = await firstURL(from: providers)
+        if directURL == nil, let image = await firstImage(from: providers) {
+            return image
+        }
+        let text = await textRepresentations(from: providers)
+        let contentText = item.attributedContentText?.string.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let contentURL = bareWebURL(in: contentText)
+        let sourceURL = directURL?.urlString ?? contentURL ?? text.url
+
+        // A URL-only Safari share uses content text for the page title.
+        // Selected text arrives as a text attachment; hosts without attachments
+        // can supply their selection directly as content text.
+        let body = text.body ?? (sourceURL == nil && !contentText.isEmpty ? contentText : nil)
+        if let body {
+            return ShareCapture(kind: .text, urlString: sourceURL ?? "", snippetBody: body)
+        }
+        if let directURL { return directURL }
+        if let value = contentURL ?? text.url {
+            return ShareCapture(urlString: value)
         }
         return nil
+    }
+
+    private func textRepresentations(from providers: [NSItemProvider]) async -> (body: String?, url: String?) {
+        var body: String?
+        var url: String?
+        let textTypes = [UTType.plainText.identifier, UTType.text.identifier]
+        for provider in providers where !provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+            for typeIdentifier in textTypes where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
+                guard let item = try? await provider.loadItem(forTypeIdentifier: typeIdentifier),
+                      let value = text(from: item)?.trimmingCharacters(in: .whitespacesAndNewlines),
+                      !value.isEmpty else { continue }
+                if let bareURL = bareWebURL(in: value) {
+                    if url == nil { url = bareURL }
+                } else if body == nil {
+                    body = value
+                }
+                break
+            }
+        }
+        return (body, url)
+    }
+
+    private func bareWebURL(in text: String) -> String? {
+        guard !text.isEmpty,
+              text.rangeOfCharacter(from: .whitespacesAndNewlines) == nil,
+              let normalized = try? NormalizedURL(text) else { return nil }
+        return normalized.url.absoluteString
     }
 
     private func firstImage(from providers: [NSItemProvider]) async -> ShareCapture? {
@@ -315,14 +368,6 @@ final class ShareCaptureModel: ObservableObject {
         if let string = item as? NSString { return string as String }
         if let data = item as? Data { return String(data: data, encoding: .utf8) }
         return nil
-    }
-
-    private func firstValidURL(in text: String) -> String? {
-        let trimSet = CharacterSet(charactersIn: "<>()[]{}\"'.,;:!?")
-        return text
-            .components(separatedBy: .whitespacesAndNewlines)
-            .map { $0.trimmingCharacters(in: trimSet) }
-            .first { (try? NormalizedURL($0)) != nil }
     }
 
     private func fetchMetadata(for loaded: ShareCapture) {

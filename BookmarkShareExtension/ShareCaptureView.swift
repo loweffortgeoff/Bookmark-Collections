@@ -1,16 +1,8 @@
 import SwiftUI
 
-#if os(iOS)
-import UIKit
-private typealias PlatformImage = UIImage
-#elseif os(macOS)
-import AppKit
-private typealias PlatformImage = NSImage
-#endif
-
 struct ShareCaptureView: View {
     @ObservedObject var model: ShareCaptureModel
-    let providers: [NSItemProvider]
+    let items: [NSExtensionItem]
     let onCancel: () -> Void
 
     var body: some View {
@@ -50,7 +42,7 @@ struct ShareCaptureView: View {
         }
         .task {
             guard model.state == .idle else { return }
-            await model.load(from: providers)
+            await model.load(items: items)
         }
     }
 
@@ -77,7 +69,7 @@ struct ShareCaptureView: View {
                 }
             }
         }
-        .navigationTitle("Save Bookmark")
+        .navigationTitle(model.capture?.kind == .text ? Text("Save Snippet") : Text("Save Bookmark"))
     }
 
     @ViewBuilder
@@ -95,26 +87,13 @@ struct ShareCaptureView: View {
             }
         default:
             if let capture = model.capture {
-                Section(capture.kind == .image ? "Image" : "Link") {
-                    if let previewData = capture.previewImageData,
-                       let preview = PlatformImage(data: previewData) {
-                        Image(platformImage: preview)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .aspectRatio(16 / 9, contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .accessibilityHidden(true)
-                    }
-                    if let title = capture.suggestedTitle, !title.isEmpty {
-                        LabeledContent("Title", value: title)
-                    }
-                    if capture.kind == .link {
-                        Text(capture.urlString)
-                            .font(.callout)
-                            .textSelection(.enabled)
-                    }
-                }
+                ShareCapturePreview(
+                    kind: capture.kind,
+                    snippetBody: capture.snippetBody,
+                    urlString: capture.urlString,
+                    suggestedTitle: capture.suggestedTitle,
+                    previewImageData: capture.previewImageData
+                )
             }
         }
     }
@@ -128,15 +107,5 @@ struct ShareCaptureView: View {
             return "Retry"
         }
         return "Save"
-    }
-}
-
-private extension Image {
-    init(platformImage: PlatformImage) {
-        #if os(iOS)
-        self.init(uiImage: platformImage)
-        #elseif os(macOS)
-        self.init(nsImage: platformImage)
-        #endif
     }
 }
