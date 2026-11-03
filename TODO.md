@@ -6,19 +6,13 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
-<<<<<<< Updated upstream
-**Release context (2026-10-31):** Build 11: iOS is App Store live; macOS is Waiting for Review. The Oct-24 remaining-bug-package / TestFlight 1.0 (10) device checklist is retired (2026-10-31); Pending rows were not marked Passed. Do not infer native macOS 1.0 approval from TestFlight or a version number. Geoff intends to get right on the [v1.1.0 follow-up](#v110) after native macOS 1.0 approval. Visual polish continues on this branch; Share diagnosis remains in the current queue.
+**Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) is waiting for review. Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
 
-- [ ] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. Still needed independently of the retired Oct-24 matrix: the [JSON pack](docs/verification/fixtures/2026-10-23-testflight/README.md), current-build purchase/restore and cross-device access, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
-=======
-- [x] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
-  - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
-  - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
+- [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. Existing UI failures remain in polish acceptance below.
+- [ ] Finish polish acceptance first. Check Mac selection and commands, physical iPad live resize, light and dark appearance, and Larger Text. Then follow Share diagnosis, highlighted-text capture, and the Mac menu bar helper. Packaging follows integrated verification.
+- [ ] Resolve UI verification failures before polish acceptance. Mac paywall cases cannot find the app window under test launch arguments, also reproduced on unchanged `main`. iPhone Edit and Get Info context-menu cases fail on both the combined branch and original polish tip `2670e78`. These checks remain in polish acceptance.
 
-- [x] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (10) from `a17ab86` (2026-10-24) supersedes 1.0 (9) and carries these fixes; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
->>>>>>> Stashed changes
-
-Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
+Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Complete polish acceptance before the remaining numbered tasks. Larger Text layout checks belong with polish.
 
 - [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
 
@@ -37,7 +31,7 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 
 ### v1.1.0
 
-Geoff intends to get right on this follow-up after native macOS 1.0 approval. Visual polish has already started; Share diagnosis remains in [Next](#next). None of this blocks 1.0. The approved numbered order starts with Share storage; task 2 is done and task 3 was dropped. The following items keep their existing order.
+The current work order is polish acceptance, Share diagnosis, highlighted-text capture, the Mac menu bar helper, then integrated 1.1.0 verification and packaging. Task 2 is done and task 3 was dropped. Original Things task numbers below remain unchanged.
 
 **Already started:** `dev/visual-polish` contains card shadows, sidebar changes, and the 2026-10-29 leftovers (`bee97be` and later), not yet merged to `main`. Finish and verify Mac selection, iPad live resize, and light/dark appearance; Larger Text layout leftovers fit this branch. Later 2026-10-29 polish (Select in the toolbar, Add Link focus, selection bar background, Get Info preview, card footer decision) is in the leftovers list below. See [change history](CHANGELOG.md#changed--2026-10-26) and the [testing note](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). This does not include Share storage, highlighted-text capture, the menu bar helper, or Shortcuts.
 
@@ -108,6 +102,10 @@ These items were explicitly excluded from v1 and are not release blockers or com
 - Analytics or telemetry SDKs.
 
 ## Done
+
+- [x] Implement and submit iOS 1.0.2 (13). Settings Unlock/Restore, Share limit messaging, and About links include the 1.0.1 cap hotfix. iPhone checks passed on November 2. Waiting for review per Geoff on November 3; Mac remains at 1.0 until the shared 1.1.0 update.
+
+- [x] **Device-test the approved paywall and JSON fixes.** Marked complete on `main` before reconciliation. Keep the [JSON fixtures](docs/verification/fixtures/2026-10-23-testflight/README.md) as historical instructions. The integrated 1.1.0 build has separate acceptance.
 
 _Earlier v1 work landed before TODO.md tracked completions with dates._
 

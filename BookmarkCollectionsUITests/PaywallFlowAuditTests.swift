@@ -16,6 +16,9 @@ final class PaywallFlowAuditTests: XCTestCase {
         // Start locked on both platforms. A Mac that owns Tucked would
         // otherwise read its real shared unlock flag and skip the paywall.
         application.launchArguments += ["-tuckedProUnlocked", "NO"]
+        // The cap only applies once the App Store has returned the product.
+        // UI tests skip StoreKit, so state that it is on sale.
+        application.launchArguments += ["-tuckedForLifeProductAvailable", "YES"]
         application.launch()
     }
 
@@ -77,6 +80,17 @@ final class PaywallFlowAuditTests: XCTestCase {
         editor.clickOrTap()
         editor.typeText("Disposable audit snippet")
         app.buttons["Save"].clickOrTap()
+        XCTAssertTrue(app.staticTexts["Ten Bookmarks Is Not Enough"].waitForExistence(timeout: 5))
+    }
+
+    func testSettingsUnlockRowOpensPaywallAndOffersRestoreWhenLocked() {
+        let app = launch()
+        add("Settings", app: app)
+        let restore = app.buttons["settings.restorePurchases"]
+        XCTAssertTrue(restore.waitForExistence(timeout: 5), app.debugDescription)
+        let unlock = app.buttons["settings.unlock"]
+        XCTAssertTrue(unlock.exists)
+        unlock.clickOrTap()
         XCTAssertTrue(app.staticTexts["Ten Bookmarks Is Not Enough"].waitForExistence(timeout: 5))
     }
 

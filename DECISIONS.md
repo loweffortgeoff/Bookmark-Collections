@@ -4,6 +4,25 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-03 (One shared 1.1.0 update)
+
+- **Decision:** Reconcile `main` into `dev/visual-polish` before polish acceptance. Then diagnose Share failures, add highlighted-text capture, and add the Mac menu bar helper. Package iOS and Mac as 1.1.0.
+- **Why:** Both iOS hotfixes must remain in the combined source. A separate Mac 1.0.2 is outside the current queue. Clipboard capture depends on the highlighted-text result.
+- **Alternative considered:** Test the old polish branch or schedule a separate Mac 1.0.2. Rejected because the branch lacks the hotfixes and the shared update aligns the platforms.
+
+
+## 2026-11-02 (Paywall must be reachable without hitting the limit)
+
+- **Decision:** Settings shows Unlock and Restore Purchases while Tucked for Life is locked. The iOS Share sheet explains the free limit as a neutral message with no Save/Retry. Ship as 1.0.2 before the `dev/visual-polish` merge, which becomes 1.1.0.
+- **Why:** The IAP was approved with the Mac review, so the cap now applies everywhere. The paywall appeared only after a failing in-app save, Restore existed only inside the paywall, and the Share sheet's red error looked like a bug. A device test found no purchase path outside a failing save.
+- **Alternative considered:** An Open Tucked button in the iOS Share sheet, and bundling visual-polish into 1.0.2. Rejected: opening the app from an iOS extension is unreliable, and visual-polish is a large, device-untested change that would sit under a revenue fix.
+
+## 2026-10-31 (iOS 1.0.1: cap only when Tucked for Life is on sale)
+
+- **Decision:** Enforce the free cap only after StoreKit has returned the Tucked for Life product. The app's Storefront writes `tuckedForLifeProductAvailable` to the app group; the repository default and JSON import preflight read `PaywallConfiguration.isEnforced`. Ship as iOS 1.0.1 from `v1.0-build10` with nothing from `main` or `dev/visual-polish`.
+- **Why:** iOS 1.0 went live while the IAP sat in the Mac review, so users hit the paywall at link #11 with nothing to buy. This lifts the cap now and restores it with no further update when the IAP is approved.
+- **Alternative considered:** Turn the cap off in 1.0.1 and turn it back on in a later update. Rejected because it needs a second review, and its timing depends on two separate App Review queues.
+
 ## 2026-10-29 (Explicit grid widths replace the width-bucketed `.id()`)
 
 - **Decision:** The library grid computes its column count and cell width from the `GeometryReader` width, uses `.fixed` `GridItem`s, and gives each card `.frame(width:)`. The `.id(Int(width / 20))` reset is removed. Column bounds (160–210pt) and spacing are unchanged.

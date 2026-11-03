@@ -1,8 +1,12 @@
 # Changelog
 
-All notable project changes are recorded here. For current queue and approval dependencies, see [TODO](TODO.md); TODO takes precedence over this history. Entries retain their status as recorded on their dates.
+All notable project changes are recorded here. For the current queue, see [TODO](TODO.md). Dated entries retain their historical context.
 
 ## In Progress
+
+### Reconciled 2026-11-03
+
+- Merged current `main` into `dev/visual-polish`, retaining both iOS hotfixes. Signed iOS build and Mac/iPhone unit suites pass. Existing Mac paywall-launch and iPhone context-menu UI failures remain in 1.1.0 polish acceptance.
 
 ### Fixed — 2026-10-29
 
@@ -29,11 +33,25 @@ All notable project changes are recorded here. For current queue and approval de
 
 - Added subtle card shadows and refined the native sidebar with accent-colored icons and section spacing.
 
-### Added — 2026-10-25
+## Release history
 
-- Settings → About links to the Privacy Policy, Support, and the Low Effort Apps website. Marketing version stays 1.0 so this can ship with a 1.0 resubmission or as the first 1.1 change.
+> **Platform note:** 1.0.1 and 1.0.2 are iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). It does not include the 1.0.1 or 1.0.2 sections or the builds 10 and 11 section below. Those reach Mac with the next Mac build.
 
-### Fixed — 2026-10-24 (in TestFlight 1.0 (10); device acceptance pending)
+### 1.0.2 — 2026-11-02 (iOS; build 13 submitted, waiting for review per Geoff on 2026-11-03)
+
+- Settings has a "Tucked for Life" section while locked: **Unlock Tucked for Life** opens the paywall and **Restore Purchases** works without hitting the limit first. Unlocked users still see the badge.
+- The Share sheet at the free limit explains it in plain text instead of a red error, and hides Save and Retry, which cannot succeed there. Mac keeps its Open Tucked and Cancel buttons.
+- Settings → About links to the Privacy Policy, Support, and the Low Effort Apps website.
+- Includes the 1.0.1 free-cap change. Device-checked on iPhone: Settings row, paywall, sandbox purchase, Restore, and a saved link after unlock.
+
+### 1.0.1 — 2026-10-31 (iOS hotfix, build 12)
+
+- The free ten-bookmark cap applies only after the App Store returns Tucked for Life. Until then the app and the Share extension save without a limit. The app records the answer in the app group, and the extension reads it from there. An empty catalog answer lifts the cap; a failed lookup (offline) keeps the last answer. Bookmarks saved past ten while the product was unavailable are kept. When the product loads, only new saves past ten reach the paywall, and existing items can still be edited and re-shared.
+- Version 1.0.1 (12). The live iOS build 11 has the same source as build 10 (no Settings About links).
+
+### 1.0 fixes before 1.0.1 (builds 10 and 11, iOS)
+
+#### Fixed — 2026-10-24 (in TestFlight 1.0 (10); device acceptance pending)
 
 - Re-sharing keeps saved titles, organization, and previews. Interactive Share loads existing choices; explicit None/off still applies. Suggested names no longer mark metadata complete.
 - iOS Share offers Retry when it cannot read an already-saved link. Retry reads the saved values again before it saves, so the form's defaults never clear them.
@@ -41,17 +59,16 @@ All notable project changes are recorded here. For current queue and approval de
 - Mac menu Share uses the selected link, image, or snippet. Missing images show an image error; stale selection disables commands. Extension paywall values and test deployment floors are explicit.
 - Mac Bookmark menu commands act on the item last clicked, focused, or used with Edit or Get Info. The card under the pointer no longer becomes the target.
 
-### Added — 2026-10-24
+#### Added — 2026-10-24
 
 - TestFlight 1.0 (10) from `a17ab86` is available internally on iPhone and native Mac with the Release paywall enabled. Both builds are `VALID` and In Beta Testing in the internal group, with What to Test and export compliance saved. Not attached to an App Store version or submitted. See [the matrix](docs/verification/cloudkit-device-matrix.md#testflight-candidate--2026-10-24).
 
-### Changed — 2026-10-24
+#### Changed — 2026-10-24
 
 - UI-test launches without `-storekit-audit` no longer query StoreKit, so a Mac that owns Tucked cannot unlock the test library. The Mac StoreKit audit cannot run on a Mac whose Apple Account owns Tucked for Life.
 - Added a [first-time tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md) for the next TestFlight build.
 
-
-### Fixed — 2026-10-23
+#### Fixed — 2026-10-23
 
 - Verified lifetime purchases unlock the active Mac app before transaction completion. Ownership checks survive product-catalog failures; successful purchase, approval, and restore clear obsolete errors and close the paywall.
 - JSON import checks reconciled capacity before changing data. Duplicate-only updates remain free, rejected imports preserve collections and pending edits, and sync duplicates cannot hide new growth past ten.
@@ -60,7 +77,7 @@ All notable project changes are recorded here. For current queue and approval de
 - Mac share failure screens use a plain-stack `MacShareFailureView` that fits the fixed frame. The iOS `ShareStoreFailureView` is unchanged.
 - The Mac Share controller applies one window background where it hosts SwiftUI content.
 
-### Added — 2026-10-23
+#### Added — 2026-10-23
 
 - Draft spec and full-send plan scope the remaining bug block. No app changes or device-gate completion are claimed.
 - TestFlight 1.0 (9) from `f34b8c6` is available internally on iPhone and native Mac with the Release paywall enabled. Five validated JSON fixtures cover capacity, duplicate updates, rejection without mutations, and unlocked expansion.
@@ -68,7 +85,7 @@ All notable project changes are recorded here. For current queue and approval de
 - Share diagnostics: a `ShareSave` log category. `ShareStorageDiagnostics.logSummary` logs the error domain and code down the underlying-error chain. The full error is logged as private. A notice records when the free-bookmark limit blocks a save. Item type identifiers are logged when a share holds nothing to save. A "Share view appeared" entry logs the view and window frames.
 - Unit tests for the free-limit failure and `logSummary`.
 
-### Added — 2026-10-15
+#### Added — 2026-10-15
 
 - Tucked for Life paywall: save 10 active bookmarks free, then unlock unlimited links, images, and snippets with a $4.99 lifetime non-consumable purchase (`com.loweffortapps.BookmarkCollections.tuckedforlife`). Existing bookmarks, export, and deletion remain free.
 - Paywall lists an "independent developer" support row and a footnote that existing bookmarks stay put.
@@ -77,10 +94,6 @@ All notable project changes are recorded here. For current queue and approval de
 - Settings shows a "Tucked for Life" seal row at the top once the purchase is unlocked.
 
 ---
-
-## Shipped
-
-The dated entries below are historical change records, not evidence that each change shipped in a particular platform build. iOS 1.0 is publicly available; native macOS 1.0 approval remains pending per the latest user update. See [TODO](TODO.md#next).
 
 ### 1.0 — 2026-10-14
 

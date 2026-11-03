@@ -176,7 +176,7 @@ final class ShareCaptureModel: ObservableObject {
         } catch let error as BookmarkRepository.LimitError where error == .limitReached {
             shareSaveLogger.notice("Save blocked by the free bookmark limit")
             failureReason = .limitReached
-            state = .failed("You’ve saved 10 bookmarks free. Open Tucked to unlock Tucked for Life.")
+            state = .failed("Your 10 free bookmarks are used, so this wasn’t saved. Open Tucked and choose Settings, then Unlock Tucked for Life, to save more.")
         } catch {
             shareSaveLogger.error("""
                 Save failed: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
