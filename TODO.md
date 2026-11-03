@@ -2,14 +2,6 @@
 
 ## Next
 
-- [x] **Ship iOS 1.0.2 (13)** (Settings Unlock/Restore, Share limit message, Settings About links, 1.0.1 cap hotfix; merged to `main` in #7). Device-checked on iPhone 2026-11-02: Settings row, paywall, sandbox purchase, Restore, and a saved link after unlock. Build 13 archived and uploaded 2026-11-02 16:28 (Tucked is not in the ASC API key scope, so check processing in the ASC web UI). Remaining: confirm processing, paste the 1.0.2 What's New, attach the build and the IAP to the iOS version, submit. Mac stays on 1.0. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see v1.1.0).
-
-- [x] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
-  - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
-  - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
-
-- [x] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (10) from `a17ab86` (2026-10-24) supersedes 1.0 (9) and carries these fixes; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
-
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Follow the numbered order across both projects.
 
 - [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
@@ -20,41 +12,12 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
   `ShareStorage` log before changing storage or entitlement configuration.
   The failure message is "Tucked could not open its shared library," and it
   blocks every share, including links and images. Highlighted-text share is
-  the separate v1.1.0 item below unless that storage message is what appears.
+  the separate item below unless that storage message is what appears.
   The 2026-10-23 macOS share fix did not resolve this iOS failure. The `ShareStorage`
   log now records the error domain and code down the underlying-error chain, which
   should make the cause diagnosable.
-- [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
-
-  2026-10-23 follow-up: all 15 Mac UI cases pass. Numeric free-limit launch arguments suppressed the initial window under native XCTest; filling the real ten-item cap through UI saves resolves that harness gap. Local purchase closes the paywall and shows the unlocked Settings badge.
-
-  Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
-  Merged `main` is byte-identical to the tree whose UI suite passed on
-  2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
-  and all code signatures are valid. The runner attaches to the app and gets a
-  pid, but reads zero accessibility identifiers from it — an empty tree, not a
-  missing element. Ruled out: stale runner signature, leftover processes, a
-  clean DerivedData rebuild, and moving `/Applications/Tucked.app` aside.
-  Leading explanation is macOS withholding Accessibility/Automation permission
-  after a second binary claimed the same bundle identifier. First thing to try:
-  `tccutil reset All com.loweffortapps.BookmarkCollections`, re-run the suite,
-  and grant control when macOS prompts. Then check System Settings → Privacy &
-  Security → Accessibility for Xcode and Terminal. Release builds drop
-  `get-task-allow`, so installing Release may clear this on its own.
-
-- [x] **Finish verifying the Mac share failure card** (unnumbered; follow-up to the 2026-10-23 Mac share fix). On a Mac, check four things: the free-limit message text in the share sheet, light mode, the largest accessibility text size (the fixed 360 x 200 frame could clip the buttons), and the storage-failure screen. The window background is unverified: if the card looks doubled, remove the one `.background` line in `ShareViewController.host`.
-
-  2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
-
-  2026-10-24: the fixed 360 x 200 frame is gone; the card now scrolls. The free-limit card offers Open Tucked and Cancel instead of Retry. Typed recovery tests pass. The real-host checks move to the next TestFlight build (see Next).
-
-  Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
-
-  > **Branch state:** `fix/mac-save-to-tucked` was merged before `158fbb3`. The remaining checks above are the TestFlight checks in Next.
 
 The remaining v1 release gates (real-device CloudKit matrix, Production schema, TestFlight/new-account check) are tracked in `docs/verification/cloudkit-device-matrix.md`, not here.
-
-## v1.1.0
 
 After the initial release is approved. None of this blocks 1.0.
 
@@ -80,7 +43,7 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - `pageDescription` field + og:description fetch for the info panel.
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
-- Sharing plain non-URL text, clipboard snippet capture, and a Mac menu bar extra are in v1.1.0 above.
+- Sharing plain non-URL text, clipboard snippet capture, and a Mac menu bar extra are in Next above.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).
@@ -110,6 +73,42 @@ These items were explicitly excluded from v1 and are not release blockers or com
 - Analytics or telemetry SDKs.
 
 ## Done
+
+- [x] **Ship iOS 1.0.2 (13)** (Settings Unlock/Restore, Share limit message, Settings About links, 1.0.1 cap hotfix; merged to `main` in #7). Device-checked on iPhone 2026-11-02: Settings row, paywall, sandbox purchase, Restore, and a saved link after unlock. Build 13 archived and uploaded 2026-11-02 16:28 (Tucked is not in the ASC API key scope, so check processing in the ASC web UI). Remaining: confirm processing, paste the 1.0.2 What's New, attach the build and the IAP to the iOS version, submit. Mac stays on 1.0. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see Next).
+
+- [x] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
+  - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
+  - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
+
+- [x] **Device-test the approved paywall and JSON fixes.** Local implementation, all 169 checks per platform, signed Release builds, and independent review pass. TestFlight 1.0 (10) from `a17ab86` (2026-10-24) supersedes 1.0 (9) and carries these fixes; use the [JSON pack instructions](docs/verification/fixtures/2026-10-23-testflight/README.md). Before submission, verify current-build purchase/restore and cross-device access in sandbox/TestFlight, physical-device Share capture, and fresh-account Production sync. See [audit and follow-up](docs/verification/2026-10-23-branch-paywall-audit.md).
+
+- [x] **2. Restore the macOS UI test runner** (Things: Bug Fixes). Confirm the current empty accessibility tree, check permissions, rerun the suite, and record the actual cause and result.
+
+  2026-10-23 follow-up: all 15 Mac UI cases pass. Numeric free-limit launch arguments suppressed the initial window under native XCTest; filling the real ten-item cap through UI saves resolves that harness gap. Local purchase closes the paywall and shows the unlocked Settings badge.
+
+  Prior tooling investigation: the macOS UI test suite failed wholesale (11 of 11).
+  Merged `main` is byte-identical to the tree whose UI suite passed on
+  2026-08-28 at 09:50, the app launches and stays alive under `-ui-testing`,
+  and all code signatures are valid. The runner attaches to the app and gets a
+  pid, but reads zero accessibility identifiers from it — an empty tree, not a
+  missing element. Ruled out: stale runner signature, leftover processes, a
+  clean DerivedData rebuild, and moving `/Applications/Tucked.app` aside.
+  Leading explanation is macOS withholding Accessibility/Automation permission
+  after a second binary claimed the same bundle identifier. First thing to try:
+  `tccutil reset All com.loweffortapps.BookmarkCollections`, re-run the suite,
+  and grant control when macOS prompts. Then check System Settings → Privacy &
+  Security → Accessibility for Xcode and Terminal. Release builds drop
+  `get-task-allow`, so installing Release may clear this on its own.
+
+- [x] **Finish verifying the Mac share failure card** (unnumbered; follow-up to the 2026-10-23 Mac share fix). On a Mac, check four things: the free-limit message text in the share sheet, light mode, the largest accessibility text size (the fixed 360 x 200 frame could clip the buttons), and the storage-failure screen. The window background is unverified: if the card looks doubled, remove the one `.background` line in `ShareViewController.host`.
+
+  2026-10-23 audit: live Safari at the free limit shows readable message text, Cancel, and Retry in light and dark mode. Retry remains blocked; Cancel dismisses. Largest text and a live storage-failure screen remain open.
+
+  2026-10-24: the fixed 360 x 200 frame is gone; the card now scrolls. The free-limit card offers Open Tucked and Cancel instead of Retry. Typed recovery tests pass. The real-host checks move to the next TestFlight build (see Next).
+
+  Previously seen working: a plain-text share shows "Share a web link or an image." in dark mode with the window background. To repro the limit, edit the App Group prefs plist (`~/Library/Group Containers/group.com.loweffortapps.BookmarkCollections/Library/Preferences/group.com.loweffortapps.BookmarkCollections.plist`, key `tuckedProUnlocked`) with `plutil -replace tuckedProUnlocked -bool NO`, then `killall cfprefsd`. `defaults write` edits the wrong file because the CLI is not sandboxed. Do not open Tucked before sharing; launch rechecks StoreKit and can reset the flag. Read logs with `/usr/bin/log show --last 5m --info --predicate 'subsystem == "com.loweffortapps.BookmarkCollections"'` (full path; plain `log` is a zsh built-in). Categories: `ShareSave`, `ShareStorage`.
+
+  > **Branch state:** `fix/mac-save-to-tucked` was merged before `158fbb3`. The remaining checks above are the TestFlight checks in Next.
 
 - [x] Settings → About links (Privacy Policy, Support, company site) shipped in iOS 1.0.2 (2026-11-02).
 - [x] Settings Unlock Tucked for Life and Restore Purchases; Share sheet explains the free limit. Merged in #7, device-checked on iPhone (2026-11-02).
