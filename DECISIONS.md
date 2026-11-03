@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-03 (Close the Share report without a speculative storage fix)
+
+- **Decision:** Close Step 3 after Geoff confirms sharing works. Keep the old free-limit block as the likely Save/Retry cause. The separate historical container-open error remains unexplained.
+- **Why:** The November 2 fix explains the ineffective Save/Retry behavior, and all 48 targeted tests pass. Original failure logs are absent.
+- **Alternative considered:** Change storage or entitlements without a current failure. Rejected because no current evidence supports that change.
+
 ## 2026-11-03 (Large-text sidebar rows give titles their own line)
 
 - **Decision:** At accessibility text sizes, place the icon and count above the full-width destination title. Keep native selection and the standard-size row layout.
@@ -46,7 +52,7 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** The library grid computes its column count and cell width from the `GeometryReader` width, uses `.fixed` `GridItem`s, and gives each card `.frame(width:)`. The `.id(Int(width / 20))` reset is removed. Column bounds (160–210pt) and spacing are unchanged.
 - **Why:** Geoff reported the grid shuddering during iPad resize. Every 20pt the `.id()` reset tore down the grid, reset its scroll state, and re-decoded every visible preview. An explicit width is a view input, so cells re-render at the new width instead of depending on LazyVGrid re-proposing size, which was the original stale-geometry bug.
 - **Alternative considered:** Keying `.id()` on column count only — rejected, it would keep the stale-geometry bug for every resize that stays within one column count.
-- **Status:** Needs physical iPad resize verification against the 2026-07-19 "window shade" artifact below.
+- **Status:** Physical iPad resize accepted with Step 2 per Geoff on 2026-11-03. Earlier recording limits remain in Tucked Testing.
 
 ## 2026-10-25 (Settings links for review)
 

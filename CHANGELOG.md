@@ -4,14 +4,23 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Share diagnosis closed 2026-11-03
+
+- Geoff confirms sharing works on the current polish build. The old free-limit UI likely explains the Save/Retry symptom; original device logs are absent. No app-code or storage change is needed.
+- All 48 targeted Share and limit tests pass on iPhone 18 Pro with iOS 27.0, using macOS 27.2 and Xcode 27.2. Highlighted-text capture is next.
+
+### Polish acceptance closed 2026-11-03
+
+- Geoff confirms Step 2 testing and verification complete, including the physical iPad sidebar retest and remaining combinations. Share failure diagnosis is next; integrated 1.1.0 packaging checks remain separate.
+
 ### Appearance checks 2026-11-03
 
-- Accessibility-size sidebar rows place the icon and count above the title and reclaim horizontal row space. Built-in labels stay whole in the 260-point simulator reproduction. Physical iPad retest remains pending.
+- Accessibility-size sidebar rows place the icon and count above the title and reclaim horizontal row space. Built-in labels stay whole in the 260-point simulator reproduction. Geoff accepted the physical iPad retest on 2026-11-03.
 - Sidebar verification passes on macOS 27.2 with Xcode 27.2 and iPhone 18 Pro with iOS 27.0. Mac and simulator builds pass. Three focused UI cases pass with zero failures.
 - Maximum-text selection uses two action rows without widening the library. Collections stacks its add button when needed. The Add menu uses a compact folder label with the full accessibility name.
 - Mac Get Info uses a native grouped form so previews and labels stay inside the sheet. Light and dark appearance checked on Mac and iPhone 18 Pro with iOS 27.0.
 - Signed iOS Release build and full UI suites pass. Mac ran 17 cases and iPhone ran 18, each with one expected purchase-audit skip and zero failures.
-- Physical iPad mini recordings on iPadOS 27.2 cover resize, rotation, light/dark sheets, URL and snippet keyboards, and large-text snippet editing. Remaining combinations and the sidebar retest are in Testing. Sandbox purchase and restore remain pending.
+- Physical iPad mini recordings on iPadOS 27.2 cover resize, rotation, light/dark sheets, URL and snippet keyboards, and large-text snippet editing. Geoff confirms the remaining Step 2 checks complete. Integrated-candidate purchase/restore checks remain in packaging.
 
 ### Fixed 2026-11-03
 

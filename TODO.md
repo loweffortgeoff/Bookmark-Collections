@@ -8,41 +8,29 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 **Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) is waiting for review. Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
 
-- [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. Existing UI failures remain in polish acceptance below.
-- [ ] Finish polish acceptance first. Mac and iPhone appearance checks are recorded below. Physical iPad recordings cover resize, rotation, sheets, and keyboard editing. Retest the sidebar fix and close the specific gaps in Testing. Then follow Share diagnosis, highlighted-text capture, and the Mac menu bar helper.
+- [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. UI failures were resolved during completed polish acceptance below.
+- [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Next: highlighted-text capture, then the Mac menu bar helper.
 - [x] Check Mac light/dark grid, selection, preview Info, editors, Settings, and paywall. Check iPhone standard/maximum text in both modes. Fix selection overflow, Collections wrapping, and Mac Info margins (2026-11-03).
-- [x] Fix large-text sidebar word breaks (2026-11-03). Icons and counts stack above full-width titles with reduced row insets. Built-in labels stay whole in the 260-point simulator reproduction. Physical iPad retest remains pending.
-- [ ] Finish physical iPad polish acceptance. Geoff checked an iPad mini on iPadOS 27.2 with an Xcode-installed polish build. Completed checks and remaining combinations are in [Tucked Testing](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). Sandbox purchase and restore remain pending due to the reported account problem.
-- [x] Resolve the Mac paywall launch and iPhone Edit/Get Info test failures (2026-11-03). Mac tests use a launch-argument separator. iPhone tests scroll the card fully into view. Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0, with no failures and one purchase-audit skip per platform. Full polish acceptance remains open above.
+- [x] Fix large-text sidebar word breaks (2026-11-03). Icons and counts stack above full-width titles with reduced row insets. Built-in labels stay whole in the 260-point simulator reproduction. Physical iPad retest accepted by Geoff on 2026-11-03.
+- [x] Finish physical iPad polish acceptance (2026-11-03). Geoff confirms the remaining Step 2 checks complete. Evidence and report limits are in [Tucked Testing](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). Recheck purchase/restore on the integrated 1.1.0 candidate during packaging.
+- [x] Resolve the Mac paywall launch and iPhone Edit/Get Info test failures (2026-11-03). Mac tests use a launch-argument separator. iPhone tests scroll the card fully into view. Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0, with no failures and one purchase-audit skip per platform. Full polish acceptance is closed above from Geoff's completion report.
 
-Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Complete polish acceptance before the remaining numbered tasks. Larger Text layout checks belong with polish.
+Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Polish acceptance and Share diagnosis are complete; proceed to highlighted-text capture. Larger Text layout checks belong with polish.
 
-- [ ] **1. Diagnose the iOS Share storage failure** (Things: Bug Fixes). Reproduce the failure, read `ShareStorage` logs, identify the cause, then retest links and images after a fix.
-
-  2026-10-23 audit: live Safari link and Photos image sharing pass in the normal iPhone 18 Pro simulator store and survive relaunch. The physical-device failure and CloudKit sync remain unverified.
-
-  The Oct-24 matrix B2 row was retired with that package (2026-10-31); it was not marked Passed. This diagnose item stays open on the 2026-10-23 evidence, not as a leftover matrix gate.
-
-  Prior investigation: reproduce the iOS Share-extension storage failure and inspect its new
-  `ShareStorage` log before changing storage or entitlement configuration.
-  The failure message is "Tucked could not open its shared library," and it
-  blocks every share, including links and images. Highlighted-text share is
-  the separate v1.1.0 item below unless that storage message is what appears.
-  The 2026-10-23 macOS share fix did not resolve this iOS failure. The `ShareStorage`
-  log now records the error domain and code down the underlying-error chain, which
-  should make the cause diagnosable.
+- [x] **1. Diagnose the iOS Share storage failure** (2026-11-03). Geoff confirms sharing works on the current polish build. The former free-limit UI likely explains the Save/Retry symptom; original device logs are absent. All 48 targeted Share and limit tests pass on iPhone 18 Pro with iOS 27.0. No storage or entitlement change is needed.
+  The November 2 fix `811c1c6` explains the free limit and hides ineffective Save/Retry controls. The older "could not open its shared library" report is a separate storage path and cannot be a limit block. Reopen for a fresh failure with its exact message and `ShareStorage`/`ShareSave` logs. Highlighted-text capture remains separate below.
 
 ### v1.1.0
 
-The current work order is polish acceptance, Share diagnosis, highlighted-text capture, the Mac menu bar helper, then integrated 1.1.0 verification and packaging. Task 2 is done and task 3 was dropped. Original Things task numbers below remain unchanged.
+Polish acceptance and Share diagnosis are complete per Geoff on 2026-11-03. The remaining work order is highlighted-text capture, the Mac menu bar helper, then integrated 1.1.0 verification and packaging. Task 2 is done and task 3 was dropped. Original Things task numbers below remain unchanged.
 
-**Already started:** `dev/visual-polish` contains card shadows, sidebar changes, and the 2026-10-29 leftovers (`bee97be` and later), not yet merged to `main`. Finish and verify Mac selection, iPad live resize, and light/dark appearance; Larger Text layout leftovers fit this branch. Later 2026-10-29 polish (Select in the toolbar, Add Link focus, selection bar background, Get Info preview, card footer decision) is in the leftovers list below. See [change history](CHANGELOG.md#changed--2026-10-26) and the [testing note](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). This does not include Share storage, highlighted-text capture, the menu bar helper, or Shortcuts.
+**Already started:** `dev/visual-polish` contains card shadows, sidebar changes, and the 2026-10-29 leftovers (`bee97be` and later), not yet merged to `main`. Mac selection, iPad live resize, light/dark appearance, and Larger Text polish are accepted per Geoff on 2026-11-03. Later 2026-10-29 polish (Select in the toolbar, Add Link focus, selection bar background, Get Info preview, card footer decision) is in the leftovers list below. See [change history](CHANGELOG.md#changed--2026-10-26) and the [testing note](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). This does not include Share storage, highlighted-text capture, the menu bar helper, or Shortcuts.
 
-- [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). After Share storage works, test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
-  The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The storage error in Next is a separate failure. Existing snippet behavior and its historical design are in the [snippet decision](DECISIONS.md#2026-08-28-snippets-reuse-the-bookmark-model-rather-than-getting-their-own) and [design](docs/superpowers/archive/2026-08-28-glaze-parity-snippets-design.md).
+- [ ] **4. Save highlighted text as a snippet** (Things: Feature Work). Share now works per Geoff. Test prose with and without a page URL on Mac and iOS. Save the selection as snippet text and keep the page URL as its optional source.
+  The current loader rejects prose without a URL or prefers a supplied page URL and drops the selection. Confirm the actual result first. The prior storage-failure report is closed in Next; its historical cause remains unproven. Existing snippet behavior and its historical design are in the [snippet decision](DECISIONS.md#2026-08-28-snippets-reuse-the-bookmark-model-rather-than-getting-their-own) and [design](docs/superpowers/archive/2026-08-28-glaze-parity-snippets-design.md).
   Found 2026-10-23: a plain-text selection in Safari reaches the Mac share extension with no attachments (probably the text sits in the extension item's text content, not an attachment). It is a deterministic Mac repro for the share failure card and needs no paywall state.
-- [ ] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
-  Reported 2026-10-14. The 1.0 Larger Text claim covers iPhone and iPad only.
+- [x] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
+  Closed with Step 2 acceptance per Geoff on 2026-11-03. The 1.0 Larger Text claim covers iPhone and iPad only.
   2026-10-24: iPhone grid, link editor, snippet editor, and Settings pass at accessibility XXXL in light and dark (simulator). iPad and Mac host checks from the Oct-24 package were retired with that matrix (2026-10-31); they were not marked Passed. Layout acceptance criteria remain in the [spec](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md#b3-accessible-layouts-and-mac-failure-recovery).
   2026-10-29: a visual review on iPhone 18 Pro Max and iPad Pro 13" M5 (iOS 27.0) found layout leftovers. Screenshots are in `~/Documents/Dev Workstation/Visual Verification/Tucked/2026-10-29-1.1.0-review/`. Fixed in `e7f6eec`: cards no longer reserve a second title line at accessibility sizes, the collection picker is shared across the editors, and the snippet source field keeps its size. See [change history](CHANGELOG.md#changed--2026-10-29). The search placeholder and toolbar Cancel/Save do not scale by design ([decision](DECISIONS.md#2026-10-29-system-bars-keep-system-sizing-at-accessibility-text-sizes)).
 
@@ -66,7 +54,6 @@ Shortcuts remains an idea from Tucked Testing. Clipboard capture is the remainin
 
 The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
 
-- Verify on a physical iPad that window resize no longer shudders or shows the 2026-07-19 "window shade" clipping now that the grid uses explicit widths (2026-10-29).
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
 - Photos-picker in-app image import.
 - Drag & drop image import onto the library grid (Mac/iPad).
