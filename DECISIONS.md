@@ -2,11 +2,23 @@
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-02 (Paywall must be reachable without hitting the limit)
+
+- **Decision:** Settings shows Unlock and Restore Purchases while Tucked for Life is locked. The iOS Share sheet explains the free limit as a neutral message with no Save/Retry. Ship as 1.0.2 before the `dev/visual-polish` merge, which becomes 1.1.0.
+- **Why:** The IAP was approved with the Mac review, so the cap now applies everywhere. The paywall appeared only after a failing in-app save, Restore existed only inside the paywall, and the Share sheet's red error looked like a bug. A device test found no purchase path outside a failing save.
+- **Alternative considered:** An Open Tucked button in the iOS Share sheet, and bundling visual-polish into 1.0.2. Rejected: opening the app from an iOS extension is unreliable, and visual-polish is a large, device-untested change that would sit under a revenue fix.
+
 ## 2026-10-25 (Settings links for review)
 
 - **Decision:** Settings → About opens three live pages: Privacy Policy (`https://www.loweffortapps.app/privacy/`), Support (`https://www.loweffortapps.app/support/`), and the company site (`https://www.loweffortapps.app/`). The marketing version stays 1.0.
 - **Why:** App Review can reject a build whose Settings screen has no way to reach the privacy policy, support, or the developer site. The pages already exist. Leaving the version at 1.0 means the same change can resubmit with 1.0 or land as the first 1.1 merge.
 - **Alternative considered:** A Tucked product page, a `mailto:` support row, or a 1.1 version bump now. Rejected because the product page is not the launch page yet, Support is the page already used as the support URL, and a version bump would force this onto 1.1 before Review asks.
+
+## 2026-10-31 (iOS 1.0.1: cap only when Tucked for Life is on sale)
+
+- **Decision:** Enforce the free cap only after StoreKit has returned the Tucked for Life product. The app's Storefront writes `tuckedForLifeProductAvailable` to the app group; the repository default and JSON import preflight read `PaywallConfiguration.isEnforced`. Ship as iOS 1.0.1 from `v1.0-build10` with nothing from `main` or `dev/visual-polish`.
+- **Why:** iOS 1.0 went live while the IAP sat in the Mac review, so users hit the paywall at link #11 with nothing to buy. This lifts the cap now and restores it with no further update when the IAP is approved.
+- **Alternative considered:** Turn the cap off in 1.0.1 and turn it back on in a later update. Rejected because it needs a second review, and its timing depends on two separate App Review queues.
 
 ## 2026-10-24 (Share intent and accessible recovery)
 

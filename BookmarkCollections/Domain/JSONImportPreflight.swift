@@ -12,7 +12,7 @@ enum JSONImportPreflight {
     }
 
     static func assertCanImport(_ document: BackupDocument, existingBookmarks: [Bookmark]) throws {
-        guard PaywallConfiguration.isEnabled, !PurchaseAccess.isUnlocked else { return }
+        guard PaywallConfiguration.isEnforced, !PurchaseAccess.isUnlocked else { return }
         var items = Dictionary(uniqueKeysWithValues: existingBookmarks.map { bookmark in
             (bookmark.id, Item(id: bookmark.id, kind: bookmark.kind,
                                normalizedURL: bookmark.normalizedURLString,

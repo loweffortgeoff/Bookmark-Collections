@@ -7,8 +7,13 @@ import XCTest
 final class PreparedJSONFixtureTests: XCTestCase {
     func testFivePreparedFilesThroughActualImporter() throws {
         let oldAccess = PurchaseAccess.isUnlocked
-        defer { PurchaseAccess.setUnlocked(oldAccess) }
+        let oldAvailability = PurchaseAccess.isProductAvailable
+        defer {
+            PurchaseAccess.setUnlocked(oldAccess)
+            PurchaseAccess.setProductAvailable(oldAvailability)
+        }
         PurchaseAccess.setUnlocked(false)
+        PurchaseAccess.setProductAvailable(true)
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let context = container.mainContext
         let importer = LibraryImportService(context: context)
