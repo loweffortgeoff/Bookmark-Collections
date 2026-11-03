@@ -24,6 +24,19 @@ final class AccessibilityLayoutTests: XCTestCase {
         add(editor)
         app.buttons["Cancel"].tap()
         XCTAssertTrue(card.waitForExistence(timeout: 3))
+        let cardFrame = card.frame
+        app.buttons["selection.toggle"].tap()
+        let delete = app.buttons["selection.delete"]
+        XCTAssertTrue(delete.waitForExistence(timeout: 3))
+        XCTAssertGreaterThanOrEqual(card.frame.minX, app.frame.minX)
+        XCTAssertLessThanOrEqual(card.frame.maxX, app.frame.maxX)
+        XCTAssertEqual(card.frame.width, cardFrame.width, accuracy: 1)
+        card.tap()
+        XCTAssertTrue(delete.isHittable)
+        let selection = XCTAttachment(screenshot: app.screenshot())
+        selection.name = "Largest text selection controls"
+        selection.lifetime = .keepAlways
+        add(selection)
     }
 
     func testLargestTextDarkLinkEditorAndSettingsRemainReachable() {

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LibraryToolbar: ToolbarContent {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     @Binding var sort: BookmarkSort
     @Binding var ascending: Bool
     let onAdd: () -> Void
@@ -48,7 +50,12 @@ struct LibraryToolbar: ToolbarContent {
                 #if os(macOS)
                 Button("Add Images…", systemImage: "photo.badge.plus", action: onAddImages)
                 #endif
-                Button("New Collection", systemImage: "folder.badge.plus", action: onNewCollection)
+                Button(
+                    dynamicTypeSize.isAccessibilitySize ? LocalizedStringKey("New 📁") : LocalizedStringKey("New Collection"),
+                    systemImage: "folder.badge.plus",
+                    action: onNewCollection
+                )
+                .accessibilityLabel("New Collection")
                 Divider()
                 Button("Settings", systemImage: "gear", action: onSettings)
             } label: {

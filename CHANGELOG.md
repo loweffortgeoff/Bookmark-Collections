@@ -4,6 +4,13 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Appearance checks 2026-11-03
+
+- Maximum-text selection uses two action rows without widening the library. Collections stacks its add button when needed. The Add menu uses a compact folder label with the full accessibility name.
+- Mac Get Info uses a native grouped form so previews and labels stay inside the sheet. Light and dark appearance checked on Mac and iPhone 18 Pro with iOS 27.0.
+- Signed iOS Release build and full UI suites pass. Mac ran 17 cases and iPhone ran 18, each with one expected purchase-audit skip and zero failures.
+- Physical iPad resize and keyboard-open sheet checks remain pending. Simulator software keyboard layout could not be inspected through the device-interaction session.
+
 ### Fixed 2026-11-03
 
 - UI tests restore the Mac paywall window with a launch-argument separator. iPhone context-menu tests scroll the target card fully on screen before pressing. App behavior is unchanged.

@@ -9,7 +9,9 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 **Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) is waiting for review. Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. Existing UI failures remain in polish acceptance below.
-- [ ] Finish polish acceptance first. Check Mac selection and commands, physical iPad live resize, light and dark appearance, and Larger Text. Then follow Share diagnosis, highlighted-text capture, and the Mac menu bar helper. Packaging follows integrated verification.
+- [ ] Finish polish acceptance first. Mac and iPhone appearance checks are recorded below. Physical iPad resize and keyboard-open checks remain pending. Then follow Share diagnosis, highlighted-text capture, and the Mac menu bar helper.
+- [x] Check Mac light/dark grid, selection, preview Info, editors, Settings, and paywall. Check iPhone standard/maximum text in both modes. Fix selection overflow, Collections wrapping, and Mac Info margins (2026-11-03).
+- [ ] Verify the current `dev/visual-polish` build on a physical iPad. Follow the checkbox list in [Tucked Testing](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). Simulator software keyboard layout remains unverified.
 - [x] Resolve the Mac paywall launch and iPhone Edit/Get Info test failures (2026-11-03). Mac tests use a launch-argument separator. iPhone tests scroll the card fully into view. Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0, with no failures and one purchase-audit skip per platform. Full polish acceptance remains open above.
 
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Complete polish acceptance before the remaining numbered tasks. Larger Text layout checks belong with polish.

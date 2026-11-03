@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-03 (Polish adapts to maximum text size)
+
+- **Decision:** Use three selection-action columns at accessibility sizes and five otherwise. Stack the Collections add button when the heading needs room. Use a grouped Mac Info form.
+- **Why:** Keep the grid within its viewport and keep controls readable. Native accessibility menus hide SF icons, so the compact `New 📁` title retains the full `New Collection` accessibility label.
+- **Alternative considered:** Cap accessibility fonts or shrink labels. Rejected because layout can adapt without reducing the requested text size.
+
 ## 2026-11-03 (UI tests preserve launch state and target visible cards)
 
 - **Decision:** Mac paywall tests put `--` before value arguments. iPhone context-menu tests require the whole card on screen before a long press.

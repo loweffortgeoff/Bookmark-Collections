@@ -48,14 +48,18 @@ struct CollectionListView: View {
                     }
                 }
             } header: {
-                HStack {
-                    Text("Collections")
-                    Spacer()
-                    Button(action: onCreate) {
-                        Image(systemName: "plus")
+                ViewThatFits(in: .horizontal) {
+                    HStack {
+                        Text("Collections")
+                            .fixedSize()
+                        Spacer()
+                        newCollectionButton
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("New Collection")
+                    VStack(alignment: .leading) {
+                        Text("Collections")
+                            .fixedSize(horizontal: true, vertical: false)
+                        newCollectionButton
+                    }
                 }
                 .padding(.top, 2)
             }
@@ -70,6 +74,16 @@ struct CollectionListView: View {
             }
         }
         .listStyle(.sidebar)
+    }
+
+    private var newCollectionButton: some View {
+        Button(action: onCreate) {
+            Image(systemName: "plus")
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("New Collection")
     }
 
     private func destinationRow(

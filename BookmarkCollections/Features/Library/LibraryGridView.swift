@@ -116,15 +116,19 @@ struct LibraryGridView: View {
     }
 
     private var selectionBar: some View {
-        HStack(spacing: 0) {
+        LazyVGrid(
+            columns: Array(
+                repeating: GridItem(.flexible(minimum: 44), spacing: 0),
+                count: dynamicTypeSize.isAccessibilitySize ? 3 : 5
+            ),
+            spacing: 12
+        ) {
             Button("Favorite", systemImage: "star") {
                 updateSelection { $0.isFavorite = true }
             }
-            Spacer()
             Button("Unfavorite", systemImage: "star.slash") {
                 updateSelection { $0.isFavorite = false }
             }
-            Spacer()
             Menu {
                 Button("Unfiled") { moveSelection(to: nil) }
                 ForEach(collections) { collection in
@@ -133,11 +137,9 @@ struct LibraryGridView: View {
             } label: {
                 Label("Move", systemImage: "folder")
             }
-            Spacer()
             ShareLink(items: selectedBookmarks.compactMap { URL(string: $0.urlString) }) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
-            Spacer()
             Button("Delete", systemImage: "trash", role: .destructive) {
                 let now = Date()
                 updateSelection {

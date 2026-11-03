@@ -68,6 +68,9 @@ struct BookmarkInfoView: View {
                     Text(errorMessage).foregroundStyle(.red)
                 }
             }
+            #if os(macOS)
+            .formStyle(.grouped)
+            #endif
             .navigationTitle("Info")
             .accessibilityIdentifier("bookmarkInfo")
             .toolbar {
