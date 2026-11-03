@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-03 (Large-text sidebar rows give titles their own line)
+
+- **Decision:** At accessibility text sizes, place the icon and count above the full-width destination title. Keep native selection and the standard-size row layout.
+- **Why:** The iPad mini recordings show icons and count badges taking space from labels, which splits words in the narrow sidebar.
+- **Alternative considered:** Reduce the font or truncate destination names. Rejected because the row can adapt while retaining the requested text size and full labels.
+
 ## 2026-11-03 (Polish adapts to maximum text size)
 
 - **Decision:** Use three selection-action columns at accessibility sizes and five otherwise. Stack the Collections add button when the heading needs room. Use a grouped Mac Info form.

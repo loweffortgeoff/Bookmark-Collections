@@ -6,10 +6,12 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ### Appearance checks 2026-11-03
 
+- Accessibility-size sidebar rows place the icon and count above the title and reclaim horizontal row space. Built-in labels stay whole in the 260-point simulator reproduction. Physical iPad retest remains pending.
+- Sidebar verification passes on macOS 27.2 with Xcode 27.2 and iPhone 18 Pro with iOS 27.0. Mac and simulator builds pass. Three focused UI cases pass with zero failures.
 - Maximum-text selection uses two action rows without widening the library. Collections stacks its add button when needed. The Add menu uses a compact folder label with the full accessibility name.
 - Mac Get Info uses a native grouped form so previews and labels stay inside the sheet. Light and dark appearance checked on Mac and iPhone 18 Pro with iOS 27.0.
 - Signed iOS Release build and full UI suites pass. Mac ran 17 cases and iPhone ran 18, each with one expected purchase-audit skip and zero failures.
-- Physical iPad resize and keyboard-open sheet checks remain pending. Simulator software keyboard layout could not be inspected through the device-interaction session.
+- Physical iPad mini recordings on iPadOS 27.2 cover resize, rotation, light/dark sheets, URL and snippet keyboards, and large-text snippet editing. Remaining combinations and the sidebar retest are in Testing. Sandbox purchase and restore remain pending.
 
 ### Fixed 2026-11-03
 

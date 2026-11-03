@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct CollectionListView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Query(sort: [SortDescriptor(\BookmarkCollection.sortPosition), SortDescriptor(\BookmarkCollection.id)])
     private var collections: [BookmarkCollection]
     @Query(sort: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)])
@@ -92,23 +93,39 @@ struct CollectionListView: View {
         identifier: String,
         count: Int?
     ) -> some View {
-        Label {
-            Text(title)
-        } icon: {
-            if selection == destination {
-                Image(systemName: destination.systemImage)
+        VStack(alignment: .leading, spacing: 4) {
+            if dynamicTypeSize.isAccessibilitySize {
+                HStack {
+                    Image(systemName: destination.systemImage)
+                        .foregroundStyle(selection == destination ? Color.primary : Color.accentColor)
+                    Spacer()
+                    if let count {
+                        Text(count, format: .number)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Text(title)
+                    .fixedSize(horizontal: false, vertical: true)
             } else {
-                Image(systemName: destination.systemImage)
-                    .foregroundStyle(Color.accentColor)
+                Label {
+                    Text(title)
+                } icon: {
+                    if selection == destination {
+                        Image(systemName: destination.systemImage)
+                    } else {
+                        Image(systemName: destination.systemImage)
+                            .foregroundStyle(Color.accentColor)
+                    }
+                }
             }
         }
-            .modifier(OptionalCountBadge(count: count))
-            .tag(destination)
-            // The identifier must ride on the whole row: SwiftUI List labels
-            // otherwise let the SF Symbol image claim it, and the test taps a
-            // 20pt image inside a non-hittable cell instead of the row.
-            .accessibilityElement(children: .contain)
-            .accessibilityIdentifier(identifier)
+        .modifier(OptionalCountBadge(count: dynamicTypeSize.isAccessibilitySize ? nil : count))
+        .listRowInsets(dynamicTypeSize.isAccessibilitySize ? EdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0) : nil)
+        .tag(destination)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(count?.formatted(.number) ?? "")
+        .accessibilityIdentifier(identifier)
     }
 }
 
