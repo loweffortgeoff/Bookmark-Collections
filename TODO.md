@@ -64,6 +64,7 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).
 - Sort by last opened.
+- First Siri and Shortcuts actions. Tucked has none today. Starter set: save a link to a collection, find bookmarks, open a collection, and show favorites or forgotten items. Add bookmarks to the Spotlight index, and let them pass to other apps as links. Write full descriptions from the start so the actions are ready for Apple's Siri AI preview. This is the Shortcuts idea from Tucked Testing (see v1.1.0 above). Rough size: 2–3 days. See the [Siri AI Prep Plan](https://claude.ai/artifact/VJDSbHGzy9tipzzCknTwxC) (2026-11-03).
 
 ### Product differentiation ideas (2026-07-30)
 
