@@ -6,7 +6,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
-**Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) is waiting for review. Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
+**Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) passed App Review on November 3 and is eligible for distribution (auto-release; up to 24h to appear). Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. UI failures were resolved during completed polish acceptance below.
 - [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Next: the Mac menu bar helper.
@@ -93,7 +93,7 @@ These items were explicitly excluded from v1 and are not release blockers or com
 
 ## Done
 
-- [x] Implement and submit iOS 1.0.2 (13). Settings Unlock/Restore, Share limit messaging, and About links include the 1.0.1 cap hotfix. iPhone checks passed on November 2. Waiting for review per Geoff on November 3; Mac remains at 1.0 until the shared 1.1.0 update.
+- [x] Implement and submit iOS 1.0.2 (13). Settings Unlock/Restore, Share limit messaging, and About links include the 1.0.1 cap hotfix. iPhone checks passed on November 2. App Review accepted November 3, eligible for distribution (auto-release; public availability may lag up to 24h; submission `f6471180-6877-42a4-b797-975e02b8c0b9`); Mac remains at 1.0 until the shared 1.1.0 update.
 
 - [x] **Device-test the approved paywall and JSON fixes.** Marked complete on `main` before reconciliation. Keep the [JSON fixtures](docs/verification/fixtures/2026-10-23-testflight/README.md) as historical instructions. The integrated 1.1.0 build has separate acceptance.
 
