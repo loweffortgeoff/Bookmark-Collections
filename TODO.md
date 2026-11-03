@@ -10,7 +10,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. Existing UI failures remain in polish acceptance below.
 - [ ] Finish polish acceptance first. Check Mac selection and commands, physical iPad live resize, light and dark appearance, and Larger Text. Then follow Share diagnosis, highlighted-text capture, and the Mac menu bar helper. Packaging follows integrated verification.
-- [ ] Resolve UI verification failures before polish acceptance. Mac paywall cases cannot find the app window under test launch arguments, also reproduced on unchanged `main`. iPhone Edit and Get Info context-menu cases fail on both the combined branch and original polish tip `2670e78`. These checks remain in polish acceptance.
+- [x] Resolve the Mac paywall launch and iPhone Edit/Get Info test failures (2026-11-03). Mac tests use a launch-argument separator. iPhone tests scroll the card fully into view. Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0, with no failures and one purchase-audit skip per platform. Full polish acceptance remains open above.
 
 Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Complete polish acceptance before the remaining numbered tasks. Larger Text layout checks belong with polish.
 

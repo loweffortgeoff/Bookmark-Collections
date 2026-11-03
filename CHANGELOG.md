@@ -4,6 +4,11 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Fixed 2026-11-03
+
+- UI tests restore the Mac paywall window with a launch-argument separator. iPhone context-menu tests scroll the target card fully on screen before pressing. App behavior is unchanged.
+- Full UI suites pass on macOS 27.2 with Xcode 27.2 and iPhone 18 Pro with iOS 27.0. Mac ran 17 cases and iPhone ran 18, each with one expected purchase-audit skip and no failures.
+
 ### Reconciled 2026-11-03
 
 - Merged current `main` into `dev/visual-polish`, retaining both iOS hotfixes. Signed iOS build and Mac/iPhone unit suites pass. Existing Mac paywall-launch and iPhone context-menu UI failures remain in 1.1.0 polish acceptance.

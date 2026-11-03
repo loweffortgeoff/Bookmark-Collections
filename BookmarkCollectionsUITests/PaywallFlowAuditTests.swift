@@ -9,7 +9,9 @@ final class PaywallFlowAuditTests: XCTestCase {
         continueAfterFailure = false
         application = XCUIApplication()
         #if os(macOS)
-        application.launchArguments = ["-ui-testing"]
+        // AppKit otherwise suppresses the initial window for these value arguments.
+        // Foundation still reads the purchase overrides after "--".
+        application.launchArguments = ["--", "-ui-testing"]
         #else
         application.launchArguments = ["-ui-testing", "-free-limit", "0"]
         #endif
@@ -24,8 +26,6 @@ final class PaywallFlowAuditTests: XCTestCase {
 
     private func launch() -> XCUIApplication {
         #if os(macOS)
-        // Native XCTest launches with numeric command-line values can start
-        // without a window. Exercise the real ten-item limit from seven seeds.
         for index in 0..<3 {
             add("Add Link", app: application)
             let field = application.textFields.matching(NSPredicate(format: "placeholderValue == %@", "https://example.com")).firstMatch

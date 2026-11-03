@@ -44,6 +44,10 @@ final class BookmarkCollectionsUITests: XCTestCase {
         activate(contextMenuItem("Edit"))
 
         XCTAssertTrue(identified("bookmarkEditor").waitForExistence(timeout: 2))
+        let editorScreenshot = XCTAttachment(screenshot: app.screenshot())
+        editorScreenshot.name = "Seeded Card Editor Opened"
+        editorScreenshot.lifetime = .keepAlways
+        add(editorScreenshot)
     }
 
     func testSeededCardOpensInfoPanelFromContextMenu() {
@@ -56,6 +60,10 @@ final class BookmarkCollectionsUITests: XCTestCase {
         activate(contextMenuItem("Get Info"))
 
         XCTAssertTrue(identified("bookmarkInfo").waitForExistence(timeout: 2))
+        let infoScreenshot = XCTAttachment(screenshot: app.screenshot())
+        infoScreenshot.name = "Seeded Card Info Opened"
+        infoScreenshot.lifetime = .keepAlways
+        add(infoScreenshot)
     }
 
     func testPermanentDeletionRequiresConfirmation() {
@@ -167,6 +175,18 @@ final class BookmarkCollectionsUITests: XCTestCase {
         #if os(macOS)
         element.rightClick()
         #else
+        // Partially visible cards can report hittable with their center offscreen.
+        for _ in 0..<5 {
+            if app.frame.contains(element.frame) { break }
+            app.scrollViews.firstMatch.swipeUp()
+        }
+        XCTAssertTrue(app.frame.contains(element.frame))
+        XCTAssertTrue(element.isHittable)
+
+        let targetScreenshot = XCTAttachment(screenshot: app.screenshot())
+        targetScreenshot.name = "Context Menu Target Fully Visible"
+        targetScreenshot.lifetime = .keepAlways
+        add(targetScreenshot)
         element.press(forDuration: 1)
         #endif
     }

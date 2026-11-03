@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-03 (UI tests preserve launch state and target visible cards)
+
+- **Decision:** Mac paywall tests put `--` before value arguments. iPhone context-menu tests require the whole card on screen before a long press.
+- **Why:** Mac value arguments suppress the initial window without the separator. XCTest can report a partly visible card as hittable while its center is offscreen.
+- **Alternative considered:** Extend timeouts or change app startup. Rejected because both failures come from test setup and gestures.
+
 ## 2026-11-03 (One shared 1.1.0 update)
 
 - **Decision:** Reconcile `main` into `dev/visual-polish` before polish acceptance. Then diagnose Share failures, add highlighted-text capture, and add the Mac menu bar helper. Package iOS and Mac as 1.1.0.
