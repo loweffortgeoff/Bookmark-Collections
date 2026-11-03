@@ -2,9 +2,9 @@
 
 ## Next
 
-- [ ] **Ship iOS 1.0.2 (13)** (Settings Unlock/Restore, Share limit message, Settings About links, 1.0.1 cap hotfix; merged to `main` in #7). Device-checked on iPhone 2026-11-02: Settings row, paywall, sandbox purchase, Restore, and a saved link after unlock. Build 13 archived and uploaded 2026-11-02 16:28 (Tucked is not in the ASC API key scope, so check processing in the ASC web UI). Remaining: confirm processing, paste the 1.0.2 What's New, attach the build and the IAP to the iOS version, submit. Mac stays on 1.0. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see v1.1.0).
+- [x] **Ship iOS 1.0.2 (13)** (Settings Unlock/Restore, Share limit message, Settings About links, 1.0.1 cap hotfix; merged to `main` in #7). Device-checked on iPhone 2026-11-02: Settings row, paywall, sandbox purchase, Restore, and a saved link after unlock. Build 13 archived and uploaded 2026-11-02 16:28 (Tucked is not in the ASC API key scope, so check processing in the ASC web UI). Remaining: confirm processing, paste the 1.0.2 What's New, attach the build and the IAP to the iOS version, submit. Mac stays on 1.0. After that: finish and merge `dev/visual-polish`, then 1.1.0 (see v1.1.0).
 
-- [ ] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
+- [x] **Run the TestFlight 1.0 (10) acceptance.** Build 10 from `a17ab86` holds the remaining bug fixes. It is In Beta Testing internally on iPhone and Mac (uploaded 2026-10-24). Then:
   - **Geoff (owner account):** run the device checks in the [matrix](docs/verification/cloudkit-device-matrix.md#remaining-bug-package--2026-10-24). These are B2 physical Share storage, re-share preservation, Mac menu targeting, largest text and dark mode, and iPad resize.
   - **Two first-time testers:** send them the [tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md). Geoff's account owns Tucked for Life and cannot test the locked path.
 
