@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-04 (Mac UI tests ignore saved window state)
+
+- **Decision:** Every Mac UI test launch starts with `--` and ends with `-ApplePersistenceIgnoreState YES`, through `XCUIApplication.tucked()` in `BookmarkCollectionsUITests/TuckedLaunch.swift`. The app launch path is unchanged.
+- **Why:** Saved window state belongs to the bundle ID, so the Debug test build shares it with the `~/Applications` and TestFlight copies. A copy that closes its window and stays in the menu bar leaves state with no window. XCTest launches restore it and show no window. A bare value after a flag (`YES`, `NO`, `0`) without a leading `--` also suppresses the initial window under XCTest (symptom proven, AppKit mechanism not confirmed). Evidence is in the [1.1.0 validation note](docs/verification/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
+- **Alternative considered:** `.restorationBehavior(.disabled)` or opening the window at launch in the app. Rejected because it changes shipped behavior for a test-only problem. Normal `open` launches still show the window with the same state.
+
 ## 2026-11-03 (Use the current installed Mac Share extension)
 
 - **Decision:** Install the current Mac Release build in `~/Applications/Tucked.app` and register its extension. Keep the protected App Store copy in `/Applications` unchanged.

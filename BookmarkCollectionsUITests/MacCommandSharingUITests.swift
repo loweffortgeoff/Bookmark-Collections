@@ -4,8 +4,7 @@ import XCTest
 @MainActor
 final class MacCommandSharingUITests: XCTestCase {
     func testImageAndSnippetOpenAndShareThroughNativeMenu() {
-        let app = XCUIApplication()
-        app.launchArguments = ["-ui-testing"]
+        let app = XCUIApplication.tucked()
         app.launch()
         let image = app.buttons["bookmark.11111111-1111-1111-1111-111111111111"]
         XCTAssertTrue(image.waitForExistence(timeout: 5))

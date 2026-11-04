@@ -6,8 +6,7 @@ final class BookmarkCollectionsUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-        app = XCUIApplication()
-        app.launchArguments = ["-ui-testing"]
+        app = XCUIApplication.tucked()
         app.launch()
     }
 
@@ -159,8 +158,7 @@ final class BookmarkCollectionsUITests: XCTestCase {
     }
 
     func testAppLaunches() {
-        let app = XCUIApplication()
-        app.launchArguments = ["-ui-testing"]
+        let app = XCUIApplication.tucked()
         app.launch()
 
         XCTAssertTrue(
@@ -206,8 +204,24 @@ final class BookmarkCollectionsUITests: XCTestCase {
         if cell.exists { return cell }
         let element = byIdentifier.firstMatch
         _ = element.waitForExistence(timeout: 5)
+        #if os(macOS)
+        scrollSidebarIfClipped(element)
+        #endif
         return element
     }
+
+    #if os(macOS)
+    /// At the default 900 x 450 window the sidebar overflows. Its last row
+    /// (Recently Deleted) ends below the sidebar's bottom edge, and a click at
+    /// the row's center can miss. Scroll the sidebar to the end first.
+    private func scrollSidebarIfClipped(_ element: XCUIElement) {
+        let sidebar = app.outlines.firstMatch
+        guard element.exists, sidebar.exists,
+              element.frame.maxY > app.windows.firstMatch.frame.maxY - 16
+        else { return }
+        sidebar.scroll(byDeltaX: 0, deltaY: -200)
+    }
+    #endif
 
     private func contextMenuItem(_ title: String) -> XCUIElement {
         #if os(macOS)

@@ -21,6 +21,7 @@ final class PaywallFlowAuditTests: XCTestCase {
         // The cap only applies once the App Store has returned the product.
         // UI tests skip StoreKit, so state that it is on sale.
         application.launchArguments += ["-tuckedForLifeProductAvailable", "YES"]
+        application.launchArguments += XCUIApplication.tuckedLaunchDefaults
         application.launch()
     }
 

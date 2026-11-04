@@ -4,6 +4,12 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Fixed 2026-11-04 (Mac UI test harness)
+
+- Mac UI tests no longer launch into a menu bar with no window. Cause: saved window state is shared by every Tucked copy with the same bundle ID, and a copy that closed its window left state with no window. Also, a bare launch-argument value without a leading `--` suppresses the initial window. Every Mac UI launch now starts with `--` and adds `-ApplePersistenceIgnoreState YES` (`TuckedLaunch.swift`). App code is unchanged.
+- Sidebar tests scroll the sidebar before they click a row that is clipped at the bottom (likely cause of one rare Recently Deleted flake; not proven).
+- Verification (Mac mini, macOS 27.2, Xcode 27.2): with windowless state written on purpose before each run, two consecutive full Mac UI runs pass, 17 cases each with one expected purchase-audit skip. Without the fix, the same state fails `testAppLaunches` and the snippets test with the same errors as the 06:12 failing run. iOS UI test target builds. Share extension not rebuilt; app code is unchanged. Details in the [1.1.0 validation note](docs/verification/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
+
 ### Added 2026-11-04
 
 - Mac menu bar helper: Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Each item opens or raises the library window on that view; Search focuses the search field and Settings opens the Settings sheet. No clipboard capture added.
