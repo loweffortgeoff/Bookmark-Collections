@@ -47,6 +47,8 @@ Polish acceptance and Share diagnosis are complete per Geoff on 2026-11-03. Step
 - [x] **6. Add the Mac menu bar helper** (done 2026-11-04, local on `dev/visual-polish`; Links/Images items, light mode, and signed Release build unchecked) (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
   Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
 
+- [ ] **Validate and package the shared 1.1.0** (Step 6, started 2026-11-04). Integrated build across platforms: Mac purchase and restore, cross-platform access, both hotfix behaviors on Mac, Production sync, iPad and source-bearing highlighted text, and the remaining menu bar checks. Set matching app and extension versions. Checklist and current evidence: [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md).
+
 Shortcuts remains an idea from Tucked Testing. Clipboard capture is the remaining scope question; settle it from task 4 before task 6.
 
 ## Backlog

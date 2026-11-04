@@ -1,5 +1,7 @@
 # CloudKit and Release Verification Matrix
 
+**Current acceptance:** [Tucked 1.1.0 validation](2026-11-04-1.1.0-validation.md) (started 2026-11-04). Everything below is historical.
+
 ## Remaining bug package — 2026-10-24
 
 > **Superseded / retired 2026-10-31.** Geoffrey retired this package acceptance checklist. iOS Build 11 is App Store live; macOS Build 11 is Waiting for Review. Visual/performance work continued on `dev/visual-polish` (not merged here). Pending rows below are a historical record — they were not executed as a pass/fail gate and are not current Next work. This marks the *package acceptance checklist* retired, not every row Passed.
