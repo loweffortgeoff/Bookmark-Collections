@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-04 (Watch iPad resize behavior across beta updates)
+
+- **Decision:** Leave Tucked's layout code unchanged. Track the iPad Pro resize symptom as suspected iPadOS behavior and repeat the comparison after the next beta. Geoff agrees on 2026-11-04.
+- **Why:** The physical iPad Pro 11-inch M5 comparison recording shows similar movement in Files and Settings on iPadOS 27.3 Developer Beta. It does not establish a beta-specific regression.
+- **Alternative considered:** Add a Tucked layout workaround now. Rejected because the evidence does not isolate a fault in our code.
+
 ## 2026-11-04 (Mac UI tests ignore saved window state)
 
 - **Decision:** Every Mac UI test launch starts with `--` and ends with `-ApplePersistenceIgnoreState YES`, through `XCUIApplication.tucked()` in `BookmarkCollectionsUITests/TuckedLaunch.swift`. The app launch path is unchanged.
@@ -76,7 +82,7 @@ Significant decisions made during development, logged for future reference.
 - **Decision:** The library grid computes its column count and cell width from the `GeometryReader` width, uses `.fixed` `GridItem`s, and gives each card `.frame(width:)`. The `.id(Int(width / 20))` reset is removed. Column bounds (160–210pt) and spacing are unchanged.
 - **Why:** Geoff reported the grid shuddering during iPad resize. Every 20pt the `.id()` reset tore down the grid, reset its scroll state, and re-decoded every visible preview. An explicit width is a view input, so cells re-render at the new width instead of depending on LazyVGrid re-proposing size, which was the original stale-geometry bug.
 - **Alternative considered:** Keying `.id()` on column count only — rejected, it would keep the stale-geometry bug for every resize that stays within one column count.
-- **Status:** Physical iPad resize accepted with Step 2 per Geoff on 2026-11-03. Earlier recording limits remain in Tucked Testing.
+- **Status:** Physical iPad mini resize accepted with Step 2 per Geoff on 2026-11-03. The iPad Pro report on 2026-11-04 is now a watch item for suspected iPadOS behavior, following the comparison with Files and Settings. See the November 4 decision above.
 
 ## 2026-10-25 (Settings links for review)
 

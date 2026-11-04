@@ -4,6 +4,10 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Investigated 2026-11-04 (iPad Pro resize)
+
+- The iPad Pro 11-inch M5 comparison recording shows similar resize movement in Files, Settings, and Tucked on iPadOS 27.3 Developer Beta. Geoff agrees to track suspected iPadOS behavior and recheck after the next beta. App code is unchanged. The earlier acceptance covered iPad mini only. See [current evidence](docs/verification/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
+
 ### Fixed 2026-11-04 (Mac UI test harness)
 
 - Mac UI tests no longer launch into a menu bar with no window. Cause: saved window state is shared by every Tucked copy with the same bundle ID, and a copy that closed its window left state with no window. Also, a bare launch-argument value without a leading `--` suppresses the initial window. Every Mac UI launch now starts with `--` and adds `-ApplePersistenceIgnoreState YES` (`TuckedLaunch.swift`). App code is unchanged.
