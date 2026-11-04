@@ -40,6 +40,12 @@ Significant decisions made during development, logged for future reference.
 - **Why:** Mac value arguments suppress the initial window without the separator. XCTest can report a partly visible card as hittable while its center is offscreen.
 - **Alternative considered:** Extend timeouts or change app startup. Rejected because both failures come from test setup and gestures.
 
+## 2026-11-04 (Mac menu bar helper keeps the app running)
+
+- **Decision:** Closing the Mac library window no longer quits the app. The menu bar item stays, and Open Tucked reopens a single-instance library window. Menu items open the library window on that view; they do not show an inline list.
+- **Why:** A menu bar helper is useless if closing the window quits. Open Tucked and the Dock icon keep a visible way back, which preserves the guideline 4 fix. Reusing the library window keeps scope small and needs no new UI.
+- **Alternative considered:** A Settings toggle for the menu bar item, or an inline popover list. Rejected for scope; revisit if users want to hide the item. The "Stash menu" reference was not available, so item behavior is an assumption.
+
 ## 2026-11-03 (One shared 1.1.0 update)
 
 - **Decision:** Reconcile `main` into `dev/visual-polish` before polish acceptance. Then diagnose Share failures, add highlighted-text capture, and add the Mac menu bar helper. Package iOS and Mac as 1.1.0.

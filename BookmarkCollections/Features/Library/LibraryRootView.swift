@@ -21,6 +21,7 @@ struct LibraryRootView: View {
     @State private var deletingCollection: BookmarkCollection?
     @State private var errorMessage: String?
     @State private var commandBookmark: Bookmark?
+    @Environment(MenuBarRouter.self) private var menuBarRouter
     #if os(macOS)
     @State private var isAddingImages = false
     #endif
@@ -70,6 +71,8 @@ struct LibraryRootView: View {
                 Text(errorMessage ?? "Try again.")
             }
             .focusedSceneValue(\.bookmarkCommandActions, commandActions)
+            .onAppear(perform: consumeMenuBarRequest)
+            .onChange(of: menuBarRouter.generation) { consumeMenuBarRequest() }
             .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
                 if bookmarkID == nil { commandBookmark = nil }
             }
@@ -92,6 +95,21 @@ struct LibraryRootView: View {
                 }
             }
             #endif
+    }
+
+    private func consumeMenuBarRequest() {
+        guard let request = menuBarRouter.take() else { return }
+        sheet = nil
+        switch request {
+        case let .destination(target):
+            destination = target
+            searchText = ""
+        case .search:
+            destination = .allItems
+            isSearchPresented = true
+        case .settings:
+            sheet = .settings
+        }
     }
 
     private var navigationView: some View {

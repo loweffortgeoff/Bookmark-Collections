@@ -9,7 +9,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 **Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) passed App Review on November 3 and is eligible for distribution (auto-release; up to 24h to appear). Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. UI failures were resolved during completed polish acceptance below.
-- [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Next: the Mac menu bar helper.
+- [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Step 5, the Mac menu bar helper, is built and verified locally on 2026-11-04. Next: integrated 1.1.0 validation and packaging.
 - [x] Check Mac light/dark grid, selection, preview Info, editors, Settings, and paywall. Check iPhone standard/maximum text in both modes. Fix selection overflow, Collections wrapping, and Mac Info margins (2026-11-03).
 - [x] Fix large-text sidebar word breaks (2026-11-03). Icons and counts stack above full-width titles with reduced row insets. Built-in labels stay whole in the 260-point simulator reproduction. Physical iPad retest accepted by Geoff on 2026-11-03.
 - [x] Finish physical iPad polish acceptance (2026-11-03). Geoff confirms the remaining Step 2 checks complete. Evidence and report limits are in [Tucked Testing](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). Recheck purchase/restore on the integrated 1.1.0 candidate during packaging.
@@ -44,7 +44,7 @@ Polish acceptance and Share diagnosis are complete per Geoff on 2026-11-03. Step
 - Settings shows "iCloud temporarily unavailable" under the in-memory test store. This is expected; no action.
 - iPad captures show the real status-bar clock. This is a simulator capture setting, not an app bug; no action.
 
-- [ ] **6. Add the Mac menu bar helper** (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
+- [x] **6. Add the Mac menu bar helper** (done 2026-11-04, local on `dev/visual-polish`; Links/Images items, light mode, and signed Release build unchecked) (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
   Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
 
 Shortcuts remains an idea from Tucked Testing. Clipboard capture is the remaining scope question; settle it from task 4 before task 6.

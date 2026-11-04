@@ -16,6 +16,7 @@ struct BookmarkCollectionsApp: App {
     #endif
     @Environment(\.scenePhase) private var scenePhase
     @State private var storefront = Storefront()
+    @State private var menuBarRouter = MenuBarRouter()
     private let container: ModelContainer
 
     init() {
@@ -31,27 +32,39 @@ struct BookmarkCollectionsApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
-            LibraryRootView()
-                .environment(storefront)
-                .task(id: scenePhase) {
-                    guard scenePhase == .active else { return }
-                    try? BookmarkRepository(context: container.mainContext).reconcileDuplicates()
-                    let enricher = MetadataEnricher(
-                        context: container.mainContext,
-                        provider: LinkPresentationMetadataProvider()
-                    )
-                    try? await enricher.enrichPending(limit: 20)
-                }
+        #if os(macOS)
+        // Single-instance window so the menu bar can reopen it after it is closed.
+        Window("Tucked", id: LibraryWindow.id) {
+            libraryContent
         }
         .modelContainer(container)
-        .commands {
-            #if os(macOS)
-            BookmarkCommands()
-            #else
-            EmptyCommands()
-            #endif
+        .commands { BookmarkCommands() }
+
+        MenuBarExtra("Tucked", systemImage: "bookmark") {
+            MenuBarContent(router: menuBarRouter)
         }
+        #else
+        WindowGroup {
+            libraryContent
+        }
+        .modelContainer(container)
+        .commands { EmptyCommands() }
+        #endif
+    }
+
+    private var libraryContent: some View {
+        LibraryRootView()
+            .environment(storefront)
+            .environment(menuBarRouter)
+            .task(id: scenePhase) {
+                guard scenePhase == .active else { return }
+                try? BookmarkRepository(context: container.mainContext).reconcileDuplicates()
+                let enricher = MetadataEnricher(
+                    context: container.mainContext,
+                    provider: LinkPresentationMetadataProvider()
+                )
+                try? await enricher.enrichPending(limit: 20)
+            }
     }
 
     @MainActor

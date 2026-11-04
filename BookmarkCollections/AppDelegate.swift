@@ -45,10 +45,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApplication.shared.registerForRemoteNotifications()
     }
 
-    /// Single-window app: closing the library window quits, so there is never
-    /// a running app with no window to reopen (App Review guideline 4).
+    /// Closing the library window leaves Tucked running in the menu bar. The
+    /// menu bar's Open Tucked reopens the window and Quit quits, so there is
+    /// always a visible way back (App Review guideline 4).
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        true
+        false
     }
 
     func application(

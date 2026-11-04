@@ -4,6 +4,12 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Added 2026-11-04
+
+- Mac menu bar helper: Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Each item opens or raises the library window on that view; Search focuses the search field and Settings opens the Settings sheet. No clipboard capture added.
+- Closing the Mac library window now leaves Tucked running in the menu bar instead of quitting. The Mac library is a single-instance window so the menu can reopen it.
+- Verification: iOS app, share extension, and macOS builds pass. Mac unit suite runs 196 cases (13 expected skips) and Mac UI suite 17 cases (1 expected skip), zero failures. Live menu checks (close, reopen on Snippets, Settings, Search, Quit) are in the Visual Verification folder `Tucked/2026-11-04-menubar-helper`. Links, Images, light mode, and a signed Release build are unchecked.
+
 ### Added 2026-11-03
 
 - Share selected text into a snippet on iPhone, iPad, and Mac. Keep paragraphs, embedded links, and a separately supplied source URL. iPhone and iPad show the text before saving; Mac retains Quick Save.
