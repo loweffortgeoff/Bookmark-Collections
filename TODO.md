@@ -6,17 +6,20 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
-**Release context (2026-11-06):** `dev/visual-polish` merged to `main` (fast-forward to `b4075c2`). 1.1.0 (15) is the first shared iOS and macOS update; release pass in progress. iOS 1.0.2 (13) and Mac 1.0 are the current App Store versions.
+**Release context (2026-11-07):** Geoff confirms 1.1.0 is live on iOS and macOS. The release/submission task is closed; the remaining menu bar checks below are still open.
 
-- [ ] **Release 1.1.0 (15)** (2026-11-06). Uploaded for iOS and macOS on 2026-11-06. Remaining: confirm ASC processing (`VALID`) and export compliance, transfer the approved ASC copy from `ASC_LISTING.md`, then submit for review when Geoff approves. The MacBook cannot reach the ASC API; use the Mac mini. Build 15 has the same app code as validated TestFlight build 14.
 - [ ] **Check the remaining Mac menu bar items** on a Release build: Links and Images items, Open Tucked with the window already open, Dock-click reopen, light mode, and window close keeps Tucked running. Geoff shipped 1.1.0 with these open (2026-11-06). Rows are in the [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md#a-local-checks-claude-no-upload).
 - [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
 
-Shortcuts and Siri actions are the next feature candidate (see Backlog). Clipboard capture has no demonstrated gap.
+- [ ] **Scope the first Siri and Shortcuts actions.** Choose from saving a link, finding bookmarks, opening a collection, and showing favorites or forgotten items; define indexing and link-sharing behavior. Geoff approved scoping on 2026-11-07, not an implementation bundle, version, or date; the starter ideas remain in Backlog.
+
+Clipboard capture has no demonstrated gap.
 
 ## Done — v1.1.0 (merged to `main` 2026-11-06)
 
 Older completed work is under [Done](#done) at the end of this file.
+
+- [x] **Release 1.1.0 (15).** Uploaded for iOS and macOS on 2026-11-06; Geoff confirms both versions are live on 2026-11-07. This closes the earlier processing, copy, and submission follow-up; no App Store Connect checks were repeated in this reconciliation. The remaining Mac menu bar checks stay in Next.
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. UI failures were resolved during completed polish acceptance below.
 - [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Step 5, the Mac menu bar helper, is built and verified locally on 2026-11-04.
