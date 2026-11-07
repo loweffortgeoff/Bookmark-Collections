@@ -6,28 +6,34 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
-**Release context (2026-11-03):** iOS 1.0.1 is live. iOS 1.0.2 (13) passed App Review on November 3 and is eligible for distribution (auto-release; up to 24h to appear). Mac 1.0 was approved on November 2. The next shared version is 1.1.0. No separate Mac 1.0.2 is queued.
+**Release context (2026-11-06):** `dev/visual-polish` merged to `main` (fast-forward to `b4075c2`). 1.1.0 (15) is the first shared iOS and macOS update; release pass in progress. iOS 1.0.2 (13) and Mac 1.0 are the current App Store versions.
+
+- [ ] **Release 1.1.0 (15)** (2026-11-06). Uploaded for iOS and macOS on 2026-11-06. Remaining: confirm ASC processing (`VALID`) and export compliance, transfer the approved ASC copy from `ASC_LISTING.md`, then submit for review when Geoff approves. The MacBook cannot reach the ASC API; use the Mac mini. Build 15 has the same app code as validated TestFlight build 14.
+- [ ] **Check the remaining Mac menu bar items** on a Release build: Links and Images items, Open Tucked with the window already open, Dock-click reopen, light mode, and window close keeps Tucked running. Geoff shipped 1.1.0 with these open (2026-11-06). Rows are in the [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md#a-local-checks-claude-no-upload).
+- [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
+
+Shortcuts and Siri actions are the next feature candidate (see Backlog). Clipboard capture has no demonstrated gap.
+
+## Done — v1.1.0 (merged to `main` 2026-11-06)
+
+Older completed work is under [Done](#done) at the end of this file.
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. UI failures were resolved during completed polish acceptance below.
-- [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Step 5, the Mac menu bar helper, is built and verified locally on 2026-11-04. Next: integrated 1.1.0 validation and packaging.
+- [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Step 5, the Mac menu bar helper, is built and verified locally on 2026-11-04.
 - [x] Check Mac light/dark grid, selection, preview Info, editors, Settings, and paywall. Check iPhone standard/maximum text in both modes. Fix selection overflow, Collections wrapping, and Mac Info margins (2026-11-03).
 - [x] Fix large-text sidebar word breaks (2026-11-03). Icons and counts stack above full-width titles with reduced row insets. Built-in labels stay whole in the 260-point simulator reproduction. Physical iPad retest accepted by Geoff on 2026-11-03.
-- [x] Finish physical iPad mini polish acceptance (2026-11-03). Geoff confirms the remaining Step 2 checks complete on iPad mini. The iPad Pro resize symptom is on the Watch List below. Evidence and report limits are in [Tucked Testing](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md).
-- [x] Resolve the Mac paywall launch and iPhone Edit/Get Info test failures (2026-11-03). Mac tests use a launch-argument separator. iPhone tests scroll the card fully into view. Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0, with no failures and one purchase-audit skip per platform. Full polish acceptance is closed above from Geoff's completion report.
+- [x] Finish physical iPad mini polish acceptance (2026-11-03). Geoff confirms the remaining Step 2 checks complete on iPad mini. The iPad Pro resize symptom is on the Watch List. Evidence and report limits are in [Tucked Testing](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md).
+- [x] Resolve the Mac paywall launch and iPhone Edit/Get Info test failures (2026-11-03). Mac tests use a launch-argument separator. iPhone tests scroll the card fully into view. Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0, with no failures and one purchase-audit skip per platform.
 
-Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Tasks have no dates. Polish acceptance and Share diagnosis are complete; highlighted-text capture is closed below. Larger Text layout checks belong with polish.
+Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Work projects. Original Things task numbers remain unchanged. Task 2 is done and task 3 was dropped.
 
 - [x] **1. Diagnose the iOS Share storage failure** (2026-11-03). Geoff confirms sharing works on the current polish build. The former free-limit UI likely explains the Save/Retry symptom; original device logs are absent. All 48 targeted Share and limit tests pass on iPhone 18 Pro with iOS 27.0. No storage or entitlement change is needed.
   The November 2 fix `811c1c6` explains the free limit and hides ineffective Save/Retry controls. The older "could not open its shared library" report is a separate storage path and cannot be a limit block. Reopen for a fresh failure with its exact message and `ShareStorage`/`ShareSave` logs. Highlighted-text capture remains separate below.
 
-### v1.1.0
+1.1.0 includes card shadows, sidebar changes, the 2026-10-29 leftovers (`bee97be` and later), highlighted-text capture, and the Mac menu bar helper. See [change history](CHANGELOG.md#110--2026-11-06-ios-and-macos-build-15) and the [testing note](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md).
 
-Polish acceptance and Share diagnosis closed per Geoff on 2026-11-03. The iPad Pro resize report is now a watch item after the comparison with Files and Settings. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Repeat the resize comparison after the next iPadOS beta update. Task 2 is done and task 3 was dropped. Original Things task numbers below remain unchanged.
-
-**Already started:** `dev/visual-polish` contains card shadows, sidebar changes, and the 2026-10-29 leftovers (`bee97be` and later), not yet merged to `main`. Mac selection, iPad mini live resize, light/dark appearance, and Larger Text polish were accepted per Geoff on 2026-11-03. The iPad Pro resize report is now a watch item. Later 2026-10-29 polish (Select in the toolbar, Add Link focus, selection bar background, Get Info preview, card footer decision) is in the leftovers list below. See [change history](CHANGELOG.md#changed--2026-10-26) and the [testing note](/Users/geoffreysilva/Documents/Dev%20Workstation/The%20Notebook/Tucked%20Testing.md). Highlighted-text capture is now included. The menu bar helper and Shortcuts are not included.
-
-- [x] **4. Save highlighted text as a snippet** (2026-11-03). Closed on `dev/visual-polish` after Geoff confirmed iOS and Mac text sharing. Simulator capture and relaunch persistence also pass on iPhone 18 Pro with iOS 27.0. Source remains empty when the host does not supply one.
-  Geoff confirms iOS and native Mac capture on 2026-11-03. iPad and source-bearing host combinations remain integrated 1.1.0 checks. The Mac initially invoked an old installed extension; current Release is now installed in `~/Applications/Tucked.app` and selected by PlugInKit. Check selected prose with and without an accompanying source URL. Clipboard capture has no demonstrated gap and is not added here.
+- [x] **4. Save highlighted text as a snippet** (2026-11-03). Closed after Geoff confirmed iOS and Mac text sharing. Simulator capture and relaunch persistence also pass on iPhone 18 Pro with iOS 27.0. Source remains empty when the host does not supply one.
+  Geoff confirms iOS and native Mac capture on 2026-11-03. iPad and source-bearing host combinations passed in the integrated 1.1.0 checks on build 14. The Mac initially invoked an old installed extension; current Release is now installed in `~/Applications/Tucked.app` and selected by PlugInKit. Check selected prose with and without an accompanying source URL. Clipboard capture has no demonstrated gap and is not added here.
 - [x] **5. Fix Larger Text layout problems** (Things: Bug Fixes). Check the grid, cards, sidebar, and editor sheets at the largest accessibility text sizes on iPhone and iPad. Fix broken layouts, then reassess the Mac claim.
   Closed with Step 2 acceptance per Geoff on 2026-11-03. The 1.0 Larger Text claim covers iPhone and iPad only.
   2026-10-24: iPhone grid, link editor, snippet editor, and Settings pass at accessibility XXXL in light and dark (simulator). iPad and Mac host checks from the Oct-24 package were retired with that matrix (2026-10-31); they were not marked Passed. Layout acceptance criteria remain in the [spec](docs/superpowers/specs/2026-10-23-remaining-bug-fixes-design.md#b3-accessible-layouts-and-mac-failure-recovery).
@@ -40,16 +46,14 @@ Polish acceptance and Share diagnosis closed per Geoff on 2026-11-03. The iPad P
 - [x] **Move "Select" into the toolbar.** On every list, "Select" sits alone on its own row under the large title. Consider moving it into the toolbar. Done 2026-10-29 in `ca39de2`: Select/Done is in the library toolbar next to Add.
 - [x] **Focus the Add Link URL field and use a URL keyboard.** The field is not focused when the sheet opens, and it shows the default keyboard. Done 2026-10-29 in `ca39de2`: focused on open, URL keyboard, no autocapitalization or autocorrection, Return saves.
 - [x] **Give the selection action bar a background.** In Select mode the Favorite, Unfavorite, Move, Share, and Delete bar floats over the last card and the search field with no background. Seen 2026-10-29; predates moving Select. Done 2026-10-29 in `b663635`: floating material capsule; the last row scrolls clear of it.
-- [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
+- Low-priority paywall check under test launch arguments moved to Next.
 - Settings shows "iCloud temporarily unavailable" under the in-memory test store. This is expected; no action.
 - iPad captures show the real status-bar clock. This is a simulator capture setting, not an app bug; no action.
 
-- [x] **6. Add the Mac menu bar helper** (done 2026-11-04, local on `dev/visual-polish`; Links/Images items, light mode, and signed Release build unchecked) (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
+- [x] **6. Add the Mac menu bar helper** (done 2026-11-04; Links/Images items, light mode, and Release-build window checks remain in Next) (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
   Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
 
-- [ ] **Validate and package the shared 1.1.0** (Step 6, started 2026-11-04). Integrated build across platforms: Mac purchase and restore, cross-platform access, both hotfix behaviors on Mac, Production sync, iPad and source-bearing highlighted text, and the remaining menu bar checks. Set matching app and extension versions. Checklist and current evidence: [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md). 2026-11-04: 1.1.0 (14) on internal TestFlight; Geoff says one more close item remains (see validation doc).
-
-Shortcuts remains an idea from Tucked Testing. Clipboard capture is the remaining scope question; settle it from task 4 before task 6.
+- [x] **Validate the shared 1.1.0** (Step 6, 2026-11-04 to 2026-11-06). TestFlight 1.1.0 (14) passed Mac purchase and restore, cross-platform access, both hotfix behaviors on Mac, Production sync, and iPad and source-bearing highlighted text. The last row closed on 2026-11-06 (`b4075c2`). Evidence: [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md). Menu bar checks remain in Next.
 
 ## Watch List
 
@@ -65,7 +69,7 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - `pageDescription` field + og:description fetch for the info panel.
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
-- Sharing plain non-URL text, clipboard snippet capture, and a Mac menu bar extra are in v1.1.0 above.
+- Clipboard snippet capture, only if Share capture leaves a real gap. Shared text and the Mac menu bar shipped in 1.1.0.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).

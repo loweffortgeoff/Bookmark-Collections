@@ -4,23 +4,35 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
-### Investigated 2026-11-04 (iPad Pro resize)
+Nothing yet.
+
+## Release history
+
+> **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
+
+### 1.1.0 — 2026-11-06 (iOS and macOS; build 15)
+
+Merged `dev/visual-polish` to `main` at `b4075c2` on 2026-11-06. Build 15 has the same app code as TestFlight build 14, which carries the device validation; only UI-test files changed after build 14. The Mac menu bar items for Links, Images, Open Tucked with the window open, Dock-click reopen, light mode, and window close in a Release build were not checked; Geoff chose to ship with them open.
+
+- Delivery (2026-11-06, MacBook Pro, macOS 27.2, Xcode 27.2): archived `Tucked Release` for iOS and macOS; app and extension read 1.1.0 (15). Both uploads succeeded through Xcode distribution. ASC processing, export compliance, and the copy transfer were not checked: the ASC API rejected this Mac's credentials. Not attached to a version or submitted.
+
+#### Investigated 2026-11-04 (iPad Pro resize)
 
 - The iPad Pro 11-inch M5 comparison recording shows similar resize movement in Files, Settings, and Tucked on iPadOS 27.3 Developer Beta. Geoff agrees to track suspected iPadOS behavior and recheck after the next beta. App code is unchanged. The earlier acceptance covered iPad mini only. See [current evidence](docs/verification/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
 
-### Fixed 2026-11-04 (Mac UI test harness)
+#### Fixed 2026-11-04 (Mac UI test harness)
 
 - Mac UI tests no longer launch into a menu bar with no window. Cause: saved window state is shared by every Tucked copy with the same bundle ID, and a copy that closed its window left state with no window. Also, a bare launch-argument value without a leading `--` suppresses the initial window. Every Mac UI launch now starts with `--` and adds `-ApplePersistenceIgnoreState YES` (`TuckedLaunch.swift`). App code is unchanged.
 - Sidebar tests scroll the sidebar before they click a row that is clipped at the bottom (likely cause of one rare Recently Deleted flake; not proven).
 - Verification (Mac mini, macOS 27.2, Xcode 27.2): with windowless state written on purpose before each run, two consecutive full Mac UI runs pass, 17 cases each with one expected purchase-audit skip. Without the fix, the same state fails `testAppLaunches` and the snippets test with the same errors as the 06:12 failing run. iOS UI test target builds. Share extension not rebuilt; app code is unchanged. Details in the [1.1.0 validation note](docs/verification/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
 
-### Added 2026-11-04
+#### Added 2026-11-04
 
 - Mac menu bar helper: Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Each item opens or raises the library window on that view; Search focuses the search field and Settings opens the Settings sheet. No clipboard capture added.
 - Closing the Mac library window now leaves Tucked running in the menu bar instead of quitting. The Mac library is a single-instance window so the menu can reopen it.
 - Verification: iOS app, share extension, and macOS builds pass. Mac unit suite runs 196 cases (13 expected skips) and Mac UI suite 17 cases (1 expected skip), zero failures. Live menu checks (close, reopen on Snippets, Settings, Search, Quit) are in the Visual Verification folder `Tucked/2026-11-04-menubar-helper`. Links, Images, light mode, and a signed Release build are unchecked.
 
-### Added 2026-11-03
+#### Added 2026-11-03
 
 - Share selected text into a snippet on iPhone, iPad, and Mac. Keep paragraphs, embedded links, and a separately supplied source URL. iPhone and iPad show the text before saving; Mac retains Quick Save.
 - Ordinary Safari page shares remain links. Image captions do not replace images. Snippets use the existing local save, free limit, Collection, and Favorite behavior without a schema change.
@@ -28,20 +40,20 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 - Full UI suites pass on Mac and iPhone 18 Pro with iOS 27.0: 17 and 18 cases, each with one expected purchase-audit skip and zero failures. Final Mac and simulator builds pass.
 - Live Safari selection capture, Cancel, Save, and relaunch persistence pass on iPhone 18 Pro with iOS 27.0. Geoff confirms iOS and native Mac text sharing; Step 4 is closed. iPad and source-bearing host combinations remain integrated 1.1.0 checks. Evidence is in Tucked Testing and `build/highlight-*`.
 
-### Mac Share installation corrected 2026-11-03
+#### Mac Share installation corrected 2026-11-03
 
 - Geoff confirms iOS snippet capture. Mac Safari invoked the old `/Applications/Tucked.app` extension while the new app ran from Xcode. Installed current Release in `~/Applications/Tucked.app`; signature and binary match pass, and PlugInKit selects that copy. Geoff confirms Mac text sharing works after the installation correction.
 
-### Share diagnosis closed 2026-11-03
+#### Share diagnosis closed 2026-11-03
 
 - Geoff confirms sharing works on the current polish build. The old free-limit UI likely explains the Save/Retry symptom; original device logs are absent. No app-code or storage change is needed.
 - All 48 targeted Share and limit tests pass on iPhone 18 Pro with iOS 27.0, using macOS 27.2 and Xcode 27.2. Highlighted-text capture is next.
 
-### Polish acceptance closed 2026-11-03
+#### Polish acceptance closed 2026-11-03
 
 - Geoff confirms Step 2 testing and verification complete, including the physical iPad sidebar retest and remaining combinations. Share failure diagnosis is next; integrated 1.1.0 packaging checks remain separate.
 
-### Appearance checks 2026-11-03
+#### Appearance checks 2026-11-03
 
 - Accessibility-size sidebar rows place the icon and count above the title and reclaim horizontal row space. Built-in labels stay whole in the 260-point simulator reproduction. Geoff accepted the physical iPad retest on 2026-11-03.
 - Sidebar verification passes on macOS 27.2 with Xcode 27.2 and iPhone 18 Pro with iOS 27.0. Mac and simulator builds pass. Three focused UI cases pass with zero failures.
@@ -50,16 +62,16 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 - Signed iOS Release build and full UI suites pass. Mac ran 17 cases and iPhone ran 18, each with one expected purchase-audit skip and zero failures.
 - Physical iPad mini recordings on iPadOS 27.2 cover resize, rotation, light/dark sheets, URL and snippet keyboards, and large-text snippet editing. Geoff confirms the remaining Step 2 checks complete. Integrated-candidate purchase/restore checks remain in packaging.
 
-### Fixed 2026-11-03
+#### Fixed 2026-11-03
 
 - UI tests restore the Mac paywall window with a launch-argument separator. iPhone context-menu tests scroll the target card fully on screen before pressing. App behavior is unchanged.
 - Full UI suites pass on macOS 27.2 with Xcode 27.2 and iPhone 18 Pro with iOS 27.0. Mac ran 17 cases and iPhone ran 18, each with one expected purchase-audit skip and no failures.
 
-### Reconciled 2026-11-03
+#### Reconciled 2026-11-03
 
 - Merged current `main` into `dev/visual-polish`, retaining both iOS hotfixes. Signed iOS build and Mac/iPhone unit suites pass. Existing Mac paywall-launch and iPhone context-menu UI failures remain in 1.1.0 polish acceptance.
 
-### Fixed — 2026-10-29
+#### Fixed — 2026-10-29
 
 - The library grid no longer rebuilds itself every 20pt during an iPad window resize. Fixed columns and an explicit card width resize cells in place, which should stop the resize shudder.
 - Card previews decode off the main thread at card size and stay cached, so scrolling and resizing no longer decode full-size stored images on every render.
@@ -68,7 +80,7 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 - Sidebar counts come from one pass over the library instead of one pass per row.
 - New link previews are stored as JPEG (quality 0.8) instead of PNG, which is usually several times smaller for photos. Previews with transparency stay PNG. Saved images are unchanged: they stay lossless PNG, since share and export hand them back as stored. Existing previews are not converted.
 
-### Changed — 2026-10-29
+#### Changed — 2026-10-29
 
 - Cards no longer reserve a second title line at accessibility text sizes (one-column grid), which removes the gap between title and subtitle.
 - Add Link, Edit, Get Info, and the snippet editor share one collection picker. At accessibility sizes it stacks the label over a flush-leading menu instead of the system row's indented wrap.
@@ -80,15 +92,11 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 - Get Info shows the bookmark's preview image at the top, using the same cached thumbnail as the card. Snippets and links without a preview skip it.
 - Left as is: the "Search bookmarks" placeholder and toolbar Cancel/Save do not scale at accessibility sizes. See [the decision](DECISIONS.md#2026-10-29-system-bars-keep-system-sizing-at-accessibility-text-sizes).
 
-### Changed — 2026-10-26
+#### Changed — 2026-10-26
 
 - Added subtle card shadows and refined the native sidebar with accent-colored icons and section spacing.
 
-## Release history
-
-> **Platform note:** 1.0.1 and 1.0.2 are iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). It does not include the 1.0.1 or 1.0.2 sections or the builds 10 and 11 section below. Those reach Mac with the next Mac build.
-
-### 1.0.2 — 2026-11-02 (iOS; build 13 submitted, waiting for review per Geoff on 2026-11-03)
+### 1.0.2 — 2026-11-02 (iOS; build 13 approved by App Review on 2026-11-03)
 
 - Settings has a "Tucked for Life" section while locked: **Unlock Tucked for Life** opens the paywall and **Restore Purchases** works without hitting the limit first. Unlocked users still see the badge.
 - The Share sheet at the free limit explains it in plain text instead of a red error, and hides Save and Retry, which cannot succeed there. Mac keeps its Open Tucked and Cancel buttons.

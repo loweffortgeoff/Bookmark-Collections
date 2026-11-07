@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-06 (Ship 1.1.0 as build 15 with menu bar checks open)
+
+- **Decision:** Archive and upload 1.1.0 (15) from merged `main` for iOS and macOS. Accept the 2026-11-04 Mac mini test runs as the pre-merge suite. Ship with five Mac menu bar checks unchecked (Links and Images items, Open Tucked with the window open, Dock-click reopen, light mode, window close in a Release build).
+- **Why:** Geoff's call. Build 15 is built from the merged `main` that the tag will name. App code is the same as TestFlight build 14, which carries the device validation; only UI-test files changed after build 14. The open menu bar checks are not 1.1.0 gates.
+- **Alternative considered:** Reuse build 14 for the App Store version. Rejected by Geoff in favor of a build cut from `main`.
+
 ## 2026-11-04 (Watch iPad resize behavior across beta updates)
 
 - **Decision:** Leave Tucked's layout code unchanged. Track the iPad Pro resize symptom as suspected iPadOS behavior and repeat the comparison after the next beta. Geoff agrees on 2026-11-04.

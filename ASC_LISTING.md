@@ -1,4 +1,4 @@
-# App Store Connect — Current Listing (v1.0.2)
+# App Store Connect — Current Listing (v1.1.0)
 
 Initial release listing for Tucked 1.0. Bundle ID `com.loweffortapps.BookmarkCollections`. Primary locale `en-US`.
 
@@ -8,14 +8,17 @@ Bookmarks, Images & Snippets — 28 characters
 Rationale: The app name ("Tucked") does not contain any category keywords, so the subtitle carries the primary discovery terms. "Bookmarks", "Images", and "Snippets" name the three item kinds Tucked stores while indexing high-intent searches for bookmark managers, image/screenshot savers, and text snippet tools.
 
 ## Promotional Text (170 characters max)
-Save links, screenshots, and text snippets from the Share Sheet on iPhone, iPad, and Mac. Forgotten and Surprise me bring back what you tucked away and never opened. — 165 characters
+Save links, screenshots, and highlighted text from the Share Sheet on iPhone, iPad, and Mac. Forgotten and Surprise me bring back what you tucked away and never opened. — 168 characters
 
 ## What's New
-Unlocking Tucked for Life is easier to find.
+Save highlighted text, enjoy a calmer library, and find Tucked in the Mac menu bar.
 
-• Unlock Tucked for Life or Restore Purchases from Settings, any time.
-• When Save to Tucked reaches the free limit, the Share Sheet now explains it clearly instead of showing an error.
-• Settings now links to the Privacy Policy, Support, and the Low Effort Apps website.
+• Share selected text from Safari or any app and Tucked saves it as a snippet, with paragraphs, links, and the source page when available.
+• Mac: Tucked lives in the menu bar. Jump to Search, Links, Images, Snippets, or Settings, and close the window without quitting.
+• Refreshed cards and sidebar, Select in the toolbar, and a floating selection bar.
+• Get Info shows the preview image. Add Link opens ready to type.
+• Smoother scrolling and resizing, and better layouts at the largest text sizes.
+• Mac also gets Unlock and Restore Purchases in Settings and a clearer free-limit message when saving.
 
 ## Description
 Tucked — Save it now. Actually find it later.
@@ -25,11 +28,12 @@ Tucked is a native bookmark library for iPhone, iPad, and Mac. It keeps the link
 Three Kinds of Saves in One Place
 • Links: Visual cards with webpage preview images, favicons, titles, and domains. Tucked strips tracking parameters automatically and merges duplicate links.
 • Images & Screenshots: Save images from the Share Sheet or import them on Mac with File ▸ Add Images. Open any image in a full-screen zoomable viewer.
-• Text Snippets: Save quotes, notes, code, or excerpts directly in Tucked with an optional source URL. Copy the text in one tap or search inside snippet bodies.
+• Text Snippets: Share highlighted text from any app, or write quotes, notes, code, or excerpts directly in Tucked with an optional source URL. Copy the text in one tap or search inside snippet bodies.
 
 Capture From Anywhere
 • On iPhone and iPad, the Save to Tucked Share Sheet lets you assign a Collection and mark Favorite right as you save.
-• On Mac, Save to Tucked uses Quick Save: one click in any Share menu saves the link or image immediately without interrupting your work.
+• On Mac, Save to Tucked uses Quick Save: one click in any Share menu saves the link, image, or highlighted text immediately without interrupting your work.
+• On Mac, Tucked stays in the menu bar for quick jumps to Search, Links, Images, and Snippets.
 
 Clean, Predictable Organization
 • Each item belongs to zero or one Collection, plus an independent Favorites list — no messy tag sprawl to maintain.
@@ -96,5 +100,7 @@ Two adjacent clusters dominate search: **bookmark & link managers** (Raindrop.io
 - "research" ↔ "curate"
 
 ## Notes
+
+- 2026-11-06 (v1.1.0 release pass): New What's New for the first shared iOS and macOS update. Promotional Text names highlighted text instead of text snippets. Description adds highlighted-text capture and the Mac menu bar. Subtitle and Keywords unchanged.
 
 - 2026-10-14 (v1.0 release pass): Created initial `ASC_LISTING.md` from `README.md`, `CHANGELOG.md`, and `DECISIONS.md`. Because the app name "Tucked" carries no category keywords on its own, the subtitle ("Bookmarks, Images & Snippets") is dedicated to the three saved item types. Keywords target the "save links", "read later", "bookmark folder", and "screenshot/snippet" search clusters without claiming offline article archiving or multi-tag management.

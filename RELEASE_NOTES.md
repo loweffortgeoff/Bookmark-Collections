@@ -1,3 +1,36 @@
+# Release Notes — v1.1.0
+
+Theme: Save highlighted text, a calmer library, and Tucked in the Mac menu bar. First shared update for iPhone, iPad, and Mac.
+
+## NEW
+
+- **Save highlighted text.** Select text in Safari or another app, share it to Tucked, and it saves as a snippet. Paragraphs and links stay intact, and the source page comes along when the app provides it. iPhone and iPad show the text before you save.
+- **Tucked in the Mac menu bar.** Jump straight to Search, Links, Images, Snippets, or Settings. Closing the window keeps Tucked ready in the menu bar.
+- **Get Info shows the preview image** at the top of the sheet.
+
+## IMPROVED
+
+- Refreshed library cards with subtle shadows, and a cleaner sidebar with accent-colored icons.
+- Select moved into the toolbar. Selection actions sit on a floating bar instead of over your cards.
+- Add Link opens ready to type, with the URL keyboard.
+- Smoother scrolling and window resizing. Previews load in the background, and new link previews take less space.
+- Cards, the sidebar, and editors fit better at the largest text sizes.
+
+## FIXED (on Mac, from iOS 1.0.1 and 1.0.2)
+
+- Unlock Tucked for Life and Restore Purchases are in Settings, any time.
+- Save to Tucked explains the free limit clearly instead of showing an error.
+- The free limit applies only once Tucked for Life can be purchased.
+
+## What to Test — 1.1.0 (15)
+
+Build 15 has the same app code as build 14. Spot-check only:
+
+- **Highlighted text:** Share selected text from Safari. Confirm it saves as a snippet.
+- **Mac menu bar:** Open Links and Images from the menu bar. Close the window, then reopen Tucked from the menu bar and from the Dock.
+
+---
+
 # Release Notes — v1.0.2
 
 Theme: Easier to unlock, clearer about the free limit.
