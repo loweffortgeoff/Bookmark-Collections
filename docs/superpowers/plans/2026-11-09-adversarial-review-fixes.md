@@ -190,7 +190,9 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 - [ ] **Step 2: Run** `RecentlyDeletedTests`. Build both schemes.
 - [ ] **Step 3: Commit** `Purge Recently Deleted items after 30 days`.
 
-Geoff: this is the first build that hard-deletes on a timer. Items deleted more than 30 days ago go on first launch, on every device. Confirm before merge.
+Geoff: this is the first build that hard-deletes on a timer. Items deleted more than 30 days ago go on first launch, on every device. **Accepted by Geoff 2026-11-09.**
+
+**Execution method (Geoff, 2026-11-09):** subagent-driven, one chapter per session.
 
 ### Task 2.3: Paywall retries the product and shows no invented price
 
@@ -292,7 +294,7 @@ func testUserEnteredAddsHTTPS() {
 
 ## Chapter 4 — Decisions for Geoff (no code until chosen)
 
-1. **F1 full fix.** Chapter 1 stops the loss but leaves clone pairs visible; the user deletes one by hand. A clean merge needs a synced per-record token (schema change plus Production CloudKit deploy). Recommendation: ship Chapter 1, add the token only if clones are seen in the field.
+1. **F1 full fix.** Chapter 1 stops the loss but leaves clone pairs visible; the user deletes one by hand. A clean merge needs a synced per-record token (schema change plus Production CloudKit deploy). Recommendation: ship Chapter 1, add the token only if clones are seen in the field. **Decided 2026-11-09 (Geoff): ship Chapter 1 as written. Condition: if no permanent fix follows, that must be stated in writing (DECISIONS.md and the release notes), not left silent. Tracked on the TODO Watch List.**
 2. **F15 share heuristic.** Option: when an item has both a URL and text, save a link and use the text as the title unless the host is Safari-style selection (text longer than about 200 characters or multi-line). Needs device captures from 3 or 4 real apps first.
 3. **F17 import policy.** Recommendation: skip a record when the existing one has a later `modifiedAt`, and never apply a link record to a non-link `id`. Small, but it changes restore semantics.
 4. **F21 `modifiedAt` on open.** Recommendation: stop the bump. One test changes.

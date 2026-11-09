@@ -13,6 +13,8 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 - [ ] **Scope the first Siri and Shortcuts actions.** Choose from saving a link, finding bookmarks, opening a collection, and showing favorites or forgotten items; define indexing and link-sharing behavior. Geoff approved scoping on 2026-11-07, not an implementation bundle, version, or date; the starter ideas remain in Backlog.
 
+- [ ] **Fix the 2026-11-09 adversarial review findings.** 24 findings, three chapters, one branch each: data loss, then previews/purge/purchase, then UI traps. Geoff approved subagent-driven execution on 2026-11-09. See the [plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md).
+
 Clipboard capture has no demonstrated gap.
 
 ## Done — v1.1.0 (merged to `main` 2026-11-06)
@@ -61,6 +63,8 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 ## Watch List
 
 - [ ] **Repeat iPad Pro resize comparison after the next iPadOS beta update.** On iPad Pro 11-inch M5 with 27.3 Developer Beta, Files and Settings show similar movement to Tucked 1.1.0 (14). Geoff agrees to classify this as suspected iPadOS behavior and leave app code unchanged (2026-11-04). Record the new OS build and compare the same window drags. See [current evidence](docs/verification/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
+
+- [ ] **Decide the permanent fix for identical clone pairs (review finding F1).** Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`. The Chapter 1 fix stops Tucked from deleting them, but both copies stay visible until the user deletes one. A clean merge needs a new synced field and a Production CloudKit deploy. Geoff accepted the interim fix on 2026-11-09 on one condition: if no permanent fix follows, record that as a decision in DECISIONS.md and say it in the release notes. Trigger: the release that ships Chapter 1, or the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
 
 ## Backlog
 
