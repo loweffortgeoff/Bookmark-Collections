@@ -10,6 +10,14 @@
 
 **Spec:** The Findings section of this file. Evidence is code reading at `9b39d7d` unless a row says "run".
 
+## Resume here (written 2026-11-09, end of session 1)
+
+1. Check that Chapter 1 is merged: `git branch --merged main` lists `fix/review-data-loss`. If it is not, stop and ask Geoff (he runs the Mac UI suite, merges, and pushes).
+2. Branch `fix/review-enrichment-purchase` from the merged `main`. Start at Task 2.1.
+3. Fold these small Chapter 1 leftovers into Task 2.1's commit set: reword the comment at `JSONImportPreflight.swift:56-58` (reconcile now keeps clones); add a test that a clone-only group with different titles is not written.
+4. Lessons from session 1: keep rules that run on every device a function of the record set, never of fetch order or a late-syncing field. Give each reviewer the multi-device invariant in the brief. Pass xcodebuild flags inline; a flags variable is not word-split in zsh.
+5. The per-session ledger is `.superpowers/sdd/2026-11-09-adversarial-review-fixes/progress.md` (git-ignored; may be gone). Git history and this file are the record.
+
 ## Global Constraints
 
 - iOS 18.0 and macOS 15.0 deployment targets. No third-party dependencies.
