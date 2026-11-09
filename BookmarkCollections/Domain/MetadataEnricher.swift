@@ -70,7 +70,10 @@ struct MetadataEnricher {
         }
         do {
             let metadata = try await provider.metadata(for: url)
-            if let title = metadata.title, !title.isEmpty {
+            // A title the user typed, or one restored from an import, wins
+            // over the page's own title.
+            if bookmark.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               let title = metadata.title, !title.isEmpty {
                 bookmark.title = title
             }
             if !metadata.domain.isEmpty {

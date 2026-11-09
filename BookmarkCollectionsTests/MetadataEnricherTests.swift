@@ -113,6 +113,53 @@ final class MetadataEnricherTests: XCTestCase {
         XCTAssertEqual(bookmark.metadataState, .ready)
     }
 
+    func testEnrichmentKeepsAnExistingTitle() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = try makeBookmark(in: container)
+        bookmark.title = "My Title"
+        try container.mainContext.save()
+        let provider = StubMetadataProvider(results: [
+            .success(LinkMetadata(title: "Page Title", domain: "example.com"))
+        ])
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.enrichPending(limit: 1)
+
+        XCTAssertEqual(bookmark.title, "My Title")
+        XCTAssertEqual(bookmark.metadataState, .ready)
+    }
+
+    func testRefreshKeepsAnExistingTitle() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = try makeBookmark(in: container)
+        bookmark.title = "My Title"
+        try container.mainContext.save()
+        let provider = StubMetadataProvider(results: [
+            .success(LinkMetadata(title: "Page Title", domain: "example.com"))
+        ])
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.refresh(bookmark)
+
+        XCTAssertEqual(bookmark.title, "My Title")
+        XCTAssertEqual(bookmark.metadataState, .ready)
+    }
+
+    func testEnrichmentFillsAWhitespaceOnlyTitle() async throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let bookmark = try makeBookmark(in: container)
+        bookmark.title = "  \n"
+        try container.mainContext.save()
+        let provider = StubMetadataProvider(results: [
+            .success(LinkMetadata(title: "Page Title", domain: "example.com"))
+        ])
+        let enricher = MetadataEnricher(context: container.mainContext, provider: provider)
+
+        try await enricher.refresh(bookmark)
+
+        XCTAssertEqual(bookmark.title, "Page Title")
+    }
+
     func testPendingEnrichmentRespectsLimit() async throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         _ = try makeBookmark(in: container, path: "one")
