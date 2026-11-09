@@ -60,6 +60,15 @@
 
 ## Chapter 1 — Data loss (branch `fix/review-data-loss`)
 
+> **Chapter 1 status (2026-11-09):** built on `fix/review-data-loss`, commits `7f3e610`..`7770209`. Not merged. Review changed two rules in Task 1.1; the text below is the original and the rule as built is here:
+>
+> - **Canonical** is always the earliest record by `createdAt`, then `id`. It is never chosen by `deletedAt`: that field changes and syncs late, so two devices could pick different survivors.
+> - **Survivors** are the canonical and its clones (same `id` and `createdAt`). Every other record in the group is hard-deleted, and the merged values go to every survivor.
+> - **A group of clones only is left alone.** No merge, no revive, no save. A copy the user deletes stays deleted.
+> - **Revive:** `deletedAt` is cleared on the survivors only when none of them is active and a record removed from the group was active.
+> - **Preflight** counts a link group as 1 when any member is active. At 10 active, a JSON import of an active copy of a deleted link now stops at the free limit; in 1.1.0 it reported success and left the link deleted.
+> - **Known limits, accepted:** an import updates one copy of a snippet clone pair; the preflight counts an equal-id pair once, so a free user who holds clone pairs can pass the cap by that number.
+
 ### Task 1.1: Reconcile never guesses and never keeps a deleted canonical
 
 **Files:**
@@ -186,7 +195,7 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 - Modify: `BookmarkCollections/BookmarkCollectionsApp.swift:59-67`
 - Test: `BookmarkCollectionsTests/RecentlyDeletedTests.swift` (the repository method is already covered; no new test)
 
-- [ ] **Step 1: Call `try? repository.purgeExpiredDeleted()` in the activation task, before `reconcileDuplicates()`.**
+- [ ] **Step 1: Call `try? repository.purgeExpiredDeleted()` in the activation task, after `reconcileDuplicates()`, and make the purge skip any link whose normalized URL also has an active record.** Chapter 1 review found a race otherwise: one device purges a just-expired deleted copy while another revives it and deletes the active copy, and both are gone after sync. Add `testPurgeSkipsDeletedLinkWithAnActiveCopy` to `RecentlyDeletedTests`.
 - [ ] **Step 2: Run** `RecentlyDeletedTests`. Build both schemes.
 - [ ] **Step 3: Commit** `Purge Recently Deleted items after 30 days`.
 
@@ -266,7 +275,7 @@ func testUserEnteredAddsHTTPS() {
 **Files:** Modify `Features/Bookmark/SnippetEditorView.swift:122-128`, `Features/Bookmark/AddBookmarkView.swift:64-69`, `Features/Library/LibraryRootView.swift:100-113,300-336`
 
 - [ ] **Step 1: In both editors, present `PaywallView()` from a local `@State private var showsPaywall` `.sheet`** in place of `onPaywall()`. The editor stays under it with its text. Keep the `onPaywall` parameter for Settings.
-- [ ] **Step 2: In `commandActions`, when `sheet != nil` pass `selectedBookmark: nil`, `canDeleteSelected: false`, and make `addLink`, `newSnippet`, `newCollection` no-ops.** This also closes F16.
+- [ ] **Step 2: In `commandActions`, when `sheet != nil` pass `selectedBookmark: nil`, `canDeleteSelected: false`, and make `addLink`, `newSnippet`, `newCollection` no-ops.** This also closes F16. In `visibleCommandBookmark`, match by `persistentModelID`, not `id`, so a command on one clone cannot act on the other.
 - [ ] **Step 3: `consumeMenuBarRequest`: return without `take()` while `sheet` is `.snippetEditor`, `.editBookmark`, or `.addBookmark`.** The window still comes forward.
 - [ ] **Step 4: Check F16 on the Mac mini before and after:** open a snippet, press Cmd+Delete in the text, close, look in Recently Deleted. Record the result in the commit body.
 - [ ] **Step 5: Run** `BookmarkCollectionsUITests/PaywallFlowAuditTests` and `MacCommandSharingUITests`. Commit `Keep editor drafts when the paywall or a menu command appears`.

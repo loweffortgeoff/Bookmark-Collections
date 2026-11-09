@@ -4,7 +4,17 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
-Nothing yet.
+### Review fixes, Chapter 1: data loss (branch `fix/review-data-loss`, not merged)
+
+From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1 to F5).
+
+- Fixed: the same JSON backup imported on two devices no longer makes each device delete the other's copy of every link. Identical copies now stay; duplicate cleanup leaves them alone.
+- Fixed: JSON import no longer crashes when the library holds two records with the same id.
+- Fixed: duplicate cleanup no longer keeps a deleted record over an active copy. The earliest record stays and becomes active again.
+- Fixed: fetching a preview no longer replaces a title. Restored and edited titles stay; Refresh Preview does not rename.
+- Fixed: text import and URL drop no longer clear the collection and Favorite of a link that is already saved.
+- Changed: at the free limit, a JSON import of an active copy of a deleted link now stops at the limit. In 1.1.0 it reported success and left the link deleted.
+- Known limit: identical copies from a double import stay visible until the user deletes one ([decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import)).
 
 ## Release history
 

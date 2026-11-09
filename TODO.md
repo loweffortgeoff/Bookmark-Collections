@@ -14,6 +14,9 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 - [ ] **Scope the first Siri and Shortcuts actions.** Choose from saving a link, finding bookmarks, opening a collection, and showing favorites or forgotten items; define indexing and link-sharing behavior. Geoff approved scoping on 2026-11-07, not an implementation bundle, version, or date; the starter ideas remain in Backlog.
 
 - [ ] **Fix the 2026-11-09 adversarial review findings.** 24 findings, three chapters, one branch each: data loss, then previews/purge/purchase, then UI traps. Geoff approved subagent-driven execution on 2026-11-09. See the [plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md).
+  - [ ] Chapter 1, data loss: built and reviewed on `fix/review-data-loss` (2026-11-09). Waits for Geoff: Mac UI suite, then merge.
+  - [ ] Chapter 2, previews, purge, purchase.
+  - [ ] Chapter 3, UI traps.
 
 Clipboard capture has no demonstrated gap.
 

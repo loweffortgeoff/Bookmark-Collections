@@ -4,6 +4,14 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-09 (Keep identical copies from a double import)
+
+- **Decision:** Duplicate cleanup never deletes a record it cannot tell apart from the one it keeps. Two links with the same `id` and `createdAt` both stay, and a group made only of such copies is not touched. The record kept in a group is always the earliest by `createdAt`, then `id`; `deletedAt` never decides it.
+- **Why:** In 1.1.0, importing one backup on two devices made each device hard-delete the other's copy, so the links vanished on both after sync. A rule that depends on local fetch order or on a field that syncs late cannot be safe across devices.
+- **Cost, accepted by Geoff as an interim fix:** the copies stay visible until the user deletes one. An import updates only one copy of a snippet pair. The free-limit preflight counts an equal-id pair once, so a free user who holds such pairs can pass the cap by that number.
+- **Condition (Geoff):** if no permanent fix follows, record that here and say it in the release notes. The permanent fix needs a new synced field and a Production CloudKit deploy; it is on the TODO Watch List.
+- **Alternative considered:** choose the survivor by "earliest active record". Rejected in review: two devices can see different `deletedAt` values and delete different records.
+
 ## 2026-11-06 (Ship 1.1.0 as build 15 with menu bar checks open)
 
 - **Decision:** Archive and upload 1.1.0 (15) from merged `main` for iOS and macOS. Accept the 2026-11-04 Mac mini test runs as the pre-merge suite. Ship with five Mac menu bar checks unchecked (Links and Images items, Open Tucked with the window open, Dock-click reopen, light mode, window close in a Release build).
