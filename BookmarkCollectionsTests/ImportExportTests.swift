@@ -28,6 +28,46 @@ final class ImportExportTests: XCTestCase {
         XCTAssertEqual(summary.failedLines, ["not a URL"])
     }
 
+    func testTextImportKeepsCollectionAndFavoriteOfExistingLink() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let reading = BookmarkCollection(name: "Reading", sortPosition: 0)
+        container.mainContext.insert(reading)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let saved = try createdBookmark(from: repository.save(
+            url: "https://example.com/kept",
+            collection: reading,
+            favorite: true
+        ))
+        let service = LibraryImportService(context: container.mainContext)
+
+        let summary = try service.importText("https://example.com/kept")
+
+        XCTAssertEqual(summary.duplicateCount, 1)
+        XCTAssertEqual(saved.collection?.id, reading.id)
+        XCTAssertTrue(saved.isFavorite)
+    }
+
+    func testRepeatSaveWithPreserveOrganizationKeepsCollectionAndFavorite() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let reading = BookmarkCollection(name: "Reading", sortPosition: 0)
+        container.mainContext.insert(reading)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let saved = try createdBookmark(from: repository.save(
+            url: "https://example.com/kept",
+            collection: reading,
+            favorite: true
+        ))
+
+        _ = try repository.save(url: "https://example.com/kept", preserveOrganization: true)
+        XCTAssertEqual(saved.collection?.id, reading.id)
+        XCTAssertTrue(saved.isFavorite)
+
+        // The Add Link form stays explicit: the default still overwrites.
+        _ = try repository.save(url: "https://example.com/kept")
+        XCTAssertNil(saved.collection)
+        XCTAssertFalse(saved.isFavorite)
+    }
+
     func testJSONRoundTripPreservesUserDataAndOrganization() throws {
         let source = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let collectionID = UUID(uuidString: "00000000-0000-0000-0000-000000000010")!

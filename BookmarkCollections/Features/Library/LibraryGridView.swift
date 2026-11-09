@@ -77,7 +77,7 @@ struct LibraryGridView: View {
                             do {
                                 let repository = BookmarkRepository(context: modelContext)
                                 for url in urls where ["http", "https"].contains(url.scheme?.lowercased()) {
-                                    _ = try repository.save(url: url.absoluteString)
+                                    _ = try repository.save(url: url.absoluteString, preserveOrganization: true)
                                 }
                                 return true
                             } catch {

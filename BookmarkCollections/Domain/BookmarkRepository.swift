@@ -48,9 +48,13 @@ struct BookmarkRepository {
     func save(
         url value: String,
         collection: BookmarkCollection? = nil,
-        favorite: Bool = false
+        favorite: Bool = false,
+        preserveOrganization: Bool = false
     ) throws -> SaveResult {
-        try saveLink(url: value, collection: collection, favorite: favorite)
+        try saveLink(
+            url: value, collection: collection, favorite: favorite,
+            preserveOrganization: preserveOrganization
+        )
     }
 
     /// Share capture may preserve organization while normal editor/import saves keep explicit defaults.

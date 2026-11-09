@@ -31,7 +31,7 @@ struct LibraryImportService {
             guard !line.isEmpty else { continue }
 
             do {
-                switch try repository.save(url: line) {
+                switch try repository.save(url: line, preserveOrganization: true) {
                 case .created:
                     summary.newCount += 1
                 case .updated:
