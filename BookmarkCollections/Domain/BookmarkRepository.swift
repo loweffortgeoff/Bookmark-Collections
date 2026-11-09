@@ -57,7 +57,7 @@ struct BookmarkRepository {
         )
     }
 
-    /// Share capture may preserve organization while normal editor/import saves keep explicit defaults.
+    /// Share capture, text import and URL drop may preserve organization; the Add Link form keeps explicit values.
     func saveSharedLink(
         url: String,
         collection: BookmarkCollection?,
@@ -276,30 +276,43 @@ struct BookmarkRepository {
                 }
                 return left.modifiedAt < right.modifiedAt
             } ?? canonical
+            // Same id and createdAt means a copy of the same record (one
+            // backup imported on two devices). createdAt is not changed by
+            // sync (JSON import can write it, with the same value for the same
+            // id). Deleting either copy would be a guess, and each device would
+            // delete the other's, so canonical and its clones all survive.
+            let survivors = orderedByCreation.filter {
+                $0 === canonical || ($0.id == canonical.id && $0.createdAt == canonical.createdAt)
+            }
+            let distinctMembers = orderedByCreation.filter { member in
+                !survivors.contains { $0 === member }
+            }
+            // A group of only clones has nothing to merge. Writing to it would
+            // revive a copy the user deleted.
+            guard !distinctMembers.isEmpty else { continue }
+
             let isFavorite = group.contains(where: \Bookmark.isFavorite)
             let lastOpenedAt = group.compactMap(\.lastOpenedAt).max()
-            let hasActiveMember = group.contains { $0.deletedAt == nil }
+            let survivorIsActive = survivors.contains { $0.deletedAt == nil }
+            let distinctIsActive = distinctMembers.contains { $0.deletedAt == nil }
             // Read before any delete below, since the winner may be deleted.
             let mergedTitle = mostRecentlyModified.title
             let mergedCollection = mostRecentlyModified.collection
             let mergedModifiedAt = mostRecentlyModified.modifiedAt
 
-            for member in orderedByCreation {
-                // Same id and createdAt means a copy of the same record (one
-                // backup imported on two devices). Deleting either one would
-                // be a guess, and each device would delete the other's copy.
-                let isClone = member.id == canonical.id && member.createdAt == canonical.createdAt
-                guard member === canonical || isClone else {
-                    context.delete(member)
-                    continue
-                }
-                member.isFavorite = isFavorite
-                member.title = mergedTitle
-                member.collection = mergedCollection
-                member.modifiedAt = mergedModifiedAt
-                member.lastOpenedAt = lastOpenedAt
-                // An active copy revives the canonical; all-deleted stays deleted.
-                if hasActiveMember { member.deletedAt = nil }
+            for member in distinctMembers {
+                context.delete(member)
+            }
+            for survivor in survivors {
+                survivor.isFavorite = isFavorite
+                survivor.title = mergedTitle
+                survivor.collection = mergedCollection
+                survivor.modifiedAt = mergedModifiedAt
+                survivor.lastOpenedAt = lastOpenedAt
+                // An active survivor decides: leave deletedAt alone, so a copy
+                // the user deleted stays deleted. Revive only when a deleted
+                // set would otherwise lose a copy that was still active.
+                if !survivorIsActive && distinctIsActive { survivor.deletedAt = nil }
             }
             changed = true
         }

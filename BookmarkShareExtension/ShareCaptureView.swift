@@ -52,7 +52,7 @@ struct ShareCaptureView: View {
             if model.capture != nil {
                 Picker("Collection", selection: $model.selectedCollectionID) {
                     Text("None").tag(nil as UUID?)
-                    ForEach(model.collections) { collection in
+                    ForEach(model.collections, id: \.persistentModelID) { collection in
                         Text(collection.name).tag(collection.id as UUID?)
                     }
                 }

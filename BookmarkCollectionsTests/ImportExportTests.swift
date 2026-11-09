@@ -630,6 +630,66 @@ final class ImportExportTests: XCTestCase {
         XCTAssertEqual(summary.newCount, 0)
     }
 
+    func testImportPrefersTheActiveCopyOfAnEqualIDPair() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let context = container.mainContext
+        let id = try XCTUnwrap(UUID(uuidString: "00000000-0000-0000-0000-0000000000B1"))
+        let url = "https://example.com/pair"
+        let created = Date(timeIntervalSince1970: 1)
+        let deletedCopy = Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created)
+        deletedCopy.deletedAt = Date(timeIntervalSince1970: 2)
+        context.insert(deletedCopy)
+        context.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        try context.save()
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "1970-01-01T00:00:03Z",
+          "collections": [],
+          "bookmarks": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000B1",
+              "urlString": "https://example.com/pair",
+              "normalizedURLString": "https://example.com/pair",
+              "title": "Pair",
+              "domain": "example.com",
+              "isFavorite": false,
+              "collectionID": null,
+              "createdAt": "1970-01-01T00:00:01Z",
+              "modifiedAt": "1970-01-01T00:00:02Z",
+              "deletedAt": null
+            }
+          ]
+        }
+        """
+
+        let summary = try LibraryImportService(context: context).importJSON(Data(json.utf8))
+
+        XCTAssertEqual(summary.duplicateCount, 1)
+        XCTAssertEqual(summary.restoredCount, 0)
+    }
+
+    func testTextImportRestoreKeepsOrganization() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let reading = BookmarkCollection(name: "Reading", sortPosition: 0)
+        container.mainContext.insert(reading)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let saved = try createdBookmark(from: repository.save(
+            url: "https://example.com/restored",
+            collection: reading,
+            favorite: true
+        ))
+        try repository.softDelete(saved)
+        let service = LibraryImportService(context: container.mainContext)
+
+        let summary = try service.importText("https://example.com/restored")
+
+        XCTAssertEqual(summary.restoredCount, 1)
+        XCTAssertNil(saved.deletedAt)
+        XCTAssertEqual(saved.collection?.id, reading.id)
+        XCTAssertTrue(saved.isFavorite)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult

@@ -35,7 +35,7 @@ struct CollectionPicker: View {
     private var picker: some View {
         Picker("Collection", selection: $selection) {
             Text("None").tag(nil as UUID?)
-            ForEach(collections) { collection in
+            ForEach(collections, id: \.persistentModelID) { collection in
                 Text(collection.name).tag(collection.id as UUID?)
             }
         }

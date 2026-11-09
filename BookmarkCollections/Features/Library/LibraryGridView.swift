@@ -131,7 +131,7 @@ struct LibraryGridView: View {
             }
             Menu {
                 Button("Unfiled") { moveSelection(to: nil) }
-                ForEach(collections) { collection in
+                ForEach(collections, id: \.persistentModelID) { collection in
                     Button(collection.name) { moveSelection(to: collection) }
                 }
             } label: {

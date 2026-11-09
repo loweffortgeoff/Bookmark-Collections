@@ -284,9 +284,14 @@ final class BookmarkRepositoryTests: XCTestCase {
         let created = Date(timeIntervalSince1970: 100)
         container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
         container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        let collection = BookmarkCollection(name: "Reading", sortPosition: 0)
+        container.mainContext.insert(collection)
+        let newest = Date(timeIntervalSince1970: 300)
         let other = Bookmark(urlString: url, normalizedURLString: url,
-                             createdAt: Date(timeIntervalSince1970: 200))
+                             createdAt: Date(timeIntervalSince1970: 200), modifiedAt: newest)
         other.isFavorite = true
+        other.title = "Newest"
+        other.collection = collection
         container.mainContext.insert(other)
         try container.mainContext.save()
 
@@ -296,6 +301,100 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(bookmarks.count, 2)
         XCTAssertFalse(bookmarks.contains { $0.id == other.id })
         XCTAssertTrue(bookmarks.allSatisfy(\.isFavorite))
+        XCTAssertTrue(bookmarks.allSatisfy { $0.title == "Newest" })
+        XCTAssertTrue(bookmarks.allSatisfy { $0.collection?.id == collection.id })
+        XCTAssertTrue(bookmarks.allSatisfy { $0.modifiedAt == newest })
+    }
+
+    func testReconcileLeavesADeletedCloneDeleted() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let url = "https://example.com/item"
+        let id = UUID()
+        let created = Date(timeIntervalSince1970: 100)
+        let deleted = Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created)
+        deleted.deletedAt = Date(timeIntervalSince1970: 150)
+        container.mainContext.insert(deleted)
+        container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        let bookmarks = try allBookmarks(in: container)
+        XCTAssertEqual(bookmarks.count, 2)
+        XCTAssertEqual(bookmarks.filter { $0.deletedAt != nil }.count, 1)
+    }
+
+    func testReconcileRevivesSurvivorsOnlyWhenNoneIsActive() throws {
+        let url = "https://example.com/item"
+        let created = Date(timeIntervalSince1970: 100)
+        let deletedAt = Date(timeIntervalSince1970: 150)
+
+        // Both clones deleted, a distinct later copy active: the survivors revive.
+        let reviveContainer = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let reviveID = UUID()
+        for _ in 0..<2 {
+            let clone = Bookmark(id: reviveID, urlString: url, normalizedURLString: url, createdAt: created)
+            clone.deletedAt = deletedAt
+            reviveContainer.mainContext.insert(clone)
+        }
+        reviveContainer.mainContext.insert(Bookmark(
+            urlString: url, normalizedURLString: url, createdAt: Date(timeIntervalSince1970: 200)
+        ))
+        try reviveContainer.mainContext.save()
+
+        try BookmarkRepository(context: reviveContainer.mainContext).reconcileDuplicates()
+
+        let revived = try allBookmarks(in: reviveContainer)
+        XCTAssertEqual(revived.count, 2)
+        XCTAssertTrue(revived.allSatisfy { $0.deletedAt == nil })
+
+        // One clone already active: the deleted clone stays deleted.
+        let keepContainer = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let keepID = UUID()
+        keepContainer.mainContext.insert(Bookmark(id: keepID, urlString: url, normalizedURLString: url, createdAt: created))
+        let deletedClone = Bookmark(id: keepID, urlString: url, normalizedURLString: url, createdAt: created)
+        deletedClone.deletedAt = deletedAt
+        keepContainer.mainContext.insert(deletedClone)
+        keepContainer.mainContext.insert(Bookmark(
+            urlString: url, normalizedURLString: url, createdAt: Date(timeIntervalSince1970: 200)
+        ))
+        try keepContainer.mainContext.save()
+
+        try BookmarkRepository(context: keepContainer.mainContext).reconcileDuplicates()
+
+        let kept = try allBookmarks(in: keepContainer)
+        XCTAssertEqual(kept.count, 2)
+        XCTAssertEqual(kept.filter { $0.deletedAt != nil }.count, 1)
+    }
+
+    func testReconcileSurvivorsDoNotDependOnInsertionOrder() throws {
+        let url = "https://example.com/item"
+        let id = UUID()
+        let otherID = UUID()
+        let created = Date(timeIntervalSince1970: 100)
+
+        func survivors(distinctFirst: Bool) throws -> [String] {
+            let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+            let context = container.mainContext
+            let distinct = Bookmark(id: otherID, urlString: url, normalizedURLString: url,
+                                    createdAt: Date(timeIntervalSince1970: 200))
+            if distinctFirst { context.insert(distinct) }
+            context.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+            context.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+            if !distinctFirst { context.insert(distinct) }
+            try context.save()
+            try BookmarkRepository(context: context).reconcileDuplicates()
+            return try allBookmarks(in: container)
+                .map { "\($0.id.uuidString)@\($0.createdAt.timeIntervalSince1970)" }
+                .sorted()
+        }
+
+        let forward = try survivors(distinctFirst: false)
+        let reversed = try survivors(distinctFirst: true)
+
+        XCTAssertEqual(forward.count, 2)
+        XCTAssertEqual(forward, reversed)
     }
 
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
