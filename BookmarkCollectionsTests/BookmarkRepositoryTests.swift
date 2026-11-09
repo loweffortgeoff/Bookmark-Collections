@@ -218,6 +218,64 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(try allBookmarks(in: container).first?.lastOpenedAt, openDate)
     }
 
+    func testReconcileKeepsActiveCopyWhenEarliestIsDeleted() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let url = "https://example.com/item"
+        let earliest = Bookmark(urlString: url, normalizedURLString: url,
+                                createdAt: Date(timeIntervalSince1970: 100))
+        earliest.deletedAt = Date(timeIntervalSince1970: 150)
+        let later = Bookmark(urlString: url, normalizedURLString: url,
+                             createdAt: Date(timeIntervalSince1970: 200))
+        container.mainContext.insert(earliest)
+        container.mainContext.insert(later)
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        let bookmarks = try allBookmarks(in: container)
+        XCTAssertEqual(bookmarks.count, 1)
+        XCTAssertNil(bookmarks.first?.deletedAt)
+        XCTAssertEqual(bookmarks.first?.id, later.id)
+    }
+
+    func testReconcileLeavesExactClonesUntouched() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let url = "https://example.com/item"
+        let id = UUID()
+        let created = Date(timeIntervalSince1970: 100)
+        container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        XCTAssertEqual(try allBookmarks(in: container).count, 2)
+    }
+
+    func testReconcileStillMergesClonesWithADistinctThirdRecord() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let url = "https://example.com/item"
+        let id = UUID()
+        let created = Date(timeIntervalSince1970: 100)
+        container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        container.mainContext.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+        let other = Bookmark(urlString: url, normalizedURLString: url,
+                             createdAt: Date(timeIntervalSince1970: 200))
+        other.isFavorite = true
+        container.mainContext.insert(other)
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        let bookmarks = try allBookmarks(in: container)
+        XCTAssertEqual(bookmarks.count, 2)
+        XCTAssertFalse(bookmarks.contains { $0.id == other.id })
+        XCTAssertTrue(bookmarks.allSatisfy(\.isFavorite))
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult

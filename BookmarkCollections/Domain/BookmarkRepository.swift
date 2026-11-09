@@ -262,22 +262,37 @@ struct BookmarkRepository {
                 }
                 return left.createdAt < right.createdAt
             }
-            guard let canonical = orderedByCreation.first else { continue }
+            // Canonical is the earliest active record, so a soft-deleted copy
+            // never outlives an active one. Fall back to the earliest overall.
+            guard let canonical = orderedByCreation.first(where: { $0.deletedAt == nil })
+                ?? orderedByCreation.first else { continue }
             let mostRecentlyModified = group.max { left, right in
                 if left.modifiedAt == right.modifiedAt {
                     return left.id.uuidString < right.id.uuidString
                 }
                 return left.modifiedAt < right.modifiedAt
             } ?? canonical
+            let isFavorite = group.contains(where: \Bookmark.isFavorite)
+            let lastOpenedAt = group.compactMap(\.lastOpenedAt).max()
+            // Read before any delete below, since the winner may be deleted.
+            let mergedTitle = mostRecentlyModified.title
+            let mergedCollection = mostRecentlyModified.collection
+            let mergedModifiedAt = mostRecentlyModified.modifiedAt
 
-            canonical.isFavorite = group.contains(where: \Bookmark.isFavorite)
-            canonical.title = mostRecentlyModified.title
-            canonical.collection = mostRecentlyModified.collection
-            canonical.modifiedAt = mostRecentlyModified.modifiedAt
-            canonical.lastOpenedAt = group.compactMap(\.lastOpenedAt).max()
-
-            for duplicate in orderedByCreation.dropFirst() {
-                context.delete(duplicate)
+            for member in orderedByCreation {
+                // Same id and createdAt means a copy of the same record (one
+                // backup imported on two devices). Deleting either one would
+                // be a guess, and each device would delete the other's copy.
+                let isClone = member.id == canonical.id && member.createdAt == canonical.createdAt
+                guard member === canonical || isClone else {
+                    context.delete(member)
+                    continue
+                }
+                member.isFavorite = isFavorite
+                member.title = mergedTitle
+                member.collection = mergedCollection
+                member.modifiedAt = mergedModifiedAt
+                member.lastOpenedAt = lastOpenedAt
             }
             changed = true
         }

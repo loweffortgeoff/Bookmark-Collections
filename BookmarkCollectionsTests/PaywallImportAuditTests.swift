@@ -279,7 +279,9 @@ final class PaywallImportAuditTests: XCTestCase {
         }
     }
 
-    func testDeletedCanonicalDuplicateRemainsDeletedWithoutChangingReconciliation() throws {
+    func testActiveImportOfDeletedURLConsumesASlotAtTheLimit() throws {
+        // Reconcile now keeps the active copy over a deleted earlier one, so the
+        // import needs a free slot instead of hiding behind the deleted record.
         try withLockedStore(10) { container in
             let context = container.mainContext
             let deleted = Bookmark(urlString: "https://audit.example/deleted",
@@ -288,13 +290,33 @@ final class PaywallImportAuditTests: XCTestCase {
             deleted.deletedAt = Date()
             context.insert(deleted)
             try context.save()
-            _ = try LibraryImportService(context: context).importJSON(encoded(links: [
+            XCTAssertThrowsError(try LibraryImportService(context: context).importJSON(encoded(links: [
                 link("https://audit.example/deleted", createdAt: Date(timeIntervalSince1970: 2_000))
-            ]))
+            ]))) {
+                XCTAssertEqual($0 as? BookmarkRepository.LimitError, .limitReached)
+            }
             let records = try context.fetch(FetchDescriptor<Bookmark>())
             XCTAssertEqual(records.count, 11)
             XCTAssertEqual(records.filter { $0.deletedAt == nil }.count, 10)
             XCTAssertNotNil(records.first { $0.id == deleted.id }?.deletedAt)
+        }
+    }
+
+    func testPreflightCountsActiveCopyWhenEarliestIsDeleted() throws {
+        try withLockedStore(9) { container in
+            let context = container.mainContext
+            let url = "https://audit.example/deleted"
+            let deleted = Bookmark(urlString: url, normalizedURLString: url,
+                                   createdAt: Date(timeIntervalSince1970: 1_000))
+            deleted.deletedAt = Date()
+            context.insert(deleted)
+            try context.save()
+
+            _ = try LibraryImportService(context: context).importJSON(encoded(links: [
+                link(url, createdAt: Date(timeIntervalSince1970: 2_000))
+            ]))
+
+            XCTAssertEqual(try context.fetch(FetchDescriptor<Bookmark>()).filter { $0.deletedAt == nil }.count, 10)
         }
     }
 

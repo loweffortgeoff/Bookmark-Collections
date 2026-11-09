@@ -55,9 +55,13 @@ enum JSONImportPreflight {
             }
 
             // BookmarkRepository.reconcileDuplicates keeps the earliest-created
-            // link (UUID breaks ties), including that canonical link's deletedAt.
+            // active link, or the earliest overall when none is active (UUID
+            // breaks ties). Items are keyed by id, so equal-id clones collapse.
             if let canonical = canonicalLinks[item.normalizedURL] {
-                let precedes = item.createdAt < canonical.createdAt ||
+                let isActive = item.deletedAt == nil
+                let canonicalIsActive = canonical.deletedAt == nil
+                let precedes = isActive != canonicalIsActive ? isActive :
+                    item.createdAt < canonical.createdAt ||
                     (item.createdAt == canonical.createdAt && item.id.uuidString < canonical.id.uuidString)
                 if precedes { canonicalLinks[item.normalizedURL] = item }
             } else {
