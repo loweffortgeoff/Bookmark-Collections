@@ -43,7 +43,7 @@ struct LibraryGridView: View {
                         let layout = GridLayout(width: proxy.size.width, isAccessibilitySize: dynamicTypeSize.isAccessibilitySize)
                         ScrollView {
                             LazyVGrid(columns: layout.columns, spacing: 18) {
-                                ForEach(visible) { bookmark in
+                                ForEach(visible, id: \.persistentModelID) { bookmark in
                                     ZStack(alignment: .topTrailing) {
                                         BookmarkCard(
                                             bookmark: bookmark,

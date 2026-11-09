@@ -320,6 +320,25 @@ final class PaywallImportAuditTests: XCTestCase {
         }
     }
 
+    func testPreflightDoesNotTrapOnEqualIDBookmarks() throws {
+        try withLockedStore(2) { container in
+            let context = container.mainContext
+            let id = UUID()
+            let url = "https://audit.example/clone"
+            let created = Date(timeIntervalSince1970: 1_000)
+            for _ in 0..<2 {
+                context.insert(Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created))
+            }
+            try context.save()
+
+            let summary = try LibraryImportService(context: context).importJSON(
+                encoded(links: [link("https://audit.example/unrelated")])
+            )
+
+            XCTAssertEqual(summary.newCount, 1)
+        }
+    }
+
     func testExistingSyncDuplicatesDoNotPermitGrowthBeyondTenUniqueItems() throws {
         try withLockedStore(10) { container in
             let context = container.mainContext

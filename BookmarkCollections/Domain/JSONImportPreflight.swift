@@ -4,19 +4,20 @@ import Foundation
 @MainActor
 enum JSONImportPreflight {
     private struct Item {
-        let id: UUID
         let kind: Bookmark.Kind
         let normalizedURL: String
-        let createdAt: Date
         let deletedAt: Date?
     }
 
     static func assertCanImport(_ document: BackupDocument, existingBookmarks: [Bookmark]) throws {
         guard PaywallConfiguration.isEnforced, !PurchaseAccess.isUnlocked else { return }
-        var items = Dictionary(uniqueKeysWithValues: existingBookmarks.map { bookmark in
-            (bookmark.id, Item(id: bookmark.id, kind: bookmark.kind,
-                               normalizedURL: bookmark.normalizedURLString,
-                               createdAt: bookmark.createdAt, deletedAt: bookmark.deletedAt))
+        // Equal-id records can exist after an import runs on two devices before
+        // sync. Keep the active one so it still counts toward the cap.
+        var items = Dictionary(existingBookmarks.map { bookmark in
+            (bookmark.id, Item(kind: bookmark.kind, normalizedURL: bookmark.normalizedURLString,
+                               deletedAt: bookmark.deletedAt))
+        }, uniquingKeysWith: { first, second in
+            first.deletedAt == nil || second.deletedAt != nil ? first : second
         })
         let activeCount = reconciledActiveCount(items)
 
@@ -24,15 +25,13 @@ enum JSONImportPreflight {
         // changing an existing item's kind; snippets cannot overwrite another kind.
         for record in document.bookmarks {
             guard let normalized = try? NormalizedURL(record.urlString) else { continue }
-            items[record.id] = Item(id: record.id, kind: items[record.id]?.kind ?? .link,
-                                    normalizedURL: normalized.string,
-                                    createdAt: record.createdAt, deletedAt: record.deletedAt)
+            items[record.id] = Item(kind: items[record.id]?.kind ?? .link,
+                                    normalizedURL: normalized.string, deletedAt: record.deletedAt)
         }
         for record in document.snippets {
             guard !record.body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { continue }
             if let existing = items[record.id], existing.kind != .text { continue }
-            items[record.id] = Item(id: record.id, kind: .text, normalizedURL: "",
-                                    createdAt: record.createdAt, deletedAt: record.deletedAt)
+            items[record.id] = Item(kind: .text, normalizedURL: "", deletedAt: record.deletedAt)
         }
 
         let finalActiveCount = reconciledActiveCount(items)

@@ -539,6 +539,57 @@ final class ImportExportTests: XCTestCase {
         )
     }
 
+    func testImportDoesNotTrapWhenLibraryHoldsEqualIDRecords() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let context = container.mainContext
+        let snippetID = try XCTUnwrap(UUID(uuidString: "00000000-0000-0000-0000-0000000000A1"))
+        let collectionID = try XCTUnwrap(UUID(uuidString: "00000000-0000-0000-0000-0000000000A2"))
+        let created = Date(timeIntervalSince1970: 1)
+        for _ in 0..<2 {
+            let clone = Bookmark(id: snippetID, urlString: "", normalizedURLString: "", createdAt: created)
+            clone.kind = .text
+            clone.snippetBody = "Cloned by an import on two devices"
+            context.insert(clone)
+            context.insert(BookmarkCollection(id: collectionID, name: "Cloned", sortPosition: 0, createdAt: created))
+        }
+        try context.save()
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "1970-01-01T00:00:03.000Z",
+          "collections": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000A2",
+              "name": "Cloned",
+              "sortPosition": 0,
+              "createdAt": "1970-01-01T00:00:01.000Z",
+              "modifiedAt": "1970-01-01T00:00:01.000Z"
+            }
+          ],
+          "bookmarks": [],
+          "snippets": [
+            {
+              "id": "00000000-0000-0000-0000-0000000000A1",
+              "title": "Cloned",
+              "body": "Cloned by an import on two devices",
+              "sourceUrl": null,
+              "isFavorite": false,
+              "collectionID": "00000000-0000-0000-0000-0000000000A2",
+              "createdAt": "1970-01-01T00:00:01.000Z",
+              "modifiedAt": "1970-01-01T00:00:01.000Z",
+              "deletedAt": null,
+              "lastOpenedAt": null
+            }
+          ]
+        }
+        """
+
+        let summary = try LibraryImportService(context: context).importJSON(Data(json.utf8))
+
+        XCTAssertEqual(summary.duplicateCount, 1)
+        XCTAssertEqual(summary.newCount, 0)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult

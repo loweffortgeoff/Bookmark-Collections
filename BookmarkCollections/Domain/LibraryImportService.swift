@@ -71,7 +71,9 @@ struct LibraryImportService {
         let existingBookmarks = try context.fetch(FetchDescriptor<Bookmark>())
         try JSONImportPreflight.assertCanImport(document, existingBookmarks: existingBookmarks)
         let existingCollections = try context.fetch(FetchDescriptor<BookmarkCollection>())
-        var collectionsByID = Dictionary(uniqueKeysWithValues: existingCollections.map { ($0.id, $0) })
+        // Equal-id records can exist after an import runs on two devices before sync.
+        var collectionsByID = Dictionary(existingCollections.map { ($0.id, $0) },
+                                         uniquingKeysWith: { first, _ in first })
 
         for record in document.collections {
             let collection: BookmarkCollection
@@ -94,7 +96,10 @@ struct LibraryImportService {
             collection.modifiedAt = record.modifiedAt
         }
 
-        var bookmarksByID = Dictionary(uniqueKeysWithValues: existingBookmarks.map { ($0.id, $0) })
+        var bookmarksByID = Dictionary(existingBookmarks.map { ($0.id, $0) },
+                                       uniquingKeysWith: { first, second in
+            first.deletedAt == nil || second.deletedAt != nil ? first : second
+        })
         var bookmarksByNormalizedURL = Dictionary(
             grouping: existingBookmarks,
             by: \Bookmark.normalizedURLString

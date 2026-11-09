@@ -32,7 +32,7 @@ struct CollectionListView: View {
                 if collections.isEmpty {
                     Button("Create Collection", systemImage: "folder.badge.plus", action: onCreate)
                 } else {
-                    ForEach(Array(collections.enumerated()), id: \.element.id) { index, collection in
+                    ForEach(Array(collections.enumerated()), id: \.element.persistentModelID) { index, collection in
                         let destination = LibraryDestination.collection(collection.id)
                         destinationRow(
                             destination,
