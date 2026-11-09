@@ -262,10 +262,10 @@ struct BookmarkRepository {
                 }
                 return left.createdAt < right.createdAt
             }
-            // Canonical is the earliest active record, so a soft-deleted copy
-            // never outlives an active one. Fall back to the earliest overall.
-            guard let canonical = orderedByCreation.first(where: { $0.deletedAt == nil })
-                ?? orderedByCreation.first else { continue }
+            // Canonical is the earliest record. deletedAt is mutable and syncs
+            // late, so it must never choose the canonical: two devices could
+            // pick different ones and delete both.
+            guard let canonical = orderedByCreation.first else { continue }
             let mostRecentlyModified = group.max { left, right in
                 if left.modifiedAt == right.modifiedAt {
                     return left.id.uuidString < right.id.uuidString
@@ -274,6 +274,7 @@ struct BookmarkRepository {
             } ?? canonical
             let isFavorite = group.contains(where: \Bookmark.isFavorite)
             let lastOpenedAt = group.compactMap(\.lastOpenedAt).max()
+            let hasActiveMember = group.contains { $0.deletedAt == nil }
             // Read before any delete below, since the winner may be deleted.
             let mergedTitle = mostRecentlyModified.title
             let mergedCollection = mostRecentlyModified.collection
@@ -293,6 +294,8 @@ struct BookmarkRepository {
                 member.collection = mergedCollection
                 member.modifiedAt = mergedModifiedAt
                 member.lastOpenedAt = lastOpenedAt
+                // An active copy revives the canonical; all-deleted stays deleted.
+                if hasActiveMember { member.deletedAt = nil }
             }
             changed = true
         }

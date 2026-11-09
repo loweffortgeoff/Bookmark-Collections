@@ -47,27 +47,18 @@ enum JSONImportPreflight {
 
     private static func reconciledActiveCount(_ items: [UUID: Item]) -> Int {
         var activeCount = 0
-        var canonicalLinks: [String: Item] = [:]
+        var activeLinkURLs: Set<String> = []
         for item in items.values {
             guard item.kind == .link, !item.normalizedURL.isEmpty else {
                 if item.deletedAt == nil { activeCount += 1 }
                 continue
             }
 
-            // BookmarkRepository.reconcileDuplicates keeps the earliest-created
-            // active link, or the earliest overall when none is active (UUID
-            // breaks ties). Items are keyed by id, so equal-id clones collapse.
-            if let canonical = canonicalLinks[item.normalizedURL] {
-                let isActive = item.deletedAt == nil
-                let canonicalIsActive = canonical.deletedAt == nil
-                let precedes = isActive != canonicalIsActive ? isActive :
-                    item.createdAt < canonical.createdAt ||
-                    (item.createdAt == canonical.createdAt && item.id.uuidString < canonical.id.uuidString)
-                if precedes { canonicalLinks[item.normalizedURL] = item }
-            } else {
-                canonicalLinks[item.normalizedURL] = item
-            }
+            // BookmarkRepository.reconcileDuplicates keeps one link per URL and
+            // revives it when any copy is active, so a group costs one slot
+            // exactly when any member is active.
+            if item.deletedAt == nil { activeLinkURLs.insert(item.normalizedURL) }
         }
-        return activeCount + canonicalLinks.values.lazy.filter { $0.deletedAt == nil }.count
+        return activeCount + activeLinkURLs.count
     }
 }

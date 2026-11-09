@@ -218,7 +218,29 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(try allBookmarks(in: container).first?.lastOpenedAt, openDate)
     }
 
-    func testReconcileKeepsActiveCopyWhenEarliestIsDeleted() throws {
+    func testReconcileLeavesAllDeletedGroupDeleted() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let url = "https://example.com/item"
+        let earliest = Bookmark(urlString: url, normalizedURLString: url,
+                                createdAt: Date(timeIntervalSince1970: 100))
+        earliest.deletedAt = Date(timeIntervalSince1970: 150)
+        let later = Bookmark(urlString: url, normalizedURLString: url,
+                             createdAt: Date(timeIntervalSince1970: 200))
+        later.deletedAt = Date(timeIntervalSince1970: 250)
+        container.mainContext.insert(earliest)
+        container.mainContext.insert(later)
+        try container.mainContext.save()
+
+        try repository.reconcileDuplicates()
+
+        let bookmarks = try allBookmarks(in: container)
+        XCTAssertEqual(bookmarks.count, 1)
+        XCTAssertEqual(bookmarks.first?.id, earliest.id)
+        XCTAssertNotNil(bookmarks.first?.deletedAt)
+    }
+
+    func testReconcileRevivesEarliestWhenALaterCopyIsActive() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let repository = BookmarkRepository(context: container.mainContext)
         let url = "https://example.com/item"
@@ -236,7 +258,7 @@ final class BookmarkRepositoryTests: XCTestCase {
         let bookmarks = try allBookmarks(in: container)
         XCTAssertEqual(bookmarks.count, 1)
         XCTAssertNil(bookmarks.first?.deletedAt)
-        XCTAssertEqual(bookmarks.first?.id, later.id)
+        XCTAssertEqual(bookmarks.first?.id, earliest.id)
     }
 
     func testReconcileLeavesExactClonesUntouched() throws {
