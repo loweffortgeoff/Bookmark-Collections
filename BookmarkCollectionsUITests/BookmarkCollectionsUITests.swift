@@ -105,6 +105,21 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("selection.delete").waitForExistence(timeout: 2))
     }
 
+    func testSelectionModeEndsWhenDestinationChanges() {
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.allItems"))
+        let selectButton = identified("selection.toggle")
+        XCTAssertTrue(selectButton.waitForExistence(timeout: 5))
+        activate(selectButton)
+        activate(identified("bookmark.seeded-active"))
+        XCTAssertTrue(identified("selection.delete").waitForExistence(timeout: 2))
+
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.recentlyDeleted"))
+        XCTAssertTrue(identified("library.recentlyDeleted").waitForExistence(timeout: 5))
+        XCTAssertFalse(identified("selection.delete").exists)
+    }
+
     func testBookmarkCardExposesOrganizationAndFavoriteState() {
         showSidebarIfNeeded()
         activate(destinationElement("destination.allItems"))

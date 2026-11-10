@@ -98,8 +98,16 @@ struct LibraryGridView: View {
                 selectionBar
             }
         }
+        // Selection belongs to the view it was made in. Carried into Recently
+        // Deleted, the action bar stayed with no Done button, and bulk Delete
+        // there re-stamped the deletion date.
+        .onChange(of: destination) {
+            isSelecting = false
+            selection.removeAll()
+        }
         .toolbar {
-            if destination != .recentlyDeleted && !visible.isEmpty {
+            // Done shows whenever selection is on, so there is always a way out.
+            if isSelecting || (destination != .recentlyDeleted && !visible.isEmpty) {
                 ToolbarItem(placement: .primaryAction) {
                     Button(isSelecting ? "Done" : "Select") {
                         isSelecting.toggle()
@@ -116,7 +124,10 @@ struct LibraryGridView: View {
     }
 
     private var selectionBar: some View {
-        LazyVGrid(
+        // Bulk Share sends web addresses only. With none in the selection
+        // the share sheet would open empty, so the control is disabled.
+        let shareURLs = selectedBookmarks.compactMap { URL(string: $0.urlString) }
+        return LazyVGrid(
             columns: Array(
                 repeating: GridItem(.flexible(minimum: 44), spacing: 0),
                 count: dynamicTypeSize.isAccessibilitySize ? 3 : 5
@@ -137,9 +148,10 @@ struct LibraryGridView: View {
             } label: {
                 Label("Move", systemImage: "folder")
             }
-            ShareLink(items: selectedBookmarks.compactMap { URL(string: $0.urlString) }) {
+            ShareLink(items: shareURLs) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
+            .disabled(shareURLs.isEmpty)
             Button("Delete", systemImage: "trash", role: .destructive) {
                 let now = Date()
                 updateSelection {
