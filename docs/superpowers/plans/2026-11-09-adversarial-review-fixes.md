@@ -343,6 +343,8 @@ func testUserEnteredAddsHTTPS() {
 
 **Start:** local branch `main`; open this section and [TODO → Next](../../../TODO.md#next). Do not resume implementation on the retained `dev/chapter4-import-edit-dates` branch.
 
+> **Status (2026-11-10):** the first task and the Mac Release menu checks are done, and all pass. Unlock row and zoom: iPhone 18 Pro, iOS 27.2 (the MacBook has no iOS 27.0 runtime), `93431c8`, evidence in `~/Documents/Dev Workstation/Visual Verification/Tucked/2026-11-10-review-fix-acceptance/`. Menu bar: Geoff ran the checks at the MacBook on a local Release build of `93431c8`. Packaging acceptance is what remains. See [TODO → Next](../../../TODO.md#next).
+
 **First task:** visually inspect the import-summary Unlock row after a text/image import reaches the free limit on iPhone 18 Pro, iOS 27.0. Confirm the saved counts and paywall presentation; save evidence under `~/Documents/Dev Workstation/Visual Verification/Tucked/`. Then inspect image-viewer zoom. Chapter 3 has automated coverage, but these two flows were not visually inspected.
 
 **Then:** finish the still-open [Mac Release menu checks](../../verification/2026-11-04-1.1.0-validation.md#a-local-checks-claude-no-upload). At packaging, disclose the accepted F1 clone-pair limit in release notes if the permanent fix is absent, and establish acceptance for the new candidate. Prior 1.1.0 TestFlight/device passes are historical, not passes for this candidate. No upload or release is authorized here.
