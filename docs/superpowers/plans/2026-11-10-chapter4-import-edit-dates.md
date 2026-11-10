@@ -7,6 +7,8 @@
 **Tech Stack:** Swift 6, SwiftData, XCTest; iOS 18 and macOS 15 minimum.
 **Spec:** Approved Chapter 4 F17 and F21 decisions in this session and `DECISIONS.md`.
 
+**Closeout (2026-11-10):** Geoff later authorized the local merge; `main` was fast-forwarded to `72b8260`. Not pushed. Implementation is complete; the [parent plan handoff](2026-11-09-adversarial-review-fixes.md#after-chapter-4--next-session) names the next session’s first task.
+
 ## Constraints and review focus
 
 - Work on `dev/chapter4-import-edit-dates`; no schema change, merge, or push.

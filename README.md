@@ -13,7 +13,7 @@ The project has no third-party dependencies. Reads and writes use the local Swif
 
 ## Project status
 
-iOS 1.0.1 is live, and iOS 1.0.2 (13) is waiting for review per Geoff on 2026-11-03. Mac 1.0 was approved on 2026-11-02. The next shared version is 1.1.0. See [TODO](TODO.md) for the current queue and [the verification matrix](docs/verification/cloudkit-device-matrix.md) for dated evidence. The October 24 acceptance package is retired, not passed.
+Geoff confirmed 1.1.0 is live on iOS and macOS on 2026-11-07. Review-fix Chapters 1–4 are merged into local `main` as of 2026-11-10; Chapter 4 was fast-forwarded at `72b8260` and was not pushed. Version 1.1.1 is recommended for this fixes-only update; version settings are unchanged. See [the next-session starting point](TODO.md#next) and [verification records](docs/verification/cloudkit-device-matrix.md). The October 24 acceptance package is retired, not passed.
 
 ## Requirements
 

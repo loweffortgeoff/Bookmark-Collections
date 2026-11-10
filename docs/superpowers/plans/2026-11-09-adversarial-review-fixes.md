@@ -4,20 +4,21 @@
 
 **Goal:** Fix the data-loss, crash, and dead-end bugs found in the 2026-11-09 adversarial review of Tucked 1.1.0 (`main` at `9b39d7d`).
 
-**Architecture:** Three chapters, one branch each, in severity order. Each chapter is merge-ready alone. No schema change, no new dependency. Chapter 4 holds decisions for Geoff and has no code.
+**Architecture:** Three initial implementation chapters in severity order, followed by Chapter 4 decisions. Geoff approved the F17/F21 implementation in Chapter 4 on 2026-11-10. No schema change or new dependency.
 
 **Tech Stack:** Swift 6, SwiftUI, SwiftData + CloudKit, StoreKit 2, XCTest.
 
 **Spec:** The Findings section of this file. Evidence is code reading at `9b39d7d` unless a row says "run".
 
-## Resume here (updated 2026-11-10, Chapter 3)
+## Resume here (updated 2026-11-10, Chapter 4 merged)
 
 1. Chapters 1 and 2 are merged locally to `main` at `bffbf0b` (fast-forward, 2026-11-10, with Geoff’s authorization). No push performed.
 2. Chapter 2 merge gate at `bffbf0b`, Mac mini, macOS 27.2, Xcode 27.2, scheme `BookmarkCollections`: Mac unit 254 cases (15 skipped), Mac UI 17 (1 skipped), iPhone 18 Pro iOS 27.0 unit 250 (15 skipped), UI 18 (1 skipped). Zero failures. The Mac UI suite ran after Geoff authorized Automation Mode.
 3. Chapter 3 is built on `fix/review-ui-traps`, `456b450`..`db57eeb`. All six tasks are done. Code review found three Important items; `db57eeb` fixes them.
 4. Chapter 3 exit suites at `db57eeb`, same machine: Mac unit 261 (15 skipped), Mac UI 19 (1 skipped), iPhone unit 257 (15 skipped), iPhone UI 19 (1 skipped). Zero failures. Both simulator schemes build.
 5. Chapter 3 is merged locally to `main` at `bf083a4` (fast-forward, 2026-11-10, with Geoff’s authorization). Not pushed; Geoff pushes `main`. The merged branches `fix/review-data-loss` and `fix/review-enrichment-purchase` are deleted, local and on `origin`. No visual check of the import-summary Unlock row or the image viewer was done; tests and builds only.
-6. Geoff approved Chapter 4 F17 and F21, then authorized implementation on 2026-11-10. The changes are on `dev/chapter4-import-edit-dates`; no merge or push is authorized. See the [implementation plan](2026-11-10-chapter4-import-edit-dates.md).
+6. Chapter 4 F17/F21 is merged into local `main` by fast-forward at `72b8260` with Geoff’s approval (2026-11-10). No push occurred. The merged app/test source matches `92cb26a`, which passed all four full suites and the signed/simulator builds. See [verification](../../verification/2026-11-10-review-chapter4.md).
+7. All approved numbered chapters are complete; there is no Chapter 5. Start the next session at [After Chapter 4](#after-chapter-4--next-session); deferred findings remain open in TODO rather than forming another approved implementation chapter.
 
 ## Global Constraints
 
@@ -333,7 +334,19 @@ func testUserEnteredAddsHTTPS() {
 
 1. **F1 full fix.** Chapter 1 stops the loss but leaves clone pairs visible; the user deletes one by hand. A clean merge needs a synced per-record token (schema change plus Production CloudKit deploy). Recommendation: ship Chapter 1, add the token only if clones are seen in the field. **Decided 2026-11-09 (Geoff): ship Chapter 1 as written. Condition: if no permanent fix follows, that must be stated in writing (DECISIONS.md and the release notes), not left silent. Tracked on the TODO Watch List.**
 2. **F15 share heuristic.** Option: when an item has both a URL and text, save a link and use the text as the title unless the host is Safari-style selection (text longer than about 200 characters or multi-line). Needs device captures from 3 or 4 real apps first.
-3. **F17 import policy.** The newer-`modifiedAt` safeguard was approved and brought forward into Chapter 2 on 2026-11-09. **Decided 2026-11-10 (Geoff):** when a backup link has the same ID as an existing image or snippet, preserve the existing item, skip the incoming record, and report the conflict. Implemented on `dev/chapter4-import-edit-dates`, including capacity preflight; not merged or pushed.
-4. **F21 `modifiedAt` semantics.** **Decided 2026-11-10 (Geoff):** only user edits advance Date Modified, including collection changes. Opens update Last Opened only; metadata fetches leave Date Modified unchanged. Implemented on `dev/chapter4-import-edit-dates`; not merged or pushed. Existing dates are retained.
+3. **F17 import policy.** The newer-`modifiedAt` safeguard was approved and brought forward into Chapter 2 on 2026-11-09. **Decided 2026-11-10 (Geoff):** when a backup link has the same ID as an existing image or snippet, preserve the existing item, skip the incoming record, and report the conflict. Implemented with matching capacity preflight; merged into local `main` at `72b8260`, not pushed.
+4. **F21 `modifiedAt` semantics.** **Decided 2026-11-10 (Geoff):** only user edits advance Date Modified, including collection changes. Opens update Last Opened only; metadata fetches leave Date Modified unchanged. Restore keeps the latest Last Opened date. Merged into local `main` at `72b8260`, not pushed; existing edit dates are retained.
 5. **F24 extension CloudKit.** Try `cloudKit: false` in the extension on a device pair; the app exports the record on next launch. Only if Share storage errors return.
 6. **F22, F23, F20 pan.** Backlog.
+
+## After Chapter 4 — next session
+
+**Start:** local branch `main`; open this section and [TODO → Next](../../../TODO.md#next). Do not resume implementation on the retained `dev/chapter4-import-edit-dates` branch.
+
+**First task:** visually inspect the import-summary Unlock row after a text/image import reaches the free limit on iPhone 18 Pro, iOS 27.0. Confirm the saved counts and paywall presentation; save evidence under `~/Documents/Dev Workstation/Visual Verification/Tucked/`. Then inspect image-viewer zoom. Chapter 3 has automated coverage, but these two flows were not visually inspected.
+
+**Then:** finish the still-open [Mac Release menu checks](../../verification/2026-11-04-1.1.0-validation.md#a-local-checks-claude-no-upload). At packaging, disclose the accepted F1 clone-pair limit in release notes if the permanent fix is absent, and establish acceptance for the new candidate. Prior 1.1.0 TestFlight/device passes are historical, not passes for this candidate. No upload or release is authorized here.
+
+**Version recommendation:** 1.1.1, because the merged package repairs data handling, purchase recovery, and UI behavior without adding a new feature. No version setting has been changed.
+
+**Remaining review work:** F15 needs real host payloads before a classification rule is chosen; F22 URL drops, F23 export cleanup, and F20 zoomed-image panning remain [Backlog](../../../TODO.md#backlog). F1 clone handling and F24 Share storage remain conditional [Watch List](../../../TODO.md#watch-list) items. The wider backlog includes image-capable backup and imports, Siri/Shortcuts scoping, and later product ideas; these are separate from this fixes-only release.

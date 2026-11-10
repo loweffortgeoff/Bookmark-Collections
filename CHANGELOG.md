@@ -9,7 +9,7 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 - Fixed: JSON restore skips a link whose ID belongs to an existing image or snippet and reports the conflict. Skipped conflicts do not change the free-limit calculation.
 - Fixed: opening an item updates Last Opened without changing Date Modified. Preview fetches also preserve Date Modified; user edits and collection changes still advance it. Existing dates are retained.
 - Fixed: JSON restore keeps the latest Last Opened value for links and snippets, so a backup cannot erase a later open or return an opened item to Forgotten.
-- Source: `dev/chapter4-import-edit-dates`, not merged or pushed. Verification is recorded in the [Chapter 4 note](docs/verification/2026-11-10-review-chapter4.md).
+- Merged `dev/chapter4-import-edit-dates` into local `main` by fast-forward at `72b8260` with Geoff’s approval (2026-11-10). Not pushed. The merged app/test source matches the passing source; see [verification](docs/verification/2026-11-10-review-chapter4.md).
 
 ### Review fixes, Chapter 3: UI traps (merged to `main` locally 2026-11-10, not pushed)
 

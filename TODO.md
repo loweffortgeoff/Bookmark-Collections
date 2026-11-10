@@ -6,6 +6,8 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
+- [ ] **Next session: review-fix acceptance, proposed 1.1.1.** Start on local `main`; open [the plan handoff](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#after-chapter-4--next-session). First task: visually inspect the import-summary Unlock row on iPhone 18 Pro, iOS 27.0, and save evidence; then inspect image-viewer zoom. No Chapter 5 is planned.
+
 - [x] Chapter 2 staged two-device purge/restore check (2026-11-10): Geoff reports pass on iPhone 17 and iPhone 17 Pro, Build 15 / `126b913`; restored link appears in `Dev Work` on both. [Evidence](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09).
 
 **Release context (2026-11-07):** Geoff confirms 1.1.0 is live on iOS and macOS. The release/submission task is closed; the remaining menu bar checks below are still open.
@@ -15,7 +17,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 - [ ] **Scope the first Siri and Shortcuts actions.** Choose from saving a link, finding bookmarks, opening a collection, and showing favorites or forgotten items; define indexing and link-sharing behavior. Geoff approved scoping on 2026-11-07, not an implementation bundle, version, or date; the starter ideas remain in Backlog.
 
-- [ ] **Fix the 2026-11-09 adversarial review findings.** 24 findings, three chapters, one branch each: data loss, then previews/purge/purchase, then UI traps. Geoff approved subagent-driven execution on 2026-11-09. See the [plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md).
+- [x] **Implement the approved 2026-11-09 review-fix Chapters 1–4.** All approved code is merged into local `main`. Deferred findings remain in Backlog and Watch List; visual/release acceptance is separate. See the [plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md).
   - [x] Chapter 1, data loss: built and reviewed on `fix/review-data-loss` (2026-11-09). Mac unit suite passed 213 tests (13 skipped); Mac UI suite passed 17 tests (1 skipped), both with zero failures on Mac mini, macOS 27.2, Xcode 27.2. Merged locally to `main` at `411b8e8` with Geoff’s authorization on 2026-11-09.
   - [x] Chapter 2, previews, purge, purchase: implemented on `fix/review-enrichment-purchase`; final review passed; failure, no-product paywall, and live-preview visuals passed. Merged locally to `main` at `bffbf0b` with Geoff’s authorization on 2026-11-10, after all four full suites passed at that commit (Mac unit 254, Mac UI 17, iPhone unit 250, iPhone UI 18; zero failures). Not pushed. See [verification](docs/verification/2026-11-09-review-chapter2.md).
     - [x] Task 2.1 (2026-11-09) implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; live preview confirmation and full suites pass; the final URL guard passes 30 metadata tests on both platforms.
@@ -30,7 +32,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
     - [x] Task 3.5 (2026-11-10): text and image imports that stop at the free limit report what was saved (F18).
     - [x] Task 3.6 (2026-11-10): the image viewer decodes once (F20).
   - [x] Chapter 4 F17 policy (2026-11-10): Geoff chose to preserve an existing image or snippet when a backup link has the same ID; skip the incoming link and report the conflict.
-  - [x] Chapter 4 F17/F21 (2026-11-10): built on `dev/chapter4-import-edit-dates` (`aedc0c1`, `92cb26a`); incoming link ID conflicts preserve images/snippets, opens/metadata fetches preserve Date Modified, and restore keeps the latest Last Opened. Final Mac unit/UI 270/19 and iPhone unit/UI 266/19 cases, zero failures; 15 unit and one UI audit skip per platform. Signed iOS and both simulator scheme builds pass; review follow-up fixed. [Evidence](docs/verification/2026-11-10-review-chapter4.md). Not merged or pushed.
+  - [x] Chapter 4 F17/F21 (2026-11-10): built on `dev/chapter4-import-edit-dates` (`aedc0c1`, `92cb26a`), merged locally at `72b8260` with Geoff’s approval; not pushed. Incoming link ID conflicts preserve images/snippets, opens/metadata fetches preserve Date Modified, and restore keeps the latest Last Opened. Final Mac unit/UI 270/19 and iPhone unit/UI 266/19 cases, zero failures; 15 unit and one UI audit skip per platform. Signed iOS and both simulator scheme builds pass; review follow-up fixed. [Evidence](docs/verification/2026-11-10-review-chapter4.md).
 
 Clipboard capture has no demonstrated gap.
 
@@ -79,6 +81,8 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 
 ## Watch List
 
+- [ ] **Revisit Share extension CloudKit only if storage errors return (F24).** Capture the exact error and ShareStorage/ShareSave logs first; then assess the device-pair experiment in [Chapter 4](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen). No mirroring-policy change is approved.
+
 - [ ] **Repeat iPad Pro resize comparison after the next iPadOS beta update.** On iPad Pro 11-inch M5 with 27.3 Developer Beta, Files and Settings show similar movement to Tucked 1.1.0 (14). Geoff agrees to classify this as suspected iPadOS behavior and leave app code unchanged (2026-11-04). Record the new OS build and compare the same window drags. See [current evidence](docs/verification/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
 
 - [ ] **Decide the permanent fix for identical clone pairs (review finding F1).** Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`. The Chapter 1 fix stops Tucked from deleting them, but both copies stay visible until the user deletes one. A clean merge needs a new synced field and a Production CloudKit deploy. Geoff accepted the interim fix on 2026-11-09 on one condition: if no permanent fix follows, record that as a decision in DECISIONS.md and say it in the release notes. Trigger: the release that ships Chapter 1, or the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
@@ -86,6 +90,11 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 ## Backlog
 
 The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
+
+- **F15, Share URL/title classification:** capture payloads from 3–4 real host apps before choosing a heuristic. Preserve selected prose as snippets; implementation is not yet chosen.
+- **F22, URL drops:** handle an empty library, respect the current collection, and continue after a bad URL. Keep this separate from image drag-and-drop.
+- **F23, export cleanup:** use Tucked in filenames and the HTML title, and explain that image bookmarks are omitted. Image-capable backup and HTML import remain separate scope.
+- **F20, image viewer:** add panning while zoomed. The repeated-decode fix is already merged in Chapter 3.
 
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
 - Photos-picker in-app image import.

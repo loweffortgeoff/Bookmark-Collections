@@ -1,6 +1,6 @@
 # Review fixes, Chapter 4 — local verification
 
-Branch: `dev/chapter4-import-edit-dates`, based on `8a42175`. Final app/test source: `92cb26a`. No merge or push is authorized.
+Source branch: `dev/chapter4-import-edit-dates`, based on `8a42175`. Final app/test source: `92cb26a`. Geoff authorized the local merge on 2026-11-10; `main` was fast-forwarded to `72b8260`. No push occurred; the branch is retained.
 Machine: Mac mini (Mac18,5), macOS 27.2 (26B123), Xcode 27.2 (27B52). iPhone checks use only iPhone 18 Pro, iOS 27.0, UUID `204520A6-E5B5-447D-8A6B-028317014DD8`.
 
 ## Policies and regression evidence
@@ -27,6 +27,8 @@ Review rulings: preserving open history is part of the F21 correction, so restor
 | iPhone full UI suite | 19 | 1 | 0 | `build/chapter4/iphone-final-ui.xcresult` |
 
 All final suites ran after commit `92cb26a`; only documentation changed afterwards. The 15 unit skips and one UI skip per platform are the existing audit-only purchase cases. Each result bundle has a matching `.log`. The earlier full suites at `aedc0c1` also passed (269/265 unit cases and 19 UI cases per platform).
+
+Merge verification: `git diff 72b8260 main` was empty immediately after the fast-forward, and `git diff 92cb26a main -- BookmarkCollections BookmarkCollectionsTests BookmarkShareExtension BookmarkCollectionsUITests BookmarkCollections.xcodeproj` was empty. No tests were rerun solely for this identical-source merge.
 
 The signed generic iOS build and the `BookmarkCollections` and `BookmarkShareExtension` iPhone simulator builds pass at `92cb26a`. Logs under `build/chapter4/`: `ios-final-build.log`, `simulator-final-app-build.log`, and `simulator-final-extension-build.log`.
 
