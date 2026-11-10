@@ -4,6 +4,8 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+- Verification procedure corrected (2026-11-10): sync a recent deletion first, then age only the offline device’s copy. The original two-device purge attempt stopped during setup; Geoff reports the revised check passed on both physical iPhones at `126b913`, with the restored link in `Dev Work` (03:50 am).
+
 - Chapter 2 integrated checks (2026-11-09, Mac mini, macOS/Xcode 27.2): Mac unit/UI suites pass 253/17 cases; iPhone 18 Pro iOS 27.0 passes 249/18. Expected skips are 15 unit and one UI per platform; zero failures. Failure/success, no-product paywall, and live-preview visuals pass; the final URL guard passes 30 metadata tests per platform. [Evidence](docs/verification/2026-11-09-review-chapter2.md).
 
 ### Review fixes, Chapter 2: Task 2.4 (2026-11-09)

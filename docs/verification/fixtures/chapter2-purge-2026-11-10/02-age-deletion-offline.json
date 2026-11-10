@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "exportedAt": "2026-11-10T08:42:04Z",
+  "collections": [],
+  "snippets": [],
+  "bookmarks": [
+    {
+      "id": "AFFA5224-8E65-4172-96AA-ADB15E7EE317",
+      "urlString": "https://example.com/tucked-purge-test-affa5224-8e65-4172-96aa-adb15e7ee317",
+      "normalizedURLString": "https://example.com/tucked-purge-test-affa5224-8e65-4172-96aa-adb15e7ee317",
+      "title": "Chapter 2 staged purge test",
+      "domain": "example.com",
+      "isFavorite": false,
+      "createdAt": "2026-09-11T08:42:04Z",
+      "modifiedAt": "2026-11-09T08:42:04Z",
+      "deletedAt": "2026-09-26T08:42:04Z"
+    }
+  ]
+}

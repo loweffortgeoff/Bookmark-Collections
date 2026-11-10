@@ -1,14 +1,27 @@
 # CloudKit and Release Verification Matrix
 
-**Current acceptance:** [Tucked 1.1.0 validation](2026-11-04-1.1.0-validation.md) (started 2026-11-04). The Chapter 2 check below is pending; older sections retain historical evidence.
+**Current acceptance:** [Tucked 1.1.0 validation](2026-11-04-1.1.0-validation.md) (started 2026-11-04). Geoff reported the Chapter 2 check below passed on 2026-11-10; older sections retain historical evidence.
 
 ## Chapter 2 purge/restore — 2026-11-09
 
-Use an approved disposable library on two devices with both apps already open. Import one JSON tombstone with a new UUID not present on either device. On A, use `deletedAt` and `modifiedAt` more than 30 days old, then wait until B shows it; this avoids waiting 30 days.
+Use two physical devices with the same Chapter 2 build and iCloud account/environment, and an approved disposable library. Do not use `-ui-testing`. Device A needs both fixture files downloaded locally before it goes offline.
+
+**Setup correction (2026-11-10):** Geoff reported the original expired fixture disappeared before the first checkpoint. That attempt is inconclusive, not a restore-conflict failure. Import does not call purge; library activation does. The old fixture was eligible immediately, so any activation could remove it before sync. The exact device event was not logged. Do not reuse `build/chapter2-two-device-tombstone.json`.
+
+1. Import [01-sync-recent-deletion.json](fixtures/chapter2-purge-2026-11-10/01-sync-recent-deletion.json) on A only. It has a new UUID and a recent deletion date. Confirm **Chapter 2 staged purge test** in Recently Deleted on both A and B. Do not edit or restore it yet. Both devices may be reopened safely during this checkpoint.
+2. Disconnect A from all networks. On iOS/iPadOS, enable Airplane Mode and explicitly turn Wi-Fi off. Keep A offline through step 5.
+3. Restore the link on B. Confirm it is active there. Leave B online.
+4. On A only, import [02-age-deletion-offline.json](fixtures/chapter2-purge-2026-11-10/02-age-deletion-offline.json). It has the same UUID, URL, and modification date; only the deletion date changes to 45 days old. Equal modification dates are allowed by the import safeguard. A duplicate count is expected and does not mean the import was skipped.
+5. Background and reopen Tucked on A while still offline. Confirm the link is absent from both Recently Deleted and the active library. It may already disappear during the import flow; at this stage that is expected. If it remains, stop and record the import result. Do not manually delete it.
+6. Reconnect A. Keep both apps open. Record the link state and propagation time on each device. Relaunch after the states settle and check again. A surviving restored link on both devices is the desired outcome; disappearance demonstrates the accepted unseen-restore risk. Persistent disagreement or no sync is inconclusive.
+
+Use this fixture pair within seven days of 2026-11-10. For a later test or repeat, generate a new UUID/URL pair and fresh dates. Never import the second file on B or while A is online. Do not change device clocks. The staged import deliberately ages A's copy after the initial sync; it simulates an expired stale deletion without a 30-day wait.
 
 | Scenario | Device A | Device B | Result / evidence |
 | --- | --- | --- | --- |
-| Delayed remote restore versus activation purge | Pending | Pending | Keep A offline, restore on B, activate A offline, then reconnect both. Record final convergence, device/OS/build, and latency; the local-only guard cannot see B's restore before delivery. |
+| Delayed remote restore versus activation purge | Pass — Geoff reported | Pass — Geoff reported | Revised procedure passed on 2026-11-10 at 03:50 am. Both devices show the restored link in `Dev Work`. |
+
+Device 1: iPhone 17, iOS 27.1.2. Device 2: iPhone 17 Pro, iOS 27.3 Developer Beta 1. Both ran Xcode-installed Build 15 from `126b913`. Geoff supplied the pass and final states; the agent did not observe the devices. Propagation latency and the mapping of Device 1/2 to A/B were not supplied. This result covers this device pair and run, not all CloudKit conflict orderings.
 
 Geoff accepted the unseen-restore limit on 2026-11-09. Local tests cover a stale imported tombstone after a visible restore; they do not establish CloudKit behavior. Reconciliation can retain an older deletion date when both independent duplicates are deleted; that behavior is unchanged.
 

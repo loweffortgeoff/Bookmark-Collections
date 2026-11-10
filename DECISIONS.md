@@ -28,7 +28,7 @@ Significant decisions made during development, logged for future reference.
 
 - **Decision:** Run the accepted 30-day purge on activation, after reconciliation. Retain an expired link while any active link shares its normalized URL; apply the age rule normally to images and snippets.
 - **Why:** Geoff accepted scheduled hard deletion on 2026-11-09. The active-copy guard narrows the race where purge deletes a canonical record while another device revives it and removes the active duplicate.
-- **Accepted limit (Geoff, 2026-11-09):** A local-only check cannot protect a remote restore that CloudKit has not delivered. The [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) remains pending.
+- **Accepted limit (Geoff, 2026-11-09):** A local-only check cannot protect a remote restore that CloudKit has not delivered. Geoff reported the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed on 2026-11-10; this observed outcome does not remove the local-only limit.
 - **Existing date limit:** When both independent duplicates are deleted, reconciliation can retain the older canonical deletion date. The 30-day purge uses that date; reconciliation semantics are unchanged here.
 - **Alternative considered:** Purge every expired record without checking active links. Rejected because concurrent cleanup could remove both copies. Keep deterministic reconciliation and its revive policy unchanged.
 

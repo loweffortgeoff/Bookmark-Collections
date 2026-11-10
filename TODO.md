@@ -6,6 +6,8 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
+- [x] Chapter 2 staged two-device purge/restore check (2026-11-10): Geoff reports pass on iPhone 17 and iPhone 17 Pro, Build 15 / `126b913`; restored link appears in `Dev Work` on both. [Evidence](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09).
+
 **Release context (2026-11-07):** Geoff confirms 1.1.0 is live on iOS and macOS. The release/submission task is closed; the remaining menu bar checks below are still open.
 
 - [ ] **Check the remaining Mac menu bar items** on a Release build: Links and Images items, Open Tucked with the window already open, Dock-click reopen, light mode, and window close keeps Tucked running. Geoff shipped 1.1.0 with these open (2026-11-06). Rows are in the [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md#a-local-checks-claude-no-upload).
@@ -17,7 +19,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
   - [x] Chapter 1, data loss: built and reviewed on `fix/review-data-loss` (2026-11-09). Mac unit suite passed 213 tests (13 skipped); Mac UI suite passed 17 tests (1 skipped), both with zero failures on Mac mini, macOS 27.2, Xcode 27.2. Merged locally to `main` at `411b8e8` with Geoff’s authorization on 2026-11-09.
   - [ ] Chapter 2, previews, purge, purchase: implemented on `fix/review-enrichment-purchase`; full Mac/iPhone unit and UI suites pass. Final review passed; failure, no-product paywall, and live-preview visuals passed. Awaiting merge authorization. See [verification](docs/verification/2026-11-09-review-chapter2.md).
     - [x] Task 2.1 (2026-11-09) implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; live preview confirmation and full suites pass; the final URL guard passes 30 metadata tests on both platforms.
-    - [x] Task 2.2 (2026-11-09): activation purges expired deletions after reconciliation; the F17 newer-date import safeguard was brought forward into Chapter 2. All 58 focused import/purge tests and both simulator builds pass; parent acceptance and the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) remain pending.
+    - [x] Task 2.2 (2026-11-09): activation purges expired deletions after reconciliation; the F17 newer-date import safeguard was brought forward into Chapter 2. All 58 focused import/purge tests and both simulator builds pass; the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed per Geoff on 2026-11-10.
     - [x] Task 2.3 (2026-11-09): the paywall retries missing products and shows only a StoreKit price. All 28 focused audit tests pass with zero skips; ordinary UI-test isolation is preserved. No-product layout and full suites pass; product loading has local audit coverage.
     - [x] Task 2.4 (2026-11-09): show library-open recovery text and Support without a fallback store. All 13 container tests, both simulator schemes, and the native Mac build pass. Failure/success visuals, full suites, and final review pass.
   - [ ] Chapter 3, UI traps.

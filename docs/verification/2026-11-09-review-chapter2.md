@@ -37,6 +37,6 @@ After that final guard, all 30 metadata tests passed on iPhone and Mac, with zer
 
 ## Acceptance boundaries
 
-The [two-device purge/restore check](cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) remains pending. Geoff accepted the local-only purge visibility limit. Tests use in-memory stores and do not prove CloudKit convergence. Newer-record import follows the existing `modifiedAt` semantics, including non-edit writes; [DECISIONS](../../DECISIONS.md) records that limit.
+The [two-device purge/restore check](cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed per Geoff on 2026-11-10 at 03:50 am: iPhone 17 / iOS 27.1.2 and iPhone 17 Pro / iOS 27.3 Developer Beta 1, both Xcode-installed Build 15 at `126b913`, with the restored link in `Dev Work` on both. Latency was not supplied. Geoff accepted the local-only purge visibility limit. Tests use in-memory stores and do not prove CloudKit convergence. Newer-record import follows the existing `modifiedAt` semantics, including non-edit writes; [DECISIONS](../../DECISIONS.md) records that limit.
 
 Task reviews passed for enrichment, purge, paywall, and the newer-date import safeguard. Final Chapter 2 and Task 2.4 review passed; the small follow-up was checked by the parent and focused tests. No release, upload, submission, push, or Chapter 2 merge is authorized by these results.

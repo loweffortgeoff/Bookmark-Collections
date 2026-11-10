@@ -16,7 +16,7 @@
 2. Chapter 2 implementation is on `fix/review-enrichment-purchase`, through `b9197be`; review-limit docs follow at `de5346c`. All task-focused checks passed. The approved F17 newer-date safeguard is included.
 3. Full Mac/iPhone unit suites passed (253/249 cases, each with 15 expected StoreKit skips), and UI suites passed (17/18 cases, each with one expected skip). Zero failures. Final review passed; the final URL guard also passes 30 metadata tests per platform; see [verification](../../verification/2026-11-09-review-chapter2.md).
 4. Live iPhone checks passed after the ownership claim cleared: failure/success startup, no-product paywall, and Apple/Swift/Python previews without backgrounding. Temporary metadata-only test instrumentation was removed. Request counts and loaded-price/loading-spinner visuals were not measured.
-5. Chapter 2 is not merged or pushed. Chapter 3 is a separate session. The two-device purge/restore check remains pending with the local-only limit accepted by Geoff.
+5. Chapter 2 is not merged or pushed. Chapter 3 is a separate session. Geoff reported the staged two-device purge/restore check passed on 2026-11-10 at `126b913`; the accepted local-only limit remains.
 6. The session ledger is `.superpowers/sdd/2026-11-09-adversarial-review-fixes/progress.md` (git-ignored). Git history and this file are the durable record.
 
 ## Global Constraints
@@ -219,7 +219,7 @@ Geoff: this is the first build that hard-deletes on a timer. Items deleted more 
 
 - [x] Preserve newer same-ID links, snippets, and collections during JSON import; equal/newer backups still apply. Mirror dates in capacity preflight, including records already processed from the same file; preserve clone selection and kind-collision policy.
 - [x] Add focused regressions for stale tombstones after restore/purge, newer deletions and edits, equal/newer backups, and free-cap rejection without mutations. All 58 tests in `JSONImportNewerRecordTests`, `ImportExportTests`, `PaywallImportAuditTests`, and `RecentlyDeletedTests` pass on iPhone 18 Pro, iOS 27.0.
-- [ ] Complete the [two-device purge/restore check](../../verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09). The local guard narrows the race but cannot protect an unseen remote restore; Geoff accepted this limit. Reconciliation can keep an older deletion date when both independent duplicates are deleted; leave that behavior unchanged.
+- [x] Complete the [two-device purge/restore check](../../verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09). Geoff reported pass on 2026-11-10 (both physical iPhones at `126b913`). The local guard narrows the race but cannot protect an unseen remote restore; Geoff accepted this limit. Reconciliation can keep an older deletion date when both independent duplicates are deleted; leave that behavior unchanged.
 
 **Execution method (Geoff, 2026-11-09):** subagent-driven, one chapter per session.
 
