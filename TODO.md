@@ -17,9 +17,10 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
   - [x] Chapter 1, data loss: built and reviewed on `fix/review-data-loss` (2026-11-09). Mac unit suite passed 213 tests (13 skipped); Mac UI suite passed 17 tests (1 skipped), both with zero failures on Mac mini, macOS 27.2, Xcode 27.2. Merged locally to `main` at `411b8e8` with Geoff’s authorization on 2026-11-09.
   - [ ] Chapter 2, previews, purge, purchase: in progress on `fix/review-enrichment-purchase`.
     - [x] Task 2.1 implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; parent live visual confirmation and final suites remain pending.
-    - [x] Task 2.2: activation purges deletions older than 30 days after reconciliation, with active-link protection. All 5 Recently Deleted tests and both simulator builds pass; parent acceptance remains pending.
+    - [x] Task 2.2 (2026-11-09): activation purges expired deletions after reconciliation; the F17 newer-date import safeguard was brought forward into Chapter 2. All 58 focused import/purge tests and both simulator builds pass; parent acceptance and the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) remain pending.
     - [x] Task 2.3: the paywall retries missing products and shows only a StoreKit price. All 28 focused audit tests pass with zero skips; ordinary UI-test isolation is preserved. Parent visuals and final suites remain pending.
   - [ ] Chapter 3, UI traps.
+  - [ ] Chapter 4, remaining F17 decision: define same-ID link-to-non-link collision behavior. The newer-date safeguard is complete in Chapter 2; no kind policy changed.
 
 Clipboard capture has no demonstrated gap.
 

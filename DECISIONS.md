@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-09 (Bring the F17 newer-record safeguard into Chapter 2)
+
+- **Decision:** Skip same-ID links, snippets, and collections when the local `modifiedAt` is newer than the backup. Count skipped bookmarks as duplicates; equal/newer backups keep existing semantics, with the same rule in capacity preflight.
+- **Why:** Geoff approved this part of F17 during purge review. An older tombstone must not replace a later restore and make it eligible for permanent deletion; an older record must not erase newer edits or free capacity.
+- **Alternative considered:** Keep unconditional overwrite or include the remaining kind-collision change. Rejected; the date safeguard is brought forward, while the kind-collision decision remains in Chapter 4.
+
 ## 2026-11-09 (Retry missing paywall products within Storefront isolation)
 
 - **Decision:** Reload a missing product when the paywall opens. Reject overlapping loads and ordinary UI-test loads; retain the `-storekit-audit` exception. Show only a StoreKit price, with progress while a missing product loads.
@@ -13,7 +19,9 @@ Significant decisions made during development, logged for future reference.
 ## 2026-11-09 (Purge expired deletions after duplicate cleanup)
 
 - **Decision:** Run the accepted 30-day purge on activation, after reconciliation. Retain an expired link while any active link shares its normalized URL; apply the age rule normally to images and snippets.
-- **Why:** Geoff accepted scheduled hard deletion on 2026-11-09. The active-copy guard prevents purge from deleting a canonical record while another device revives it and removes the active duplicate.
+- **Why:** Geoff accepted scheduled hard deletion on 2026-11-09. The active-copy guard narrows the race where purge deletes a canonical record while another device revives it and removes the active duplicate.
+- **Accepted limit (Geoff, 2026-11-09):** A local-only check cannot protect a remote restore that CloudKit has not delivered. The [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) remains pending.
+- **Existing date limit:** When both independent duplicates are deleted, reconciliation can retain the older canonical deletion date. The 30-day purge uses that date; reconciliation semantics are unchanged here.
 - **Alternative considered:** Purge every expired record without checking active links. Rejected because concurrent cleanup could remove both copies. Keep deterministic reconciliation and its revive policy unchanged.
 
 ## 2026-11-09 (Process one pending record per library task)

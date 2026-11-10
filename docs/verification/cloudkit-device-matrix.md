@@ -1,6 +1,16 @@
 # CloudKit and Release Verification Matrix
 
-**Current acceptance:** [Tucked 1.1.0 validation](2026-11-04-1.1.0-validation.md) (started 2026-11-04). Everything below is historical.
+**Current acceptance:** [Tucked 1.1.0 validation](2026-11-04-1.1.0-validation.md) (started 2026-11-04). The Chapter 2 check below is pending; older sections retain historical evidence.
+
+## Chapter 2 purge/restore — 2026-11-09
+
+Use an approved disposable library on two devices with both apps already open. Import one JSON tombstone on A with `deletedAt` and `modifiedAt` more than 30 days old, then wait until B shows it; this avoids waiting 30 days.
+
+| Scenario | Device A | Device B | Result / evidence |
+| --- | --- | --- | --- |
+| Delayed remote restore versus activation purge | Pending | Pending | Keep A offline, restore on B, activate A offline, then reconnect both. Record final convergence, device/OS/build, and latency; the local-only guard cannot see B's restore before delivery. |
+
+Geoff accepted the unseen-restore limit on 2026-11-09. Local tests cover a stale imported tombstone after a visible restore; they do not establish CloudKit behavior. Reconciliation can retain an older deletion date when both independent duplicates are deleted; that behavior is unchanged.
 
 ## Remaining bug package — 2026-10-24
 

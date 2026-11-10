@@ -18,7 +18,8 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 ### Review fixes, Chapter 2: Task 2.2 (2026-11-09)
 
 - Changed: activation now purges items deleted more than 30 days ago, after duplicate cleanup. Expired links stay if an active link has the same normalized URL; images and snippets purge normally.
-- Verification: all 5 Recently Deleted tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Full suites, live UI checks, and device acceptance remain with the parent session.
+- Fixed: brought the F17 date safeguard forward into Chapter 2. JSON import preserves newer same-ID links, snippets, and collections; capacity checks use the same date rule, including repeated records within a backup.
+- Verification: all 58 focused import/purge tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Full suites, live UI checks, and the pending two-device purge/restore check remain with the parent session; the F17 kind-collision decision stays in Chapter 4.
 
 ### Review fixes, Chapter 1: data loss (merged to `main` 2026-11-09)
 

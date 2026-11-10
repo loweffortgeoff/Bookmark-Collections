@@ -214,6 +214,12 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 
 Geoff: this is the first build that hard-deletes on a timer. Items deleted more than 30 days ago go on first launch, on every device. **Accepted by Geoff 2026-11-09.**
 
+**Approved F17 follow-up, brought forward from Chapter 4 (2026-11-09):**
+
+- [x] Preserve newer same-ID links, snippets, and collections during JSON import; equal/newer backups still apply. Mirror dates in capacity preflight, including records already processed from the same file; preserve clone selection and kind-collision policy.
+- [x] Add focused regressions for stale tombstones after restore/purge, newer deletions and edits, equal/newer backups, and free-cap rejection without mutations. All 58 tests in `JSONImportNewerRecordTests`, `ImportExportTests`, `PaywallImportAuditTests`, and `RecentlyDeletedTests` pass on iPhone 18 Pro, iOS 27.0.
+- [ ] Complete the [two-device purge/restore check](../../verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09). The local guard narrows the race but cannot protect an unseen remote restore; Geoff accepted this limit. Reconciliation can keep an older deletion date when both independent duplicates are deleted; leave that behavior unchanged.
+
 **Execution method (Geoff, 2026-11-09):** subagent-driven, one chapter per session.
 
 ### Task 2.3: Paywall retries the product and shows no invented price
@@ -318,7 +324,7 @@ func testUserEnteredAddsHTTPS() {
 
 1. **F1 full fix.** Chapter 1 stops the loss but leaves clone pairs visible; the user deletes one by hand. A clean merge needs a synced per-record token (schema change plus Production CloudKit deploy). Recommendation: ship Chapter 1, add the token only if clones are seen in the field. **Decided 2026-11-09 (Geoff): ship Chapter 1 as written. Condition: if no permanent fix follows, that must be stated in writing (DECISIONS.md and the release notes), not left silent. Tracked on the TODO Watch List.**
 2. **F15 share heuristic.** Option: when an item has both a URL and text, save a link and use the text as the title unless the host is Safari-style selection (text longer than about 200 characters or multi-line). Needs device captures from 3 or 4 real apps first.
-3. **F17 import policy.** Recommendation: skip a record when the existing one has a later `modifiedAt`, and never apply a link record to a non-link `id`. Small, but it changes restore semantics.
+3. **F17 import policy, remaining decision.** The newer-`modifiedAt` safeguard was approved and brought forward into Chapter 2 on 2026-11-09. Still pending: decide whether to reject a link record for a non-link `id`; no kind-collision policy changed in Chapter 2.
 4. **F21 `modifiedAt` on open.** Recommendation: stop the bump. One test changes.
 5. **F24 extension CloudKit.** Try `cloudKit: false` in the extension on a device pair; the app exports the record on next launch. Only if Share storage errors return.
 6. **F22, F23, F20 pan.** Backlog.

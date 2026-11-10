@@ -78,6 +78,7 @@ struct LibraryImportService {
         for record in document.collections {
             let collection: BookmarkCollection
             if let existing = collectionsByID[record.id] {
+                guard existing.modifiedAt <= record.modifiedAt else { continue }
                 collection = existing
             } else {
                 collection = BookmarkCollection(
@@ -116,6 +117,10 @@ struct LibraryImportService {
 
             let bookmark: Bookmark
             if let existing = bookmarksByID[record.id] {
+                guard existing.modifiedAt <= record.modifiedAt else {
+                    summary.duplicateCount += 1
+                    continue
+                }
                 bookmark = existing
                 if existing.deletedAt != nil && record.deletedAt == nil {
                     summary.restoredCount += 1
@@ -171,6 +176,10 @@ struct LibraryImportService {
             }
 
             if let existing {
+                guard existing.modifiedAt <= record.modifiedAt else {
+                    summary.duplicateCount += 1
+                    continue
+                }
                 if existing.deletedAt != nil && record.deletedAt == nil {
                     summary.restoredCount += 1
                 } else {

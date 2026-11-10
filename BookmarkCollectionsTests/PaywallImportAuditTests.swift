@@ -90,6 +90,7 @@ final class PaywallImportAuditTests: XCTestCase {
         _ url: String,
         id: UUID = UUID(),
         createdAt: Date = Date(),
+        modifiedAt: Date? = nil,
         deletedAt: Date? = nil,
         title: String = "Imported",
         favorite: Bool = false,
@@ -97,17 +98,18 @@ final class PaywallImportAuditTests: XCTestCase {
     ) -> BackupDocument.BookmarkRecord {
         .init(id: id, urlString: url, normalizedURLString: url, title: title,
               domain: "audit.example", isFavorite: favorite, collectionID: collectionID,
-              createdAt: createdAt, modifiedAt: createdAt, deletedAt: deletedAt, lastOpenedAt: nil)
+              createdAt: createdAt, modifiedAt: modifiedAt ?? createdAt, deletedAt: deletedAt, lastOpenedAt: nil)
     }
 
     private func snippet(
         _ body: String,
         id: UUID = UUID(),
+        modifiedAt: Date = Date(),
         deletedAt: Date? = nil
     ) -> BackupDocument.SnippetRecord {
         .init(id: id, title: "Imported snippet", body: body, sourceUrl: nil,
               isFavorite: false, collectionID: nil, createdAt: Date(),
-              modifiedAt: Date(), deletedAt: deletedAt, lastOpenedAt: nil)
+              modifiedAt: modifiedAt, deletedAt: deletedAt, lastOpenedAt: nil)
     }
 
     private func encoded(
@@ -234,9 +236,11 @@ final class PaywallImportAuditTests: XCTestCase {
                 }
                 try repository.softDelete(deleted)
                 _ = try repository.save(url: "https://audit.example/tenth")
+                // A restore must be at least as new as the deletion; older backups now skip it.
+                let restoreDate = deleted.modifiedAt.addingTimeInterval(60)
                 let data = try encoded(
-                    links: restoreSnippet ? [] : [link(deleted.urlString, id: deleted.id)],
-                    snippets: restoreSnippet ? [snippet("Restored", id: deleted.id)] : []
+                    links: restoreSnippet ? [] : [link(deleted.urlString, id: deleted.id, modifiedAt: restoreDate)],
+                    snippets: restoreSnippet ? [snippet("Restored", id: deleted.id, modifiedAt: restoreDate)] : []
                 )
                 XCTAssertThrowsError(try LibraryImportService(context: context).importJSON(data)) {
                     XCTAssertEqual($0 as? BookmarkRepository.LimitError, .limitReached)

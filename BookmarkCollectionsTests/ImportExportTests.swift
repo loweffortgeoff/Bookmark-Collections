@@ -403,7 +403,7 @@ final class ImportExportTests: XCTestCase {
         }
     }
 
-    func testImportingASoftDeletedSnippetAgainRestoresIt() throws {
+    func testImportingAnEqualDatedSnippetBackupRestoresIt() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let url = try XCTUnwrap(
             Bundle(for: Self.self).url(forResource: "glaze-export", withExtension: "json")
@@ -416,7 +416,8 @@ final class ImportExportTests: XCTestCase {
         let snippets = try container.mainContext.fetch(FetchDescriptor<Bookmark>())
             .filter { $0.kind == .text }
         let toDelete = try XCTUnwrap(snippets.first { $0.title == "A kept paragraph" })
-        try repository.softDelete(toDelete)
+        // Older backups preserve newer deletions. Equal dates still apply the backup.
+        try repository.softDelete(toDelete, at: toDelete.modifiedAt)
 
         let summary = try service.importJSON(data)
 
