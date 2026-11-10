@@ -28,6 +28,6 @@
 - [x] Add the link-kind guards and remove the two automatic `modifiedAt` assignments.
 - [x] Run focused tests. Expected: zero failures.
 - [x] Run full Mac and iPhone unit/UI suites separately, and signed iOS plus both simulator scheme builds. Expected: zero failures, documented audit skips only.
-- [ ] Review the whole diff, update the project records, and commit the completed changes locally.
+- [x] Review the whole diff, update the project records, and commit the completed changes locally.
 
 **Focused command:** `xcodebuild test -project BookmarkCollections.xcodeproj -scheme BookmarkCollections -destination 'platform=macOS' -only-testing:BookmarkCollectionsTests/JSONImportKindCollisionTests -only-testing:BookmarkCollectionsTests/BookmarkEditDateTests -only-testing:BookmarkCollectionsTests/BookmarkRepositoryTests -only-testing:BookmarkCollectionsTests/JSONImportNewerRecordTests -only-testing:BookmarkCollectionsTests/MetadataEnricherTests`

@@ -30,7 +30,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
     - [x] Task 3.5 (2026-11-10): text and image imports that stop at the free limit report what was saved (F18).
     - [x] Task 3.6 (2026-11-10): the image viewer decodes once (F20).
   - [x] Chapter 4 F17 policy (2026-11-10): Geoff chose to preserve an existing image or snippet when a backup link has the same ID; skip the incoming link and report the conflict.
-  - [x] Chapter 4 F17/F21 (2026-11-10): built on `dev/chapter4-import-edit-dates`; incoming link ID conflicts preserve images/snippets, and opens/metadata fetches preserve Date Modified. Mac unit/UI 269/19 and iPhone unit/UI 265/19 cases, zero failures; 15 unit and one UI audit skip per platform. Signed iOS and both simulator scheme builds pass. [Evidence](docs/verification/2026-11-10-review-chapter4.md). Not merged or pushed.
+  - [x] Chapter 4 F17/F21 (2026-11-10): built on `dev/chapter4-import-edit-dates` (`aedc0c1`, `92cb26a`); incoming link ID conflicts preserve images/snippets, opens/metadata fetches preserve Date Modified, and restore keeps the latest Last Opened. Final Mac unit/UI 270/19 and iPhone unit/UI 266/19 cases, zero failures; 15 unit and one UI audit skip per platform. Signed iOS and both simulator scheme builds pass; review follow-up fixed. [Evidence](docs/verification/2026-11-10-review-chapter4.md). Not merged or pushed.
 
 Clipboard capture has no demonstrated gap.
 
