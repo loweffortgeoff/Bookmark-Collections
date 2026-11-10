@@ -13,12 +13,14 @@ Significant decisions made during development, logged for future reference.
 ## 2026-11-09 (Bring the F17 newer-record safeguard into Chapter 2)
 
 - **Decision:** Skip same-ID links, snippets, and collections when the local `modifiedAt` is newer than the backup. Count skipped bookmarks as duplicates; equal/newer backups keep existing semantics, with the same rule in capacity preflight.
+- **Known limit:** `modifiedAt` also changes after metadata fetches, opens, and collection deletion. These writes can make later-imported backup edits look older; deleting and restoring an older collection can restore it empty. Keep this policy for Chapter 2; Chapter 4 F21 must decide which writes count as edits.
 - **Why:** Geoff approved this part of F17 during purge review. An older tombstone must not replace a later restore and make it eligible for permanent deletion; an older record must not erase newer edits or free capacity.
 - **Alternative considered:** Keep unconditional overwrite or include the remaining kind-collision change. Rejected; the date safeguard is brought forward, while the kind-collision decision remains in Chapter 4.
 
 ## 2026-11-09 (Retry missing paywall products within Storefront isolation)
 
 - **Decision:** Reload a missing product when the paywall opens. Reject overlapping loads and ordinary UI-test loads; retain the `-storekit-audit` exception. Show only a StoreKit price, with progress while a missing product loads.
+- **Known limit:** A request during another load, purchase, or restore returns without queuing a retry. If no product arrives, reopening the paywall retries.
 - **Why:** A failed launch lookup needs a retry, but paywall appearance must preserve UI-test isolation and must not invent a price.
 - **Alternative considered:** Keep the fixed price fallback or retry directly through StoreKit in the view. Rejected because these bypass the product state or the UI-test guard.
 
@@ -34,6 +36,7 @@ Significant decisions made during development, logged for future reference.
 
 - **Decision:** Key the library task by the oldest active pending link's `persistentModelID` and enrich only that record. Activation retries only due failed links, up to 20; the existing batch API keeps its default behavior for other callers.
 - **Why:** Count changes restart batches mid-fetch and miss same-count replacements. Clone UUIDs are shared. Keep cancellation and liveness guards; discard late results after another refresh or a saved deletion in another context.
+- **Known limit:** A store-query error can leave the first pending link queued until the library reopens. An older imported or synced link can cancel one in-flight fetch; ordinary provider failures leave the queue and retain the hourly retry.
 - **Alternative considered:** Keep the original count-keyed 20-link batch from `a6151f9`. Rejected after Task 2.1 review because it can repeat fetches and overlap activation work.
 
 ## 2026-11-09 (Save each metadata result before the library task restarts — superseded)

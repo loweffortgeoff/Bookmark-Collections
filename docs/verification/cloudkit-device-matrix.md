@@ -4,7 +4,7 @@
 
 ## Chapter 2 purge/restore — 2026-11-09
 
-Use an approved disposable library on two devices with both apps already open. Import one JSON tombstone on A with `deletedAt` and `modifiedAt` more than 30 days old, then wait until B shows it; this avoids waiting 30 days.
+Use an approved disposable library on two devices with both apps already open. Import one JSON tombstone with a new UUID not present on either device. On A, use `deletedAt` and `modifiedAt` more than 30 days old, then wait until B shows it; this avoids waiting 30 days.
 
 | Scenario | Device A | Device B | Result / evidence |
 | --- | --- | --- | --- |

@@ -17,7 +17,7 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 ### Review fixes, Chapter 2: Task 2.1 (2026-11-09)
 
 - Fixed: new links start metadata enrichment while the library is open. Each result saves separately; cancelled fetches stay pending, and deleted links are skipped before and after fetching.
-- Review correction: each library task enriches its oldest pending record by persistent identity. Activation retries only due failures; late results cannot overwrite another refresh or write to a row deleted by another context.
+- Review correction: each library task enriches its oldest pending record by persistent identity. Activation retries only due failures; late results are discarded after another refresh or a detected row deletion.
 - Verification: 29 metadata tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Live visual confirmation and final suites remain pending with the parent session.
 
 ### Review fixes, Chapter 2: Task 2.2 (2026-11-09)
