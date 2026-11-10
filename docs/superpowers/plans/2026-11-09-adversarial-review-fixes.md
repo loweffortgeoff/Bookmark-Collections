@@ -12,11 +12,11 @@
 
 ## Resume here (updated 2026-11-10, Chapter 3)
 
-1. Chapters 1 and 2 are merged locally to `main` at `bffbf0b` (fast-forward, 2026-11-10, with Geoff’s authorization). No push performed; `main` is 9 commits ahead of `origin/main`.
+1. Chapters 1 and 2 are merged locally to `main` at `bffbf0b` (fast-forward, 2026-11-10, with Geoff’s authorization). No push performed.
 2. Chapter 2 merge gate at `bffbf0b`, Mac mini, macOS 27.2, Xcode 27.2, scheme `BookmarkCollections`: Mac unit 254 cases (15 skipped), Mac UI 17 (1 skipped), iPhone 18 Pro iOS 27.0 unit 250 (15 skipped), UI 18 (1 skipped). Zero failures. The Mac UI suite ran after Geoff authorized Automation Mode.
 3. Chapter 3 is built on `fix/review-ui-traps`, `456b450`..`db57eeb`. All six tasks are done. Code review found three Important items; `db57eeb` fixes them.
 4. Chapter 3 exit suites at `db57eeb`, same machine: Mac unit 261 (15 skipped), Mac UI 19 (1 skipped), iPhone unit 257 (15 skipped), iPhone UI 19 (1 skipped). Zero failures. Both simulator schemes build.
-5. Chapter 3 is not merged or pushed. Next step: Geoff authorizes the merge. No visual check of the import-summary Unlock row or the image viewer was done; tests and builds only.
+5. Chapter 3 is merged locally to `main` at `bf083a4` (fast-forward, 2026-11-10, with Geoff’s authorization). Not pushed; Geoff pushes `main`. The merged branches `fix/review-data-loss` and `fix/review-enrichment-purchase` are deleted, local and on `origin`. No visual check of the import-summary Unlock row or the image viewer was done; tests and builds only.
 6. Chapter 4 is decisions only. No code until Geoff chooses.
 
 ## Global Constraints
@@ -252,7 +252,7 @@ Geoff: this is the first build that hard-deletes on a timer. Items deleted more 
 
 ## Chapter 3 — UI traps (branch `fix/review-ui-traps`)
 
-> **Chapter 3 status (2026-11-10):** built on `fix/review-ui-traps`, commits `456b450`..`db57eeb`. Not merged. The text below is the original; these rules changed as built:
+> **Chapter 3 status (2026-11-10):** built on `fix/review-ui-traps`, commits `456b450`..`db57eeb`. Merged locally to `main` at `bf083a4` with Geoff’s authorization. The text below is the original; these rules changed as built:
 >
 > - **Task 3.3:** text with a real scheme (`mailto:`) stays as typed and gets the unsupported-scheme message. The planned `https://mailto:a@b.com` parses as a valid address. `https://` is added only when the host ends in a letters-only label of two or more letters and the text has no `@`, so `v1.2`, `3.14` and `user@example.com` stay invalid lines in a text import.
 > - **Task 3.4:** the editors no longer take `onPaywall`; `SettingsView` keeps it. A menu bar request that arrives while an editor is open is taken and dropped, not kept: a kept request fired on the next window appearance. Surprise Me and Add Images are also inert while a sheet is open. The collection editors count as editors with a draft.

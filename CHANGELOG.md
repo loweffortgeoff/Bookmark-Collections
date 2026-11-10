@@ -4,7 +4,7 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
-### Review fixes, Chapter 3: UI traps (2026-11-10, on `fix/review-ui-traps`, not merged)
+### Review fixes, Chapter 3: UI traps (merged to `main` locally 2026-11-10, not pushed)
 
 From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F11 to F14, F16, F18 to F20).
 
