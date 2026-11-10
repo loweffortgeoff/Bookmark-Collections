@@ -82,6 +82,11 @@ final class PaywallFlowAuditTests: XCTestCase {
         editor.typeText("Disposable audit snippet")
         app.buttons["Save"].clickOrTap()
         XCTAssertTrue(app.staticTexts["Ten Bookmarks Is Not Enough"].waitForExistence(timeout: 5))
+
+        // The paywall opens over the editor; closing it gives the draft back.
+        app.buttons["Close"].clickOrTap()
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        XCTAssertEqual(editor.value as? String, "Disposable audit snippet")
     }
 
     func testSettingsUnlockRowOpensPaywallAndOffersRestoreWhenLocked() {

@@ -46,6 +46,26 @@ final class MacCommandSharingUITests: XCTestCase {
         app.typeKey(.escape, modifierFlags: [])
     }
 
+    /// Cmd+Delete in a text field is "delete to line start". With a sheet
+    /// open it must not reach the Bookmark menu's "Move to Recently Deleted".
+    func testCommandDeleteInSnippetEditorDoesNotDeleteTheSnippet() {
+        let app = XCUIApplication.tucked()
+        app.launch()
+        let snippet = app.buttons["bookmark.22222222-2222-2222-2222-222222222222"]
+        XCTAssertTrue(snippet.waitForExistence(timeout: 5))
+        snippet.click()
+        let editor = app.textViews["Snippet text"]
+        XCTAssertTrue(editor.waitForExistence(timeout: 3))
+        editor.click()
+        app.typeKey(.delete, modifierFlags: .command)
+        app.buttons["Cancel"].click()
+
+        XCTAssertTrue(snippet.waitForExistence(timeout: 3))
+        app.menuBars.menuBarItems["Bookmark"].click()
+        XCTAssertTrue(app.menuItems["Move to Recently Deleted"].isEnabled)
+        app.typeKey(.escape, modifierFlags: [])
+    }
+
     private func shareFromMenu(_ app: XCUIApplication) {
         app.menuBars.menuBarItems["Bookmark"].click()
         app.menuItems["Share"].click()

@@ -11,7 +11,6 @@ struct SnippetEditorView: View {
     @Query(sort: \BookmarkCollection.sortPosition) private var collections: [BookmarkCollection]
 
     let bookmark: Bookmark?
-    let onPaywall: () -> Void
 
     @State private var title = ""
     @State private var snippetBody = ""
@@ -19,6 +18,9 @@ struct SnippetEditorView: View {
     @State private var selectedCollectionID: UUID?
     @State private var isFavorite = false
     @State private var errorMessage: String?
+    // The paywall opens over the editor, so the typed text is still here
+    // when it closes.
+    @State private var showsPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -64,6 +66,7 @@ struct SnippetEditorView: View {
         #endif
         .accessibilityIdentifier("snippet.editor")
         .onAppear(perform: load)
+        .sheet(isPresented: $showsPaywall) { PaywallView() }
     }
 
     /// Validated the same way saving validates it, so the button never offers
@@ -121,7 +124,7 @@ struct SnippetEditorView: View {
             dismiss()
         } catch {
             if error as? BookmarkRepository.LimitError == .limitReached {
-                onPaywall()
+                showsPaywall = true
             } else {
                 errorMessage = error.localizedDescription
             }

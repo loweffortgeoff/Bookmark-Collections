@@ -109,6 +109,9 @@ struct LibraryRootView: View {
     }
 
     private func consumeMenuBarRequest() {
+        // A menu bar request must not close an editor with unsaved text. The
+        // request stays in the router; the window still comes forward.
+        if sheet?.holdsDraft == true { return }
         guard let request = menuBarRouter.take() else { return }
         sheet = nil
         switch request {
@@ -198,7 +201,7 @@ struct LibraryRootView: View {
     private func sheetContent(for destination: SheetDestination) -> some View {
         switch destination {
         case .addBookmark:
-            AddBookmarkView(onPaywall: { sheet = .paywall })
+            AddBookmarkView()
         case let .editBookmark(bookmark):
             BookmarkEditorView(bookmark: bookmark)
         case let .bookmarkInfo(bookmark):
@@ -214,7 +217,7 @@ struct LibraryRootView: View {
         case let .shareBookmark(bookmark):
             ShareBookmarkSheet(bookmark: bookmark)
         case let .snippetEditor(bookmark):
-            SnippetEditorView(bookmark: bookmark, onPaywall: { sheet = .paywall })
+            SnippetEditorView(bookmark: bookmark)
         case .paywall:
             PaywallView()
         }
@@ -316,13 +319,17 @@ struct LibraryRootView: View {
     private var commandActions: BookmarkCommandActions {
         // Looked up once for the flags below; the actions look it up again
         // when they run, since the selection can change in between.
-        let selected = visibleCommandBookmark
+        // While a sheet is open, menu commands must not replace it or act on
+        // the item behind it. Cmd+Delete in a sheet's text field is "delete
+        // to line start", not "Move to Recently Deleted".
+        let sheetIsOpen = sheet != nil
+        let selected = sheetIsOpen ? nil : visibleCommandBookmark
         return BookmarkCommandActions(
-            addLink: { sheet = .addBookmark },
+            addLink: { if sheet == nil { sheet = .addBookmark } },
             addImages: addImages,
             focusSearch: { isSearchPresented = true },
-            newCollection: { sheet = .newCollection },
-            newSnippet: { sheet = .snippetEditor(nil) },
+            newCollection: { if sheet == nil { sheet = .newCollection } },
+            newSnippet: { if sheet == nil { sheet = .snippetEditor(nil) } },
             selectedBookmark: selected,
             canDeleteSelected: selected != nil && selected?.deletedAt == nil,
             openSelected: {
@@ -339,7 +346,8 @@ struct LibraryRootView: View {
                 SnippetPasteboard.copy(bookmark.snippetBody)
             },
             deleteSelected: {
-                guard let bookmark = visibleCommandBookmark,
+                guard sheet == nil,
+                      let bookmark = visibleCommandBookmark,
                       bookmark.deletedAt == nil else { return }
                 perform {
                     try BookmarkRepository(context: modelContext).softDelete(bookmark)
@@ -353,7 +361,9 @@ struct LibraryRootView: View {
 
     private var visibleCommandBookmark: Bookmark? {
         guard let commandBookmark,
-              let bookmark = bookmarks.first(where: { $0.id == commandBookmark.id }),
+              // By row, not by `id`: equal-id clones exist, and a command on
+              // one must not act on the other.
+              let bookmark = bookmarks.first(where: { $0.persistentModelID == commandBookmark.persistentModelID }),
               (destination ?? .allItems).matches(bookmark, searchText: searchText) else {
             return nil
         }
@@ -372,6 +382,14 @@ private enum SheetDestination: Identifiable {
     case shareBookmark(Bookmark)
     case snippetEditor(Bookmark?)
     case paywall
+
+    /// The sheet has text the user typed and would lose if it closed.
+    var holdsDraft: Bool {
+        switch self {
+        case .addBookmark, .editBookmark, .snippetEditor: true
+        default: false
+        }
+    }
 
     var id: String {
         switch self {

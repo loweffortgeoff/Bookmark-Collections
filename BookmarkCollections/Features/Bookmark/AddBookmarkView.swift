@@ -6,8 +6,9 @@ struct AddBookmarkView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \BookmarkCollection.sortPosition) private var collections: [BookmarkCollection]
 
-    let onPaywall: () -> Void
-
+    // The paywall opens over the form, so the typed address is still here
+    // when it closes.
+    @State private var showsPaywall = false
     @State private var urlString = ""
     @State private var selectedCollectionID: UUID?
     @State private var isFavorite = false
@@ -46,6 +47,7 @@ struct AddBookmarkView: View {
         .frame(minWidth: 360, minHeight: 240)
         // The sheet only ever opens empty, so the address field is the next step.
         .onAppear { isURLFieldFocused = true }
+        .sheet(isPresented: $showsPaywall) { PaywallView() }
     }
 
     private var canSave: Bool {
@@ -63,7 +65,7 @@ struct AddBookmarkView: View {
             dismiss()
         } catch {
             if error as? BookmarkRepository.LimitError == .limitReached {
-                onPaywall()
+                showsPaywall = true
             } else {
                 errorMessage = error.localizedDescription
             }
