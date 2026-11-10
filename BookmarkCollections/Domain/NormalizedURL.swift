@@ -26,9 +26,20 @@ struct NormalizedURL {
     /// shared items already carry a scheme.
     static func userEntered(_ value: String) -> String {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        // "a@b.com" would parse as a host with a user name, so it is not an
+        // address to fix up.
         guard !trimmed.contains("://"),
-              trimmed.contains("."),
+              !trimmed.contains("@"),
               trimmed.rangeOfCharacter(from: .whitespacesAndNewlines) == nil else {
+            return trimmed
+        }
+        // The host must end in a letters-only label of two or more letters.
+        // That keeps "v1.2" and "3.14" in a pasted list out of the library.
+        let host = trimmed.prefix { !"/?#:".contains($0) }
+        let labels = host.split(separator: ".", omittingEmptySubsequences: false)
+        guard labels.count >= 2,
+              let last = labels.last, last.count >= 2,
+              last.allSatisfy(\.isLetter) else {
             return trimmed
         }
         // "mailto:a@b.com" has a real scheme and stays as typed, so it gets

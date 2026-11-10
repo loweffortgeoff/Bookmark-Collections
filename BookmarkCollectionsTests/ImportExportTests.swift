@@ -28,6 +28,24 @@ final class ImportExportTests: XCTestCase {
         XCTAssertEqual(summary.failedLines, ["not a URL"])
     }
 
+    func testTextImportAcceptsBareDomainsAndRejectsOtherDottedText() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let service = LibraryImportService(context: container.mainContext)
+
+        let summary = try service.importText("""
+        example.com
+        www.example.org/page
+        v1.2
+        3.14
+        user@example.com
+        """)
+
+        XCTAssertEqual(summary.newCount, 2)
+        XCTAssertEqual(summary.failedLines, ["v1.2", "3.14", "user@example.com"])
+        let saved = try container.mainContext.fetch(FetchDescriptor<Bookmark>()).map(\.normalizedURLString).sorted()
+        XCTAssertEqual(saved, ["https://example.com/", "https://www.example.org/page"])
+    }
+
     func testTextImportKeepsCollectionAndFavoriteOfExistingLink() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let reading = BookmarkCollection(name: "Reading", sortPosition: 0)

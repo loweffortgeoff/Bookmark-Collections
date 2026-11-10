@@ -42,6 +42,13 @@ final class NormalizedURLTests: XCTestCase {
         XCTAssertEqual(NormalizedURL.userEntered("not a url"), "not a url")
     }
 
+    func testUserEnteredLeavesTextThatIsNotAnAddress() {
+        for value in ["v1.2", "3.14", "user@example.com", "example", "example.", "a.b1"] {
+            XCTAssertEqual(NormalizedURL.userEntered(value), value, value)
+            XCTAssertThrowsError(try NormalizedURL(NormalizedURL.userEntered(value)), value)
+        }
+    }
+
     func testUserEnteredLeavesOtherSchemesForValidationToReject() {
         XCTAssertEqual(NormalizedURL.userEntered("mailto:a@b.com"), "mailto:a@b.com")
         XCTAssertThrowsError(try NormalizedURL(NormalizedURL.userEntered("mailto:a@b.com"))) {

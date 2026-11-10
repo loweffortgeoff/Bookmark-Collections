@@ -109,10 +109,11 @@ struct LibraryRootView: View {
     }
 
     private func consumeMenuBarRequest() {
-        // A menu bar request must not close an editor with unsaved text. The
-        // request stays in the router; the window still comes forward.
-        if sheet?.holdsDraft == true { return }
         guard let request = menuBarRouter.take() else { return }
+        // A menu bar request must not close an editor with unsaved text. It
+        // is dropped, not kept: a kept request would fire later, when the
+        // user no longer expects it. The window still comes forward.
+        if sheet?.holdsDraft == true { return }
         sheet = nil
         switch request {
         case let .destination(target):
@@ -326,7 +327,7 @@ struct LibraryRootView: View {
         let selected = sheetIsOpen ? nil : visibleCommandBookmark
         return BookmarkCommandActions(
             addLink: { if sheet == nil { sheet = .addBookmark } },
-            addImages: addImages,
+            addImages: { if sheet == nil { addImages() } },
             focusSearch: { isSearchPresented = true },
             newCollection: { if sheet == nil { sheet = .newCollection } },
             newSnippet: { if sheet == nil { sheet = .snippetEditor(nil) } },
@@ -354,8 +355,10 @@ struct LibraryRootView: View {
                     commandBookmark = nil
                 }
             },
-            surpriseMe: surpriseMe,
-            canSurpriseMe: destination != .recentlyDeleted && hasSurpriseCandidates
+            // Surprise Me can open a snippet or image sheet, which would
+            // replace the open one.
+            surpriseMe: { if sheet == nil { surpriseMe() } },
+            canSurpriseMe: !sheetIsOpen && destination != .recentlyDeleted && hasSurpriseCandidates
         )
     }
 
@@ -386,7 +389,7 @@ private enum SheetDestination: Identifiable {
     /// The sheet has text the user typed and would lose if it closed.
     var holdsDraft: Bool {
         switch self {
-        case .addBookmark, .editBookmark, .snippetEditor: true
+        case .addBookmark, .editBookmark, .snippetEditor, .newCollection, .editCollection: true
         default: false
         }
     }

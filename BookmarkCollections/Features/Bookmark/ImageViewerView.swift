@@ -67,7 +67,8 @@ struct ImageViewerView: View {
         #if os(macOS)
         .frame(minWidth: 480, minHeight: 400)
         #endif
-        .task {
+        // Keyed by size so image data that syncs in later is decoded too.
+        .task(id: bookmark.previewImageData?.count) {
             image = decodedImage
             didDecode = true
         }
