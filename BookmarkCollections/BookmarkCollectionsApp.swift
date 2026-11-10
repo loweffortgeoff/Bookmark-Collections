@@ -1,11 +1,17 @@
 import SwiftData
 import SwiftUI
+import OSLog
 
 #if os(macOS)
 import AppKit
 #else
 import UIKit
 #endif
+
+private let libraryStorageLogger = Logger(
+    subsystem: "com.loweffortapps.BookmarkCollections",
+    category: "LibraryStorage"
+)
 
 @main
 struct BookmarkCollectionsApp: App {
@@ -14,19 +20,20 @@ struct BookmarkCollectionsApp: App {
     #elseif os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #endif
-    @Environment(\.scenePhase) private var scenePhase
     @State private var storefront = Storefront()
     @State private var menuBarRouter = MenuBarRouter()
-    private let container: ModelContainer
+    private let container: ModelContainer?
 
     init() {
         let runtime = AppRuntimeConfiguration()
         BookmarkLimit.freeBookmarkLimitOverride = runtime.freeBookmarkLimitOverride
-        container = try! ModelContainerFactory.make(
-            inMemory: runtime.usesInMemoryStore,
-            cloudKit: runtime.usesCloudKit
-        )
-        if runtime.isUITesting {
+        container = Self.openLibrary(runtime: runtime) {
+            try ModelContainerFactory.make(
+                inMemory: runtime.usesInMemoryStore,
+                cloudKit: runtime.usesCloudKit
+            )
+        }
+        if let container, runtime.isUITesting {
             Self.seedUITestLibrary(in: container.mainContext)
         }
     }
@@ -37,7 +44,6 @@ struct BookmarkCollectionsApp: App {
         Window("Tucked", id: LibraryWindow.id) {
             libraryContent
         }
-        .modelContainer(container)
         .commands { BookmarkCommands() }
 
         MenuBarExtra("Tucked", systemImage: "bookmark") {
@@ -47,26 +53,40 @@ struct BookmarkCollectionsApp: App {
         WindowGroup {
             libraryContent
         }
-        .modelContainer(container)
         .commands { EmptyCommands() }
         #endif
     }
 
+    @ViewBuilder
     private var libraryContent: some View {
-        LibraryRootView()
-            .environment(storefront)
-            .environment(menuBarRouter)
-            .task(id: scenePhase) {
-                guard scenePhase == .active else { return }
-                let repository = BookmarkRepository(context: container.mainContext)
-                try? repository.reconcileDuplicates()
-                _ = try? repository.purgeExpiredDeleted()
-                let enricher = MetadataEnricher(
-                    context: container.mainContext,
-                    provider: LinkPresentationMetadataProvider()
-                )
-                try? await enricher.enrichPending(limit: 20, includePending: false)
+        if let container {
+            LibraryContentView()
+                .environment(storefront)
+                .environment(menuBarRouter)
+                .modelContainer(container)
+        } else {
+            LibraryStoreFailureView()
+        }
+    }
+
+    static func openLibrary(
+        runtime: AppRuntimeConfiguration,
+        makeContainer: () throws -> ModelContainer
+    ) -> ModelContainer? {
+        do {
+            #if DEBUG
+            if runtime.simulatesStoreOpenFailure {
+                throw CocoaError(.fileReadUnknown)
             }
+            #endif
+            return try makeContainer()
+        } catch {
+            libraryStorageLogger.error("""
+                Could not open library: \(ShareStorageDiagnostics.logSummary(for: error), privacy: .public) \
+                detail: \(String(reflecting: error), privacy: .private)
+                """)
+            return nil
+        }
     }
 
     @MainActor
@@ -165,33 +185,5 @@ struct BookmarkCollectionsApp: App {
             context.fill(.init(x: 0, y: 0, width: width, height: height))
         }
         #endif
-    }
-}
-
-struct AppRuntimeConfiguration {
-    let usesInMemoryStore: Bool
-    let usesCloudKit: Bool
-    let isUITesting: Bool
-    let freeBookmarkLimitOverride: Int?
-
-    init(
-        arguments: [String] = ProcessInfo.processInfo.arguments,
-        environment: [String: String] = ProcessInfo.processInfo.environment
-    ) {
-        isUITesting = arguments.contains("-ui-testing")
-        usesInMemoryStore = environment["XCTestConfigurationFilePath"] != nil || isUITesting
-        usesCloudKit = !usesInMemoryStore
-        freeBookmarkLimitOverride = Self.parseFreeLimit(from: arguments)
-    }
-
-    /// Reads `-free-limit N`. Ignores a missing, non-numeric, or negative value.
-    private static func parseFreeLimit(from arguments: [String]) -> Int? {
-        guard let flag = arguments.firstIndex(of: "-free-limit") else { return nil }
-        let valueIndex = arguments.index(after: flag)
-        guard valueIndex < arguments.endIndex,
-              let value = Int(arguments[valueIndex]),
-              value >= 0
-        else { return nil }
-        return value
     }
 }

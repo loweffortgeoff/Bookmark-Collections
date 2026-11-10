@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-09 (Show library-open failures without a fallback store)
+
+- **Decision:** Attach SwiftData and run library work only after the store opens. On failure, log safe error codes with private details and show restart/support guidance; keep the store unopened.
+- **Why:** A throwaway store would make new saves appear durable. The Debug-only `-ui-testing -simulate-store-open-failure` seam stops before any store opens and permits safe visual checks.
+- **Alternative considered:** Crash or fall back to an in-memory library. Rejected because the first gives no recovery guidance and the second risks silent data loss.
+
 ## 2026-11-09 (Bring the F17 newer-record safeguard into Chapter 2)
 
 - **Decision:** Skip same-ID links, snippets, and collections when the local `modifiedAt` is newer than the backup. Count skipped bookmarks as duplicates; equal/newer backups keep existing semantics, with the same rule in capacity preflight.

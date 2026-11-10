@@ -41,6 +41,86 @@ final class ModelContainerTests: XCTestCase {
         XCTAssertFalse(configuration.usesCloudKit)
     }
 
+    func testRuntimeConfigurationUsesAnInMemoryStoreForUITests() {
+        let configuration = AppRuntimeConfiguration(arguments: ["-ui-testing"], environment: [:])
+
+        XCTAssertTrue(configuration.isUITesting)
+        XCTAssertTrue(configuration.usesInMemoryStore)
+        XCTAssertFalse(configuration.usesCloudKit)
+        XCTAssertFalse(configuration.simulatesStoreOpenFailure)
+    }
+
+    func testStoreOpenFailureSimulationRequiresAnExplicitUITestLaunch() {
+        for environment in [[:], ["XCTestConfigurationFilePath": "/tmp/tests.xctestconfiguration"]] {
+            let configuration = AppRuntimeConfiguration(
+                arguments: ["-simulate-store-open-failure"],
+                environment: environment
+            )
+
+            XCTAssertFalse(configuration.simulatesStoreOpenFailure)
+        }
+    }
+
+    func testStoreOpenFailureSimulationRequiresADebugBuild() {
+        let configuration = AppRuntimeConfiguration(
+            arguments: ["-ui-testing", "-simulate-store-open-failure"],
+            environment: [:]
+        )
+
+        #if DEBUG
+        XCTAssertTrue(configuration.simulatesStoreOpenFailure)
+        #else
+        XCTAssertFalse(configuration.simulatesStoreOpenFailure)
+        #endif
+        XCTAssertTrue(configuration.usesInMemoryStore)
+        XCTAssertFalse(configuration.usesCloudKit)
+    }
+
+    func testLibraryOpenReturnsTheCreatedContainer() throws {
+        let expected = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let runtime = AppRuntimeConfiguration(arguments: [], environment: [:])
+        var attempts = 0
+
+        let container = BookmarkCollectionsApp.openLibrary(runtime: runtime) {
+            attempts += 1
+            return expected
+        }
+
+        XCTAssertTrue(container === expected)
+        XCTAssertEqual(attempts, 1)
+    }
+
+    func testLibraryOpenFailureReturnsNoContainerWithoutRetryOrFallback() {
+        let runtime = AppRuntimeConfiguration(arguments: [], environment: [:])
+        var attempts = 0
+
+        let container = BookmarkCollectionsApp.openLibrary(runtime: runtime) {
+            attempts += 1
+            throw CocoaError(.fileReadCorruptFile)
+        }
+
+        XCTAssertNil(container)
+        XCTAssertEqual(attempts, 1)
+    }
+
+    #if DEBUG
+    func testSimulatedLibraryOpenFailureDoesNotAttemptToOpenAnyStore() {
+        let runtime = AppRuntimeConfiguration(
+            arguments: ["-ui-testing", "-simulate-store-open-failure"],
+            environment: [:]
+        )
+        var attempts = 0
+
+        let container = BookmarkCollectionsApp.openLibrary(runtime: runtime) {
+            attempts += 1
+            return try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        }
+
+        XCTAssertNil(container)
+        XCTAssertEqual(attempts, 0)
+    }
+    #endif
+
     func testRuntimeConfigurationReadsTheFreeLimitLaunchArgument() {
         let configuration = AppRuntimeConfiguration(
             arguments: ["Tucked", "-free-limit", "1"],

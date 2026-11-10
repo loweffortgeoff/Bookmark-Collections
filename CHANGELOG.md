@@ -4,6 +4,11 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Review fixes, Chapter 2: Task 2.4 (2026-11-09)
+
+- Fixed: a library-open failure shows recovery text and a Support link instead of crashing. Log safe error codes and private details; do not create a fallback store.
+- Verification: all 13 container tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes and the native Mac app build. Parent failure-screen visuals and Chapter 2 exit checks remain pending.
+
 ### Review fixes, Chapter 2: Task 2.3 (2026-11-09)
 
 - Fixed: opening the paywall retries a missing product without overlapping an active load. Show the StoreKit price when available, progress while loading, and no invented price.

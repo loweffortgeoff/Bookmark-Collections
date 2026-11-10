@@ -19,6 +19,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
     - [x] Task 2.1 implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; parent live visual confirmation and final suites remain pending.
     - [x] Task 2.2 (2026-11-09): activation purges expired deletions after reconciliation; the F17 newer-date import safeguard was brought forward into Chapter 2. All 58 focused import/purge tests and both simulator builds pass; parent acceptance and the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) remain pending.
     - [x] Task 2.3: the paywall retries missing products and shows only a StoreKit price. All 28 focused audit tests pass with zero skips; ordinary UI-test isolation is preserved. Parent visuals and final suites remain pending.
+    - [x] Task 2.4: show library-open recovery text and Support without a fallback store. All 13 container tests, both simulator schemes, and the native Mac build pass. Parent visuals and Chapter 2 exit checks remain pending.
   - [ ] Chapter 3, UI traps.
   - [ ] Chapter 4, remaining F17 decision: define same-ID link-to-non-link collision behavior. The newer-date safeguard is complete in Chapter 2; no kind policy changed.
 
