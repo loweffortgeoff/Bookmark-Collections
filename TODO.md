@@ -16,7 +16,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 - [ ] **Fix the 2026-11-09 adversarial review findings.** 24 findings, three chapters, one branch each: data loss, then previews/purge/purchase, then UI traps. Geoff approved subagent-driven execution on 2026-11-09. See the [plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md).
   - [x] Chapter 1, data loss: built and reviewed on `fix/review-data-loss` (2026-11-09). Mac unit suite passed 213 tests (13 skipped); Mac UI suite passed 17 tests (1 skipped), both with zero failures on Mac mini, macOS 27.2, Xcode 27.2. Merged locally to `main` at `411b8e8` with Geoff’s authorization on 2026-11-09.
   - [ ] Chapter 2, previews, purge, purchase: in progress on `fix/review-enrichment-purchase`.
-    - [x] Task 2.1 implementation: prompt enrichment, deletion guards, per-item saves, and cancellation safety. Focused iPhone tests pass; parent live visual confirmation and final suites remain pending.
+    - [x] Task 2.1 implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; parent live visual confirmation and final suites remain pending.
   - [ ] Chapter 3, UI traps.
 
 Clipboard capture has no demonstrated gap.

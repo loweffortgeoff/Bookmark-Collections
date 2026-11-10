@@ -170,14 +170,19 @@ func testRefreshKeepsAnExistingTitle() async throws
 
 ### Task 2.1: Safe, prompt enrichment
 
+Review correction (Session 2, after `a6151f9`): the original count-keyed batch restarted mid-fetch and could miss same-count replacements. The interfaces below replace that scheduling rule; the original implementation report and review remain in `.superpowers/sdd/2026-11-09-adversarial-review-fixes/`.
+
 **Files:**
 - Modify: `BookmarkCollections/Domain/MetadataEnricher.swift:13-46,64-94`
 - Modify: `BookmarkCollections/Features/Library/LibraryRootView.swift` (add one `.task(id:)`)
+- Modify: `BookmarkCollections/BookmarkCollectionsApp.swift` (activation retries only)
 - Test: `BookmarkCollectionsTests/MetadataEnricherTests.swift`
+- Test: `BookmarkCollectionsTests/MetadataEnricherSchedulingTests.swift`
 
 **Interfaces:**
-- Produces: `enrichPending(limit:)` skips records with `deletedAt != nil`, checks `bookmark.modelContext != nil && !bookmark.isDeleted` after each `await` before it writes, and saves after each bookmark.
-- Produces: in `LibraryRootView`, `private var pendingLinkCount: Int` (active, `.link`, `.pending`) and `.task(id: pendingLinkCount) { try? await MetadataEnricher(...).enrichPending(limit: 20) }`. A finished batch changes the count, so the task drains the queue; failures become `.failed`, so it ends. The activation task in `BookmarkCollectionsApp` stays for hourly failed retries.
+- Produces: `enrichPending(limit:includePending:)`, with `includePending` defaulting to `true`, preserves existing pending-first batch semantics and per-result saves. Activation calls it with `limit: 20, includePending: false` to retry only active failed links whose hourly delay has elapsed.
+- Produces: in `LibraryRootView`, `oldestPendingLinkID: PersistentIdentifier?` selects the first active pending link in `createdAt`, then `id` order. Capture that ID for `.task(id:)`; call `enrichPendingBookmark(id:)` for only that record. Skip `-ui-testing`. Finishing or deleting the record changes the key even for clone UUIDs and same-count replacements; a missing or ineligible keyed record is skipped without selecting a replacement.
+- Preserves cancellation and model-liveness checks before reads and after awaits. Discard both success and failure if `lastMetadataRefreshAt` changed during the request or the stored row no longer exists; discarded results do not save. Cover two-enricher completion order and second-context deletion with focused tests.
 
 - [ ] **Step 1: Write failing tests**
 
@@ -192,7 +197,7 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 
 - [ ] **Step 2: Run** `MetadataEnricherTests`. Expected: first fails; second crashes.
 - [ ] **Step 3: Implement the three rules in `MetadataEnricher`.**
-- [ ] **Step 4: Add the `.task(id: pendingLinkCount)` to `LibraryRootView`.** Skip it when `-ui-testing` is set, as the Storefront does.
+- [ ] **Step 4: Capture `oldestPendingLinkID` as `pendingLinkID` and add `.task(id: pendingLinkID)` to `LibraryRootView`, with one-record enrichment.** Skip `-ui-testing`; restrict activation to due failed links only.
 - [ ] **Step 5: Run** `MetadataEnricherTests`. Build both schemes.
 - [ ] **Step 6: Visually confirm** on iPhone 18 Pro: Add Link `https://www.apple.com`; the title and preview appear with no backgrounding.
 - [ ] **Step 7: Commit** `Enrich new links at once and guard against deleted records`.

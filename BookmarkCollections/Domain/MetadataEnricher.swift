@@ -10,7 +10,7 @@ struct MetadataEnricher {
     let context: ModelContext
     let provider: any MetadataProviding
 
-    func enrichPending(limit: Int) async throws {
+    func enrichPending(limit: Int, includePending: Bool = true) async throws {
         try Task.checkCancellation()
         guard limit > 0 else { return }
         // Only unfinished bookmarks are loaded; a large, fully enriched
@@ -28,21 +28,32 @@ struct MetadataEnricher {
         let now = Date()
         // Never-fetched links come first so a library with many failures still
         // drains its new saves before retrying old ones.
-        let pending = bookmarks.filter { isActiveLink($0) && $0.metadataState == .pending }
+        let pending = includePending ? bookmarks.filter(Self.isActivePendingLink) : []
         let retryable = bookmarks.filter { bookmark in
-            isActiveLink(bookmark)
+            Self.isActiveLink(bookmark)
                 && bookmark.metadataState == .failed
                 && Self.isRetryDue(bookmark, now: now, interval: Self.failedRetryInterval)
         }
 
         let batch = (pending + retryable).prefix(limit)
-        // A pending-count change can cancel this batch. Save each completed
-        // result before the next fetch can suspend or the task can restart.
+        // Keep completed results if cancellation interrupts a later fetch.
         for bookmark in batch {
             if try await apply(to: bookmark) {
                 try context.save()
             }
         }
+    }
+
+    /// Enrich only the pending record that keys the library's SwiftUI task.
+    func enrichPendingBookmark(id: PersistentIdentifier) async throws {
+        try Task.checkCancellation()
+        var descriptor = FetchDescriptor<Bookmark>(
+            predicate: #Predicate { $0.persistentModelID == id }
+        )
+        descriptor.fetchLimit = 1
+        guard let bookmark = try context.fetch(descriptor).first,
+              Self.isActivePendingLink(bookmark) else { return }
+        try await refresh(bookmark)
     }
 
     private static func isRetryDue(
@@ -60,53 +71,71 @@ struct MetadataEnricher {
         }
     }
 
-    private func isActiveLink(_ bookmark: Bookmark) -> Bool {
+    static func isActivePendingLink(_ bookmark: Bookmark) -> Bool {
+        isActiveLink(bookmark) && bookmark.metadataState == .pending
+    }
+
+    private static func isActiveLink(_ bookmark: Bookmark) -> Bool {
         bookmark.modelContext != nil && !bookmark.isDeleted
             && bookmark.deletedAt == nil && bookmark.kind == .link
+    }
+
+    private func canApply(to bookmark: Bookmark, previousRefreshAt: Date?) throws -> Bool {
+        guard Self.isActiveLink(bookmark),
+              bookmark.lastMetadataRefreshAt == previousRefreshAt else { return false }
+        // Another context can delete the stored row while this model still
+        // has a context and reports isDeleted == false.
+        let id = bookmark.persistentModelID
+        return try context.fetchCount(FetchDescriptor<Bookmark>(
+            predicate: #Predicate { $0.persistentModelID == id }
+        )) > 0
     }
 
     /// Returns whether metadata was applied and needs saving.
     private func apply(to bookmark: Bookmark) async throws -> Bool {
         try Task.checkCancellation()
-        guard isActiveLink(bookmark) else { return false }
+        guard Self.isActiveLink(bookmark) else { return false }
+        let previousRefreshAt = bookmark.lastMetadataRefreshAt
         let refreshDate = Date()
         guard let url = URL(string: bookmark.urlString) else {
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
             return true
         }
+        let metadata: LinkMetadata
         do {
-            let metadata = try await provider.metadata(for: url)
-            try Task.checkCancellation()
-            guard isActiveLink(bookmark) else { return false }
-            // A title the user typed, or one restored from an import, wins
-            // over the page's own title.
-            if bookmark.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-               let title = metadata.title, !title.isEmpty {
-                bookmark.title = title
-            }
-            if !metadata.domain.isEmpty {
-                bookmark.domain = metadata.domain
-            }
-            // A fetch can succeed without an image (many pages have no
-            // og:image). Keep any preview already stored instead of erasing it.
-            if let faviconData = metadata.faviconData {
-                bookmark.faviconData = faviconData
-            }
-            if let previewImageData = metadata.previewImageData {
-                bookmark.previewImageData = previewImageData
-            }
-            bookmark.metadataState = .ready
-            bookmark.lastMetadataRefreshAt = refreshDate
-            bookmark.modifiedAt = refreshDate
+            metadata = try await provider.metadata(for: url)
         } catch is CancellationError {
             throw CancellationError()
         } catch {
             try Task.checkCancellation()
-            guard isActiveLink(bookmark) else { return false }
+            guard try canApply(to: bookmark, previousRefreshAt: previousRefreshAt) else { return false }
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
+            return true
         }
+        try Task.checkCancellation()
+        guard try canApply(to: bookmark, previousRefreshAt: previousRefreshAt) else { return false }
+        // A title the user typed, or one restored from an import, wins
+        // over the page's own title.
+        if bookmark.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           let title = metadata.title, !title.isEmpty {
+            bookmark.title = title
+        }
+        if !metadata.domain.isEmpty {
+            bookmark.domain = metadata.domain
+        }
+        // A fetch can succeed without an image (many pages have no
+        // og:image). Keep any preview already stored instead of erasing it.
+        if let faviconData = metadata.faviconData {
+            bookmark.faviconData = faviconData
+        }
+        if let previewImageData = metadata.previewImageData {
+            bookmark.previewImageData = previewImageData
+        }
+        bookmark.metadataState = .ready
+        bookmark.lastMetadataRefreshAt = refreshDate
+        bookmark.modifiedAt = refreshDate
         return true
     }
 }

@@ -260,6 +260,7 @@ final class MetadataEnricherTests: XCTestCase {
         XCTAssertEqual(callCount, 0)
         XCTAssertEqual(detached.metadataState, .pending)
         XCTAssertNil(detached.lastMetadataRefreshAt)
+        XCTAssertTrue(container.mainContext.hasChanges, "Refresh must not save the pending deletion")
     }
 
     func testPendingEnrichmentSavesEachResultBeforeTheNextFetch() async throws {

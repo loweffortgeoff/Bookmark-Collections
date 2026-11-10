@@ -4,7 +4,15 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
-## 2026-11-09 (Save each metadata result before the library task restarts)
+## 2026-11-09 (Process one pending record per library task)
+
+- **Decision:** Key the library task by the oldest active pending link's `persistentModelID` and enrich only that record. Activation retries only due failed links, up to 20; the existing batch API keeps its default behavior for other callers.
+- **Why:** Count changes restart batches mid-fetch and miss same-count replacements. Clone UUIDs are shared. Keep cancellation and liveness guards; discard late results after another refresh or a saved deletion in another context.
+- **Alternative considered:** Keep the original count-keyed 20-link batch from `a6151f9`. Rejected after Task 2.1 review because it can repeat fetches and overlap activation work.
+
+## 2026-11-09 (Save each metadata result before the library task restarts — superseded)
+
+Historical decision from `a6151f9`, superseded by the review correction above. The original activation path also selected pending links; its stated separation below was not implemented until the correction.
 
 - **Decision:** Start a 20-link batch when the active pending-link count changes. Save each result; skip UI-test launches and leave hourly failed retries in the activation task.
 - **Why:** The count changes as previews finish, so SwiftUI can cancel and restart the task. Cancellation must keep unfinished links pending and preserve completed saves.

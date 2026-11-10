@@ -63,7 +63,7 @@ struct BookmarkCollectionsApp: App {
                     context: container.mainContext,
                     provider: LinkPresentationMetadataProvider()
                 )
-                try? await enricher.enrichPending(limit: 20)
+                try? await enricher.enrichPending(limit: 20, includePending: false)
             }
     }
 
