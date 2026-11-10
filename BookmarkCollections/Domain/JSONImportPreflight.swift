@@ -53,9 +53,9 @@ enum JSONImportPreflight {
                 continue
             }
 
-            // BookmarkRepository.reconcileDuplicates keeps one link per URL and
-            // revives it when any copy is active, so a group costs one slot
-            // exactly when any member is active.
+            // Preflight counts one slot per URL when any copy is active.
+            // Reconciliation keeps indistinguishable clones (same id and
+            // createdAt), so this can undercount visible clone pairs.
             if item.deletedAt == nil { activeLinkURLs.insert(item.normalizedURL) }
         }
         return activeCount + activeLinkURLs.count

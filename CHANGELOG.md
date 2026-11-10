@@ -4,6 +4,11 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Review fixes, Chapter 2: Task 2.1 (2026-11-09)
+
+- Fixed: new links start metadata enrichment while the library is open. Each result saves separately; cancelled fetches stay pending, and deleted links are skipped before and after fetching.
+- Verification: 18 enrichment tests and the clone-only cleanup regression pass on iPhone 18 Pro with iOS 27.0. Live visual confirmation and final suites remain pending with the parent session.
+
 ### Review fixes, Chapter 1: data loss (merged to `main` 2026-11-09)
 
 From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1 to F5).

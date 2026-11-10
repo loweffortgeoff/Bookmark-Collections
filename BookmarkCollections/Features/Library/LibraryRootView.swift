@@ -71,6 +71,14 @@ struct LibraryRootView: View {
                 Text(errorMessage ?? "Try again.")
             }
             .focusedSceneValue(\.bookmarkCommandActions, commandActions)
+            .task(id: pendingLinkCount) {
+                guard !ProcessInfo.processInfo.arguments.contains("-ui-testing"),
+                      pendingLinkCount > 0 else { return }
+                try? await MetadataEnricher(
+                    context: modelContext,
+                    provider: LinkPresentationMetadataProvider()
+                ).enrichPending(limit: 20)
+            }
             .onAppear(perform: consumeMenuBarRequest)
             .onChange(of: menuBarRouter.generation) { consumeMenuBarRequest() }
             .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
@@ -219,6 +227,13 @@ struct LibraryRootView: View {
 
     private var hasRecentlyDeletedBookmarks: Bool {
         bookmarks.contains { $0.deletedAt != nil }
+    }
+
+    private var pendingLinkCount: Int {
+        bookmarks.lazy.filter {
+            $0.modelContext != nil && !$0.isDeleted
+                && $0.deletedAt == nil && $0.kind == .link && $0.metadataState == .pending
+        }.count
     }
 
     private var permanentDeletePresented: Binding<Bool> {

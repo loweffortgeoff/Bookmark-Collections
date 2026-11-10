@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-09 (Save each metadata result before the library task restarts)
+
+- **Decision:** Start a 20-link batch when the active pending-link count changes. Save each result; skip UI-test launches and leave hourly failed retries in the activation task.
+- **Why:** The count changes as previews finish, so SwiftUI can cancel and restart the task. Cancellation must keep unfinished links pending and preserve completed saves.
+- **Alternative considered:** Save only at the end of a batch. Rejected because a task restart can interrupt the batch before that save.
+
 ## 2026-11-09 (Keep identical copies from a double import)
 
 - **Decision:** Duplicate cleanup never deletes a record it cannot tell apart from the one it keeps. Two links with the same `id` and `createdAt` both stay, and a group made only of such copies is not touched. The record kept in a group is always the earliest by `createdAt`, then `id`; `deletedAt` never decides it.

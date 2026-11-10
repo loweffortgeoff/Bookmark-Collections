@@ -11,13 +11,14 @@ struct MetadataEnricher {
     let provider: any MetadataProviding
 
     func enrichPending(limit: Int) async throws {
+        try Task.checkCancellation()
         guard limit > 0 else { return }
         // Only unfinished bookmarks are loaded; a large, fully enriched
         // library no longer costs a whole-store fetch on every activation.
         let ready = Bookmark.MetadataState.ready.rawValue
         let bookmarks = try context.fetch(
             FetchDescriptor<Bookmark>(
-                predicate: #Predicate { $0.metadataStateRawValue != ready },
+                predicate: #Predicate { $0.metadataStateRawValue != ready && $0.deletedAt == nil },
                 sortBy: [
                     SortDescriptor(\Bookmark.createdAt),
                     SortDescriptor(\Bookmark.id)
@@ -27,22 +28,21 @@ struct MetadataEnricher {
         let now = Date()
         // Never-fetched links come first so a library with many failures still
         // drains its new saves before retrying old ones.
-        let pending = bookmarks.filter { $0.kind == .link && $0.metadataState == .pending }
+        let pending = bookmarks.filter { isActiveLink($0) && $0.metadataState == .pending }
         let retryable = bookmarks.filter { bookmark in
-            bookmark.kind == .link
+            isActiveLink(bookmark)
                 && bookmark.metadataState == .failed
                 && Self.isRetryDue(bookmark, now: now, interval: Self.failedRetryInterval)
         }
 
         let batch = (pending + retryable).prefix(limit)
-        guard !batch.isEmpty else { return }
-        // Each card observes its own bookmark, so previews still appear one
-        // by one; saving once at the end spares the library a full redraw
-        // per refreshed link.
+        // A pending-count change can cancel this batch. Save each completed
+        // result before the next fetch can suspend or the task can restart.
         for bookmark in batch {
-            await apply(to: bookmark)
+            if try await apply(to: bookmark) {
+                try context.save()
+            }
         }
-        try context.save()
     }
 
     private static func isRetryDue(
@@ -55,21 +55,30 @@ struct MetadataEnricher {
     }
 
     func refresh(_ bookmark: Bookmark) async throws {
-        guard bookmark.kind == .link else { return }
-        await apply(to: bookmark)
-        try context.save()
+        if try await apply(to: bookmark) {
+            try context.save()
+        }
     }
 
-    /// Fetches and stores one link's metadata without saving the context.
-    private func apply(to bookmark: Bookmark) async {
+    private func isActiveLink(_ bookmark: Bookmark) -> Bool {
+        bookmark.modelContext != nil && !bookmark.isDeleted
+            && bookmark.deletedAt == nil && bookmark.kind == .link
+    }
+
+    /// Returns whether metadata was applied and needs saving.
+    private func apply(to bookmark: Bookmark) async throws -> Bool {
+        try Task.checkCancellation()
+        guard isActiveLink(bookmark) else { return false }
         let refreshDate = Date()
         guard let url = URL(string: bookmark.urlString) else {
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
-            return
+            return true
         }
         do {
             let metadata = try await provider.metadata(for: url)
+            try Task.checkCancellation()
+            guard isActiveLink(bookmark) else { return false }
             // A title the user typed, or one restored from an import, wins
             // over the page's own title.
             if bookmark.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
@@ -90,9 +99,14 @@ struct MetadataEnricher {
             bookmark.metadataState = .ready
             bookmark.lastMetadataRefreshAt = refreshDate
             bookmark.modifiedAt = refreshDate
+        } catch is CancellationError {
+            throw CancellationError()
         } catch {
+            try Task.checkCancellation()
+            guard isActiveLink(bookmark) else { return false }
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
         }
+        return true
     }
 }

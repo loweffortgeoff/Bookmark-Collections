@@ -276,6 +276,40 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(try allBookmarks(in: container).count, 2)
     }
 
+    func testReconcileLeavesCloneOnlyDifferingTitlesUnmergedAndDoesNotSave() throws {
+        for reversed in [false, true] {
+            let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+            let context = container.mainContext
+            let url = "https://example.com/item"
+            let id = UUID()
+            let created = Date(timeIntervalSince1970: 100)
+            let first = Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created)
+            first.title = "First title"
+            let second = Bookmark(id: id, urlString: url, normalizedURLString: url, createdAt: created,
+                                  modifiedAt: Date(timeIntervalSince1970: 200))
+            second.title = "Edited clone title"
+            for clone in reversed ? [second, first] : [first, second] {
+                context.insert(clone)
+            }
+            let collection = BookmarkCollection(name: "Saved name", sortPosition: 0)
+            context.insert(collection)
+            try context.save()
+            collection.name = "Unsaved name"
+            XCTAssertTrue(context.hasChanges)
+
+            try BookmarkRepository(context: context).reconcileDuplicates()
+
+            XCTAssertEqual(try allBookmarks(in: container).count, 2)
+            XCTAssertEqual(first.title, "First title")
+            XCTAssertEqual(second.title, "Edited clone title")
+            XCTAssertEqual(first.modifiedAt, created)
+            XCTAssertEqual(second.modifiedAt, Date(timeIntervalSince1970: 200))
+            XCTAssertTrue(context.hasChanges, "Clone-only cleanup must not save unrelated pending edits")
+            let storedCollections = try ModelContext(container).fetch(FetchDescriptor<BookmarkCollection>())
+            XCTAssertEqual(storedCollections.first?.name, "Saved name")
+        }
+    }
+
     func testReconcileStillMergesClonesWithADistinctThirdRecord() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let repository = BookmarkRepository(context: container.mainContext)
