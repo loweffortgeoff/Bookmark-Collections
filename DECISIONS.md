@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-09 (Purge expired deletions after duplicate cleanup)
+
+- **Decision:** Run the accepted 30-day purge on activation, after reconciliation. Retain an expired link while any active link shares its normalized URL; apply the age rule normally to images and snippets.
+- **Why:** Geoff accepted scheduled hard deletion on 2026-11-09. The active-copy guard prevents purge from deleting a canonical record while another device revives it and removes the active duplicate.
+- **Alternative considered:** Purge every expired record without checking active links. Rejected because concurrent cleanup could remove both copies. Keep deterministic reconciliation and its revive policy unchanged.
+
 ## 2026-11-09 (Process one pending record per library task)
 
 - **Decision:** Key the library task by the oldest active pending link's `persistentModelID` and enrich only that record. Activation retries only due failed links, up to 20; the existing batch API keeps its default behavior for other callers.

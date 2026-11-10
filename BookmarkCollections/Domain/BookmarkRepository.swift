@@ -362,9 +362,13 @@ struct BookmarkRepository {
     func purgeExpiredDeleted(now: Date = Date()) throws -> Int {
         let expirationDate = now.addingTimeInterval(-30 * 24 * 60 * 60)
         let bookmarks = try context.fetch(FetchDescriptor<Bookmark>())
+        let activeLinkURLs = Set(bookmarks.lazy
+            .filter { $0.kind == .link && $0.deletedAt == nil }
+            .map(\.normalizedURLString))
         let expired = bookmarks.filter { bookmark in
-            guard let deletedAt = bookmark.deletedAt else { return false }
-            return deletedAt < expirationDate
+            guard let deletedAt = bookmark.deletedAt, deletedAt < expirationDate else { return false }
+            // Another device may revive this link and remove its active duplicate.
+            return bookmark.kind != .link || !activeLinkURLs.contains(bookmark.normalizedURLString)
         }
         for bookmark in expired {
             context.delete(bookmark)

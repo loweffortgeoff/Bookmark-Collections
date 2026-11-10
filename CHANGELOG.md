@@ -10,6 +10,11 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 - Review correction: each library task enriches its oldest pending record by persistent identity. Activation retries only due failures; late results cannot overwrite another refresh or write to a row deleted by another context.
 - Verification: 29 metadata tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Live visual confirmation and final suites remain pending with the parent session.
 
+### Review fixes, Chapter 2: Task 2.2 (2026-11-09)
+
+- Changed: activation now purges items deleted more than 30 days ago, after duplicate cleanup. Expired links stay if an active link has the same normalized URL; images and snippets purge normally.
+- Verification: all 5 Recently Deleted tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Full suites, live UI checks, and device acceptance remain with the parent session.
+
 ### Review fixes, Chapter 1: data loss (merged to `main` 2026-11-09)
 
 From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1 to F5).

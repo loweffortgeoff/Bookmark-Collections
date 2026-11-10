@@ -58,7 +58,9 @@ struct BookmarkCollectionsApp: App {
             .environment(menuBarRouter)
             .task(id: scenePhase) {
                 guard scenePhase == .active else { return }
-                try? BookmarkRepository(context: container.mainContext).reconcileDuplicates()
+                let repository = BookmarkRepository(context: container.mainContext)
+                try? repository.reconcileDuplicates()
+                _ = try? repository.purgeExpiredDeleted()
                 let enricher = MetadataEnricher(
                     context: container.mainContext,
                     provider: LinkPresentationMetadataProvider()

@@ -49,6 +49,60 @@ final class RecentlyDeletedTests: XCTestCase {
         XCTAssertEqual(remainingIDs, [boundary.id, active.id])
     }
 
+    func testPurgeSkipsDeletedLinkWithAnActiveCopy() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let now = Date(timeIntervalSince1970: 4_000_000)
+        let deletionDate = now.addingTimeInterval(-31 * 24 * 60 * 60)
+        let expired = Bookmark(
+            urlString: "https://example.com/shared#old",
+            normalizedURLString: "https://example.com/shared",
+            createdAt: Date(timeIntervalSince1970: 1_000)
+        )
+        expired.deletedAt = deletionDate
+        let active = Bookmark(
+            urlString: "https://example.com/shared?utm_source=new",
+            normalizedURLString: "https://example.com/shared",
+            createdAt: Date(timeIntervalSince1970: 2_000)
+        )
+        container.mainContext.insert(expired)
+        container.mainContext.insert(active)
+        try container.mainContext.save()
+        let expiredID = expired.id
+        let activeID = active.id
+
+        let purgedCount = try repository.purgeExpiredDeleted(now: now)
+
+        let remaining = try allBookmarks(in: container)
+        XCTAssertEqual(purgedCount, 0)
+        XCTAssertEqual(Set(remaining.map(\.id)), [expiredID, activeID])
+        XCTAssertEqual(remaining.first { $0.id == expiredID }?.deletedAt, deletionDate)
+        XCTAssertNil(active.deletedAt)
+    }
+
+    func testPurgeRemovesExpiredNonLinksSharingAnEmptyURLWithActiveItems() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let repository = BookmarkRepository(context: container.mainContext)
+        let now = Date(timeIntervalSince1970: 4_000_000)
+        var activeIDs: Set<UUID> = []
+        for kind in [Bookmark.Kind.image, .text] {
+            let expired = Bookmark(urlString: "", normalizedURLString: "")
+            expired.kind = kind
+            expired.deletedAt = now.addingTimeInterval(-31 * 24 * 60 * 60)
+            let active = Bookmark(urlString: "", normalizedURLString: "")
+            active.kind = kind
+            activeIDs.insert(active.id)
+            container.mainContext.insert(expired)
+            container.mainContext.insert(active)
+        }
+        try container.mainContext.save()
+
+        let purgedCount = try repository.purgeExpiredDeleted(now: now)
+
+        XCTAssertEqual(purgedCount, 2)
+        XCTAssertEqual(Set(try allBookmarks(in: container).map(\.id)), activeIDs)
+    }
+
     private func createdBookmark(from result: SaveResult) throws -> Bookmark {
         guard case let .created(bookmark) = result else {
             throw TestError.unexpectedSaveResult
