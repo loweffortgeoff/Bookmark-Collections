@@ -74,9 +74,9 @@ final class ImageImportTests: XCTestCase {
         let second = directory.appendingPathComponent("Second.png")
         try Self.pngData(width: 20, height: 20).write(to: first)
         try Self.pngData(width: 20, height: 20).write(to: second)
-        XCTAssertThrowsError(try ImageImportService(context: container.mainContext).importImages(at: [first, second])) {
-            XCTAssertEqual($0 as? BookmarkRepository.LimitError, .limitReached)
-        }
+        let summary = try ImageImportService(context: container.mainContext).importImages(at: [first, second])
+        XCTAssertEqual(summary.newCount, 1)
+        XCTAssertTrue(summary.stoppedAtLimit)
         XCTAssertEqual(try container.mainContext.fetchCount(FetchDescriptor<Bookmark>()), 10)
     }
 

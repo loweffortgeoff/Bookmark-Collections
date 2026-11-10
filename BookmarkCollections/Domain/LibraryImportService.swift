@@ -26,7 +26,9 @@ struct LibraryImportService {
         let repository = BookmarkRepository(context: context)
         var summary = ImportSummary()
 
-        for rawLine in text.components(separatedBy: .newlines) {
+        // The lines before the free limit are already saved, so the limit
+        // ends the loop and the summary reports what happened.
+        lines: for rawLine in text.components(separatedBy: .newlines) {
             let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !line.isEmpty else { continue }
 
@@ -39,8 +41,9 @@ struct LibraryImportService {
                 case .restored:
                     summary.restoredCount += 1
                 }
-            } catch let error as BookmarkRepository.LimitError {
-                throw error
+            } catch is BookmarkRepository.LimitError {
+                summary.stoppedAtLimit = true
+                break lines
             } catch {
                 summary.failedLines.append(line)
             }

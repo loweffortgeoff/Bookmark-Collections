@@ -95,7 +95,9 @@ struct LibraryRootView: View {
                 case let .success(urls):
                     perform {
                         let summary = try ImageImportService(context: modelContext).importImages(at: urls)
-                        if !summary.failedLines.isEmpty {
+                        if summary.stoppedAtLimit {
+                            sheet = .paywall
+                        } else if !summary.failedLines.isEmpty {
                             errorMessage = "Could not add \(summary.failedLines.count) of \(urls.count) images."
                         }
                     }

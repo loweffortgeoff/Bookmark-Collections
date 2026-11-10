@@ -28,8 +28,10 @@ struct ImageImportService {
                     title: url.deletingPathExtension().lastPathComponent
                 )
                 summary.newCount += 1
-            } catch let error as BookmarkRepository.LimitError {
-                throw error
+            } catch is BookmarkRepository.LimitError {
+                // Earlier files are already saved; report the stop.
+                summary.stoppedAtLimit = true
+                return summary
             } catch {
                 summary.failedLines.append(url.lastPathComponent)
             }

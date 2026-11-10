@@ -33,10 +33,29 @@ final class PaywallImportAuditTests: XCTestCase {
 
     func testTextImportStopsAtTenWithoutCreatingEleventh() throws {
         try withLockedStore(9) { container in
-            XCTAssertThrowsError(try LibraryImportService(context: container.mainContext).importText("https://audit.example/new-a\nhttps://audit.example/new-b")) {
-                XCTAssertEqual($0 as? BookmarkRepository.LimitError, .limitReached)
-            }
+            let summary = try LibraryImportService(context: container.mainContext).importText("https://audit.example/new-a\nhttps://audit.example/new-b")
+            XCTAssertEqual(summary.newCount, 1)
+            XCTAssertTrue(summary.stoppedAtLimit)
             XCTAssertEqual(try container.mainContext.fetchCount(FetchDescriptor<Bookmark>()), 10)
+        }
+    }
+
+    func testTextImportAtLimitReturnsSummary() throws {
+        try withLockedStore(8) { container in
+            let text = (0..<5).map { "https://audit.example/partial-\($0)" }.joined(separator: "\n")
+            let summary = try LibraryImportService(context: container.mainContext).importText(text)
+            XCTAssertEqual(summary.newCount, 2)
+            XCTAssertTrue(summary.stoppedAtLimit)
+            XCTAssertTrue(summary.failedLines.isEmpty)
+            XCTAssertEqual(try container.mainContext.fetchCount(FetchDescriptor<Bookmark>()), 10)
+        }
+    }
+
+    func testTextImportBelowLimitDoesNotReportAStop() throws {
+        try withLockedStore(8) { container in
+            let summary = try LibraryImportService(context: container.mainContext).importText("https://audit.example/fits")
+            XCTAssertEqual(summary.newCount, 1)
+            XCTAssertFalse(summary.stoppedAtLimit)
         }
     }
 

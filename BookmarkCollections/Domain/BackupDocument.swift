@@ -77,5 +77,8 @@ struct ImportSummary: Equatable, Sendable {
     var duplicateCount = 0
     var restoredCount = 0
     var failedLines: [String] = []
+    /// A text or image import met the free limit part way. The items before
+    /// it are saved; the rest were not tried.
+    var stoppedAtLimit = false
 }
 
