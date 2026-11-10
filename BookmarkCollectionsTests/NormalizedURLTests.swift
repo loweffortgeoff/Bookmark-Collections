@@ -33,5 +33,27 @@ final class NormalizedURLTests: XCTestCase {
         XCTAssertThrowsError(try NormalizedURL("not a url"))
         XCTAssertThrowsError(try NormalizedURL("https:///missing-host"))
     }
-}
 
+    func testUserEnteredAddsHTTPS() {
+        XCTAssertEqual(NormalizedURL.userEntered("example.com"), "https://example.com")
+        XCTAssertEqual(NormalizedURL.userEntered(" www.example.com/page "), "https://www.example.com/page")
+        XCTAssertEqual(NormalizedURL.userEntered("example.com:8080/a"), "https://example.com:8080/a")
+        XCTAssertEqual(NormalizedURL.userEntered("http://example.com"), "http://example.com")
+        XCTAssertEqual(NormalizedURL.userEntered("not a url"), "not a url")
+    }
+
+    func testUserEnteredLeavesOtherSchemesForValidationToReject() {
+        XCTAssertEqual(NormalizedURL.userEntered("mailto:a@b.com"), "mailto:a@b.com")
+        XCTAssertThrowsError(try NormalizedURL(NormalizedURL.userEntered("mailto:a@b.com"))) {
+            XCTAssertEqual($0 as? NormalizedURL.ValidationError, .unsupportedScheme)
+        }
+    }
+
+    func testUserEnteredAddressesNormalize() throws {
+        XCTAssertEqual(try NormalizedURL(NormalizedURL.userEntered("example.com")).string, "https://example.com/")
+        XCTAssertEqual(
+            try NormalizedURL(NormalizedURL.userEntered("www.example.com/page")).string,
+            "https://www.example.com/page"
+        )
+    }
+}

@@ -21,6 +21,25 @@ struct NormalizedURL {
     let url: URL
     let string: String
 
+    /// Text a person typed or pasted, with `https://` added when it reads as
+    /// a bare web address ("example.com"). Share capture does not use this:
+    /// shared items already carry a scheme.
+    static func userEntered(_ value: String) -> String {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.contains("://"),
+              trimmed.contains("."),
+              trimmed.rangeOfCharacter(from: .whitespacesAndNewlines) == nil else {
+            return trimmed
+        }
+        // "mailto:a@b.com" has a real scheme and stays as typed, so it gets
+        // the unsupported-scheme message. "example.com:8080" parses with the
+        // host as its scheme; a scheme with a dot is a host.
+        if let scheme = URLComponents(string: trimmed)?.scheme, !scheme.contains(".") {
+            return trimmed
+        }
+        return "https://" + trimmed
+    }
+
     init(_ value: String) throws {
         guard var components = URLComponents(string: value) else {
             throw ValidationError.invalidURL

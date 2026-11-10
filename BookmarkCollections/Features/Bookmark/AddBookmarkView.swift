@@ -56,7 +56,7 @@ struct AddBookmarkView: View {
         do {
             let collection = collections.first(where: { $0.id == selectedCollectionID })
             _ = try BookmarkRepository(context: modelContext).save(
-                url: urlString.trimmingCharacters(in: .whitespacesAndNewlines),
+                url: NormalizedURL.userEntered(urlString),
                 collection: collection,
                 favorite: isFavorite
             )
