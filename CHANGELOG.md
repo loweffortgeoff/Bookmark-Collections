@@ -4,6 +4,21 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Review fixes, Chapter 3: UI traps (2026-11-10, on `fix/review-ui-traps`, not merged)
+
+From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F11 to F14, F16, F18 to F20).
+
+- Fixed: a long-press on a link with an empty or unreadable address no longer crashes.
+- Fixed: selection mode ends when you change to another view. Done shows whenever selection is on. Bulk Share is disabled when the selection has no web address.
+- Fixed: Add Link and text import accept `example.com` and `www.example.com/page`. Tucked adds `https://`. Text that is not a web address, such as `v1.2` or an email address, stays an invalid line.
+- Fixed: at the free limit, Save in Add Link or the snippet editor opens the paywall over the editor. The typed text is still there when the paywall closes.
+- Fixed: with a sheet open on the Mac, Cmd+Delete in a text field no longer moves the item to Recently Deleted. Add Link, New Snippet, New Collection, Add Images, and Surprise Me do nothing while a sheet is open. A menu bar choice made while an editor is open is ignored.
+- Changed: a text or image import that meets the free limit keeps the items it saved and shows a summary with "Stopped at the free limit" and an Unlock button. Before, it showed the paywall with no summary.
+- Fixed: the image viewer decodes the image once, not on every pinch frame.
+- Verification (Mac mini, macOS 27.2, Xcode 27.2, `db57eeb`): Mac unit/UI suites pass 261/19 cases; iPhone 18 Pro iOS 27.0 passes 257/19. Expected skips are 15 unit and one UI per platform; zero failures. Both simulator schemes build. No visual check was done.
+
+- Chapter 2 merged to `main` locally at `bffbf0b` (2026-11-10), not pushed. Merge gate at that commit: Mac unit/UI 254/17, iPhone unit/UI 250/18, zero failures.
+
 - Verification procedure corrected (2026-11-10): sync a recent deletion first, then age only the offline device’s copy. The original two-device purge attempt stopped during setup; Geoff reports the revised check passed on both physical iPhones at `126b913`, with the restored link in `Dev Work` (03:50 am).
 
 - Chapter 2 integrated checks (2026-11-09, Mac mini, macOS/Xcode 27.2): Mac unit/UI suites pass 253/17 cases; iPhone 18 Pro iOS 27.0 passes 249/18. Expected skips are 15 unit and one UI per platform; zero failures. Failure/success, no-product paywall, and live-preview visuals pass; the final URL guard passes 30 metadata tests per platform. [Evidence](docs/verification/2026-11-09-review-chapter2.md).

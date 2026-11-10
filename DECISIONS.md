@@ -4,6 +4,18 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-10 (Drop a menu bar request that arrives while an editor is open)
+
+- **Decision:** When Add Link, a link or snippet editor, or a collection editor is open, a menu bar choice brings the window forward and is otherwise ignored. While any sheet is open, menu commands that would open another sheet or act on the item behind it do nothing.
+- **Why:** Each of these replaced the open sheet and lost the typed text (review finding F14). Cmd+Delete in a sheet's text field also reached "Move to Recently Deleted" (F16, confirmed by a Mac UI test on `bffbf0b`).
+- **Alternative considered:** keep the request and run it when the editor closes (the plan's wording). Rejected in review: nothing ran it at close, so it fired on the next window appearance, when the user no longer expected it.
+
+## 2026-11-10 (Add https:// only to text that reads as a web address)
+
+- **Decision:** Add Link and text import add `https://` when the text has no scheme, no `@`, no whitespace, and a host that ends in a letters-only label of two or more letters. Text with another scheme, such as `mailto:`, stays as typed and gets the unsupported-scheme message. Share capture does not use this rule.
+- **Why:** `example.com` was rejected (F13). A looser rule saved `v1.2`, `3.14` and `user@example.com` from a pasted list as links, and each one used a free slot.
+- **Cost, accepted:** a bare IP address or `localhost` needs a typed scheme. A line such as `notes.txt` still saves as a link.
+
 ## 2026-11-09 (Show library-open failures without a fallback store)
 
 - **Decision:** Attach SwiftData and run library work only after the store opens. On failure, log safe error codes with private details and show restart/support guidance; keep the store unopened.

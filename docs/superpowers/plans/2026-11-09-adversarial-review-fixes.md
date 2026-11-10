@@ -10,14 +10,14 @@
 
 **Spec:** The Findings section of this file. Evidence is code reading at `9b39d7d` unless a row says "run".
 
-## Resume here (updated 2026-11-09, Chapter 2)
+## Resume here (updated 2026-11-10, Chapter 3)
 
-1. Chapter 1 is merged locally to `main` at `411b8e8`, with Geoff’s authorization. No push performed.
-2. Chapter 2 implementation is on `fix/review-enrichment-purchase`, through `b9197be`; review-limit docs follow at `de5346c`. All task-focused checks passed. The approved F17 newer-date safeguard is included.
-3. Full Mac/iPhone unit suites passed (253/249 cases, each with 15 expected StoreKit skips), and UI suites passed (17/18 cases, each with one expected skip). Zero failures. Final review passed; the final URL guard also passes 30 metadata tests per platform; see [verification](../../verification/2026-11-09-review-chapter2.md).
-4. Live iPhone checks passed after the ownership claim cleared: failure/success startup, no-product paywall, and Apple/Swift/Python previews without backgrounding. Temporary metadata-only test instrumentation was removed. Request counts and loaded-price/loading-spinner visuals were not measured.
-5. Chapter 2 is not merged or pushed. Chapter 3 is a separate session. Geoff reported the staged two-device purge/restore check passed on 2026-11-10 at `126b913`; the accepted local-only limit remains.
-6. The session ledger is `.superpowers/sdd/2026-11-09-adversarial-review-fixes/progress.md` (git-ignored). Git history and this file are the durable record.
+1. Chapters 1 and 2 are merged locally to `main` at `bffbf0b` (fast-forward, 2026-11-10, with Geoff’s authorization). No push performed; `main` is 9 commits ahead of `origin/main`.
+2. Chapter 2 merge gate at `bffbf0b`, Mac mini, macOS 27.2, Xcode 27.2, scheme `BookmarkCollections`: Mac unit 254 cases (15 skipped), Mac UI 17 (1 skipped), iPhone 18 Pro iOS 27.0 unit 250 (15 skipped), UI 18 (1 skipped). Zero failures. The Mac UI suite ran after Geoff authorized Automation Mode.
+3. Chapter 3 is built on `fix/review-ui-traps`, `456b450`..`db57eeb`. All six tasks are done. Code review found three Important items; `db57eeb` fixes them.
+4. Chapter 3 exit suites at `db57eeb`, same machine: Mac unit 261 (15 skipped), Mac UI 19 (1 skipped), iPhone unit 257 (15 skipped), iPhone UI 19 (1 skipped). Zero failures. Both simulator schemes build.
+5. Chapter 3 is not merged or pushed. Next step: Geoff authorizes the merge. No visual check of the import-summary Unlock row or the image viewer was done; tests and builds only.
+6. Chapter 4 is decisions only. No code until Geoff chooses.
 
 ## Global Constraints
 
@@ -252,21 +252,29 @@ Geoff: this is the first build that hard-deletes on a timer. Items deleted more 
 
 ## Chapter 3 — UI traps (branch `fix/review-ui-traps`)
 
+> **Chapter 3 status (2026-11-10):** built on `fix/review-ui-traps`, commits `456b450`..`db57eeb`. Not merged. The text below is the original; these rules changed as built:
+>
+> - **Task 3.3:** text with a real scheme (`mailto:`) stays as typed and gets the unsupported-scheme message. The planned `https://mailto:a@b.com` parses as a valid address. `https://` is added only when the host ends in a letters-only label of two or more letters and the text has no `@`, so `v1.2`, `3.14` and `user@example.com` stay invalid lines in a text import.
+> - **Task 3.4:** the editors no longer take `onPaywall`; `SettingsView` keeps it. A menu bar request that arrives while an editor is open is taken and dropped, not kept: a kept request fired on the next window appearance. Surprise Me and Add Images are also inert while a sheet is open. The collection editors count as editors with a draft.
+> - **Task 3.4, F16:** confirmed real on `bffbf0b` and closed. `testCommandDeleteInSnippetEditorDoesNotDeleteTheSnippet` is the regression test.
+> - **Task 3.5:** the Mac Add Images command opens the paywall when its batch stops at the limit.
+> - **Task 3.6:** the decode is keyed by image data size, so data that syncs in later is decoded.
+
 ### Task 3.1: Remove the force unwrap
 
 **Files:** Modify `BookmarkCollections/Features/Bookmark/BookmarkActions.swift:42-46`
 
-- [ ] **Step 1: Show the link `ShareLink` only when `BookmarkSharePayload(bookmark:)` is `.link(url)`.**
-- [ ] **Step 2: Build both schemes. Commit** `Remove the force-unwrapped share URL`.
+- [x] **Step 1: Show the link `ShareLink` only when `BookmarkSharePayload(bookmark:)` is `.link(url)`.**
+- [x] **Step 2: Build both schemes. Commit** `Remove the force-unwrapped share URL`.
 
 ### Task 3.2: Selection mode ends with its view
 
 **Files:** Modify `BookmarkCollections/Features/Library/LibraryGridView.swift:96-111`; Test `BookmarkCollectionsUITests/BookmarkCollectionsUITests.swift`
 
-- [ ] **Step 1: Write failing UI test** `testSelectionModeEndsWhenDestinationChanges`: tap `selection.toggle`, select "Seeded Active", tap `destination.recentlyDeleted`, assert `selection.delete` does not exist.
-- [ ] **Step 2: Add `.onChange(of: destination) { isSelecting = false; selection.removeAll() }`.** Show the Done button whenever `isSelecting` is true.
-- [ ] **Step 3: Bulk Share (F19):** disable the Share control when the selection has no link.
-- [ ] **Step 4: Run** `-only-testing:BookmarkCollectionsUITests/BookmarkCollectionsUITests/testSelectionModeEndsWhenDestinationChanges`. Commit `End selection mode when the destination changes`.
+- [x] **Step 1: Write failing UI test** `testSelectionModeEndsWhenDestinationChanges`: tap `selection.toggle`, select "Seeded Active", tap `destination.recentlyDeleted`, assert `selection.delete` does not exist.
+- [x] **Step 2: Add `.onChange(of: destination) { isSelecting = false; selection.removeAll() }`.** Show the Done button whenever `isSelecting` is true.
+- [x] **Step 3: Bulk Share (F19):** disable the Share control when the selection has no link.
+- [x] **Step 4: Run** `-only-testing:BookmarkCollectionsUITests/BookmarkCollectionsUITests/testSelectionModeEndsWhenDestinationChanges`. Commit `End selection mode when the destination changes`.
 
 ### Task 3.3: Accept addresses with no scheme
 
@@ -275,7 +283,7 @@ Geoff: this is the first build that hard-deletes on a timer. Items deleted more 
 **Interfaces:**
 - Produces: `static func userEntered(_ value: String) -> String` on `NormalizedURL`. Trims whitespace. If the value has no `://` and contains a `.` and no whitespace, it returns `"https://" + value`; otherwise the trimmed value. Share capture does not use it.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 func testUserEnteredAddsHTTPS() {
@@ -287,18 +295,18 @@ func testUserEnteredAddsHTTPS() {
 }
 ```
 
-- [ ] **Step 2: Implement; call it from Add Link and `importText`.**
-- [ ] **Step 3: Run** `NormalizedURLTests`, `ImportExportTests`. Build both schemes. Commit `Accept web addresses typed without a scheme`.
+- [x] **Step 2: Implement; call it from Add Link and `importText`.**
+- [x] **Step 3: Run** `NormalizedURLTests`, `ImportExportTests`. Build both schemes. Commit `Accept web addresses typed without a scheme`.
 
 ### Task 3.4: The paywall does not discard a draft
 
 **Files:** Modify `Features/Bookmark/SnippetEditorView.swift:122-128`, `Features/Bookmark/AddBookmarkView.swift:64-69`, `Features/Library/LibraryRootView.swift:100-113,300-336`
 
-- [ ] **Step 1: In both editors, present `PaywallView()` from a local `@State private var showsPaywall` `.sheet`** in place of `onPaywall()`. The editor stays under it with its text. Keep the `onPaywall` parameter for Settings.
-- [ ] **Step 2: In `commandActions`, when `sheet != nil` pass `selectedBookmark: nil`, `canDeleteSelected: false`, and make `addLink`, `newSnippet`, `newCollection` no-ops.** This also closes F16. In `visibleCommandBookmark`, match by `persistentModelID`, not `id`, so a command on one clone cannot act on the other.
-- [ ] **Step 3: `consumeMenuBarRequest`: return without `take()` while `sheet` is `.snippetEditor`, `.editBookmark`, or `.addBookmark`.** The window still comes forward.
-- [ ] **Step 4: Check F16 on the Mac mini before and after:** open a snippet, press Cmd+Delete in the text, close, look in Recently Deleted. Record the result in the commit body.
-- [ ] **Step 5: Run** `BookmarkCollectionsUITests/PaywallFlowAuditTests` and `MacCommandSharingUITests`. Commit `Keep editor drafts when the paywall or a menu command appears`.
+- [x] **Step 1: In both editors, present `PaywallView()` from a local `@State private var showsPaywall` `.sheet`** in place of `onPaywall()`. The editor stays under it with its text. Keep the `onPaywall` parameter for Settings.
+- [x] **Step 2: In `commandActions`, when `sheet != nil` pass `selectedBookmark: nil`, `canDeleteSelected: false`, and make `addLink`, `newSnippet`, `newCollection` no-ops.** This also closes F16. In `visibleCommandBookmark`, match by `persistentModelID`, not `id`, so a command on one clone cannot act on the other.
+- [x] **Step 3: `consumeMenuBarRequest`: return without `take()` while `sheet` is `.snippetEditor`, `.editBookmark`, or `.addBookmark`.** The window still comes forward.
+- [x] **Step 4: Check F16 on the Mac mini before and after:** open a snippet, press Cmd+Delete in the text, close, look in Recently Deleted. Record the result in the commit body.
+- [x] **Step 5: Run** `BookmarkCollectionsUITests/PaywallFlowAuditTests` and `MacCommandSharingUITests`. Commit `Keep editor drafts when the paywall or a menu command appears`.
 
 ### Task 3.5: Import reports partial results
 
@@ -307,15 +315,15 @@ func testUserEnteredAddsHTTPS() {
 **Interfaces:**
 - Produces: `var stoppedAtLimit = false` on `ImportSummary`. `importText` and `importImages` set it and `break` in place of the rethrow. `ImportSummaryView` shows a row "Stopped at the free limit" with an Unlock button when it is true.
 
-- [ ] **Step 1: Write failing test** `testTextImportAtLimitReturnsSummary`: free, enforced, 8 existing; import 5 new URLs; expect `newCount == 2`, `stoppedAtLimit == true`, no throw. Update the existing audit test that expects a throw.
-- [ ] **Step 2: Implement. Run** `PaywallImportAuditTests`, `ImageImportTests`, `ImportExportTests`. Build both schemes. Commit `Report partial imports that stop at the free limit`.
+- [x] **Step 1: Write failing test** `testTextImportAtLimitReturnsSummary`: free, enforced, 8 existing; import 5 new URLs; expect `newCount == 2`, `stoppedAtLimit == true`, no throw. Update the existing audit test that expects a throw.
+- [x] **Step 2: Implement. Run** `PaywallImportAuditTests`, `ImageImportTests`, `ImportExportTests`. Build both schemes. Commit `Report partial imports that stop at the free limit`.
 
 ### Task 3.6: Image viewer decodes once
 
 **Files:** Modify `Features/Bookmark/ImageViewerView.swift`
 
-- [ ] **Step 1: Decode into `@State private var image: Image?` in `.task`;** body and toolbar read the state.
-- [ ] **Step 2: Build both schemes. Commit** `Decode the viewer image once`. Pan-while-zoomed stays out (Chapter 4).
+- [x] **Step 1: Decode into `@State private var image: Image?` in `.task`;** body and toolbar read the state.
+- [x] **Step 2: Build both schemes. Commit** `Decode the viewer image once`. Pan-while-zoomed stays out (Chapter 4).
 
 **Chapter 3 exit:** full suite on both platforms, then merge.
 

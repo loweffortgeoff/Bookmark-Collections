@@ -1,6 +1,6 @@
 # Review fixes, Chapter 2 — local verification
 
-Full-suite source: `b9197be` on `fix/review-enrichment-purchase`. The final URL-change guard and its focused verification are recorded below. Chapter 1 was merged locally to `main` at `411b8e8` with Geoff’s authorization. Chapter 2 is not merged or pushed.
+Full-suite source: `b9197be` on `fix/review-enrichment-purchase`. The final URL-change guard and its focused verification are recorded below. Chapter 1 was merged locally to `main` at `411b8e8` with Geoff’s authorization. Chapter 2 was merged locally to `main` at `bffbf0b` on 2026-11-10 (see Merge gate below); it is not pushed.
 
 Machine: Geoffrey’s Mac mini, macOS 27.2 (26B123), Xcode 27.2 (27B52). iPhone tests used only iPhone 18 Pro, iOS 27.0 (24A434), UUID `204520A6-E5B5-447D-8A6B-028317014DD8`.
 
@@ -35,8 +35,21 @@ Final review approved `b9197be`, including the Task 2.4 spec and quality gate, w
 
 After that final guard, all 30 metadata tests passed on iPhone and Mac, with zero failures or skips (`build/chapter2-url-guard-ios.xcresult`, `build/chapter2-url-guard-macos.xcresult`). Both app targets compiled in those test builds, and the standalone Share Extension simulator build passed (`build/chapter2-url-guard-extension.log`). The four full-suite results above precede this narrow follow-up; the affected suites were rerun. No temporary instrumentation remains.
 
+## Merge gate — 2026-11-10
+
+Geoff authorized the merge on 2026-11-10. All four full suites were rerun at `bffbf0b` (the branch head, which includes the URL guard) on the same Mac mini, scheme `BookmarkCollections`. `main` was an ancestor, so the tested tree is the merged tree.
+
+| Check | Cases, including skips | Skipped | Failures | Local evidence |
+| --- | ---: | ---: | ---: | --- |
+| Mac full unit suite | 254 | 15 | 0 | `build/merge2-macos-unit.xcresult` |
+| Mac full UI suite | 17 | 1 | 0 | `build/merge2-macos-ui-retry.xcresult` |
+| iPhone full unit suite | 250 | 15 | 0 | `build/merge2-ios-unit.xcresult` |
+| iPhone full UI suite | 18 | 1 | 0 | `build/merge2-ios-ui.xcresult` |
+
+The first two Mac UI attempts did not start: macOS timed out enabling Automation Mode, which needs user authentication on this Mac (tooling, not our code). The fast-forward merge to `main` was made at that point, on Geoff’s authorization. After Geoff authorized Automation Mode, the Mac UI suite passed on a clean checkout of `bffbf0b`. No push was performed.
+
 ## Acceptance boundaries
 
 The [two-device purge/restore check](cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed per Geoff on 2026-11-10 at 03:50 am: iPhone 17 / iOS 27.1.2 and iPhone 17 Pro / iOS 27.3 Developer Beta 1, both Xcode-installed Build 15 at `126b913`, with the restored link in `Dev Work` on both. Latency was not supplied. Geoff accepted the local-only purge visibility limit. Tests use in-memory stores and do not prove CloudKit convergence. Newer-record import follows the existing `modifiedAt` semantics, including non-edit writes; [DECISIONS](../../DECISIONS.md) records that limit.
 
-Task reviews passed for enrichment, purge, paywall, and the newer-date import safeguard. Final Chapter 2 and Task 2.4 review passed; the small follow-up was checked by the parent and focused tests. No release, upload, submission, push, or Chapter 2 merge is authorized by these results.
+Task reviews passed for enrichment, purge, paywall, and the newer-date import safeguard. Final Chapter 2 and Task 2.4 review passed; the small follow-up was checked by the parent and focused tests. No release, upload, submission, or push is authorized by these results. Geoff authorized the Chapter 2 merge separately on 2026-11-10.

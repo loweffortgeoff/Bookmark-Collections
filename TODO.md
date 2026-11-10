@@ -17,12 +17,18 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 - [ ] **Fix the 2026-11-09 adversarial review findings.** 24 findings, three chapters, one branch each: data loss, then previews/purge/purchase, then UI traps. Geoff approved subagent-driven execution on 2026-11-09. See the [plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md).
   - [x] Chapter 1, data loss: built and reviewed on `fix/review-data-loss` (2026-11-09). Mac unit suite passed 213 tests (13 skipped); Mac UI suite passed 17 tests (1 skipped), both with zero failures on Mac mini, macOS 27.2, Xcode 27.2. Merged locally to `main` at `411b8e8` with Geoff’s authorization on 2026-11-09.
-  - [ ] Chapter 2, previews, purge, purchase: implemented on `fix/review-enrichment-purchase`; full Mac/iPhone unit and UI suites pass. Final review passed; failure, no-product paywall, and live-preview visuals passed. Awaiting merge authorization. See [verification](docs/verification/2026-11-09-review-chapter2.md).
+  - [x] Chapter 2, previews, purge, purchase: implemented on `fix/review-enrichment-purchase`; final review passed; failure, no-product paywall, and live-preview visuals passed. Merged locally to `main` at `bffbf0b` with Geoff’s authorization on 2026-11-10, after all four full suites passed at that commit (Mac unit 254, Mac UI 17, iPhone unit 250, iPhone UI 18; zero failures). Not pushed. See [verification](docs/verification/2026-11-09-review-chapter2.md).
     - [x] Task 2.1 (2026-11-09) implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; live preview confirmation and full suites pass; the final URL guard passes 30 metadata tests on both platforms.
     - [x] Task 2.2 (2026-11-09): activation purges expired deletions after reconciliation; the F17 newer-date import safeguard was brought forward into Chapter 2. All 58 focused import/purge tests and both simulator builds pass; the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed per Geoff on 2026-11-10.
     - [x] Task 2.3 (2026-11-09): the paywall retries missing products and shows only a StoreKit price. All 28 focused audit tests pass with zero skips; ordinary UI-test isolation is preserved. No-product layout and full suites pass; product loading has local audit coverage.
     - [x] Task 2.4 (2026-11-09): show library-open recovery text and Support without a fallback store. All 13 container tests, both simulator schemes, and the native Mac build pass. Failure/success visuals, full suites, and final review pass.
-  - [ ] Chapter 3, UI traps.
+  - [ ] Chapter 3, UI traps: built and reviewed on `fix/review-ui-traps`, `456b450`..`db57eeb` (2026-11-10). All four full suites pass at `db57eeb` on Mac mini, macOS 27.2, Xcode 27.2 (Mac unit 261, Mac UI 19, iPhone unit 257, iPhone UI 19; zero failures). Awaiting merge authorization. No visual check of the import-summary Unlock row or the image viewer; tests and builds only.
+    - [x] Task 3.1 (2026-11-10): the card menu no longer force-unwraps the share URL (F11).
+    - [x] Task 3.2 (2026-11-10): selection mode ends when the destination changes; bulk Share is disabled with no web address selected (F12, F19).
+    - [x] Task 3.3 (2026-11-10): Add Link and text import accept an address typed with no scheme (F13).
+    - [x] Task 3.4 (2026-11-10): the paywall, menu commands, and menu bar requests no longer discard an editor draft (F14). F16 confirmed and closed with a Mac UI test.
+    - [x] Task 3.5 (2026-11-10): text and image imports that stop at the free limit report what was saved (F18).
+    - [x] Task 3.6 (2026-11-10): the image viewer decodes once (F20).
   - [ ] Chapter 4, remaining F17 decision: define same-ID link-to-non-link collision behavior. The newer-date safeguard is complete in Chapter 2; no kind policy changed.
 
 Clipboard capture has no demonstrated gap.
