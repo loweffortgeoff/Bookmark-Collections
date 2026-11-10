@@ -39,8 +39,8 @@ struct BookmarkActions: View {
                     SnippetPasteboard.copy(bookmark.snippetBody)
                 }
             }
-            if bookmark.kind == .link {
-                ShareLink(item: URL(string: bookmark.urlString)!)
+            if case let .link(url) = BookmarkSharePayload(bookmark: bookmark) {
+                ShareLink(item: url)
             } else if let shareImage {
                 ShareLink(item: shareImage, preview: SharePreview(bookmark.title, image: shareImage))
             }
