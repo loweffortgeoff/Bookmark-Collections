@@ -10,13 +10,14 @@
 
 **Spec:** The Findings section of this file. Evidence is code reading at `9b39d7d` unless a row says "run".
 
-## Resume here (written 2026-11-09, end of session 1)
+## Resume here (updated 2026-11-09, Chapter 2)
 
-1. Chapter 1 merged locally to `main` at `411b8e8` on 2026-11-09 after Geoff confirmed the Mac suite and authorized the merge. No push performed.
-2. Chapter 2 started on `fix/review-enrichment-purchase` from merged `main`. Start at Task 2.1.
-3. Fold these small Chapter 1 leftovers into Task 2.1's commit set: reword the comment at `JSONImportPreflight.swift:56-58` (reconcile now keeps clones); add a test that a clone-only group with different titles is not written.
-4. Lessons from session 1: keep rules that run on every device a function of the record set, never of fetch order or a late-syncing field. Give each reviewer the multi-device invariant in the brief. Pass xcodebuild flags inline; a flags variable is not word-split in zsh.
-5. The per-session ledger is `.superpowers/sdd/2026-11-09-adversarial-review-fixes/progress.md` (git-ignored; may be gone). Git history and this file are the record.
+1. Chapter 1 is merged locally to `main` at `411b8e8`, with Geoff’s authorization. No push performed.
+2. Chapter 2 implementation is on `fix/review-enrichment-purchase`, through `b9197be`; review-limit docs follow at `de5346c`. All task-focused checks passed. The approved F17 newer-date safeguard is included.
+3. Full Mac/iPhone unit suites passed (253/249 cases, each with 15 expected StoreKit skips), and UI suites passed (17/18 cases, each with one expected skip). Zero failures. Final review remains in progress; see [verification](../../verification/2026-11-09-review-chapter2.md).
+4. Live iPhone visuals are blocked by a stale device-tool claim (`DEVICE_IN_USE`, owner `t3-a044af77abb1e783618d12b0`) even after Geoff reported releasing it. Do not bypass or close another session. Task 2.1 visual step remains open.
+5. Chapter 2 is not merged or pushed. Chapter 3 is a separate session. The two-device purge/restore check remains pending with the local-only limit accepted by Geoff.
+6. The session ledger is `.superpowers/sdd/2026-11-09-adversarial-review-fixes/progress.md` (git-ignored). Git history and this file are the durable record.
 
 ## Global Constraints
 
@@ -184,7 +185,7 @@ Review correction (Session 2, after `a6151f9`): the original count-keyed batch r
 - Produces: in `LibraryRootView`, `oldestPendingLinkID: PersistentIdentifier?` selects the first active pending link in `createdAt`, then `id` order. Capture that ID for `.task(id:)`; call `enrichPendingBookmark(id:)` for only that record. Skip `-ui-testing`. Finishing or deleting the record changes the key even for clone UUIDs and same-count replacements; a missing or ineligible keyed record is skipped without selecting a replacement.
 - Preserves cancellation and model-liveness checks before reads and after awaits. Discard both success and failure if `lastMetadataRefreshAt` changed during the request or the stored row no longer exists; discarded results do not save. Cover two-enricher completion order and second-context deletion with focused tests.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```swift
 func testPendingEnrichmentSkipsSoftDeletedLinks() async throws
@@ -195,12 +196,12 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 // enrichPending returns without a crash; fetch count == 0.
 ```
 
-- [ ] **Step 2: Run** `MetadataEnricherTests`. Expected: first fails; second crashes.
-- [ ] **Step 3: Implement the three rules in `MetadataEnricher`.**
-- [ ] **Step 4: Capture `oldestPendingLinkID` as `pendingLinkID` and add `.task(id: pendingLinkID)` to `LibraryRootView`, with one-record enrichment.** Skip `-ui-testing`; restrict activation to due failed links only.
-- [ ] **Step 5: Run** `MetadataEnricherTests`. Build both schemes.
+- [x] **Step 2: Run** `MetadataEnricherTests`. Before implementation, both failed; deletion caused an extra provider call rather than a crash on this runtime.
+- [x] **Step 3: Implement the three rules in `MetadataEnricher`.**
+- [x] **Step 4: Capture `oldestPendingLinkID` as `pendingLinkID` and add `.task(id: pendingLinkID)` to `LibraryRootView`, with one-record enrichment.** Skip `-ui-testing`; restrict activation to due failed links only.
+- [x] **Step 5: Run** `MetadataEnricherTests`. Build both schemes.
 - [ ] **Step 6: Visually confirm** on iPhone 18 Pro: Add Link `https://www.apple.com`; the title and preview appear with no backgrounding.
-- [ ] **Step 7: Commit** `Enrich new links at once and guard against deleted records`.
+- [x] **Step 7: Commit** `Enrich new links at once and guard against deleted records`.
 
 ### Task 2.2: Purge expired deletions
 
@@ -208,9 +209,9 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 - Modify: `BookmarkCollections/BookmarkCollectionsApp.swift:59-67`
 - Test: `BookmarkCollectionsTests/RecentlyDeletedTests.swift` (the repository method is already covered; no new test)
 
-- [ ] **Step 1: Call `try? repository.purgeExpiredDeleted()` in the activation task, after `reconcileDuplicates()`, and make the purge skip any link whose normalized URL also has an active record.** Chapter 1 review found a race otherwise: one device purges a just-expired deleted copy while another revives it and deletes the active copy, and both are gone after sync. Add `testPurgeSkipsDeletedLinkWithAnActiveCopy` to `RecentlyDeletedTests`.
-- [ ] **Step 2: Run** `RecentlyDeletedTests`. Build both schemes.
-- [ ] **Step 3: Commit** `Purge Recently Deleted items after 30 days`.
+- [x] **Step 1: Call `try? repository.purgeExpiredDeleted()` in the activation task, after `reconcileDuplicates()`, and make the purge skip any link whose normalized URL also has an active record.** Chapter 1 review found a race otherwise: one device purges a just-expired deleted copy while another revives it and deletes the active copy, and both are gone after sync. Add `testPurgeSkipsDeletedLinkWithAnActiveCopy` to `RecentlyDeletedTests`.
+- [x] **Step 2: Run** `RecentlyDeletedTests`. Build both schemes.
+- [x] **Step 3: Commit** `Purge Recently Deleted items after 30 days`.
 
 Geoff: this is the first build that hard-deletes on a timer. Items deleted more than 30 days ago go on first launch, on every device. **Accepted by Geoff 2026-11-09.**
 
@@ -229,21 +230,21 @@ Geoff: this is the first build that hard-deletes on a timer. Items deleted more 
 - Modify: `BookmarkCollections/Domain/Storefront.swift:37-57`
 - Test: `BookmarkCollectionsTests/StorefrontAuditTests.swift`
 
-- [ ] **Step 1: In `PaywallView`, add `.task { if storefront.product == nil { await storefront.load() } }`.**
-- [ ] **Step 2: Make `load()` return early when `isLoading` is already true.**
-- [ ] **Step 3: Replace the `"$4.99"` fallback** with a `ProgressView` while `isLoading`, and no price row otherwise.
-- [ ] **Step 4: Run** `StorefrontAuditTests`, `PaywallGateAuditTests`. Build both schemes.
-- [ ] **Step 5: Commit** `Retry the product load when the paywall opens`.
+- [x] **Step 1: In `PaywallView`, add `.task { if storefront.product == nil { await storefront.load() } }`.**
+- [x] **Step 2: Make `load()` return early when `isLoading` is already true.**
+- [x] **Step 3: Replace the `"$4.99"` fallback** with a `ProgressView` while `isLoading`, and no price row otherwise.
+- [x] **Step 4: Run** `StorefrontAuditTests`, `PaywallGateAuditTests`. Build both schemes.
+- [x] **Step 5: Commit** `Retry the product load when the paywall opens`.
 
 ### Task 2.4: Store-open failure shows a screen, not a crash
 
 **Files:**
 - Modify: `BookmarkCollections/BookmarkCollectionsApp.swift:20-32,55-68`
 
-- [ ] **Step 1: Make `container` optional; catch the error and log it with `ShareStorageDiagnostics.logSummary`.**
-- [ ] **Step 2: When it is nil, show `ContentUnavailableView("Tucked Couldn’t Open Your Library", systemImage: "externaldrive.badge.exclamationmark", description: Text("Restart your device. If this continues, contact support."))` with the Support link from `AboutLink.support`.** No in-memory fallback: silent saves to a throwaway store are worse than a message.
-- [ ] **Step 3: Build both schemes. Run** `ModelContainerTests`.
-- [ ] **Step 4: Commit** `Show a failure screen when the library cannot open`.
+- [x] **Step 1: Make `container` optional; catch the error and log it with `ShareStorageDiagnostics.logSummary`.**
+- [x] **Step 2: When it is nil, show `ContentUnavailableView("Tucked Couldn’t Open Your Library", systemImage: "externaldrive.badge.exclamationmark", description: Text("Restart your device. If this continues, contact support."))` with the Support link from `AboutLink.support`.** No in-memory fallback: silent saves to a throwaway store are worse than a message.
+- [x] **Step 3: Build both schemes. Run** `ModelContainerTests`.
+- [x] **Step 4: Commit** `Show a failure screen when the library cannot open`.
 
 **Chapter 2 exit:** full suite on both platforms, then merge.
 
