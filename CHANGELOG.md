@@ -4,7 +4,7 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
-### Review fixes, Chapter 1: data loss (branch `fix/review-data-loss`, not merged)
+### Review fixes, Chapter 1: data loss (merged to `main` 2026-11-09)
 
 From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1 to F5).
 
