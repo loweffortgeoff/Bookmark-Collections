@@ -27,7 +27,7 @@ struct LibraryRootView: View {
     #endif
 
     var body: some View {
-        let pendingLinkID = oldestPendingLinkID
+        let pendingRequest = oldestPendingRequest
         navigationView
             .sheet(item: $sheet, content: sheetContent)
             .alert("Delete Permanently?", isPresented: permanentDeletePresented, presenting: permanentlyDeleting) { bookmark in
@@ -72,13 +72,13 @@ struct LibraryRootView: View {
                 Text(errorMessage ?? "Try again.")
             }
             .focusedSceneValue(\.bookmarkCommandActions, commandActions)
-            .task(id: pendingLinkID) {
+            .task(id: pendingRequest) {
                 guard !ProcessInfo.processInfo.arguments.contains("-ui-testing"),
-                      let pendingLinkID else { return }
+                      let pendingRequest else { return }
                 try? await MetadataEnricher(
                     context: modelContext,
                     provider: LinkPresentationMetadataProvider()
-                ).enrichPendingBookmark(id: pendingLinkID)
+                ).enrichPendingBookmark(id: pendingRequest.id)
             }
             .onAppear(perform: consumeMenuBarRequest)
             .onChange(of: menuBarRouter.generation) { consumeMenuBarRequest() }
@@ -230,8 +230,9 @@ struct LibraryRootView: View {
         bookmarks.contains { $0.deletedAt != nil }
     }
 
-    private var oldestPendingLinkID: PersistentIdentifier? {
-        bookmarks.first(where: MetadataEnricher.isActivePendingLink)?.persistentModelID
+    private var oldestPendingRequest: PendingMetadataRequest? {
+        guard let bookmark = bookmarks.first(where: MetadataEnricher.isActivePendingLink) else { return nil }
+        return PendingMetadataRequest(id: bookmark.persistentModelID, urlString: bookmark.urlString)
     }
 
     private var permanentDeletePresented: Binding<Bool> {

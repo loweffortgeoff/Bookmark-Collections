@@ -80,9 +80,10 @@ struct MetadataEnricher {
             && bookmark.deletedAt == nil && bookmark.kind == .link
     }
 
-    private func canApply(to bookmark: Bookmark, previousRefreshAt: Date?) throws -> Bool {
+    private func canApply(to bookmark: Bookmark, previousRefreshAt: Date?, requestedURL: String) throws -> Bool {
         guard Self.isActiveLink(bookmark),
-              bookmark.lastMetadataRefreshAt == previousRefreshAt else { return false }
+              bookmark.lastMetadataRefreshAt == previousRefreshAt,
+              bookmark.urlString == requestedURL else { return false }
         // Another context can delete the stored row while this model still
         // has a context and reports isDeleted == false.
         let id = bookmark.persistentModelID
@@ -96,8 +97,9 @@ struct MetadataEnricher {
         try Task.checkCancellation()
         guard Self.isActiveLink(bookmark) else { return false }
         let previousRefreshAt = bookmark.lastMetadataRefreshAt
+        let requestedURL = bookmark.urlString
         let refreshDate = Date()
-        guard let url = URL(string: bookmark.urlString) else {
+        guard let url = URL(string: requestedURL) else {
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
             return true
@@ -109,13 +111,13 @@ struct MetadataEnricher {
             throw CancellationError()
         } catch {
             try Task.checkCancellation()
-            guard try canApply(to: bookmark, previousRefreshAt: previousRefreshAt) else { return false }
+            guard try canApply(to: bookmark, previousRefreshAt: previousRefreshAt, requestedURL: requestedURL) else { return false }
             bookmark.metadataState = .failed
             bookmark.lastMetadataRefreshAt = refreshDate
             return true
         }
         try Task.checkCancellation()
-        guard try canApply(to: bookmark, previousRefreshAt: previousRefreshAt) else { return false }
+        guard try canApply(to: bookmark, previousRefreshAt: previousRefreshAt, requestedURL: requestedURL) else { return false }
         // A title the user typed, or one restored from an import, wins
         // over the page's own title.
         if bookmark.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,

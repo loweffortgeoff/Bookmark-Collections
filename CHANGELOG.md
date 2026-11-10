@@ -4,29 +4,30 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
-- Chapter 2 integrated checks (2026-11-09, Mac mini, macOS/Xcode 27.2): Mac unit/UI suites pass 253/17 cases; iPhone 18 Pro iOS 27.0 passes 249/18. Expected skips are 15 unit and one UI per platform; zero failures. Live visuals are blocked by a device-tool ownership claim. [Evidence](docs/verification/2026-11-09-review-chapter2.md).
+- Chapter 2 integrated checks (2026-11-09, Mac mini, macOS/Xcode 27.2): Mac unit/UI suites pass 253/17 cases; iPhone 18 Pro iOS 27.0 passes 249/18. Expected skips are 15 unit and one UI per platform; zero failures. Failure/success, no-product paywall, and live-preview visuals pass; the final URL guard passes 30 metadata tests per platform. [Evidence](docs/verification/2026-11-09-review-chapter2.md).
 
 ### Review fixes, Chapter 2: Task 2.4 (2026-11-09)
 
 - Fixed: a library-open failure shows recovery text and a Support link instead of crashing. Log safe error codes and private details; do not create a fallback store.
-- Verification: all 13 container tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes and the native Mac app build. Failure-screen visuals remain blocked; integrated suites pass.
+- Verification: all 13 container tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes and the native Mac app build. Failure-screen and success-control visuals pass; integrated suites pass.
 
 ### Review fixes, Chapter 2: Task 2.3 (2026-11-09)
 
 - Fixed: opening the paywall retries a missing product without overlapping an active load. Show the StoreKit price when available, progress while loading, and no invented price.
-- Verification: all 15 Storefront and 13 paywall-gate audit tests pass with local StoreKit on iPhone 18 Pro, iOS 27.0, with zero skips. Both simulator schemes build; ordinary UI tests remain isolated. Live visuals remain blocked; integrated suites pass.
+- Verification: all 15 Storefront and 13 paywall-gate audit tests pass with local StoreKit on iPhone 18 Pro, iOS 27.0, with zero skips. Both simulator schemes build; ordinary UI tests remain isolated. No-product layout was inspected; integrated suites pass.
 
 ### Review fixes, Chapter 2: Task 2.1 (2026-11-09)
 
 - Fixed: new links start metadata enrichment while the library is open. Each result saves separately; cancelled fetches stay pending, and deleted links are skipped before and after fetching.
+- Final guard: changing a link’s URL during a fetch discards the old result and restarts the pending request for the new URL.
 - Review correction: each library task enriches its oldest pending record by persistent identity. Activation retries only due failures; late results are discarded after another refresh or a detected row deletion.
-- Verification: 29 metadata tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Live visual confirmation remains blocked; integrated suites pass.
+- Verification: 29 metadata tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Live Apple/Swift/Python previews pass without backgrounding; integrated suites pass.
 
 ### Review fixes, Chapter 2: Task 2.2 (2026-11-09)
 
 - Changed: activation now purges items deleted more than 30 days ago, after duplicate cleanup. Expired links stay if an active link has the same normalized URL; images and snippets purge normally.
 - Fixed: brought the F17 date safeguard forward into Chapter 2. JSON import preserves newer same-ID links, snippets, and collections; capacity checks use the same date rule, including repeated records within a backup.
-- Verification: all 58 focused import/purge tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Integrated suites pass; live UI and the two-device purge/restore check remain pending; the F17 kind-collision decision stays in Chapter 4.
+- Verification: all 58 focused import/purge tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Integrated suites pass; the two-device purge/restore check remains pending; the F17 kind-collision decision stays in Chapter 4.
 
 ### Review fixes, Chapter 1: data loss (merged to `main` 2026-11-09)
 

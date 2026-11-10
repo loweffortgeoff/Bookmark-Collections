@@ -34,7 +34,7 @@ Significant decisions made during development, logged for future reference.
 
 ## 2026-11-09 (Process one pending record per library task)
 
-- **Decision:** Key the library task by the oldest active pending link's `persistentModelID` and enrich only that record. Activation retries only due failed links, up to 20; the existing batch API keeps its default behavior for other callers.
+- **Decision:** Key the library task by the oldest active pending link's `persistentModelID` and URL, and enrich only that record. A URL change restarts the task and invalidates the old result. Activation retries only due failed links, up to 20; the existing batch API keeps its default behavior for other callers.
 - **Why:** Count changes restart batches mid-fetch and miss same-count replacements. Clone UUIDs are shared. Keep cancellation and liveness guards; discard late results after another refresh or a saved deletion in another context.
 - **Known limit:** A store-query error can leave the first pending link queued until the library reopens. An older imported or synced link can cancel one in-flight fetch; ordinary provider failures leave the queue and retain the hourly retry.
 - **Alternative considered:** Keep the original count-keyed 20-link batch from `a6151f9`. Rejected after Task 2.1 review because it can repeat fetches and overlap activation work.

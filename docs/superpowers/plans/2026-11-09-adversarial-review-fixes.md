@@ -14,8 +14,8 @@
 
 1. Chapter 1 is merged locally to `main` at `411b8e8`, with Geoff’s authorization. No push performed.
 2. Chapter 2 implementation is on `fix/review-enrichment-purchase`, through `b9197be`; review-limit docs follow at `de5346c`. All task-focused checks passed. The approved F17 newer-date safeguard is included.
-3. Full Mac/iPhone unit suites passed (253/249 cases, each with 15 expected StoreKit skips), and UI suites passed (17/18 cases, each with one expected skip). Zero failures. Final review remains in progress; see [verification](../../verification/2026-11-09-review-chapter2.md).
-4. Live iPhone visuals are blocked by a stale device-tool claim (`DEVICE_IN_USE`, owner `t3-a044af77abb1e783618d12b0`) even after Geoff reported releasing it. Do not bypass or close another session. Task 2.1 visual step remains open.
+3. Full Mac/iPhone unit suites passed (253/249 cases, each with 15 expected StoreKit skips), and UI suites passed (17/18 cases, each with one expected skip). Zero failures. Final review passed; the final URL guard also passes 30 metadata tests per platform; see [verification](../../verification/2026-11-09-review-chapter2.md).
+4. Live iPhone checks passed after the ownership claim cleared: failure/success startup, no-product paywall, and Apple/Swift/Python previews without backgrounding. Temporary metadata-only test instrumentation was removed. Request counts and loaded-price/loading-spinner visuals were not measured.
 5. Chapter 2 is not merged or pushed. Chapter 3 is a separate session. The two-device purge/restore check remains pending with the local-only limit accepted by Geoff.
 6. The session ledger is `.superpowers/sdd/2026-11-09-adversarial-review-fixes/progress.md` (git-ignored). Git history and this file are the durable record.
 
@@ -182,7 +182,7 @@ Review correction (Session 2, after `a6151f9`): the original count-keyed batch r
 
 **Interfaces:**
 - Produces: `enrichPending(limit:includePending:)`, with `includePending` defaulting to `true`, preserves existing pending-first batch semantics and per-result saves. Activation calls it with `limit: 20, includePending: false` to retry only active failed links whose hourly delay has elapsed.
-- Produces: in `LibraryRootView`, `oldestPendingLinkID: PersistentIdentifier?` selects the first active pending link in `createdAt`, then `id` order. Capture that ID for `.task(id:)`; call `enrichPendingBookmark(id:)` for only that record. Skip `-ui-testing`. Finishing or deleting the record changes the key even for clone UUIDs and same-count replacements; a missing or ineligible keyed record is skipped without selecting a replacement.
+- Produces: in `LibraryRootView`, `oldestPendingRequest: PendingMetadataRequest?` selects the first active pending link in `createdAt`, then `id` order. Key `.task(id:)` by the captured persistent ID and URL; call `enrichPendingBookmark(id:)` for only that record. Skip `-ui-testing`. Finishing or deleting the record changes the key even for clone UUIDs and same-count replacements; a missing or ineligible keyed record is skipped without selecting a replacement.
 - Preserves cancellation and model-liveness checks before reads and after awaits. Discard both success and failure if `lastMetadataRefreshAt` changed during the request or the stored row no longer exists; discarded results do not save. Cover two-enricher completion order and second-context deletion with focused tests.
 
 - [x] **Step 1: Write failing tests**
@@ -198,9 +198,9 @@ func testEnrichmentSurvivesDeletionDuringFetch() async throws
 
 - [x] **Step 2: Run** `MetadataEnricherTests`. Before implementation, both failed; deletion caused an extra provider call rather than a crash on this runtime.
 - [x] **Step 3: Implement the three rules in `MetadataEnricher`.**
-- [x] **Step 4: Capture `oldestPendingLinkID` as `pendingLinkID` and add `.task(id: pendingLinkID)` to `LibraryRootView`, with one-record enrichment.** Skip `-ui-testing`; restrict activation to due failed links only.
+- [x] **Step 4: Capture `oldestPendingRequest` as `pendingRequest` and add `.task(id: pendingRequest)` to `LibraryRootView`, with one-record enrichment.** Skip `-ui-testing`; restrict activation to due failed links only.
 - [x] **Step 5: Run** `MetadataEnricherTests`. Build both schemes.
-- [ ] **Step 6: Visually confirm** on iPhone 18 Pro: Add Link `https://www.apple.com`; the title and preview appear with no backgrounding.
+- [x] **Step 6: Visually confirm** on iPhone 18 Pro: Add Link `https://www.apple.com`; the title and preview appear with no backgrounding.
 - [x] **Step 7: Commit** `Enrich new links at once and guard against deleted records`.
 
 ### Task 2.2: Purge expired deletions

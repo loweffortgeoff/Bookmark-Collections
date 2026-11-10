@@ -215,6 +215,43 @@ final class MetadataEnricherSchedulingTests: XCTestCase {
         try await assertSecondContextDeletionDiscardsResult(.failure(ProviderError.failed))
     }
 
+    func testURLChangeDiscardsOldSuccessAndFailureAndChangesTaskKey() async throws {
+        for result: Result<LinkMetadata, Error> in [
+            .success(LinkMetadata(title: "Old page", domain: "old.example", previewImageData: Data([9]))),
+            .failure(ProviderError.failed)
+        ] {
+            let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+            let context = container.mainContext
+            context.autosaveEnabled = false
+            let bookmark = try makeBookmark(in: context)
+            let previousKey = PendingMetadataRequest(id: bookmark.persistentModelID, urlString: bookmark.urlString)
+            let provider = ControlledMetadataProvider()
+            let task = Task {
+                try await MetadataEnricher(context: context, provider: provider).refresh(bookmark)
+            }
+            await provider.waitUntilRequested()
+            bookmark.urlString = "https://new.example/article"
+            bookmark.normalizedURLString = bookmark.urlString
+            try context.save()
+            let nextKey = PendingMetadataRequest(id: bookmark.persistentModelID, urlString: bookmark.urlString)
+            XCTAssertNotEqual(previousKey, nextKey, "A URL edit must restart the pending task")
+            await provider.resolve(result)
+            try await task.value
+            XCTAssertEqual(bookmark.metadataState, .pending)
+            XCTAssertTrue(bookmark.title.isEmpty)
+            XCTAssertNil(bookmark.previewImageData)
+            XCTAssertNil(bookmark.lastMetadataRefreshAt)
+            XCTAssertFalse(context.hasChanges)
+
+            let replacement = RecordingMetadataProvider()
+            try await MetadataEnricher(context: context, provider: replacement)
+                .enrichPendingBookmark(id: nextKey.id)
+            let requests = await replacement.requestedURLs
+            XCTAssertEqual(requests, [URL(string: nextKey.urlString)!])
+            XCTAssertEqual(bookmark.metadataState, .ready)
+        }
+    }
+
     private func assertLateResultIsDiscarded(_ result: Result<LinkMetadata, Error>) async throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let context = container.mainContext
