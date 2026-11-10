@@ -161,7 +161,7 @@ struct LibraryImportService {
             bookmark.createdAt = record.createdAt
             bookmark.modifiedAt = record.modifiedAt
             bookmark.deletedAt = record.deletedAt
-            bookmark.lastOpenedAt = record.lastOpenedAt
+            bookmark.lastOpenedAt = [bookmark.lastOpenedAt, record.lastOpenedAt].compactMap { $0 }.max()
             bookmark.faviconData = nil
             bookmark.previewImageData = nil
             bookmark.metadataState = .pending
@@ -215,7 +215,7 @@ struct LibraryImportService {
             snippet.createdAt = record.createdAt
             snippet.modifiedAt = record.modifiedAt
             snippet.deletedAt = record.deletedAt
-            snippet.lastOpenedAt = record.lastOpenedAt
+            snippet.lastOpenedAt = [snippet.lastOpenedAt, record.lastOpenedAt].compactMap { $0 }.max()
             snippet.metadataState = .ready
 
             if existing == nil {

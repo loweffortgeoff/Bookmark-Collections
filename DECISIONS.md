@@ -8,6 +8,7 @@ Significant decisions made during development, logged for future reference.
 
 - **Decision:** Opening an item updates `lastOpenedAt` only. Automatic enrichment and Refresh Preview update metadata and its refresh date without advancing `modifiedAt`; user edits, including collection changes and deletion, still advance it.
 - **Why:** Opens and preview fetches must not change Date Modified sorting or make a newer backup edit look older. Geoff approved this Chapter 4 F21 policy.
+- **Restore safeguard:** Keep the later local/backup Last Opened value for links and snippets. Without this, an equal-date backup can erase a later open and return the item to Forgotten after the edit-date change.
 - **Alternative considered:** Treat every write as an edit. Rejected because usage and derived metadata do not represent a user edit. Existing dates are retained; no schema migration is needed.
 
 ## 2026-11-10 (Preserve existing items on a backup kind conflict)

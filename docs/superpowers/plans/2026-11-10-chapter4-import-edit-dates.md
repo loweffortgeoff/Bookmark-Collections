@@ -13,6 +13,7 @@
 - Preserve images, snippets, dates, organization, and deletion state on a kind conflict, even when the backup is newer.
 - Capacity preflight must neither free nor consume a slot for a skipped conflict.
 - Opening and metadata fetching must not block a later backup edit through the newer-record safeguard.
+- Restore keeps the later local/backup Last Opened date; equal-date backups must not erase a later open or return an item to Forgotten. Added after final review reproduced this regression.
 - Explicit user edits and collection deletion continue to advance Date Modified.
 - F1 remains the accepted interim policy; F15 needs host samples, F24 is conditional, and the other Chapter 4 items remain backlog.
 

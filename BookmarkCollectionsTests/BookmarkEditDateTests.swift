@@ -53,6 +53,48 @@ final class BookmarkEditDateTests: XCTestCase {
         try importNewerEdit(for: item, in: container)
     }
 
+    func testRestoreKeepsLatestOpenHistoryForLinksAndSnippets() throws {
+        for kind in [Bookmark.Kind.link, .text] {
+            for backupEdit in [1_000.0, 2_000.0] {
+                for backupOpen: TimeInterval? in [nil, 2_000, 4_000] {
+                    let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+                    let item = makeItem(in: container)
+                    item.kind = kind
+                    if kind == .text { item.normalizedURLString = ""; item.snippetBody = "Local body" }
+                    try BookmarkRepository(context: container.mainContext).markOpened(
+                        item, at: Date(timeIntervalSince1970: 3_000)
+                    )
+                    let lastOpened = backupOpen.map { Date(timeIntervalSince1970: $0) }
+                    let backupDate = Date(timeIntervalSince1970: backupEdit)
+                    let link = BackupDocument.BookmarkRecord(
+                        id: item.id, urlString: item.urlString, normalizedURLString: item.normalizedURLString,
+                        title: "Backup edit", domain: "example.com", isFavorite: false, collectionID: nil,
+                        createdAt: edited, modifiedAt: backupDate, deletedAt: nil, lastOpenedAt: lastOpened
+                    )
+                    let snippet = BackupDocument.SnippetRecord(
+                        id: item.id, title: "Backup edit", body: "Backup body", sourceUrl: nil,
+                        isFavorite: false, collectionID: nil, createdAt: edited, modifiedAt: backupDate,
+                        deletedAt: nil, lastOpenedAt: lastOpened
+                    )
+                    let encoder = JSONEncoder()
+                    encoder.dateEncodingStrategy = .iso8601
+                    let data = try encoder.encode(BackupDocument(
+                        exportedAt: backupDate, collections: [], bookmarks: kind == .link ? [link] : [],
+                        snippets: kind == .text ? [snippet] : []
+                    ))
+
+                    _ = try LibraryImportService(context: container.mainContext).importJSON(data)
+
+                    let saved = try XCTUnwrap(ModelContext(container).fetch(FetchDescriptor<Bookmark>()).first)
+                    XCTAssertEqual(saved.title, "Backup edit")
+                    XCTAssertEqual(saved.modifiedAt, backupDate)
+                    XCTAssertEqual(saved.lastOpenedAt, Date(timeIntervalSince1970: backupOpen == 4_000 ? 4_000 : 3_000))
+                    XCTAssertFalse(UntuckRules.isForgotten(saved, now: Date(timeIntervalSince1970: 4_000_000)))
+                }
+            }
+        }
+    }
+
     func testUserOrganizationAndDeletionChangesStillAdvanceEditDate() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let context = container.mainContext

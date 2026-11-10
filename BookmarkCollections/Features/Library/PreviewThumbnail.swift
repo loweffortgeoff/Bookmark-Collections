@@ -51,10 +51,9 @@ struct PreviewThumbnail<Placeholder: View>: View {
         entry = decoded
     }
 
-    /// Changes whenever the stored preview can have changed. `modifiedAt`
-    /// is the one stamp every preview write path sets (re-share fills a
-    /// missing preview without a metadata refresh date), so unrelated edits
-    /// re-decode one image while `latest(for:)` keeps the old one on screen.
+    /// Re-share and user edits advance `modifiedAt`; metadata fetches and
+    /// Refresh Preview advance `lastMetadataRefreshAt`. Either stamp changes
+    /// this key while `latest(for:)` keeps the old image on screen.
     private var cacheKey: String {
         let refreshed = bookmark.lastMetadataRefreshAt?.timeIntervalSinceReferenceDate ?? 0
         return "\(bookmark.modifiedAt.timeIntervalSinceReferenceDate)-\(refreshed)"
