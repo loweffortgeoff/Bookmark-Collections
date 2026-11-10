@@ -137,7 +137,6 @@ struct MetadataEnricher {
         }
         bookmark.metadataState = .ready
         bookmark.lastMetadataRefreshAt = refreshDate
-        bookmark.modifiedAt = refreshDate
         return true
     }
 }

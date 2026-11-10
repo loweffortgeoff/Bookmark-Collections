@@ -324,7 +324,6 @@ struct BookmarkRepository {
 
     func markOpened(_ bookmark: Bookmark, at date: Date = Date()) throws {
         bookmark.lastOpenedAt = date
-        bookmark.modifiedAt = date
         try context.save()
     }
 

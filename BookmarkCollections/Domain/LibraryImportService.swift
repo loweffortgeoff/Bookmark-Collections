@@ -120,6 +120,10 @@ struct LibraryImportService {
 
             let bookmark: Bookmark
             if let existing = bookmarksByID[record.id] {
+                guard existing.kind == .link else {
+                    summary.failedLines.append("Link \(record.id) collides with an existing image or snippet.")
+                    continue
+                }
                 guard existing.modifiedAt <= record.modifiedAt else {
                     summary.duplicateCount += 1
                     continue

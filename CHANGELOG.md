@@ -4,6 +4,12 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Review fixes, Chapter 4: import conflicts and edit dates (2026-11-10)
+
+- Fixed: JSON restore skips a link whose ID belongs to an existing image or snippet and reports the conflict. Skipped conflicts do not change the free-limit calculation.
+- Fixed: opening an item updates Last Opened without changing Date Modified. Preview fetches also preserve Date Modified; user edits and collection changes still advance it. Existing dates are retained.
+- Source: `dev/chapter4-import-edit-dates`, not merged or pushed. Verification is recorded in the [Chapter 4 note](docs/verification/2026-11-10-review-chapter4.md).
+
 ### Review fixes, Chapter 3: UI traps (merged to `main` locally 2026-11-10, not pushed)
 
 From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F11 to F14, F16, F18 to F20).

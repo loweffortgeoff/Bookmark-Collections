@@ -144,19 +144,17 @@ final class BookmarkRepositoryTests: XCTestCase {
         XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<Bookmark>()).count, 2)
     }
 
-    func testMarkOpenedSetsLastOpenedAtAndBumpsModifiedAt() throws {
+    func testMarkOpenedSetsLastOpenedAtAndPreservesModifiedAt() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let repository = BookmarkRepository(context: container.mainContext)
         let bookmark = try createdBookmark(from: repository.save(url: "https://example.com/open-me"))
         let originalModified = bookmark.modifiedAt
-        // Must be >= originalModified so the "bumps modifiedAt" assertion is meaningful.
         let openedAt = originalModified.addingTimeInterval(1)
 
         try repository.markOpened(bookmark, at: openedAt)
 
         XCTAssertEqual(bookmark.lastOpenedAt, openedAt)
-        XCTAssertEqual(bookmark.modifiedAt, openedAt)
-        XCTAssertGreaterThanOrEqual(bookmark.modifiedAt, originalModified)
+        XCTAssertEqual(bookmark.modifiedAt, originalModified)
     }
 
     func testReconcileDuplicatesKeepsLaterLastOpenedAt() throws {

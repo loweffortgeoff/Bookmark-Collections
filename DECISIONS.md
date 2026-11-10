@@ -4,6 +4,18 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-10 (Reserve Date Modified for user edits)
+
+- **Decision:** Opening an item updates `lastOpenedAt` only. Automatic enrichment and Refresh Preview update metadata and its refresh date without advancing `modifiedAt`; user edits, including collection changes and deletion, still advance it.
+- **Why:** Opens and preview fetches must not change Date Modified sorting or make a newer backup edit look older. Geoff approved this Chapter 4 F21 policy.
+- **Alternative considered:** Treat every write as an edit. Rejected because usage and derived metadata do not represent a user edit. Existing dates are retained; no schema migration is needed.
+
+## 2026-11-10 (Preserve existing items on a backup kind conflict)
+
+- **Decision:** If an incoming backup link has the same ID as an existing image or snippet, preserve the existing item, skip the incoming record, and report the conflict in the import summary. Apply the same skip in capacity preflight, regardless of dates or deletion state. Geoff approved this Chapter 4 F17 policy.
+- **Why:** Restoring a backup must not erase an image or snippet by converting it into a link.
+- **Alternative considered:** Let the incoming link replace the existing item. Rejected because it destroys content of another kind.
+
 ## 2026-11-10 (Drop a menu bar request that arrives while an editor is open)
 
 - **Decision:** When Add Link, a link or snippet editor, or a collection editor is open, a menu bar choice brings the window forward and is otherwise ignored. While any sheet is open, menu commands that would open another sheet or act on the item behind it do nothing.
@@ -25,7 +37,7 @@ Significant decisions made during development, logged for future reference.
 ## 2026-11-09 (Bring the F17 newer-record safeguard into Chapter 2)
 
 - **Decision:** Skip same-ID links, snippets, and collections when the local `modifiedAt` is newer than the backup. Count skipped bookmarks as duplicates; equal/newer backups keep existing semantics, with the same rule in capacity preflight.
-- **Known limit:** `modifiedAt` also changes after metadata fetches, opens, and collection deletion. These writes can make later-imported backup edits look older; deleting and restoring an older collection can restore it empty. Keep this policy for Chapter 2; Chapter 4 F21 must decide which writes count as edits.
+- **Known limit at Chapter 2:** `modifiedAt` also changed after metadata fetches, opens, and collection deletion. Chapter 4 F21 removes the open/metadata bumps; collection deletion remains a user edit, so restoring an older collection can still restore it empty.
 - **Why:** Geoff approved this part of F17 during purge review. An older tombstone must not replace a later restore and make it eligible for permanent deletion; an older record must not erase newer edits or free capacity.
 - **Alternative considered:** Keep unconditional overwrite or include the remaining kind-collision change. Rejected; the date safeguard is brought forward, while the kind-collision decision remains in Chapter 4.
 

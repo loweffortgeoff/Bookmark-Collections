@@ -17,7 +17,7 @@
 3. Chapter 3 is built on `fix/review-ui-traps`, `456b450`..`db57eeb`. All six tasks are done. Code review found three Important items; `db57eeb` fixes them.
 4. Chapter 3 exit suites at `db57eeb`, same machine: Mac unit 261 (15 skipped), Mac UI 19 (1 skipped), iPhone unit 257 (15 skipped), iPhone UI 19 (1 skipped). Zero failures. Both simulator schemes build.
 5. Chapter 3 is merged locally to `main` at `bf083a4` (fast-forward, 2026-11-10, with Geoff’s authorization). Not pushed; Geoff pushes `main`. The merged branches `fix/review-data-loss` and `fix/review-enrichment-purchase` are deleted, local and on `origin`. No visual check of the import-summary Unlock row or the image viewer was done; tests and builds only.
-6. Chapter 4 is decisions only. No code until Geoff chooses.
+6. Geoff approved Chapter 4 F17 and F21, then authorized implementation on 2026-11-10. The changes are on `dev/chapter4-import-edit-dates`; no merge or push is authorized. See the [implementation plan](2026-11-10-chapter4-import-edit-dates.md).
 
 ## Global Constraints
 
@@ -333,7 +333,7 @@ func testUserEnteredAddsHTTPS() {
 
 1. **F1 full fix.** Chapter 1 stops the loss but leaves clone pairs visible; the user deletes one by hand. A clean merge needs a synced per-record token (schema change plus Production CloudKit deploy). Recommendation: ship Chapter 1, add the token only if clones are seen in the field. **Decided 2026-11-09 (Geoff): ship Chapter 1 as written. Condition: if no permanent fix follows, that must be stated in writing (DECISIONS.md and the release notes), not left silent. Tracked on the TODO Watch List.**
 2. **F15 share heuristic.** Option: when an item has both a URL and text, save a link and use the text as the title unless the host is Safari-style selection (text longer than about 200 characters or multi-line). Needs device captures from 3 or 4 real apps first.
-3. **F17 import policy, remaining decision.** The newer-`modifiedAt` safeguard was approved and brought forward into Chapter 2 on 2026-11-09. Still pending: decide whether to reject a link record for a non-link `id`; no kind-collision policy changed in Chapter 2.
-4. **F21 `modifiedAt` semantics.** Decide which writes count as edits: opens, metadata fetches, and collection deletion currently advance the date and can make later-imported backup edits look older under the approved F17 safeguard. Recommendation: stop the bump on open; assess metadata separately. No code change chosen here.
+3. **F17 import policy.** The newer-`modifiedAt` safeguard was approved and brought forward into Chapter 2 on 2026-11-09. **Decided 2026-11-10 (Geoff):** when a backup link has the same ID as an existing image or snippet, preserve the existing item, skip the incoming record, and report the conflict. Implemented on `dev/chapter4-import-edit-dates`, including capacity preflight; not merged or pushed.
+4. **F21 `modifiedAt` semantics.** **Decided 2026-11-10 (Geoff):** only user edits advance Date Modified, including collection changes. Opens update Last Opened only; metadata fetches leave Date Modified unchanged. Implemented on `dev/chapter4-import-edit-dates`; not merged or pushed. Existing dates are retained.
 5. **F24 extension CloudKit.** Try `cloudKit: false` in the extension on a device pair; the app exports the record on next launch. Only if Share storage errors return.
 6. **F22, F23, F20 pan.** Backlog.

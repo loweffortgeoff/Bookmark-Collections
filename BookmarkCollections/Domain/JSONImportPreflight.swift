@@ -22,13 +22,14 @@ enum JSONImportPreflight {
         })
         let activeCount = reconciledActiveCount(items)
 
-        // Mirror import order and identity rules: valid links update by ID without
-        // changing an existing item's kind; snippets cannot overwrite another kind.
+        // Mirror import order and identity rules: links and snippets cannot
+        // overwrite another kind, even when the backup has a newer date.
         // Keep newer dates from the library and from earlier records in this file.
         for record in document.bookmarks {
             guard let normalized = try? NormalizedURL(record.urlString) else { continue }
+            if let existing = items[record.id], existing.kind != .link { continue }
             if let existing = items[record.id], existing.modifiedAt > record.modifiedAt { continue }
-            items[record.id] = Item(kind: items[record.id]?.kind ?? .link,
+            items[record.id] = Item(kind: .link,
                                     normalizedURL: normalized.string, deletedAt: record.deletedAt,
                                     modifiedAt: record.modifiedAt)
         }
