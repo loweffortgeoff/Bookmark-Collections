@@ -12,11 +12,15 @@ struct ImageViewerView: View {
 
     @State private var zoom: CGFloat = 1
     @State private var gestureZoom: CGFloat = 1
+    // Decoded once. Body runs on every pinch frame, and a decode there cost
+    // a full-size image each time.
+    @State private var image: Image?
+    @State private var didDecode = false
 
     var body: some View {
         NavigationStack {
             Group {
-                if let image = viewerImage {
+                if let image {
                     image
                         .resizable()
                         .scaledToFit()
@@ -39,7 +43,7 @@ struct ImageViewerView: View {
                             }
                         }
                         .accessibilityLabel(bookmark.title)
-                } else {
+                } else if didDecode {
                     ContentUnavailableView("Image Unavailable", systemImage: "photo")
                 }
             }
@@ -50,7 +54,7 @@ struct ImageViewerView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
-                if let image = viewerImage {
+                if let image {
                     ToolbarItem(placement: .primaryAction) {
                         ShareLink(
                             item: image,
@@ -63,9 +67,13 @@ struct ImageViewerView: View {
         #if os(macOS)
         .frame(minWidth: 480, minHeight: 400)
         #endif
+        .task {
+            image = decodedImage
+            didDecode = true
+        }
     }
 
-    private var viewerImage: Image? {
+    private var decodedImage: Image? {
         guard let data = bookmark.previewImageData else { return nil }
         #if os(macOS)
         guard let image = NSImage(data: data) else { return nil }
