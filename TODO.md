@@ -18,6 +18,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
   - [ ] Chapter 2, previews, purge, purchase: in progress on `fix/review-enrichment-purchase`.
     - [x] Task 2.1 implementation and review correction: one pending record per task, separate failed retries, and stale-result/deletion guards. Focused iPhone verification is in the task report; parent live visual confirmation and final suites remain pending.
     - [x] Task 2.2: activation purges deletions older than 30 days after reconciliation, with active-link protection. All 5 Recently Deleted tests and both simulator builds pass; parent acceptance remains pending.
+    - [x] Task 2.3: the paywall retries missing products and shows only a StoreKit price. All 28 focused audit tests pass with zero skips; ordinary UI-test isolation is preserved. Parent visuals and final suites remain pending.
   - [ ] Chapter 3, UI traps.
 
 Clipboard capture has no demonstrated gap.

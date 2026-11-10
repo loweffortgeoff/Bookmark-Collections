@@ -4,6 +4,11 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 ## In Progress
 
+### Review fixes, Chapter 2: Task 2.3 (2026-11-09)
+
+- Fixed: opening the paywall retries a missing product without overlapping an active load. Show the StoreKit price when available, progress while loading, and no invented price.
+- Verification: all 15 Storefront and 13 paywall-gate audit tests pass with local StoreKit on iPhone 18 Pro, iOS 27.0, with zero skips. Both simulator schemes build; ordinary UI tests remain isolated. Parent visuals and final suites remain pending.
+
 ### Review fixes, Chapter 2: Task 2.1 (2026-11-09)
 
 - Fixed: new links start metadata enrichment while the library is open. Each result saves separately; cancelled fetches stay pending, and deleted links are skipped before and after fetching.

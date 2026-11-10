@@ -248,4 +248,51 @@ final class StorefrontAuditTests: XCTestCase {
         XCTAssertNil(storefront.product)
     }
 
+    func testCatalogRetryLoadsProductUnderUITestAuditArguments() async throws {
+        let session = try await session()
+        let old = PurchaseAccess.isUnlocked
+        let oldAvailability = PurchaseAccess.isProductAvailable
+        defer {
+            session.clearTransactions()
+            PurchaseAccess.setUnlocked(old)
+            PurchaseAccess.setProductAvailable(oldAvailability)
+        }
+        try await session.setSimulatedError(.generic(.notAvailableInStorefront), forAPI: .loadProducts)
+        let storefront = BookmarkCollections.Storefront(arguments: ["-ui-testing", "-storekit-audit"])
+        try await waitUntil { storefront.errorMessage != nil && !storefront.isLoading }
+        XCTAssertNil(storefront.product)
+
+        try await session.setSimulatedError(nil, forAPI: .loadProducts)
+        await storefront.load()
+
+        XCTAssertEqual(storefront.product?.id, BookmarkCollections.Storefront.lifetimeProductID)
+        XCTAssertNil(storefront.errorMessage)
+        XCTAssertFalse(storefront.isLoading)
+        XCTAssertFalse(storefront.isUnlocked)
+        XCTAssertTrue(PurchaseAccess.isProductAvailable)
+    }
+
+    func testOrdinaryUITestProductRetryRemainsIsolatedFromStoreKit() async throws {
+        let session = try await session()
+        let old = PurchaseAccess.isUnlocked
+        let oldAvailability = PurchaseAccess.isProductAvailable
+        defer {
+            session.clearTransactions()
+            PurchaseAccess.setUnlocked(old)
+            PurchaseAccess.setProductAvailable(oldAvailability)
+        }
+        PurchaseAccess.setUnlocked(false)
+        PurchaseAccess.setProductAvailable(false)
+        let storefront = BookmarkCollections.Storefront(arguments: ["-ui-testing"])
+        storefront.errorMessage = "Existing test message"
+
+        await storefront.load()
+
+        XCTAssertNil(storefront.product)
+        XCTAssertFalse(storefront.isLoading)
+        XCTAssertFalse(storefront.isUnlocked)
+        XCTAssertFalse(PurchaseAccess.isProductAvailable)
+        XCTAssertEqual(storefront.errorMessage, "Existing test message")
+    }
+
 }

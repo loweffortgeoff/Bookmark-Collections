@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-09 (Retry missing paywall products within Storefront isolation)
+
+- **Decision:** Reload a missing product when the paywall opens. Reject overlapping loads and ordinary UI-test loads; retain the `-storekit-audit` exception. Show only a StoreKit price, with progress while a missing product loads.
+- **Why:** A failed launch lookup needs a retry, but paywall appearance must preserve UI-test isolation and must not invent a price.
+- **Alternative considered:** Keep the fixed price fallback or retry directly through StoreKit in the view. Rejected because these bypass the product state or the UI-test guard.
+
 ## 2026-11-09 (Purge expired deletions after duplicate cleanup)
 
 - **Decision:** Run the accepted 30-day purge on activation, after reconciliation. Retain an expired link while any active link shares its normalized URL; apply the age rule normally to images and snippets.

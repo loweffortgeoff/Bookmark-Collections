@@ -56,6 +56,11 @@ struct PaywallView: View {
         .frame(minWidth: 520, idealWidth: 520, minHeight: 620, idealHeight: 720)
         #endif
         .accessibilityIdentifier("paywall")
+        .task {
+            if storefront.product == nil {
+                await storefront.load()
+            }
+        }
         .onChange(of: storefront.isUnlocked, initial: true) { _, unlocked in
             if unlocked { dismiss() }
         }
@@ -114,12 +119,16 @@ private struct PaywallPurchaseSection: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            VStack(spacing: 4) {
-                Text(storefront.product?.displayPrice ?? "$4.99")
-                    .font(.title3.weight(.semibold))
-                Text("One time. Yours forever.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            if let product = storefront.product {
+                VStack(spacing: 4) {
+                    Text(product.displayPrice)
+                        .font(.title3.weight(.semibold))
+                    Text("One time. Yours forever.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            } else if storefront.isLoading {
+                ProgressView()
             }
 
             if let errorMessage = storefront.errorMessage {
