@@ -6,7 +6,7 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 > **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
 
-### 1.1.1 — 2026-11-10 (iOS and macOS; build 16 — uploaded, not attached or submitted)
+### 1.1.1 — 2026-11-10 (iOS and macOS; build 16 — live 2026-11-11)
 
 Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1–F21). Chapters 1–4 are merged into `main` and pushed; there is no Chapter 5. Version settings changed to 1.1.1 (16) on 2026-11-10. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.
 
@@ -39,13 +39,13 @@ Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpower
 
 #### Fixed — import conflicts and edit dates (Chapter 4)
 
-- Fixed: JSON restore skips a link whose ID belongs to an existing image or snippet and reports the conflict. Skipped conflicts do not change the free-limit calculation.
+- Fixed: JSON restore skips a link whose ID belongs to an existing image or snippet and reports the conflict. Skipped conflicts do not change the free-limit calculation. Applies on iOS and macOS.
 - Fixed: opening an item updates Last Opened without changing Date Modified. Preview fetches also preserve Date Modified; user edits and collection changes still advance it. Existing dates are retained.
 - Fixed: JSON restore keeps the latest Last Opened value for links and snippets, so a backup cannot erase a later open or return an opened item to Forgotten.
 
 #### Known limit
 
-- Identical copies from a double import stay visible until the user deletes one ([decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import)). The permanent fix needs a new synced field and a Production CloudKit deploy, and remains on the TODO Watch List. The release notes disclose this.
+- Identical copies from a double import stay visible until the user deletes one ([decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import)). The permanent fix needs a new synced field and a Production CloudKit deploy, and is in the TODO Backlog (moved from the Watch List on 2026-11-11, when its trigger occurred). The release notes disclose this.
 
 #### Verification
 
@@ -56,6 +56,8 @@ Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpower
 - Candidate acceptance on one iPhone, one iPad, and the Mac passed all six checks on 2026-11-10, reported by Geoff: restore dates and Last Opened, kind-conflict preservation and reporting, text-import collection and Favorite, edited-title survival, paywall price, and a live Safari share. See [matrix](docs/verification/cloudkit-device-matrix.md#candidate-acceptance--111-16--2026-11-10). That run used locally installed Release builds on the Development CloudKit environment; Production sync is covered by TestFlight, not by this pass.
 - Delivery (2026-11-10, MacBook, macOS 27.2, Xcode 27.2): archived and uploaded both platforms as 1.1.1 (16) through Xcode distribution. Both archives read 1.1.1 (16) for the app and Share Extension with team `2R5TZD4XAH`. App Store Connect lists two build 16 records, iOS and macOS, both `VALID` and `APP_STORE_ELIGIBLE` under the 1.1.1 pre-release version, with no expiry and minimum OS 18.0 (iOS) and 15.0 (macOS). No build is attached to either 1.1.1 version and nothing was submitted.
 - Copy (2026-11-10): Promotional Text and What's New were saved and read back on both the iOS and macOS versions. Subtitle and Keywords were unchanged. Build 16 export compliance reports unset, so Apple has no answer yet on non-exempt encryption; 1.1.0 answered it, and this build answers it before submission.
+- Release (2026-11-11): iOS and macOS 1.1.1 (16) are live in the App Store. App Store Connect reads iOS 1.1.1 `READY_FOR_DISTRIBUTION`. macOS is live per Geoff; the App Store Connect connector reads iOS versions only. Both build 16 records report no non-exempt encryption, so export compliance was answered before submission. Tag `v1.1.1-build16` is on origin at `c22a8d7`.
+- Release-note scope (2026-11-11): the shipped What's New (`ASC_LISTING.md`) and the first `RELEASE_NOTES.md` draft said the backup-conflict fix was "On Mac". The fix is in shared import code, and Settings › Import Links reaches it on iOS too. The four `JSONImportKindCollisionTests` cases pass in the iPhone unit suite at `92cb26a`. `RELEASE_NOTES.md` is corrected. The live What's New understates the fix and stays until the next version. No test is missing.
 
 ### 1.1.0 — 2026-11-06 (iOS and macOS; build 15)
 

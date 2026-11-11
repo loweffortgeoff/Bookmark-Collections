@@ -23,7 +23,7 @@ Theme: Keep what you saved. A fixes-only update for backup restore, imports, and
 - **The paywall finds its price after an offline launch** instead of showing a disabled button.
 - **A library that cannot open shows a recovery message** and a Support link instead of crashing.
 - **Removed items are cleared after 30 days**, as the app always said they would be.
-- **On Mac, a backup link cannot erase an image or snippet.** If a link's ID matches a saved image or snippet, the image or snippet is kept and the conflict is reported.
+- **A backup link cannot erase an image or snippet.** If a link's ID matches a saved image or snippet, the image or snippet is kept and the conflict is reported.
 
 ## Known limit
 

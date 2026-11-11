@@ -6,8 +6,6 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
-- [ ] **Release 1.1.1 (16).** Archived and uploaded 2026-11-10; the iOS and macOS builds are `VALID`, App Store eligible, and grouped under the 1.1.1 pre-release version. Promo Text and What's New are saved and read back on both platforms, and the Tucked Testing note is updated. Outstanding and not authorized: answer build 16 export compliance, attach the build to each 1.1.1 App Store version, submit for review, then run the release git commands — the docs and version bump are still uncommitted, with no tag or push. Candidate acceptance passed 2026-11-10 — see [Done](#done--111-candidate-2026-11-10).
-
 - [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
 - [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
 
@@ -15,7 +13,9 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 Clipboard capture has no demonstrated gap.
 
-## Done — 1.1.1 candidate (2026-11-10)
+## Done — v1.1.1 (live 2026-11-11)
+
+- [x] **Release 1.1.1 (16)** (live 2026-11-11). iOS and macOS 1.1.1 are live in the App Store. iOS: App Store Connect reads `READY_FOR_DISTRIBUTION` (read 2026-11-11). macOS: live per Geoff; the App Store Connect connector reads iOS versions only. Export compliance is answered: both build 16 records report no non-exempt encryption. Tag `v1.1.1-build16` is on origin at `c22a8d7`. The shipped What's New says the backup-conflict fix is "On Mac", but the fix applies on iOS and macOS — see [change history](CHANGELOG.md#111--2026-11-10-ios-and-macos-build-16--live-2026-11-11).
 
 **Release context (2026-11-07):** Geoff confirms 1.1.0 is live on iOS and macOS. The release/submission task is closed.
 
@@ -47,7 +47,7 @@ Clipboard capture has no demonstrated gap.
 
 Older completed work is under [Done](#done) at the end of this file.
 
-- [x] **Release 1.1.0 (15).** Uploaded for iOS and macOS on 2026-11-06; Geoff confirms both versions are live on 2026-11-07. This closes the earlier processing, copy, and submission follow-up; no App Store Connect checks were repeated in this reconciliation. The remaining Mac menu bar checks stay in Next.
+- [x] **Release 1.1.0 (15).** Uploaded for iOS and macOS on 2026-11-06; Geoff confirms both versions are live on 2026-11-07. This closes the earlier processing, copy, and submission follow-up; no App Store Connect checks were repeated in this reconciliation. The remaining Mac menu bar checks passed on 2026-11-10 (see the 1.1.1 Done section).
 
 - [x] Reconcile current `main` into `dev/visual-polish`, preserving both iOS hotfixes and resolving the committed TODO conflict markers (2026-11-03). Signed iOS build and Mac/iPhone unit suites pass. UI failures were resolved during completed polish acceptance below.
 - [x] Finish polish acceptance (2026-11-03). Geoff confirms Step 2 testing and verification complete. Share diagnosis is complete below. Step 4 highlighted-text capture is closed after Geoff confirmed iOS and Mac sharing on 2026-11-03. Step 5, the Mac menu bar helper, is built and verified locally on 2026-11-04.
@@ -81,10 +81,10 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 - Settings shows "iCloud temporarily unavailable" under the in-memory test store. This is expected; no action.
 - iPad captures show the real status-bar clock. This is a simulator capture setting, not an app bug; no action.
 
-- [x] **6. Add the Mac menu bar helper** (done 2026-11-04; Links/Images items, light mode, and Release-build window checks remain in Next) (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
+- [x] **6. Add the Mac menu bar helper** (done 2026-11-04; the Links/Images items, light mode, and Release-build window checks passed 2026-11-10) (Things: Feature Work). After highlighted-text capture is settled, add Search, Links, Images, Snippets, Open Tucked, Settings, and Quit. Use the Stash menu as the reference; no tags.
   Add clipboard snippet capture and its keyboard shortcut only if Share capture leaves a real gap. This replaces the deferred Glaze-style quick-capture panel.
 
-- [x] **Validate the shared 1.1.0** (Step 6, 2026-11-04 to 2026-11-06). TestFlight 1.1.0 (14) passed Mac purchase and restore, cross-platform access, both hotfix behaviors on Mac, Production sync, and iPad and source-bearing highlighted text. The last row closed on 2026-11-06 (`b4075c2`). Evidence: [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md). Menu bar checks remain in Next.
+- [x] **Validate the shared 1.1.0** (Step 6, 2026-11-04 to 2026-11-06). TestFlight 1.1.0 (14) passed Mac purchase and restore, cross-platform access, both hotfix behaviors on Mac, Production sync, and iPad and source-bearing highlighted text. The last row closed on 2026-11-06 (`b4075c2`). Evidence: [1.1.0 validation](docs/verification/2026-11-04-1.1.0-validation.md). The remaining menu bar checks passed 2026-11-10.
 
 ## Watch List
 
@@ -92,12 +92,11 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 
 - [ ] **Repeat iPad Pro resize comparison after the next iPadOS beta update.** On iPad Pro 11-inch M5 with 27.3 Developer Beta, Files and Settings show similar movement to Tucked 1.1.0 (14). Geoff agrees to classify this as suspected iPadOS behavior and leave app code unchanged (2026-11-04). Record the new OS build and compare the same window drags. See [current evidence](docs/verification/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
 
-- [ ] **Decide the permanent fix for identical clone pairs (review finding F1).** Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`. The Chapter 1 fix stops Tucked from deleting them, but both copies stay visible until the user deletes one. A clean merge needs a new synced field and a Production CloudKit deploy. Geoff accepted the interim fix on 2026-11-09 on one condition: if no permanent fix follows, record that as a decision in DECISIONS.md and say it in the release notes. Trigger: the release that ships Chapter 1, or the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
-
 ## Backlog
 
 The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
 
+- **F1, permanent fix for identical clone pairs.** Moved from the Watch List on 2026-11-11: its trigger, the release that ships Chapter 1, occurred when 1.1.1 went live. Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`; both stay visible until the user deletes one. The interim conditions are met: the [decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import) is recorded and the 1.1.1 release notes disclose the limit. A clean merge needs a new synced field and a Production CloudKit deploy. No release is chosen; raise its priority on the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
 - **F15, Share URL/title classification:** capture payloads from 3–4 real host apps before choosing a heuristic. Preserve selected prose as snippets; implementation is not yet chosen.
 - **F22, URL drops:** handle an empty library, respect the current collection, and continue after a bad URL. Keep this separate from image drag-and-drop.
 - **F23, export cleanup:** use Tucked in filenames and the HTML title, and explain that image bookmarks are omitted. Image-capable backup and HTML import remain separate scope.
