@@ -88,6 +88,7 @@ Historical decision from `a6151f9`, superseded by the review correction above. T
 - **Cost, accepted by Geoff as an interim fix:** the copies stay visible until the user deletes one. An import updates only one copy of a snippet pair. The free-limit preflight counts an equal-id pair once, so a free user who holds such pairs can pass the cap by that number.
 - **Condition (Geoff):** if no permanent fix follows, record that here and say it in the release notes. The permanent fix needs a new synced field and a Production CloudKit deploy; it is on the TODO Watch List.
 - **Alternative considered:** choose the survivor by "earliest active record". Rejected in review: two devices can see different `deletedAt` values and delete different records.
+- **Update 2026-11-11:** 1.1.1 shipped this interim fix, and its release notes disclose the limit. The trigger occurred, so the permanent fix moved from the TODO Watch List to Backlog.
 
 ## 2026-11-06 (Ship 1.1.0 as build 15 with menu bar checks open)
 
