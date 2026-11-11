@@ -1,4 +1,4 @@
-# App Store Connect — Current Listing (v1.1.0)
+# App Store Connect — Current Listing (v1.1.1)
 
 Initial release listing for Tucked 1.0. Bundle ID `com.loweffortapps.BookmarkCollections`. Primary locale `en-US`.
 
@@ -11,14 +11,18 @@ Rationale: The app name ("Tucked") does not contain any category keywords, so th
 Save links, screenshots, and highlighted text from the Share Sheet on iPhone, iPad, and Mac. Forgotten and Surprise me bring back what you tucked away and never opened. — 168 characters
 
 ## What's New
-Save highlighted text, enjoy a calmer library, and find Tucked in the Mac menu bar.
+Bug fixes and reliability.
 
-• Share selected text from Safari or any app and Tucked saves it as a snippet, with paragraphs, links, and the source page when available.
-• Mac: Tucked lives in the menu bar. Jump to Search, Links, Images, Snippets, or Settings, and close the window without quitting.
-• Refreshed cards and sidebar, Select in the toolbar, and a floating selection bar.
-• Get Info shows the preview image. Add Link opens ready to type.
-• Smoother scrolling and resizing, and better layouts at the largest text sizes.
-• Mac also gets Unlock and Restore Purchases in Settings and a clearer free-limit message when saving.
+• Restoring the same backup on two devices no longer deletes links. Extra copies stay until you delete one.
+• Restoring a backup keeps Date Modified, and Last Opened keeps the later value, so a restore cannot send items back to Forgotten.
+• Opening a link no longer changes Date Modified, and a preview refresh no longer overwrites a title you edited or restored.
+• Re-saving a link keeps its collection and Favorite. Addresses typed without https:// now work.
+• Imports that stop at the free limit keep what they saved and show a summary.
+• New previews load while the library is open.
+• The paywall finds its price after an offline launch, the image viewer no longer re-decodes on every pinch, and a library that cannot open shows a recovery message instead of crashing.
+• On Mac, a backup link can no longer erase a saved image or snippet.
+
+Known limit: if you restore the same backup on two devices before they sync, a link can appear twice. The extra copy stays until you delete it.
 
 ## Description
 Tucked — Save it now. Actually find it later.
@@ -100,6 +104,8 @@ Two adjacent clusters dominate search: **bookmark & link managers** (Raindrop.io
 - "research" ↔ "curate"
 
 ## Notes
+
+- 2026-11-10 (v1.1.1 release pass): Fixes-only What's New. Promotional Text and What's New transferred to both the iOS and macOS 1.1.1 versions and read back; Subtitle and Keywords are unchanged. Description was not transferred: the live copy on both versions is 2,328 characters and ends at "macOS keyboard shortcuts", while this file adds a closing "No accounts, no subscriptions, no ads, and no analytics" line. Decide whether to add that line before submission.
 
 - 2026-11-06 (v1.1.0 release pass): New What's New for the first shared iOS and macOS update. Promotional Text names highlighted text instead of text snippets. Description adds highlighted-text capture and the Mac menu bar. Subtitle and Keywords unchanged.
 

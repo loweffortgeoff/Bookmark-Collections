@@ -1,6 +1,23 @@
 # CloudKit and Release Verification Matrix
 
-**Current acceptance:** [Tucked 1.1.0 validation](2026-11-04-1.1.0-validation.md) (started 2026-11-04). Geoff reported the Chapter 2 check below passed on 2026-11-10; older sections retain historical evidence.
+**Current acceptance:** [Candidate acceptance for 1.1.1 (16)](#candidate-acceptance--111-16--2026-11-10) (2026-11-10). The [1.1.0 validation](2026-11-04-1.1.0-validation.md) and the Chapter 2 section below are historical; older sections retain their original evidence.
+
+## Candidate acceptance — 1.1.1 (16) — 2026-11-10
+
+Geoff reported all six checks passing on physical hardware on 2026-11-10. The agent did not observe the devices, and no screenshot or recording folder was supplied for this run. Device models, OS versions, and the mapping of each check to a device were not supplied; the run used one iPhone, one iPad, and the Mac.
+
+Build: `main` at `fd8c2db` plus the 2026-11-10 `project.pbxproj` bump to 1.1.1 (16), installed with `CONFIGURATION=Release scripts/install-all-devices.sh`. A locally installed Release build signs with Apple Development and uses the **Development** CloudKit environment, so this run does not cover Production sync. The Mac check required removing the App Store 1.1.0 copy from `/Applications` first, because `install-mac.sh` cannot replace a root-owned bundle.
+
+| Check | Result | What it covers |
+| --- | --- | --- |
+| Restore one JSON backup: Date Modified unchanged, Last Opened keeps the later value | Pass — Geoff reported | Chapter 4 restore and open-history rules |
+| A backup link whose ID matches an image or snippet is reported as a conflict and the image or snippet survives | Pass — Geoff reported | F17 kind-collision policy |
+| Text import over an already-saved link keeps its collection and Favorite | Pass — Geoff reported | F4 repeat-save rule |
+| Edited title survives a preview fetch | Pass — Geoff reported | F3 enrichment rule |
+| Paywall opens with a StoreKit price | Pass — Geoff reported | F7 product retry; the price came from the StoreKit configuration |
+| Live Safari share saves as a link | Pass — Geoff reported | Share extension `ForEach` identity change (Chapter 1) |
+
+This is one run on this device set. It does not establish Production CloudKit behavior, multi-device conflict ordering, or the iPadOS-beta layout question. The earlier 1.1.0 TestFlight and device passes remain historical and are not evidence for build 16.
 
 ## Chapter 2 purge/restore — 2026-11-09
 

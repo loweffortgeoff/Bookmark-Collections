@@ -13,7 +13,7 @@ The project has no third-party dependencies. Reads and writes use the local Swif
 
 ## Project status
 
-Geoff confirmed 1.1.0 is live on iOS and macOS on 2026-11-07. Review-fix Chapters 1–4 are merged into local `main` as of 2026-11-10; Chapter 4 was fast-forwarded at `72b8260` and was not pushed. Version 1.1.1 is recommended for this fixes-only update; version settings are unchanged. See [the next-session starting point](TODO.md#next) and [verification records](docs/verification/cloudkit-device-matrix.md). The October 24 acceptance package is retired, not passed.
+Geoff confirmed 1.1.0 is live on iOS and macOS on 2026-11-07. Review-fix Chapters 1–4 are merged into `main` and pushed as of 2026-11-10. 1.1.1 (16) is archived and uploaded as of 2026-11-10; both platform builds are valid and App Store eligible, but no build is attached to either App Store version, nothing is submitted, and the release docs are still uncommitted with no tag or push. See the release item in [TODO](TODO.md#next) and [verification records](docs/verification/cloudkit-device-matrix.md). The October 24 acceptance package is retired, not passed.
 
 ## Requirements
 
@@ -57,7 +57,7 @@ in `build/DerivedData`, where the next build or test run replaces it. Defaults t
 `CONFIGURATION=Release` once the Production schema is deployed.
 `scripts/install-all-devices.sh` calls this script for its Mac step.
 
-The current local Release copy is `~/Applications/Tucked.app` (2026-11-03). macOS protected the older App Store copy in `/Applications`; PlugInKit now selects the user-installed Share extension. Running a new app from Xcode alone does not prove the host uses its extension.
+The Mac needs a local install to be the copy macOS launches. `/Applications/Tucked.app` is the App Store 1.1.0 (15) build and is root-owned, so `scripts/install-mac.sh` cannot replace it; remove it first with `sudo rm -rf /Applications/Tucked.app`. `~/Applications/Tucked.app` is an older 1.0.2 (13) install. Running a new app from Xcode alone does not prove the host uses its extension.
 
 The macOS UI runner must remain code signed. After a clean build, disabling signing can cause XCTest to kill the runner before it bootstraps. If the macOS UI suite starts failing wholesale — element queries timing out even on known-good code — the runner's signature has gone stale; run `scripts/reset-ui-tests.sh` to clear DerivedData and rerun the suite from a clean rebuild.
 

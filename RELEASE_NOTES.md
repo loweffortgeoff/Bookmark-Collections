@@ -1,3 +1,44 @@
+# Release Notes — v1.1.1
+
+Theme: Keep what you saved. A fixes-only update for backup restore, imports, and the paywall.
+
+## IMPROVED
+
+- **Restore respects your dates.** A restored backup no longer rewrites Date Modified, and the later Last Opened from either side is kept, so a restore cannot push something back into Forgotten.
+- **Opening an item is no longer an edit.** Date Modified stays put when you open a link, so Date Modified order means what it says.
+- **Addresses without https:// work.** Add Link and text import accept `example.com` and `www.example.com/page`.
+- **Imports that stop at the free limit say so.** You keep the items already saved and get a summary with an Unlock button.
+- **New previews arrive while you are in the library.** No backgrounding and reopening to get titles and images.
+
+## FIXED
+
+- **Restoring the same backup on two devices no longer deletes your links.** Each device used to remove the other's copy after sync. Both copies now stay until you delete one.
+- **A preview no longer overwrites a title.** A title you edited or restored survives Refresh Preview.
+- **Re-saving a link keeps its collection and Favorite.** Text import and URL drops used to clear both.
+- **A deleted copy no longer wins.** When Tucked holds two copies of a link and one was deleted, the active copy now stays active instead of disappearing.
+- **No crash on a long-press.** A link with a missing or unreadable address no longer takes the app down.
+- **Selection ends when you switch views**, and Share is disabled when nothing shareable is selected.
+- **Your draft survives the paywall.** Saving at the free limit in Add Link or the snippet editor opens the paywall over the editor, and the text is still there afterwards. On Mac, menu commands leave an open editor alone.
+- **Pinch-zoom no longer re-decodes the image** on every frame.
+- **The paywall finds its price after an offline launch** instead of showing a disabled button.
+- **A library that cannot open shows a recovery message** and a Support link instead of crashing.
+- **Removed items are cleared after 30 days**, as the app always said they would be.
+- **On Mac, a backup link cannot erase an image or snippet.** If a link's ID matches a saved image or snippet, the image or snippet is kept and the conflict is reported.
+
+## Known limit
+
+- If you restore the same backup on two devices before they sync, a link can appear twice. The extra copy stays until you delete it. A permanent fix needs a schema change, so it is planned as a later release.
+
+## What to Test — 1.1.1 (16)
+
+- **Restore:** Export a backup, open a few links, then restore the backup. Confirm Date Modified is unchanged and Last Opened keeps the later value.
+- **Re-save:** Import a text file containing a URL you already saved in a collection. Confirm the collection and Favorite are unchanged.
+- **Title:** Edit a link's title, then Refresh Preview. Confirm the title stays.
+- **Paywall:** With the library locked, open Unlock. Confirm a real price appears.
+- **Mac share:** Share a link from Safari with Tucked installed. Confirm it saves as a link.
+
+---
+
 # Release Notes — v1.1.0
 
 Theme: Save highlighted text, a calmer library, and Tucked in the Mac menu bar. First shared update for iPhone, iPad, and Mac.

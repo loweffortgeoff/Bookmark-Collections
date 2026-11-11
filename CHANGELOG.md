@@ -2,18 +2,32 @@
 
 All notable project changes are recorded here. For the current queue, see [TODO](TODO.md). Dated entries retain their historical context.
 
-## In Progress
+## Release history
 
-### Review fixes, Chapter 4: import conflicts and edit dates (2026-11-10)
+> **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
 
-- Fixed: JSON restore skips a link whose ID belongs to an existing image or snippet and reports the conflict. Skipped conflicts do not change the free-limit calculation.
-- Fixed: opening an item updates Last Opened without changing Date Modified. Preview fetches also preserve Date Modified; user edits and collection changes still advance it. Existing dates are retained.
-- Fixed: JSON restore keeps the latest Last Opened value for links and snippets, so a backup cannot erase a later open or return an opened item to Forgotten.
-- Merged `dev/chapter4-import-edit-dates` into local `main` by fast-forward at `72b8260` with Geoff’s approval (2026-11-10). Not pushed. The merged app/test source matches the passing source; see [verification](docs/verification/2026-11-10-review-chapter4.md).
+### 1.1.1 — 2026-11-10 (iOS and macOS; build 16 — uploaded, not attached or submitted)
 
-### Review fixes, Chapter 3: UI traps (merged to `main` locally 2026-11-10, not pushed)
+Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1–F21). Chapters 1–4 are merged into `main` and pushed; there is no Chapter 5. Version settings changed to 1.1.1 (16) on 2026-11-10. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.
 
-From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F11 to F14, F16, F18 to F20).
+#### Fixed — data loss (Chapter 1)
+
+- Fixed: the same JSON backup imported on two devices no longer makes each device delete the other's copy of every link. Identical copies now stay; duplicate cleanup leaves them alone.
+- Fixed: JSON import no longer crashes when the library holds two records with the same id.
+- Fixed: duplicate cleanup no longer keeps a deleted record over an active copy. The earliest record stays and becomes active again.
+- Fixed: fetching a preview no longer replaces a title. Restored and edited titles stay; Refresh Preview does not rename.
+- Fixed: text import and URL drop no longer clear the collection and Favorite of a link that is already saved.
+- Changed: at the free limit, a JSON import of an active copy of a deleted link now stops at the limit. In 1.1.0 it reported success and left the link deleted.
+
+#### Fixed — previews, purge, purchase, and recovery (Chapter 2)
+
+- Fixed: new links start metadata enrichment while the library is open. Each result saves separately; cancelled fetches stay pending, and deleted links are skipped before and after fetching.
+- Changed: activation now purges items deleted more than 30 days ago, after duplicate cleanup. Expired links stay if an active link has the same normalized URL; images and snippets purge normally.
+- Fixed: JSON import preserves newer same-ID links, snippets, and collections; capacity checks use the same date rule, including repeated records within a backup.
+- Fixed: opening the paywall retries a missing product without overlapping an active load. Show the StoreKit price when available, progress while loading, and no invented price.
+- Fixed: a library-open failure shows recovery text and a Support link instead of crashing. Log safe error codes and private details; do not create a fallback store.
+
+#### Fixed — UI traps (Chapter 3)
 
 - Fixed: a long-press on a link with an empty or unreadable address no longer crashes.
 - Fixed: selection mode ends when you change to another view. Done shows whenever selection is on. Bulk Share is disabled when the selection has no web address.
@@ -22,52 +36,26 @@ From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09
 - Fixed: with a sheet open on the Mac, Cmd+Delete in a text field no longer moves the item to Recently Deleted. Add Link, New Snippet, New Collection, Add Images, and Surprise Me do nothing while a sheet is open. A menu bar choice made while an editor is open is ignored.
 - Changed: a text or image import that meets the free limit keeps the items it saved and shows a summary with "Stopped at the free limit" and an Unlock button. Before, it showed the paywall with no summary.
 - Fixed: the image viewer decodes the image once, not on every pinch frame.
-- Verification (Mac mini, macOS 27.2, Xcode 27.2, `db57eeb`): Mac unit/UI suites pass 261/19 cases; iPhone 18 Pro iOS 27.0 passes 257/19. Expected skips are 15 unit and one UI per platform; zero failures. Both simulator schemes build. No visual check was done.
 
-- Chapter 2 merged to `main` locally at `bffbf0b` (2026-11-10), not pushed. Merge gate at that commit: Mac unit/UI 254/17, iPhone unit/UI 250/18, zero failures.
+#### Fixed — import conflicts and edit dates (Chapter 4)
 
-- Verification procedure corrected (2026-11-10): sync a recent deletion first, then age only the offline device’s copy. The original two-device purge attempt stopped during setup; Geoff reports the revised check passed on both physical iPhones at `126b913`, with the restored link in `Dev Work` (03:50 am).
+- Fixed: JSON restore skips a link whose ID belongs to an existing image or snippet and reports the conflict. Skipped conflicts do not change the free-limit calculation.
+- Fixed: opening an item updates Last Opened without changing Date Modified. Preview fetches also preserve Date Modified; user edits and collection changes still advance it. Existing dates are retained.
+- Fixed: JSON restore keeps the latest Last Opened value for links and snippets, so a backup cannot erase a later open or return an opened item to Forgotten.
 
-- Chapter 2 integrated checks (2026-11-09, Mac mini, macOS/Xcode 27.2): Mac unit/UI suites pass 253/17 cases; iPhone 18 Pro iOS 27.0 passes 249/18. Expected skips are 15 unit and one UI per platform; zero failures. Failure/success, no-product paywall, and live-preview visuals pass; the final URL guard passes 30 metadata tests per platform. [Evidence](docs/verification/2026-11-09-review-chapter2.md).
+#### Known limit
 
-### Review fixes, Chapter 2: Task 2.4 (2026-11-09)
+- Identical copies from a double import stay visible until the user deletes one ([decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import)). The permanent fix needs a new synced field and a Production CloudKit deploy, and remains on the TODO Watch List. The release notes disclose this.
 
-- Fixed: a library-open failure shows recovery text and a Support link instead of crashing. Log safe error codes and private details; do not create a fallback store.
-- Verification: all 13 container tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes and the native Mac app build. Failure-screen and success-control visuals pass; integrated suites pass.
+#### Verification
 
-### Review fixes, Chapter 2: Task 2.3 (2026-11-09)
-
-- Fixed: opening the paywall retries a missing product without overlapping an active load. Show the StoreKit price when available, progress while loading, and no invented price.
-- Verification: all 15 Storefront and 13 paywall-gate audit tests pass with local StoreKit on iPhone 18 Pro, iOS 27.0, with zero skips. Both simulator schemes build; ordinary UI tests remain isolated. No-product layout was inspected; integrated suites pass.
-
-### Review fixes, Chapter 2: Task 2.1 (2026-11-09)
-
-- Fixed: new links start metadata enrichment while the library is open. Each result saves separately; cancelled fetches stay pending, and deleted links are skipped before and after fetching.
-- Final guard: changing a link’s URL during a fetch discards the old result and restarts the pending request for the new URL.
-- Review correction: each library task enriches its oldest pending record by persistent identity. Activation retries only due failures; late results are discarded after another refresh or a detected row deletion.
-- Verification: 29 metadata tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Live Apple/Swift/Python previews pass without backgrounding; integrated suites pass.
-
-### Review fixes, Chapter 2: Task 2.2 (2026-11-09)
-
-- Changed: activation now purges items deleted more than 30 days ago, after duplicate cleanup. Expired links stay if an active link has the same normalized URL; images and snippets purge normally.
-- Fixed: brought the F17 date safeguard forward into Chapter 2. JSON import preserves newer same-ID links, snippets, and collections; capacity checks use the same date rule, including repeated records within a backup.
-- Verification: all 58 focused import/purge tests pass on iPhone 18 Pro with iOS 27.0; both simulator schemes build. Integrated suites pass; the two-device purge/restore check remains pending; the F17 kind-collision decision stays in Chapter 4.
-
-### Review fixes, Chapter 1: data loss (merged to `main` 2026-11-09)
-
-From the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1 to F5).
-
-- Fixed: the same JSON backup imported on two devices no longer makes each device delete the other's copy of every link. Identical copies now stay; duplicate cleanup leaves them alone.
-- Fixed: JSON import no longer crashes when the library holds two records with the same id.
-- Fixed: duplicate cleanup no longer keeps a deleted record over an active copy. The earliest record stays and becomes active again.
-- Fixed: fetching a preview no longer replaces a title. Restored and edited titles stay; Refresh Preview does not rename.
-- Fixed: text import and URL drop no longer clear the collection and Favorite of a link that is already saved.
-- Changed: at the free limit, a JSON import of an active copy of a deleted link now stops at the limit. In 1.1.0 it reported success and left the link deleted.
-- Known limit: identical copies from a double import stay visible until the user deletes one ([decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import)).
-
-## Release history
-
-> **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
+- Full suites at `92cb26a` (Mac mini, macOS 27.2, Xcode 27.2): Mac unit 270 and UI 19, iPhone 18 Pro iOS 27.0 unit 266 and UI 19, with 15 unit and one UI audit skip per platform and zero failures. The earlier merge gates at `411b8e8`, `bffbf0b`, `db57eeb`, and `aedc0c1` also passed. [Chapter 1](docs/verification/cloudkit-device-matrix.md), [Chapter 2](docs/verification/2026-11-09-review-chapter2.md), [Chapter 4](docs/verification/2026-11-10-review-chapter4.md).
+- Two-device purge/restore check passed on both physical iPhones at `126b913` (2026-11-10); see [matrix](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09).
+- Visual checks (import-summary Unlock row, image-viewer zoom) and the Mac Release menu bar checks passed at `93431c8` (2026-11-10). Zoom artifacts `zoom-3` and `zoom-4` record a bad double-tap input; `zoom-6` and `zoom-7` are the valid results.
+- Signed iOS Release build passes at 1.1.1 (16); app and Share Extension read 1.1.1 (16), team `2R5TZD4XAH`.
+- Candidate acceptance on one iPhone, one iPad, and the Mac passed all six checks on 2026-11-10, reported by Geoff: restore dates and Last Opened, kind-conflict preservation and reporting, text-import collection and Favorite, edited-title survival, paywall price, and a live Safari share. See [matrix](docs/verification/cloudkit-device-matrix.md#candidate-acceptance--111-16--2026-11-10). That run used locally installed Release builds on the Development CloudKit environment; Production sync is covered by TestFlight, not by this pass.
+- Delivery (2026-11-10, MacBook, macOS 27.2, Xcode 27.2): archived and uploaded both platforms as 1.1.1 (16) through Xcode distribution. Both archives read 1.1.1 (16) for the app and Share Extension with team `2R5TZD4XAH`. App Store Connect lists two build 16 records, iOS and macOS, both `VALID` and `APP_STORE_ELIGIBLE` under the 1.1.1 pre-release version, with no expiry and minimum OS 18.0 (iOS) and 15.0 (macOS). No build is attached to either 1.1.1 version and nothing was submitted.
+- Copy (2026-11-10): Promotional Text and What's New were saved and read back on both the iOS and macOS versions. Subtitle and Keywords were unchanged. Build 16 export compliance reports unset, so Apple has no answer yet on non-exempt encryption; 1.1.0 answered it, and this build answers it before submission.
 
 ### 1.1.0 — 2026-11-06 (iOS and macOS; build 15)
 

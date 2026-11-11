@@ -4,6 +4,14 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-10 (Ship 1.1.1 as build 16 with the interim clone-pair rule)
+
+- **Decision:** Package the merged review fixes as 1.1.1 (16) from `main` and disclose the F1 clone-pair limit in the release notes. No Production CloudKit deploy is part of this release; the permanent F1 fix stays on the Watch List.
+- **Why:** This is a fixes-only update that repairs data handling, purchase recovery, and UI behavior. It adds no feature and changes no persisted model, entitlement, or StoreKit configuration, so Production already matches the schema. Geoff's 2026-11-09 condition on the interim F1 rule requires the disclosure once no permanent fix follows; the release notes and App Store What's New carry it.
+- **Accepted limits:** Candidate acceptance ran on locally installed Release builds, which use the Development CloudKit environment, so Production sync stays a TestFlight check. The CloudKit gate rows still open from 1.1.0 — schema inspection, the fresh-account Production sync check, and the matrix sign-off — remain open and are not closed by this release.
+- **Status (2026-11-10):** Archived and uploaded both platforms; build 16 is `VALID` for iOS and macOS. No build is attached to either 1.1.1 version, nothing is submitted, and no tag or push has happened. Build 16 export compliance is unanswered.
+- **Alternative considered:** Hold 1.1.1 for the permanent F1 fix. Rejected because that needs a new synced field and a Production deploy, while the interim rule already stops the data loss.
+
 ## 2026-11-10 (Reserve Date Modified for user edits)
 
 - **Decision:** Opening an item updates `lastOpenedAt` only. Automatic enrichment and Refresh Preview update metadata and its refresh date without advancing `modifiedAt`; user edits, including collection changes and deletion, still advance it.
