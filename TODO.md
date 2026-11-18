@@ -13,7 +13,9 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 Clipboard capture has no demonstrated gap.
 
-## Done — next update (unreleased, merged to `main` 2026-11-18)
+## Done — v1.1.2 (release pass 2026-11-18)
+
+- [x] **Release 1.1.2 (17) uploaded** (2026-11-18). iOS and macOS build 17 are `VALID` in App Store Connect. Export compliance is unanswered, no build is attached to 1.1.2, and nothing is submitted. iOS en-US copy is saved; macOS copy and the staged 2026-11-18 screenshots are not transferred.
 
 - [x] **F23, export cleanup** (2026-11-18). Export files are named "Tucked Bookmarks.html" and "Tucked Backup.json"; the HTML title reads "Tucked Bookmarks". A Library Data footer says HTML holds links, JSON holds links and snippets, and image bookmarks are not exported. Image-capable backup and HTML import remain Backlog scope.
 - [x] **Sort by last opened** (2026-11-18). New "Last Opened" option in the Sort menu. Default (descending) shows the most recently opened first; never-opened items come last. UI only: uses the existing synced `lastOpenedAt` field.

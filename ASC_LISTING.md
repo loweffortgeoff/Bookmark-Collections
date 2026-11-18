@@ -1,4 +1,4 @@
-# App Store Connect — Current Listing (v1.1.1)
+# App Store Connect — Current Listing (v1.1.2)
 
 Initial release listing for Tucked 1.0. Bundle ID `com.loweffortapps.BookmarkCollections`. Primary locale `en-US`.
 
@@ -11,16 +11,11 @@ Rationale: The app name ("Tucked") does not contain any category keywords, so th
 Save links, screenshots, and highlighted text from the Share Sheet on iPhone, iPad, and Mac. Forgotten and Surprise me bring back what you tucked away and never opened. — 168 characters
 
 ## What's New
-Bug fixes and reliability.
+Find what you came back for, and take your library with you.
 
-• Restoring the same backup on two devices no longer deletes links. Extra copies stay until you delete one.
-• Restoring a backup keeps Date Modified, and Last Opened keeps the later value, so a restore cannot send items back to Forgotten.
-• Opening a link no longer changes Date Modified, and a preview refresh no longer overwrites a title you edited or restored.
-• Re-saving a link keeps its collection and Favorite. Addresses typed without https:// now work.
-• Imports that stop at the free limit keep what they saved and show a summary.
-• New previews load while the library is open.
-• The paywall finds its price after an offline launch, the image viewer no longer re-decodes on every pinch, and a library that cannot open shows a recovery message instead of crashing.
-• On Mac, a backup link can no longer erase a saved image or snippet.
+• New Last Opened sort. See what you opened most recently at the top. Items you have never opened sit at the end.
+• Exports now carry the Tucked name: "Tucked Bookmarks" for HTML and "Tucked Backup" for JSON.
+• Settings now explains what each export holds. Image bookmarks are not included in exports.
 
 Known limit: if you restore the same backup on two devices before they sync, a link can appear twice. The extra copy stays until you delete it.
 
@@ -42,7 +37,7 @@ Capture From Anywhere
 Clean, Predictable Organization
 • Each item belongs to zero or one Collection, plus an independent Favorites list — no messy tag sprawl to maintain.
 • Filter your sidebar by All Items, Images, Links, Snippets, Favorites, Forgotten, or any Collection, with live item counts on every row.
-• Search across titles, domains, URLs, collections, and snippet text, and sort by newest, oldest, or title.
+• Search across titles, domains, URLs, collections, and snippet text, and sort by date added, date modified, title, domain, or last opened.
 • Recently Deleted holds removed items for 30 days before permanent removal.
 
 Untuck What You Forgot

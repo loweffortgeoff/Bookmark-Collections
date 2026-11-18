@@ -6,11 +6,27 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 > **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
 
-### Unreleased
+### 1.1.2 — 2026-11-18 (iOS and macOS; build 17)
+
+Small UI-only update. Version settings changed to 1.1.2 (17) on 2026-11-18. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.
+
+#### New
 
 - Added: "Last Opened" sort option in the Library Sort menu. Never-opened items sort last in the default (descending) order.
+
+#### Changed
+
 - Changed: export files use the Tucked name ("Tucked Bookmarks.html", "Tucked Backup.json"), and the HTML bookmark file title reads "Tucked Bookmarks".
 - Added: a Library Data footer in Settings that says what each export holds and that image bookmarks are not exported (F23).
+
+#### Delivery
+
+- Delivery (2026-11-18, Mac mini, macOS 27.3, Xcode 27.2): archived `Tucked Release` for iOS and macOS. App and Share Extension read 1.1.2 (17) with team `2R5TZD4XAH` and valid signatures. Both uploads succeeded. App Store Connect lists two build 17 records, iOS and macOS, both `VALID` and `APP_STORE_ELIGIBLE`. Export compliance is unset on both. iOS 1.1.2 en-US What's New and Description saved and read back; macOS copy not transferred. No build is attached to either 1.1.2 version and nothing was submitted.
+
+#### Tests
+
+- Fixed: the iOS Settings UI test scrolls to the About rows before checking them. It failed on 1.1.1 `main` too, because the iPhone list creates rows lazily.
+- Full suite passed on 2026-11-18 (Mac mini, Xcode 27.2): iOS 27.2 unit 269 (16 skipped) and UI 19 (1 skipped); macOS unit 273 (16 skipped) and UI 19 (1 skipped); 0 failures.
 
 ### 1.1.1 — 2026-11-10 (iOS and macOS; build 16 — live 2026-11-11)
 

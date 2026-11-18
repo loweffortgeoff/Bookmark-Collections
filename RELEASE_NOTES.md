@@ -1,3 +1,24 @@
+# Release Notes — v1.1.2
+
+Theme: Find what you came back for, and take your library with you.
+
+## NEW
+
+- **Sort by Last Opened.** Pick Last Opened in the Sort menu to see what you opened most recently at the top. Things you have never opened sit at the end.
+
+## IMPROVED
+
+- **Exports carry the Tucked name.** HTML exports save as "Tucked Bookmarks" and JSON backups as "Tucked Backup", so they are easy to find in Files.
+- **Settings says what each export holds.** HTML exports links for other browsers. JSON backs up links and snippets. Image bookmarks are not exported.
+
+## What to Test — 1.1.2 (17)
+
+- **Last Opened:** Open two links, then pick Sort ▸ Last Opened. Confirm the last one you opened is first and never-opened items are at the end. Turn on Ascending and confirm the order flips.
+- **Export:** In Settings, export HTML and JSON. Confirm the suggested names are "Tucked Bookmarks" and "Tucked Backup", and the footer under Library Data describes the exports.
+- **Import the export:** Import the HTML file into Safari. Confirm the bookmark folder title reads "Tucked Bookmarks".
+
+---
+
 # Release Notes — v1.1.1
 
 Theme: Keep what you saved. A fixes-only update for backup restore, imports, and the paywall.

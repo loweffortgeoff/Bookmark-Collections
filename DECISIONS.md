@@ -4,6 +4,15 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-18 (Ship 1.1.2 as a small UI-only update)
+
+- **Decision:** Package Last Opened sort and F23 export cleanup as 1.1.2 (17) from `main`, for iOS and macOS. Frame the thin release under one theme instead of adding more work.
+- **Why:** Both changes need no persisted model, entitlement, or StoreKit change, so Production CloudKit already matches and no deploy is needed. Last Opened sorts on the existing synced `lastOpenedAt` field. Geoff chose to ship the two changes with a theme over pulling in another item.
+- **Sort rule:** In the default descending order, never-opened items sort last. Opened items lead, most recent first.
+- **Export naming:** Export files are "Tucked Bookmarks.html" and "Tucked Backup.json". The HTML title reads "Tucked Bookmarks". Settings states that image bookmarks are not exported; image-capable backup stays in Backlog.
+- **Status (2026-11-18):** Archived and uploaded both platforms; build 17 is `VALID` for iOS and macOS. No build is attached to either 1.1.2 version and nothing is submitted. Build 17 export compliance is unanswered.
+- **Alternative considered:** Pull F20 image-viewer panning into 1.1.2. Not chosen; it needs gesture work and device checks.
+
 ## 2026-11-10 (Ship 1.1.1 as build 16 with the interim clone-pair rule)
 
 - **Decision:** Package the merged review fixes as 1.1.1 (16) from `main` and disclose the F1 clone-pair limit in the release notes. No Production CloudKit deploy is part of this release; the permanent F1 fix stays on the Watch List.
