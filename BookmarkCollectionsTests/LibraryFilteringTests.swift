@@ -58,6 +58,17 @@ final class LibraryFilteringTests: XCTestCase {
         }
     }
 
+    func testLastOpenedSortPutsRecentFirstAndNeverOpenedLast() {
+        let never = makeBookmark(path: "never")
+        let old = makeBookmark(path: "old")
+        old.lastOpenedAt = Date(timeIntervalSince1970: 100)
+        let recent = makeBookmark(path: "recent")
+        recent.lastOpenedAt = Date(timeIntervalSince1970: 200)
+
+        let ordered = [old, never, recent].sorted(using: BookmarkSort.lastOpened.descriptors(ascending: false))
+        XCTAssertEqual(ordered.map(\.id), [recent.id, old.id, never.id])
+    }
+
     func testImagesDestinationIncludesOnlyImageKind() {
         let link = Bookmark(urlString: "https://example.com/a", normalizedURLString: "https://example.com/a")
         let image = Bookmark(urlString: "", normalizedURLString: "")

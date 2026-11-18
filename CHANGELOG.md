@@ -6,6 +6,12 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 > **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
 
+### Unreleased
+
+- Added: "Last Opened" sort option in the Library Sort menu. Never-opened items sort last in the default (descending) order.
+- Changed: export files use the Tucked name ("Tucked Bookmarks.html", "Tucked Backup.json"), and the HTML bookmark file title reads "Tucked Bookmarks".
+- Added: a Library Data footer in Settings that says what each export holds and that image bookmarks are not exported (F23).
+
 ### 1.1.1 — 2026-11-10 (iOS and macOS; build 16 — live 2026-11-11)
 
 Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1–F21). Chapters 1–4 are merged into `main` and pushed; there is no Chapter 5. Version settings changed to 1.1.1 (16) on 2026-11-10. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.

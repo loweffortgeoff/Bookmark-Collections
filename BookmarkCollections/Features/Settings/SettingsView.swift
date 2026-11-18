@@ -14,7 +14,7 @@ struct SettingsView: View {
     @State private var importSummary: ImportSummary?
     @State private var exportDocument: ExportFileDocument?
     @State private var exportType: UTType = .json
-    @State private var exportFilename = "Bookmark Collections"
+    @State private var exportFilename = "Tucked Bookmarks"
     @State private var isExporting = false
     @State private var errorMessage: String?
 
@@ -39,13 +39,17 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Library Data") {
+                Section {
                     Button("Import Links", systemImage: "square.and.arrow.down", action: beginImport)
                         .accessibilityIdentifier("settings.importLinks")
                     Button("Export HTML", systemImage: "safari", action: exportHTML)
                         .accessibilityIdentifier("settings.exportHTML")
                     Button("Export JSON", systemImage: "archivebox", action: exportJSON)
                         .accessibilityIdentifier("settings.exportJSON")
+                } header: {
+                    Text("Library Data")
+                } footer: {
+                    Text("HTML exports links for other browsers. JSON backs up links and snippets. Image bookmarks are not exported.")
                 }
 
                 Section("iCloud") {
@@ -137,13 +141,13 @@ struct SettingsView: View {
     }
 
     private func exportHTML() {
-        prepareExport(type: .html, filename: "Bookmark Collections.html") {
+        prepareExport(type: .html, filename: "Tucked Bookmarks.html") {
             try LibraryExportService(context: modelContext).exportHTML()
         }
     }
 
     private func exportJSON() {
-        prepareExport(type: .json, filename: "Bookmark Collections.json") {
+        prepareExport(type: .json, filename: "Tucked Backup.json") {
             try LibraryExportService(context: modelContext).exportJSON()
         }
     }

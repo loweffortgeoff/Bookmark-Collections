@@ -85,8 +85,8 @@ struct LibraryExportService {
         var lines = [
             "<!DOCTYPE NETSCAPE-Bookmark-file-1>",
             "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">",
-            "<TITLE>Bookmark Collections</TITLE>",
-            "<H1>Bookmark Collections</H1>",
+            "<TITLE>Tucked Bookmarks</TITLE>",
+            "<H1>Tucked Bookmarks</H1>",
             "<DL><p>"
         ]
 

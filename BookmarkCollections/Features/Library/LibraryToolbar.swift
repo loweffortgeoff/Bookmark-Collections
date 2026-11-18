@@ -38,6 +38,7 @@ struct LibraryToolbar: ToolbarContent {
                     Text("Date Modified").tag(BookmarkSort.dateModified)
                     Text("Title").tag(BookmarkSort.title)
                     Text("Domain").tag(BookmarkSort.domain)
+                    Text("Last Opened").tag(BookmarkSort.lastOpened)
                 }
                 Toggle("Ascending", isOn: $ascending)
             } label: {

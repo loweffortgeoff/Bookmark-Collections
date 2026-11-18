@@ -370,6 +370,15 @@ final class ImportExportTests: XCTestCase {
         XCTAssertFalse(html.contains("Snippet text that must not ship"))
     }
 
+    func testHTMLExportUsesTuckedTitle() throws {
+        let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
+        let data = try LibraryExportService(context: container.mainContext).exportHTML()
+        let html = try XCTUnwrap(String(data: data, encoding: .utf8))
+
+        XCTAssertTrue(html.contains("<TITLE>Tucked Bookmarks</TITLE>"))
+        XCTAssertFalse(html.contains("Bookmark Collections"))
+    }
+
     func testABackupWithoutASnippetsKeyStillImports() throws {
         let container = try ModelContainerFactory.make(inMemory: true, cloudKit: false)
         let legacy = """

@@ -13,6 +13,11 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 Clipboard capture has no demonstrated gap.
 
+## Done — next update (unreleased, branch `feature/export-cleanup-sort-last-opened`)
+
+- [x] **F23, export cleanup** (2026-11-18). Export files are named "Tucked Bookmarks.html" and "Tucked Backup.json"; the HTML title reads "Tucked Bookmarks". A Library Data footer says HTML holds links, JSON holds links and snippets, and image bookmarks are not exported. Image-capable backup and HTML import remain Backlog scope.
+- [x] **Sort by last opened** (2026-11-18). New "Last Opened" option in the Sort menu. Default (descending) shows the most recently opened first; never-opened items come last. UI only: uses the existing synced `lastOpenedAt` field.
+
 ## Done — v1.1.1 (live 2026-11-11)
 
 - [x] **Release 1.1.1 (16)** (live 2026-11-11). iOS and macOS 1.1.1 are live in the App Store. iOS: App Store Connect reads `READY_FOR_DISTRIBUTION` (read 2026-11-11). macOS: live per Geoff; the App Store Connect connector reads iOS versions only. Export compliance is answered: both build 16 records report no non-exempt encryption. Tag `v1.1.1-build16` is on origin at `c22a8d7`. The shipped What's New says the backup-conflict fix is "On Mac", but the fix applies on iOS and macOS — see [change history](CHANGELOG.md#111--2026-11-10-ios-and-macos-build-16--live-2026-11-11).
@@ -99,7 +104,6 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - **F1, permanent fix for identical clone pairs.** Moved from the Watch List on 2026-11-11: its trigger, the release that ships Chapter 1, occurred when 1.1.1 went live. Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`; both stay visible until the user deletes one. The interim conditions are met: the [decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import) is recorded and the 1.1.1 release notes disclose the limit. A clean merge needs a new synced field and a Production CloudKit deploy. No release is chosen; raise its priority on the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
 - **F15, Share URL/title classification:** capture payloads from 3–4 real host apps before choosing a heuristic. Preserve selected prose as snippets; implementation is not yet chosen.
 - **F22, URL drops:** handle an empty library, respect the current collection, and continue after a bad URL. Keep this separate from image drag-and-drop.
-- **F23, export cleanup:** use Tucked in filenames and the HTML title, and explain that image bookmarks are omitted. Image-capable backup and HTML import remain separate scope.
 - **F20, image viewer:** add panning while zoomed. The repeated-decode fix is already merged in Chapter 3.
 
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
@@ -112,7 +116,6 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).
-- Sort by last opened.
 - First Siri and Shortcuts actions. Tucked has none today. Starter set: save a link to a collection, find bookmarks, open a collection, and show favorites or forgotten items. Add bookmarks to the Spotlight index, and let them pass to other apps as links. Write full descriptions from the start so the actions are ready for Apple's Siri AI preview. This is the Shortcuts idea from Tucked Testing (see v1.1.0 above). Rough size: 2–3 days. See the [Siri AI Prep Plan](https://claude.ai/artifact/VJDSbHGzy9tipzzCknTwxC) (2026-11-03).
 
 ### Product differentiation ideas (2026-07-30)

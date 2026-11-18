@@ -5,6 +5,7 @@ enum BookmarkSort: String, CaseIterable, Identifiable {
     case dateModified
     case title
     case domain
+    case lastOpened
 
     var id: String { rawValue }
 
@@ -21,6 +22,8 @@ enum BookmarkSort: String, CaseIterable, Identifiable {
             primary = SortDescriptor(\Bookmark.title, order: order)
         case .domain:
             primary = SortDescriptor(\Bookmark.domain, order: order)
+        case .lastOpened:
+            primary = SortDescriptor(\Bookmark.lastOpenedAt, order: order)
         }
 
         return [primary, SortDescriptor(\Bookmark.id)]
