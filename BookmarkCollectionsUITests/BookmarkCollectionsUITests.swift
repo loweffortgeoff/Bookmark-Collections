@@ -147,7 +147,11 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("settings.exportHTML").exists)
         XCTAssertTrue(identified("settings.exportJSON").exists)
         XCTAssertTrue(identified("settings.syncStatus").exists)
-        XCTAssertTrue(identified("settings.privacyPolicy").exists)
+        #if os(iOS)
+        // The iPhone list creates rows lazily; the About rows sit below the fold.
+        app.swipeUp()
+        #endif
+        XCTAssertTrue(identified("settings.privacyPolicy").waitForExistence(timeout: 2))
         XCTAssertTrue(identified("settings.support").exists)
         XCTAssertTrue(identified("settings.website").exists)
         XCTAssertFalse(identified("settings.accentColor").exists)
