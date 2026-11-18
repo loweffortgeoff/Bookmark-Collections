@@ -13,7 +13,7 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 Clipboard capture has no demonstrated gap.
 
-## Done — next update (unreleased, branch `feature/export-cleanup-sort-last-opened`)
+## Done — next update (unreleased, merged to `main` 2026-11-18)
 
 - [x] **F23, export cleanup** (2026-11-18). Export files are named "Tucked Bookmarks.html" and "Tucked Backup.json"; the HTML title reads "Tucked Bookmarks". A Library Data footer says HTML holds links, JSON holds links and snippets, and image bookmarks are not exported. Image-capable backup and HTML import remain Backlog scope.
 - [x] **Sort by last opened** (2026-11-18). New "Last Opened" option in the Sort menu. Default (descending) shows the most recently opened first; never-opened items come last. UI only: uses the existing synced `lastOpenedAt` field.
