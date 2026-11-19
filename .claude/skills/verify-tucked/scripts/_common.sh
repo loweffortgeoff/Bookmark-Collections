@@ -1,7 +1,7 @@
 # Shared by the verify-tucked helpers. Source, don't execute.
 BUNDLE_ID="com.loweffortapps.BookmarkCollections"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
-DERIVED="$REPO_ROOT/build/VerifyDerivedData"
+DERIVED="$REPO_ROOT/build/VerifyDerivedData.noindex"  # .noindex: hidden from Spotlight
 APP_PRODUCT="$DERIVED/Build/Products/Debug-iphonesimulator/Tucked.app"
 RUN_ID="${RUN_ID:-$(date +%Y%m%d-%H%M%S)}"
 ARTIFACTS="$REPO_ROOT/build/verify-artifacts/$RUN_ID"

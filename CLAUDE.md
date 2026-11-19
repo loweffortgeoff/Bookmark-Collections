@@ -27,6 +27,12 @@ xcodebuild -project BookmarkCollections.xcodeproj -scheme "BookmarkCollections" 
 xcodebuild -project BookmarkCollections.xcodeproj -scheme "BookmarkShareExtension" -destination 'generic/platform=iOS Simulator' build
 ```
 
+Do not pass `-derivedDataPath` for ad hoc builds — keep the default
+DerivedData. If a script needs its own folder, end the folder name in
+`.noindex` (for example `build/MyTask.noindex`). Spotlight indexes every
+`Tucked.app` under `build/`, so per-task folders fill a "Tucked" search with
+duplicate apps (cleaned up 2026-11-18: 19 copies).
+
 Leave the output verbose — don't add `-quiet`. Error parsing (build-runner's
 included) tails the log for the first `error:`, and `-quiet` strips the context
 that makes the first error findable.

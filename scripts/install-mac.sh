@@ -2,7 +2,7 @@
 # Builds Tucked (BookmarkCollections) for macOS and installs it to /Applications.
 #
 # The Mac needs a real install step, not just a build. Launching the build
-# product in place leaves the only copy inside build/DerivedData, where the
+# product in place leaves the only copy inside build/DerivedData.noindex, where the
 # next rebuild, `xcodebuild test -destination 'platform=macOS'`, or
 # scripts/reset-ui-tests.sh deletes or replaces it — so the app stops running
 # and there is nothing left for Spotlight to find. Installing to /Applications
@@ -22,7 +22,9 @@ SCHEME="BookmarkCollections"
 APP_NAME="Tucked"
 BUNDLE_ID="com.loweffortapps.BookmarkCollections"
 CONFIGURATION="${CONFIGURATION:-Debug}"
-DERIVED_DATA_PATH="build/DerivedData"
+# The .noindex suffix keeps Spotlight from listing the build product as a
+# second "Tucked" next to the /Applications copy.
+DERIVED_DATA_PATH="build/DerivedData.noindex"
 
 # Installed as Tucked.app. Finder and Spotlight
 # match apps on the bundle's file name, not CFBundleDisplayName — installing

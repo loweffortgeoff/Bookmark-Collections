@@ -16,7 +16,7 @@ SCHEME="BookmarkCollections"
 APP_NAME="Tucked"
 BUNDLE_ID="com.loweffortapps.BookmarkCollections"
 CONFIGURATION="${CONFIGURATION:-Debug}"
-DERIVED_DATA_PATH="build/DerivedData"
+DERIVED_DATA_PATH="build/DerivedData.noindex"  # .noindex: hidden from Spotlight
 
 IPHONE_NAME="Geoffrey's iPhone"
 IPHONE_UDID="00008150-00066D092EF8401C"
