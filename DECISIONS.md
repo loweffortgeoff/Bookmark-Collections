@@ -11,6 +11,7 @@ Significant decisions made during development, logged for future reference.
 - **Sort rule:** In the default descending order, never-opened items sort last. Opened items lead, most recent first.
 - **Export naming:** Export files are "Tucked Bookmarks.html" and "Tucked Backup.json". The HTML title reads "Tucked Bookmarks". Settings states that image bookmarks are not exported; image-capable backup stays in Backlog.
 - **Status (2026-11-18):** Archived and uploaded both platforms; build 17 is `VALID` for iOS and macOS. No build is attached to either 1.1.2 version and nothing is submitted. Build 17 export compliance is unanswered.
+- **Update (2026-11-20):** iOS and macOS 1.1.2 (17) are live in the App Store per Geoff; export compliance and submission completed.
 - **Alternative considered:** Pull F20 image-viewer panning into 1.1.2. Not chosen; it needs gesture work and device checks.
 
 ## 2026-11-10 (Ship 1.1.1 as build 16 with the interim clone-pair rule)
