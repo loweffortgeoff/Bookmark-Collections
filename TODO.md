@@ -11,6 +11,8 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 - [ ] **Scope the first Siri and Shortcuts actions.** Choose from saving a link, finding bookmarks, opening a collection, and showing favorites or forgotten items; define indexing and link-sharing behavior. Geoff approved scoping on 2026-11-07, not an implementation bundle, version, or date; the starter ideas remain in Backlog.
 
+- [ ] **Settings: add a We Also Make section that mirrors the other apps.** Match the existing `AboutSectionView` pattern in Offshoots, Weather in Words, Task(ed), and EveryPaw: the same app rows, light and dark icon handling, and App Store link structure, listing the other live Low Effort Apps but not Tucked itself. Check App Store IDs against the live listings (the old Weather in Words ID `6760272161` is dead; use `6806063498`). Requested by Geoff 2026-11-22.
+
 Clipboard capture has no demonstrated gap.
 
 ## Done — v1.1.2 (live; confirmed 2026-11-20)
