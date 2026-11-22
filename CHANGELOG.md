@@ -31,7 +31,7 @@ Small UI-only update. Version settings changed to 1.1.2 (17) on 2026-11-18. No p
 
 ### 1.1.1 — 2026-11-10 (iOS and macOS; build 16 — live 2026-11-11)
 
-Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpowers/plans/2026-11-09-adversarial-review-fixes.md), findings F1–F21). Chapters 1–4 are merged into `main` and pushed; there is no Chapter 5. Version settings changed to 1.1.1 (16) on 2026-11-10. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.
+Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpowers/archive/2026-11-09-adversarial-review-fixes.md), findings F1–F21). Chapters 1–4 are merged into `main` and pushed; there is no Chapter 5. Version settings changed to 1.1.1 (16) on 2026-11-10. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.
 
 #### Fixed — data loss (Chapter 1)
 
@@ -72,11 +72,11 @@ Fixes-only update from the 2026-11-09 adversarial review ([plan](docs/superpower
 
 #### Verification
 
-- Full suites at `92cb26a` (Mac mini, macOS 27.2, Xcode 27.2): Mac unit 270 and UI 19, iPhone 18 Pro iOS 27.0 unit 266 and UI 19, with 15 unit and one UI audit skip per platform and zero failures. The earlier merge gates at `411b8e8`, `bffbf0b`, `db57eeb`, and `aedc0c1` also passed. [Chapter 1](docs/verification/cloudkit-device-matrix.md), [Chapter 2](docs/verification/2026-11-09-review-chapter2.md), [Chapter 4](docs/verification/2026-11-10-review-chapter4.md).
-- Two-device purge/restore check passed on both physical iPhones at `126b913` (2026-11-10); see [matrix](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09).
+- Full suites at `92cb26a` (Mac mini, macOS 27.2, Xcode 27.2): Mac unit 270 and UI 19, iPhone 18 Pro iOS 27.0 unit 266 and UI 19, with 15 unit and one UI audit skip per platform and zero failures. The earlier merge gates at `411b8e8`, `bffbf0b`, `db57eeb`, and `aedc0c1` also passed. [Chapter 1](docs/superpowers/archive/cloudkit-device-matrix.md), [Chapter 2](docs/superpowers/archive/2026-11-09-review-chapter2.md), [Chapter 4](docs/superpowers/archive/2026-11-10-review-chapter4.md).
+- Two-device purge/restore check passed on both physical iPhones at `126b913` (2026-11-10); see [matrix](docs/superpowers/archive/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09).
 - Visual checks (import-summary Unlock row, image-viewer zoom) and the Mac Release menu bar checks passed at `93431c8` (2026-11-10). Zoom artifacts `zoom-3` and `zoom-4` record a bad double-tap input; `zoom-6` and `zoom-7` are the valid results.
 - Signed iOS Release build passes at 1.1.1 (16); app and Share Extension read 1.1.1 (16), team `2R5TZD4XAH`.
-- Candidate acceptance on one iPhone, one iPad, and the Mac passed all six checks on 2026-11-10, reported by Geoff: restore dates and Last Opened, kind-conflict preservation and reporting, text-import collection and Favorite, edited-title survival, paywall price, and a live Safari share. See [matrix](docs/verification/cloudkit-device-matrix.md#candidate-acceptance--111-16--2026-11-10). That run used locally installed Release builds on the Development CloudKit environment; Production sync is covered by TestFlight, not by this pass.
+- Candidate acceptance on one iPhone, one iPad, and the Mac passed all six checks on 2026-11-10, reported by Geoff: restore dates and Last Opened, kind-conflict preservation and reporting, text-import collection and Favorite, edited-title survival, paywall price, and a live Safari share. See [matrix](docs/superpowers/archive/cloudkit-device-matrix.md#candidate-acceptance--111-16--2026-11-10). That run used locally installed Release builds on the Development CloudKit environment; Production sync is covered by TestFlight, not by this pass.
 - Delivery (2026-11-10, MacBook, macOS 27.2, Xcode 27.2): archived and uploaded both platforms as 1.1.1 (16) through Xcode distribution. Both archives read 1.1.1 (16) for the app and Share Extension with team `2R5TZD4XAH`. App Store Connect lists two build 16 records, iOS and macOS, both `VALID` and `APP_STORE_ELIGIBLE` under the 1.1.1 pre-release version, with no expiry and minimum OS 18.0 (iOS) and 15.0 (macOS). No build is attached to either 1.1.1 version and nothing was submitted.
 - Copy (2026-11-10): Promotional Text and What's New were saved and read back on both the iOS and macOS versions. Subtitle and Keywords were unchanged. Build 16 export compliance reports unset, so Apple has no answer yet on non-exempt encryption; 1.1.0 answered it, and this build answers it before submission.
 - Release (2026-11-11): iOS and macOS 1.1.1 (16) are live in the App Store. App Store Connect reads iOS 1.1.1 `READY_FOR_DISTRIBUTION`. macOS is live per Geoff; the App Store Connect connector reads iOS versions only. Both build 16 records report no non-exempt encryption, so export compliance was answered before submission. Tag `v1.1.1-build16` is on origin at `c22a8d7`.
@@ -90,13 +90,13 @@ Merged `dev/visual-polish` to `main` at `b4075c2` on 2026-11-06. Build 15 has th
 
 #### Investigated 2026-11-04 (iPad Pro resize)
 
-- The iPad Pro 11-inch M5 comparison recording shows similar resize movement in Files, Settings, and Tucked on iPadOS 27.3 Developer Beta. Geoff agrees to track suspected iPadOS behavior and recheck after the next beta. App code is unchanged. The earlier acceptance covered iPad mini only. See [current evidence](docs/verification/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
+- The iPad Pro 11-inch M5 comparison recording shows similar resize movement in Files, Settings, and Tucked on iPadOS 27.3 Developer Beta. Geoff agrees to track suspected iPadOS behavior and recheck after the next beta. App code is unchanged. The earlier acceptance covered iPad mini only. See [current evidence](docs/superpowers/archive/2026-11-04-1.1.0-validation.md#ipad-pro-resize-reopened-2026-11-04).
 
 #### Fixed 2026-11-04 (Mac UI test harness)
 
 - Mac UI tests no longer launch into a menu bar with no window. Cause: saved window state is shared by every Tucked copy with the same bundle ID, and a copy that closed its window left state with no window. Also, a bare launch-argument value without a leading `--` suppresses the initial window. Every Mac UI launch now starts with `--` and adds `-ApplePersistenceIgnoreState YES` (`TuckedLaunch.swift`). App code is unchanged.
 - Sidebar tests scroll the sidebar before they click a row that is clipped at the bottom (likely cause of one rare Recently Deleted flake; not proven).
-- Verification (Mac mini, macOS 27.2, Xcode 27.2): with windowless state written on purpose before each run, two consecutive full Mac UI runs pass, 17 cases each with one expected purchase-audit skip. Without the fix, the same state fails `testAppLaunches` and the snippets test with the same errors as the 06:12 failing run. iOS UI test target builds. Share extension not rebuilt; app code is unchanged. Details in the [1.1.0 validation note](docs/verification/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
+- Verification (Mac mini, macOS 27.2, Xcode 27.2): with windowless state written on purpose before each run, two consecutive full Mac UI runs pass, 17 cases each with one expected purchase-audit skip. Without the fix, the same state fails `testAppLaunches` and the snippets test with the same errors as the 06:12 failing run. iOS UI test target builds. Share extension not rebuilt; app code is unchanged. Details in the [1.1.0 validation note](docs/superpowers/archive/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
 
 #### Added 2026-11-04
 
@@ -192,12 +192,12 @@ Merged `dev/visual-polish` to `main` at `b4075c2` on 2026-11-06. Build 15 has th
 
 #### Added — 2026-10-24
 
-- TestFlight 1.0 (10) from `a17ab86` is available internally on iPhone and native Mac with the Release paywall enabled. Both builds are `VALID` and In Beta Testing in the internal group, with What to Test and export compliance saved. Not attached to an App Store version or submitted. See [the matrix](docs/verification/cloudkit-device-matrix.md#testflight-candidate--2026-10-24).
+- TestFlight 1.0 (10) from `a17ab86` is available internally on iPhone and native Mac with the Release paywall enabled. Both builds are `VALID` and In Beta Testing in the internal group, with What to Test and export compliance saved. Not attached to an App Store version or submitted. See [the matrix](docs/superpowers/archive/cloudkit-device-matrix.md#testflight-candidate--2026-10-24).
 
 #### Changed — 2026-10-24
 
 - UI-test launches without `-storekit-audit` no longer query StoreKit, so a Mac that owns Tucked cannot unlock the test library. The Mac StoreKit audit cannot run on a Mac whose Apple Account owns Tucked for Life.
-- Added a [first-time tester checklist](docs/verification/2026-10-24-testflight-fresh-tester-checklist.md) for the next TestFlight build.
+- Added a [first-time tester checklist](docs/superpowers/archive/2026-10-24-testflight-fresh-tester-checklist.md) for the next TestFlight build.
 
 #### Fixed — 2026-10-23
 
@@ -212,7 +212,7 @@ Merged `dev/visual-polish` to `main` at `b4075c2` on 2026-11-06. Build 15 has th
 
 - Draft spec and full-send plan scope the remaining bug block. No app changes or device-gate completion are claimed.
 - TestFlight 1.0 (9) from `f34b8c6` is available internally on iPhone and native Mac with the Release paywall enabled. Five validated JSON fixtures cover capacity, duplicate updates, rejection without mutations, and unlocked expansion.
-- Release audit adds gate, import, StoreKit, and UI regression coverage. Confirmed defects and submission gaps are recorded in [the branch audit](docs/verification/2026-10-23-branch-paywall-audit.md). The initial audit preceded the approved fixes above.
+- Release audit adds gate, import, StoreKit, and UI regression coverage. Confirmed defects and submission gaps are recorded in [the branch audit](docs/superpowers/archive/2026-10-23-branch-paywall-audit.md). The initial audit preceded the approved fixes above.
 - Share diagnostics: a `ShareSave` log category. `ShareStorageDiagnostics.logSummary` logs the error domain and code down the underlying-error chain. The full error is logged as private. A notice records when the free-bookmark limit blocks a save. Item type identifiers are logged when a share holds nothing to save. A "Share view appeared" entry logs the view and window frames.
 - Unit tests for the free-limit failure and `logSummary`.
 

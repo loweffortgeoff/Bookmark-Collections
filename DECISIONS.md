@@ -1,6 +1,6 @@
 # Architecture Decisions
 
-For current work and approval dependencies see [TODO](TODO.md); the [verification matrix](docs/verification/cloudkit-device-matrix.md) records acceptance evidence. Decisions below retain their historical context.
+For current work and approval dependencies see [TODO](TODO.md); the [verification matrix](docs/superpowers/archive/cloudkit-device-matrix.md) records acceptance evidence. Decisions below retain their historical context.
 
 Significant decisions made during development, logged for future reference.
 
@@ -72,7 +72,7 @@ Significant decisions made during development, logged for future reference.
 
 - **Decision:** Run the accepted 30-day purge on activation, after reconciliation. Retain an expired link while any active link shares its normalized URL; apply the age rule normally to images and snippets.
 - **Why:** Geoff accepted scheduled hard deletion on 2026-11-09. The active-copy guard narrows the race where purge deletes a canonical record while another device revives it and removes the active duplicate.
-- **Accepted limit (Geoff, 2026-11-09):** A local-only check cannot protect a remote restore that CloudKit has not delivered. Geoff reported the [two-device purge/restore check](docs/verification/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed on 2026-11-10; this observed outcome does not remove the local-only limit.
+- **Accepted limit (Geoff, 2026-11-09):** A local-only check cannot protect a remote restore that CloudKit has not delivered. Geoff reported the [two-device purge/restore check](docs/superpowers/archive/cloudkit-device-matrix.md#chapter-2-purgerestore--2026-11-09) passed on 2026-11-10; this observed outcome does not remove the local-only limit.
 - **Existing date limit:** When both independent duplicates are deleted, reconciliation can retain the older canonical deletion date. The 30-day purge uses that date; reconciliation semantics are unchanged here.
 - **Alternative considered:** Purge every expired record without checking active links. Rejected because concurrent cleanup could remove both copies. Keep deterministic reconciliation and its revive policy unchanged.
 
@@ -115,7 +115,7 @@ Historical decision from `a6151f9`, superseded by the review correction above. T
 ## 2026-11-04 (Mac UI tests ignore saved window state)
 
 - **Decision:** Every Mac UI test launch starts with `--` and ends with `-ApplePersistenceIgnoreState YES`, through `XCUIApplication.tucked()` in `BookmarkCollectionsUITests/TuckedLaunch.swift`. The app launch path is unchanged.
-- **Why:** Saved window state belongs to the bundle ID, so the Debug test build shares it with the `~/Applications` and TestFlight copies. A copy that closes its window and stays in the menu bar leaves state with no window. XCTest launches restore it and show no window. A bare value after a flag (`YES`, `NO`, `0`) without a leading `--` also suppresses the initial window under XCTest (symptom proven, AppKit mechanism not confirmed). Evidence is in the [1.1.0 validation note](docs/verification/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
+- **Why:** Saved window state belongs to the bundle ID, so the Debug test build shares it with the `~/Applications` and TestFlight copies. A copy that closes its window and stays in the menu bar leaves state with no window. XCTest launches restore it and show no window. A bare value after a flag (`YES`, `NO`, `0`) without a leading `--` also suppresses the initial window under XCTest (symptom proven, AppKit mechanism not confirmed). Evidence is in the [1.1.0 validation note](docs/superpowers/archive/2026-11-04-1.1.0-validation.md#mac-ui-suite-failure-2026-11-04-root-cause-found-harness-fixed).
 - **Alternative considered:** `.restorationBehavior(.disabled)` or opening the window at launch in the app. Rejected because it changes shipped behavior for a test-only problem. Normal `open` launches still show the window with the same state.
 
 ## 2026-11-03 (Use the current installed Mac Share extension)

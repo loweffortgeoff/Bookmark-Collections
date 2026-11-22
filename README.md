@@ -13,7 +13,7 @@ The project has no third-party dependencies. Reads and writes use the local Swif
 
 ## Project status
 
-Geoff confirmed 1.1.2 (17) is live on iOS and macOS on 2026-11-20 (tagged `v1.1.2-build17` at `f707290`), following 1.1.1 (16) live on 2026-11-11 and 1.1.0 (15) live on 2026-11-07. See the active queue in [TODO](TODO.md#next) and [verification records](docs/verification/cloudkit-device-matrix.md). The October 24 acceptance package is retired, not passed.
+Geoff confirmed 1.1.2 (17) is live on iOS and macOS on 2026-11-20 (tagged `v1.1.2-build17` at `f707290`), following 1.1.1 (16) live on 2026-11-11 and 1.1.0 (15) live on 2026-11-07. See the active queue in [TODO](TODO.md#next) and [verification records](docs/superpowers/archive/cloudkit-device-matrix.md). The October 24 acceptance package is retired, not passed.
 
 ## Requirements
 
