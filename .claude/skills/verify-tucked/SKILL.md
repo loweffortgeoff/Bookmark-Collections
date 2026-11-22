@@ -21,7 +21,7 @@ Everything below runs from the repo root. `$SKILL` means `.claude/skills/verify-
    ```
    $SKILL/scripts/launch.sh
    ```
-   It builds the `BookmarkCollections` scheme into `build/VerifyDerivedData` (gitignored, reused across runs), installs `Tucked.app`, and launches with `-ui-testing -free-limit 100`.
+   It builds the `BookmarkCollections` scheme into `build/VerifyDerivedData.noindex` (gitignored, reused across runs), installs `Tucked.app`, and launches with `-ui-testing -free-limit 100`.
    - `-ui-testing` swaps in an **in-memory** SwiftData store with CloudKit off, and seeds the library (below). Every launch starts from the same state; nothing persists across launches.
    - `-free-limit 100` lifts the 10-item free cap. The seed holds 7 active items, so a few adds would otherwise raise the paywall. Drop the flag only when verifying the paywall (set `FREE_LIMIT=` empty or a small number).
    - Ready means the `All Items` grid is on screen with the seeded cards. `launch.sh` waits for that and exits non-zero otherwise.
@@ -34,7 +34,7 @@ Everything below runs from the repo root. `$SKILL` means `.claude/skills/verify-
 ```
 $SKILL/scripts/doctor.sh
 ```
-Read-only. Checks that `$AD` is set and responds, a build exists at `build/VerifyDerivedData` with the right bundle id (it prints the build time), and Tucked is the foreground app showing the seeded library. Prints `OK` or the first failed check. Run it first whenever anything looks off. If it fails, re-run `launch.sh`.
+Read-only. Checks that `$AD` is set and responds, a build exists at `build/VerifyDerivedData.noindex` with the right bundle id (it prints the build time), and Tucked is the foreground app showing the seeded library. Prints `OK` or the first failed check. Run it first whenever anything looks off. If it fails, re-run `launch.sh`.
 
 ## Drive
 
@@ -70,7 +70,7 @@ Proof standards:
 ```
 $SKILL/scripts/cleanup.sh
 ```
-Closes the agent-device session for `com.loweffortapps.BookmarkCollections` on the simulator you opened. It does not shut the simulator down (you did not necessarily boot it), does not delete `build/VerifyDerivedData` (a warm build cache), and never touches `build/verify-artifacts/`. Then call `device_close` for the device you opened. Run cleanup after failed attempts too.
+Closes the agent-device session for `com.loweffortapps.BookmarkCollections` on the simulator you opened. It does not shut the simulator down (you did not necessarily boot it), does not delete `build/VerifyDerivedData.noindex` (a warm build cache), and never touches `build/verify-artifacts/`. Then call `device_close` for the device you opened. Run cleanup after failed attempts too.
 
 ## Helpers
 

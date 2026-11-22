@@ -33,6 +33,15 @@ INSTALL_PATH="/Applications/$APP_NAME.app"
 
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 
+# A TestFlight or App Store copy carries a _MASReceipt and is owned by the
+# system, so the rm/ditto below fail with "Permission denied". Stop before
+# building and say what to do instead.
+if [ -d "$INSTALL_PATH/Contents/_MASReceipt" ]; then
+  echo "$INSTALL_PATH is the TestFlight/App Store copy, which this script can't replace."
+  echo "Drag it to the Trash in Finder, then run this script again."
+  exit 1
+fi
+
 echo "== Building macOS ($CONFIGURATION) =="
 if ! xcodebuild build \
     -project "$PROJECT" \
