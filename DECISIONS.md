@@ -4,6 +4,19 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-23 (Show device-observed iCloud sync timestamps in Settings)
+
+- **Decision:** Amend the [2026-07-18 Honest sync health](#2026-07-18-honest-sync-health) decision to display visible device-observed iCloud sync activity timestamps (last push / last pull) in Settings alongside iCloud account availability, sourced from real CloudKit mirroring events.
+- **Why:** Geoff wants a visible sync time in Settings (helpful for user confidence and two-device checks). Reporting actual CloudKit import/export event completion times observed on the current device stays truthful as long as copy clearly describes local device-observed activity rather than claiming global multi-device completion.
+- **Precondition:** Confirm during v1.1.3 implementation that SwiftData’s underlying Core Data/CloudKit stack surfaces `NSPersistentCloudKitContainer.eventChangedNotification` events reliably on iOS and macOS.
+- **Alternative considered:** Keep Settings strictly at account availability only. Rejected by Geoff in favor of visible sync timestamps.
+
+## 2026-11-23 (Split the next two updates into v1.1.3 and v1.2.0)
+
+- **Decision:** Group backlog fixes (`F20`, `F22`), capture polish ("Already tucked" notice, clipboard URL assist, iOS Home Screen Quick Actions), and Settings/library-health work ("We Also Make", visible sync timestamps, ephemeral manual "Check for Broken Links" sweep) into **v1.1.3**, and keep **v1.2.0** purely focused on Siri, Shortcuts, and Spotlight (App Intents in the "show without opening" model). See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md).
+- **Why:** Moving broken-link checking and visible sync timestamps into v1.1.3 consolidates all Settings and maintenance changes into one release and lets v1.2.0 ship as a single-narrative system-integration update. Keeping broken-link results ephemeral means neither release changes persisted SwiftData models or requires a CloudKit Production schema deploy; schema-bearing items (`F1` permanent fix, `pageDescription`, image backup) remain batched for a later release.
+- **Alternative considered:** Keep v1.1.3 local-only and place broken-link checking in v1.2.0. Rejected by Geoff in favor of a cleaner v1.2.0 scope.
+
 ## 2026-11-18 (Ship 1.1.2 as a small UI-only update)
 
 - **Decision:** Package Last Opened sort and F23 export cleanup as 1.1.2 (17) from `main`, for iOS and macOS. Frame the thin release under one theme instead of adding more work.

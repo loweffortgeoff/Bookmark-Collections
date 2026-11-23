@@ -6,14 +6,29 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 ## Next
 
-- [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
+Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md). Both cycles keep the persisted SwiftData schema unchanged (no CloudKit Production deploy).
+
+### v1.1.3 — Fixes, Capture Polish & Library Health
+
+- [ ] **F20, image viewer panning while zoomed.** Add clamped panning when zoomed (`> 1×`) with clean re-centering at `1×`; keep the single-decode fix from 1.1.1.
+- [ ] **F22, URL drag-and-drop fixes.** Handle drops onto an empty library, respect the active collection, and skip invalid URLs without aborting the batch. Separate from image drag-and-drop.
 - [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
-
-- [ ] **Scope the first Siri and Shortcuts actions.** Choose from saving a link, finding bookmarks, opening a collection, and showing favorites or forgotten items; define indexing and link-sharing behavior. Geoff approved scoping on 2026-11-07, not an implementation bundle, version, or date; the starter ideas remain in Backlog.
-
+- [ ] **Capture-time "Already tucked" notice.** Show a quiet inline match notice in Add Link (with a View action) and iOS Share Sheet for active or Recently Deleted normalized-URL matches; keep upsert/restore semantics.
+- [ ] **Clipboard URL assist.** Pre-fill/offer a copied web URL in Add Link (using pattern detection on iOS to avoid unwanted paste banners) and add a "Save Link from Clipboard" action in the Mac menu bar helper. URLs only; clipboard snippet capture remains out of scope.
+- [ ] **iOS/iPadOS Home Screen Quick Actions.** Add Link, Save from Clipboard, New Snippet, and Search.
 - [ ] **Settings: add a We Also Make section that mirrors the other apps.** Match the existing `AboutSectionView` pattern in Offshoots, Weather in Words, Task(ed), and EveryPaw: the same app rows, light and dark icon handling, and App Store link structure, listing the other live Low Effort Apps but not Tucked itself. Check App Store IDs against the live listings (the old Weather in Words ID `6760272161` is dead; use `6806063498`). Requested by Geoff 2026-11-22.
+- [ ] **Settings: visible device-observed iCloud sync timestamps.** Show last push / last pull timestamps observed on this device from CloudKit mirroring events, keeping local-first wording (amends the 2026-07-18 honest sync health decision).
+- [ ] **Settings: manual "Check for Broken Links" sweep.** Opt-in, cancellable, robots-tolerant check over active links with an ephemeral review sheet (Open in Browser / Move to Recently Deleted; no persisted schema change).
 
-Clipboard capture has no demonstrated gap.
+### v1.2.0 — Siri, Shortcuts & Spotlight
+
+- [ ] **App Intents, App Shortcuts, and Spotlight indexing.** Ship the first Siri, Shortcuts, and Spotlight suite in the "show without opening" model (`openAppWhenRun = false` for read, rediscovery, and write intents), with typed `BookmarkAppEntity` / `CollectionAppEntity`, inline SwiftUI result snippets, Untuck rediscovery intents (`Show Forgotten`, `Surprise Me`, `On This Day`), navigation intents (`Open Collection`, `Open Bookmark`), 8 curated `AppShortcutsProvider` phrases with full Siri AI descriptions, and CoreSpotlight indexing. See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md#cycle-2--v120-siri-shortcuts--spotlight).
+
+### Monitor / Unscheduled
+
+- [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
+
+Clipboard *snippet* capture still has no demonstrated gap (only URL clipboard assist is planned for v1.1.3).
 
 ## Done — v1.1.2 (live; confirmed 2026-11-20)
 
@@ -107,8 +122,6 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 
 - **F1, permanent fix for identical clone pairs.** Moved from the Watch List on 2026-11-11: its trigger, the release that ships Chapter 1, occurred when 1.1.1 went live. Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`; both stay visible until the user deletes one. The interim conditions are met: the [decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import) is recorded and the 1.1.1 release notes disclose the limit. A clean merge needs a new synced field and a Production CloudKit deploy. No release is chosen; raise its priority on the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/archive/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
 - **F15, Share URL/title classification:** capture payloads from 3–4 real host apps before choosing a heuristic. Preserve selected prose as snippets; implementation is not yet chosen.
-- **F22, URL drops:** handle an empty library, respect the current collection, and continue after a bad URL. Keep this separate from image drag-and-drop.
-- **F20, image viewer:** add panning while zoomed. The repeated-decode fix is already merged in Chapter 3.
 
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
 - Photos-picker in-app image import.
@@ -116,11 +129,10 @@ The deferred Photos picker and drag-and-drop items below are alternate in-app im
 - `pageDescription` field + og:description fetch for the info panel.
 - Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
 - Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
-- Clipboard snippet capture, only if Share capture leaves a real gap. Shared text and the Mac menu bar shipped in 1.1.0.
+- Clipboard snippet capture, only if Share capture leaves a real gap. Shared text and the Mac menu bar shipped in 1.1.0; URL clipboard assist is scoped separately for v1.1.3.
 - Untuck hub sheet (approach B) on top of `UntuckRules`.
 - Configurable Forgotten threshold / Settings control.
 - “Not opened in 30 days” re-entry (opened once, then stale again).
-- First Siri and Shortcuts actions. Tucked has none today. Starter set: save a link to a collection, find bookmarks, open a collection, and show favorites or forgotten items. Add bookmarks to the Spotlight index, and let them pass to other apps as links. Write full descriptions from the start so the actions are ready for Apple's Siri AI preview. This is the Shortcuts idea from Tucked Testing (see v1.1.0 above). Rough size: 2–3 days. See the [Siri AI Prep Plan](https://claude.ai/artifact/VJDSbHGzy9tipzzCknTwxC) (2026-11-03).
 
 ### Product differentiation ideas (2026-07-30)
 
@@ -129,7 +141,7 @@ Captured during the post-v1 uniqueness brainstorm. Untuck (Forgotten + Surprise 
 - **Visual tuck (OCR / screenshot research)** — Strongest long-term moat around image-kind bookmarks. On-device Vision OCR so screenshots are searchable; optional “links found in this image.” Positioning: save what you *saw*, not only the URL. Privacy-fit (no cloud AI). Rough size: 1–2 weeks for a useful v1.
 - **Why I tucked this** — Lightest product experiment. Optional one-line intent at capture or edit (“gift idea”, “for the trip”); filter/search by it. Complements single-collection + Favorite without tags. Rough size: 3–5 days.
 - **Private boards (presentation, not new model)** — Collections as mixed-media boards (links + screenshots). Full-bleed / collage browse per collection; private Pinterest energy without social. Mostly UX on the existing `kind` model. Rough size: 1–2 weeks for a first collage surface.
-- **On-device smart tuck** — Local-only helpers after the above: similar saves, collection suggestions from title/OCR, dead-link check on open. Apple frameworks only; no third-party AI APIs. Do after Visual tuck or Untuck has more usage signal. Rough size: 2+ weeks.
+- **On-device smart tuck** — Local-only helpers after the above: similar saves, collection suggestions from title/OCR, automatic dead-link checks on open (manual sweep is scoped for v1.1.3). Apple frameworks only; no third-party AI APIs. Do after Visual tuck or Untuck has more usage signal. Rough size: 2+ weeks.
 - **Untuck hub sheet (B)** — Already listed above. Branded shell on `UntuckRules` (~1–2 days) if Forgotten/Surprise need a stronger discoverability moment.
 
 **Deprioritize / skip for now** (crowded or fights brand): multi-label tags as the main differentiator, browser extensions, collaborative/social collections, full offline page archives, cloud “AI summarize every page.”
