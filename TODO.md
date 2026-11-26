@@ -30,7 +30,16 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
 - [x] **Settings: visible device-observed iCloud sync timestamps** (2026-11-26). Precondition met: SwiftData delivers `NSPersistentCloudKitContainer.eventChangedNotification` on macOS 27.2 (MacBook Pro) and iOS 27.3 (iPhone 17 Pro), Debug builds, CloudKit Development. Both devices stored real push and pull dates.
   - [ ] Two-device check: change on one device, then confirm "Last iCloud pull" advances on the other and both survive relaunch.
 - [x] **Settings: manual "Check for Broken Links" sweep** (2026-11-26). Library Data entry (Q6); ephemeral review sheet; 8 deterministic checker tests.
-  - [ ] Real network: a real `404`, an unreachable domain, a bot-walled site, Cancel mid-sweep, Airplane Mode, Open in Browser, single and Move All soft-delete.
+  - [ ] Real network: a real `404`, an unreachable domain, a bot-walled site, Cancel mid-sweep, Airplane Mode, Open in Browser, single and Move All soft-delete. Simulator (2026-11-26): a sweep of the seeded library finished, found real 404s, skipped the image and snippet, and one soft-delete removed its row.
+- [x] **Branch verification** (2026-11-26, MacBook Pro). All four suites pass with 0 failures: macOS unit 318 (16 skipped), iOS unit 309 (16 skipped), macOS UI 20 (1 skipped), iOS UI 20 (1 skipped), iPhone 18 Pro on iOS 27.2. The skips are the StoreKit audit tests (they run under `Tucked Audit`) and the screenshot seed. Both schemes build for iOS Simulator and macOS, and a signed generic iOS build passes. A fresh whole-branch review found three broken-link sweep defects; all three are fixed with tests (`4457b3a`). The unit counts were taken before the fix commit added 5 tests, except macOS unit (318), which was rerun after it.
+- [ ] **Review follow-ups (not fixed; decide before release).**
+  - [ ] Rate & Review calls `requestReview()` from a button; the system may show nothing (yearly quota, TestFlight). The reviewer suggests opening the App Store write-review URL instead. This revisits Q5.
+  - [ ] After Move All, the review sheet says "All checked links look reachable". Show the moved count instead.
+  - [ ] `http://` bookmarks fail App Transport Security before the network, so the sweep can never check them. Option: try `https` first.
+  - [ ] Sheets opened inside Settings (the paywall from an import summary, a running sweep) close when a Quick Action or menu bar request arrives, because `.settings` does not block.
+  - [ ] A HEAD-only 404/410 is flagged without a GET check; some servers mishandle HEAD.
+  - [ ] Pinch while already zoomed: magnify and pan are separate gestures; check on a device, use `simultaneousGesture` if pinch stops working.
+  - [ ] iOS Paste row can appear for prose that contains a URL; Paste then does nothing.
 
 ### v1.2.0 — Siri, Shortcuts & Spotlight
 
