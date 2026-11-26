@@ -1,4 +1,3 @@
-import StoreKit
 import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
@@ -9,7 +8,6 @@ struct SettingsView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(Storefront.self) private var storefront
     @Environment(SyncHealthMonitor.self) private var syncHealth
-    @Environment(\.requestReview) private var requestReview
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let onPaywall: () -> Void
 
@@ -76,9 +74,7 @@ struct SettingsView: View {
 
                 Section("About") {
                     versionRow
-                    Button {
-                        requestReview()
-                    } label: {
+                    Link(destination: LowEffortApps.tuckedWriteReviewURL) {
                         Label {
                             Text("Rate & Review")
                         } icon: {

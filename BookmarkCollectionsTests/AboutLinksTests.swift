@@ -25,6 +25,13 @@ final class AboutLinksTests: XCTestCase {
         XCTAssertFalse(apps.contains { $0.appStoreID == "6792490401" })
     }
 
+    func testRateAndReviewOpensTuckedWriteReviewPage() {
+        XCTAssertEqual(
+            LowEffortApps.tuckedWriteReviewURL.absoluteString,
+            "https://apps.apple.com/app/id6792490401?action=write-review"
+        )
+    }
+
     func testWeAlsoMakeUsesVerifiedLiveAppStoreIDsAndValidURLs() {
         let apps = LowEffortApps.otherApps
         let weather = apps.first { $0.name == "Weather in Words" }

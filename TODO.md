@@ -20,7 +20,7 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
 - [x] **Capture-time "Already tucked" notice** (2026-11-26). Add Link shows the notice with View (focuses the exact card by row); the iOS Share Sheet shows it with no View button. Pickers stay blank (Q2).
   - [ ] Real device: Safari Share Sheet re-share on iPhone and iPad.
 - [x] **Clipboard URL assist** (2026-11-26). macOS Add Link pre-fills a copied URL (selected); the menu bar adds "Save Link from Clipboard"; iOS Add Link shows a PasteButton row only for a probable URL.
-  - [ ] macOS 27.2: confirm whether reading the clipboard shows a paste prompt.
+  - [x] macOS: no paste prompt before the clipboard read (Geoff, 2026-11-26, Mac mini, Debug build of `dev/v1.1.3`).
   - [ ] Real iPhone: no paste banner with plain text, image, or empty clipboard.
 - [x] **iOS/iPadOS Home Screen Quick Actions** (2026-11-26). Simulator: all four show; cold-launch New Snippet and warm Save from Clipboard route correctly.
   - [ ] **Save from Clipboard pre-fill:** on the iPhone 18 Pro simulator (iOS 27.2), Add Link opened empty and no paste prompt appeared, even with a URL on the clipboard. A scene-active deferral (`2a0d481`) did not change it. Check on a real iPhone; if it still opens empty, debug the explicit `UIPasteboard` read.
@@ -28,12 +28,12 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
 - [x] **Settings: We Also Make section** (2026-11-26). Five live apps, Tucked excluded, IDs checked against the App Store lookup (Weather in Words `6806063498`; `6760272161` returns nothing). About adds Version and Rate & Review (Q5).
   - [ ] Visual: light and dark icons, XXXL text; tap each row to open the App Store.
 - [x] **Settings: visible device-observed iCloud sync timestamps** (2026-11-26). Precondition met: SwiftData delivers `NSPersistentCloudKitContainer.eventChangedNotification` on macOS 27.2 (MacBook Pro) and iOS 27.3 (iPhone 17 Pro), Debug builds, CloudKit Development. Both devices stored real push and pull dates.
-  - [ ] Two-device check: change on one device, then confirm "Last iCloud pull" advances on the other and both survive relaunch.
+  - [x] Two-device check (Geoff, 2026-11-26): push and pull appear to work. Hard to read side by side because his devices run different app builds; recheck once all devices run the 1.1.3 TestFlight build.
 - [x] **Settings: manual "Check for Broken Links" sweep** (2026-11-26). Library Data entry (Q6); ephemeral review sheet; 8 deterministic checker tests.
   - [ ] Real network: a real `404`, an unreachable domain, a bot-walled site, Cancel mid-sweep, Airplane Mode, Open in Browser, single and Move All soft-delete. Simulator (2026-11-26): a sweep of the seeded library finished, found real 404s, skipped the image and snippet, and one soft-delete removed its row.
 - [x] **Branch verification** (2026-11-26, MacBook Pro). All four suites pass with 0 failures: macOS unit 318 (16 skipped), iOS unit 309 (16 skipped), macOS UI 20 (1 skipped), iOS UI 20 (1 skipped), iPhone 18 Pro on iOS 27.2. The skips are the StoreKit audit tests (they run under `Tucked Audit`) and the screenshot seed. Both schemes build for iOS Simulator and macOS, and a signed generic iOS build passes. A fresh whole-branch review found three broken-link sweep defects; all three are fixed with tests (`4457b3a`). The unit counts were taken before the fix commit added 5 tests, except macOS unit (318), which was rerun after it.
 - [ ] **Review follow-ups (not fixed; decide before release).**
-  - [ ] Rate & Review calls `requestReview()` from a button; the system may show nothing (yearly quota, TestFlight). The reviewer suggests opening the App Store write-review URL instead. This revisits Q5.
+  - [x] Rate & Review opens the App Store write-review page instead of `requestReview()`, which the system limits to about three prompts a year (Geoff approved, 2026-11-26).
   - [ ] After Move All, the review sheet says "All checked links look reachable". Show the moved count instead.
   - [ ] `http://` bookmarks fail App Transport Security before the network, so the sweep can never check them. Option: try `https` first.
   - [ ] Sheets opened inside Settings (the paywall from an import summary, a running sweep) close when a Quick Action or menu bar request arrives, because `.settings` does not block.
