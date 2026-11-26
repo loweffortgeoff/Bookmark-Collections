@@ -22,6 +22,41 @@
 	<string>public.app-category.productivity</string>
 	<key>PaywallEnabled</key>
 	<string>$(PAYWALL_ENABLED)</string>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.loweffortapps.BookmarkCollections.quickaction.addLink</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Add Link</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>link.badge.plus</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.loweffortapps.BookmarkCollections.quickaction.saveFromClipboard</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Save from Clipboard</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>doc.on.clipboard</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.loweffortapps.BookmarkCollections.quickaction.newSnippet</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>New Snippet</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>text.quote</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.loweffortapps.BookmarkCollections.quickaction.search</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Search</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>magnifyingglass</string>
+		</dict>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
