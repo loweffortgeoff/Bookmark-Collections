@@ -27,9 +27,9 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
 - [x] **iOS/iPadOS Home Screen Quick Actions** (2026-11-26). Simulator: all four show; cold-launch New Snippet and warm Save from Clipboard route correctly.
   - [x] **Save from Clipboard pre-fill** (Geoff, 2026-11-26, iPhone 17 Pro, iOS 27.3, Debug build): iOS shows "Tucked would like to paste from Safari"; after Allow Paste, Add Link opens with the copied URL, and the Already-tucked notice appears for a saved link. The empty field seen on the iPhone 18 Pro simulator (iOS 27.2) is simulator-only.
   - [x] Pre-filled address is not selected on iOS (cursor at the end). Geoff, 2026-11-26: not an issue; no change.
-  - [ ] Real device: all four from cold launch and warm resume; dropped while a draft, paywall, or drop summary is open.
+  - [x] Real device: all four from cold launch and warm resume; dropped while a draft, paywall, or drop summary is open. (Geoff, 2026-11-26)
 - [x] **Settings: We Also Make section** (2026-11-26). Five live apps, Tucked excluded, IDs checked against the App Store lookup (Weather in Words `6806063498`; `6760272161` returns nothing). About adds Version and Rate & Review (Q5).
-  - [ ] Visual: light and dark icons, XXXL text; tap each row to open the App Store.
+  - [x] Visual: light and dark icons, XXXL text; tap each row to open the App Store. (Geoff, 2026-11-26)
 - [x] **Settings: visible device-observed iCloud sync timestamps** (2026-11-26). Precondition met: SwiftData delivers `NSPersistentCloudKitContainer.eventChangedNotification` on macOS 27.2 (MacBook Pro) and iOS 27.3 (iPhone 17 Pro), Debug builds, CloudKit Development. Both devices stored real push and pull dates.
   - [x] Two-device check (Geoff, 2026-11-26): push and pull appear to work. Hard to read side by side because his devices run different app builds; recheck once all devices run the 1.1.3 TestFlight build.
 - [x] **Settings: manual "Check for Broken Links" sweep** (2026-11-26). Library Data entry (Q6); ephemeral review sheet; 8 deterministic checker tests.
