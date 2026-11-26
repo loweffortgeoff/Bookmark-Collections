@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-26 (Separate macOS What's New for 1.1.3)
+
+- **Decision:** Ship 1.1.3 with two What's New texts: the iOS text, and a macOS text without the iOS-only items (Home Screen Quick Actions, the Share Sheet "Already tucked" notice, the Paste button, and the sheet-dismiss fix). The macOS text names the Mac-only clipboard behavior: Add Link fills in a copied URL, and the menu bar adds Save Link from Clipboard. The Description stays shared because each platform-specific line starts with "On iPhone and iPad" or "On Mac".
+- **Why:** 1.1.3 is the first shared update where the platforms differ in visible features. Mac users should not read about features they cannot find. The App Store Connect connector edits only the iOS version, so the macOS text lives in `ASC_LISTING.md` for Geoff to paste.
+- **Alternative considered:** One What's New with "On iPhone and iPad" labels. Rejected; four of eight bullets would not apply on Mac.
+
 ## 2026-11-26 (Rate & Review opens the App Store review page)
 
 - **Decision:** The Settings Rate & Review row links to `https://apps.apple.com/app/id6792490401?action=write-review` instead of calling `requestReview()`. Amends 2026-11-23 Q5, which specified `requestReview()`.
@@ -16,7 +22,7 @@ Significant decisions made during development, logged for future reference.
 - **Why:** Geoff wants a visible sync time in Settings (helpful for user confidence and two-device checks). Reporting actual CloudKit import/export event completion times observed on the current device stays truthful as long as copy clearly describes local device-observed activity rather than claiming global multi-device completion.
 - **Precondition:** Confirm during v1.1.3 implementation that SwiftData’s underlying Core Data/CloudKit stack surfaces `NSPersistentCloudKitContainer.eventChangedNotification` events reliably on iOS and macOS.
 - **Alternative considered:** Keep Settings strictly at account availability only. Rejected by Geoff in favor of visible sync timestamps.
-- **Precondition result (2026-11-26):** Met on both platforms. With Debug builds of `dev/v1.1.3` (CloudKit Development), SwiftData delivered `eventChangedNotification` for import and export, and `SyncHealthMonitor` stored real push and pull dates on the MacBook Pro (macOS 27.2) and the iPhone 17 Pro (iOS 27.3). The observer registers before the `ModelContainer` opens, so launch-time sync is recorded. A cross-device check (change on one device, pull on the other) is still open in TODO.
+- **Precondition result (2026-11-26):** Met on both platforms. With Debug builds of `dev/v1.1.3` (CloudKit Development), SwiftData delivered `eventChangedNotification` for import and export, and `SyncHealthMonitor` stored real push and pull dates on the MacBook Pro (macOS 27.2) and the iPhone 17 Pro (iOS 27.3). The observer registers before the `ModelContainer` opens, so launch-time sync is recorded. Geoff's cross-device check (2026-11-26) showed push and pull working; a side-by-side recheck waits for all devices to run the 1.1.3 TestFlight build.
 - **Scope note:** The Share Extension mirrors to CloudKit in its own process. Its exports are not recorded in the app's `UserDefaults.standard`, so the Settings rows show sync activity observed by the Tucked app on this device. The footnote says so.
 
 ## 2026-11-23 (Split the next two updates into v1.1.3 and v1.2.0)

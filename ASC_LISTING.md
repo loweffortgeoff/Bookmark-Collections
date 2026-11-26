@@ -1,4 +1,4 @@
-# App Store Connect — Current Listing (v1.1.2)
+# App Store Connect — Current Listing (v1.1.3)
 
 Initial release listing for Tucked 1.0. Bundle ID `com.loweffortapps.BookmarkCollections`. Primary locale `en-US`.
 
@@ -11,13 +11,27 @@ Rationale: The app name ("Tucked") does not contain any category keywords, so th
 Save links, screenshots, and highlighted text from the Share Sheet on iPhone, iPad, and Mac. Forgotten and Surprise me bring back what you tucked away and never opened. — 168 characters
 
 ## What's New
-Find what you came back for, and take your library with you.
+Catch duplicates, clean up dead links, and save from the clipboard.
 
-• New Last Opened sort. See what you opened most recently at the top. Items you have never opened sit at the end.
-• Exports now carry the Tucked name: "Tucked Bookmarks" for HTML and "Tucked Backup" for JSON.
-• Settings now explains what each export holds. Image bookmarks are not included in exports.
+• Home Screen Quick Actions: touch and hold the Tucked icon to add a link, save from the clipboard, write a snippet, or search.
+• Tucked tells you when a link is already saved, in Add Link and in the Share Sheet. In Add Link, tap View to go to it.
+• Add Link offers Paste when you have copied a web address.
+• New: Check for Broken Links in Settings ▸ Library Data finds links that no longer load, so you can open or remove them.
+• Settings ▸ iCloud shows when this device last sent and received changes.
+• You can pan a zoomed image, and the viewer no longer closes while you are zoomed in.
+• On iPad, drag links onto an empty library or into a collection to save them there.
+• Settings has a new We Also Make section, plus Version and Rate & Review under About.
 
-Known limit: if you restore the same backup on two devices before they sync, a link can appear twice. The extra copy stays until you delete it.
+## What's New — macOS (paste by hand)
+Catch duplicates, clean up dead links, and save from the clipboard.
+
+• Add Link fills in a web address you copied, and the menu bar has a new Save Link from Clipboard command.
+• Add Link tells you when a link is already tucked. Click View to go to it.
+• New: Check for Broken Links in Settings ▸ Library Data finds links that no longer load, so you can open or remove them.
+• Settings ▸ iCloud shows when this Mac last sent and received changes.
+• Drag links onto an empty library or into a collection to save them there. One bad address no longer stops the rest.
+• You can pan a zoomed image.
+• Settings has a new We Also Make section, plus Version and Rate & Review under About.
 
 ## Description
 Tucked — Save it now. Actually find it later.
@@ -32,13 +46,16 @@ Three Kinds of Saves in One Place
 Capture From Anywhere
 • On iPhone and iPad, the Save to Tucked Share Sheet lets you assign a Collection and mark Favorite right as you save.
 • On Mac, Save to Tucked uses Quick Save: one click in any Share menu saves the link, image, or highlighted text immediately without interrupting your work.
-• On Mac, Tucked stays in the menu bar for quick jumps to Search, Links, Images, and Snippets.
+• On iPhone and iPad, Home Screen Quick Actions jump straight to Add Link, Save from Clipboard, New Snippet, or Search.
+• On Mac, Tucked stays in the menu bar for quick jumps to Search, Links, Images, and Snippets, or to save a link you copied.
+• Tucked tells you when a link is already in your library, so you do not save it twice.
 
 Clean, Predictable Organization
 • Each item belongs to zero or one Collection, plus an independent Favorites list — no messy tag sprawl to maintain.
 • Filter your sidebar by All Items, Images, Links, Snippets, Favorites, Forgotten, or any Collection, with live item counts on every row.
 • Search across titles, domains, URLs, collections, and snippet text, and sort by date added, date modified, title, domain, or last opened.
 • Recently Deleted holds removed items for 30 days before permanent removal.
+• Check for Broken Links finds saved links that no longer load, so you can clear them out.
 
 Untuck What You Forgot
 • Forgotten surfaces items older than 30 days that you have never opened, so your library does not turn into a graveyard of unread links.
@@ -99,6 +116,8 @@ Two adjacent clusters dominate search: **bookmark & link managers** (Raindrop.io
 - "research" ↔ "curate"
 
 ## Notes
+
+- 2026-11-26 (v1.1.3 release pass): New What's New for iOS and a separate macOS What's New that leaves out the iOS-only items (Quick Actions, Share Sheet notice, Paste button, sheet-dismiss fix). The connector edits only the iOS version, so Geoff pastes the macOS text by hand. Description adds Quick Actions (labeled "On iPhone and iPad"), the clipboard menu bar command, the duplicate notice, and Check for Broken Links; it uses platform labels, so one Description serves both versions. Subtitle, Promotional Text, and Keywords unchanged.
 
 - 2026-11-10 (v1.1.1 release pass): Fixes-only What's New. Promotional Text and What's New transferred to both the iOS and macOS 1.1.1 versions and read back; Subtitle and Keywords are unchanged. Description was not transferred: the live copy on both versions is 2,328 characters and ends at "macOS keyboard shortcuts", while this file adds a closing "No accounts, no subscriptions, no ads, and no analytics" line. Decide whether to add that line before submission.
 

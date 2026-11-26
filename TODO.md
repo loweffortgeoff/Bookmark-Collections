@@ -8,7 +8,20 @@ Start here for current work; [decisions](DECISIONS.md), [change history](CHANGEL
 
 Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md). Both cycles keep the persisted SwiftData schema unchanged (no CloudKit Production deploy).
 
-### v1.1.3 — Fixes, Capture Polish & Library Health
+### v1.2.0 — Siri, Shortcuts & Spotlight
+
+- [ ] **App Intents, App Shortcuts, and Spotlight indexing.** Ship the first Siri, Shortcuts, and Spotlight suite in the "show without opening" model (`openAppWhenRun = false` for read, rediscovery, and write intents), with typed `BookmarkAppEntity` / `CollectionAppEntity`, inline SwiftUI result snippets, Untuck rediscovery intents (`Show Forgotten`, `Surprise Me`, `On This Day`), navigation intents (`Open Collection`, `Open Bookmark`), 8 curated `AppShortcutsProvider` phrases with full Siri AI descriptions, and CoreSpotlight indexing. See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md#cycle-2--v120-siri-shortcuts--spotlight).
+
+### Monitor / Unscheduled
+
+- [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
+- [ ] **Recheck iCloud push/pull side by side** once all devices run the 1.1.3 TestFlight build (from the 2026-11-26 two-device check).
+
+Clipboard *snippet* capture still has no demonstrated gap; v1.1.3 shipped URL clipboard assist only.
+
+## Done — v1.1.3 (uploaded 2026-11-26)
+
+- [ ] **Release 1.1.3 (18)** for iOS and macOS. Archived and uploaded 2026-11-26 (Mac mini, macOS 27.2, Xcode 27.2). iOS ASC copy saved and read back. Open: confirm both builds `VALID`, answer export compliance, paste the macOS What's New and Description, attach builds, submit.
 
 Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Merged into `main` at `f9839f5` (2026-11-26, Mac mini); both schemes and macOS build on the merge. All real-device checks from the plan's release checklist passed (Geoff, 2026-11-26).
 
@@ -45,16 +58,6 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). M
   - [x] A HEAD 404/410 is now confirmed with a ranged GET before the link is flagged (2026-11-26).
   - [x] Pinch while already zoomed works on a device (Geoff, 2026-11-26).
   - [x] iOS Paste row can appear for prose that contains a URL; Paste then does nothing. Geoff, 2026-11-26: accepted (rare; does not affect snippets).
-
-### v1.2.0 — Siri, Shortcuts & Spotlight
-
-- [ ] **App Intents, App Shortcuts, and Spotlight indexing.** Ship the first Siri, Shortcuts, and Spotlight suite in the "show without opening" model (`openAppWhenRun = false` for read, rediscovery, and write intents), with typed `BookmarkAppEntity` / `CollectionAppEntity`, inline SwiftUI result snippets, Untuck rediscovery intents (`Show Forgotten`, `Surprise Me`, `On This Day`), navigation intents (`Open Collection`, `Open Bookmark`), 8 curated `AppShortcutsProvider` phrases with full Siri AI descriptions, and CoreSpotlight indexing. See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md#cycle-2--v120-siri-shortcuts--spotlight).
-
-### Monitor / Unscheduled
-
-- [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
-
-Clipboard *snippet* capture still has no demonstrated gap (only URL clipboard assist is planned for v1.1.3).
 
 ## Done — v1.1.2 (live; confirmed 2026-11-20)
 

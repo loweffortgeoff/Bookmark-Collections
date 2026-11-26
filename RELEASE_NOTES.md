@@ -1,3 +1,40 @@
+# Release Notes — v1.1.3
+
+Theme: Catch duplicates, clean up dead links, and save from the clipboard.
+
+## NEW
+
+- **Check for Broken Links.** Settings ▸ Library Data checks your saved links and lists the ones that no longer load. Open each one, delete it, or move them all to Recently Deleted. Nothing is checked until you ask.
+- **Already tucked.** Add Link tells you when a link is already in your library, and View takes you to its card. On iPhone and iPad, the Share Sheet says so too.
+- **Save from the clipboard.** On Mac, Add Link fills in a web address you copied, and the menu bar adds Save Link from Clipboard. On iPhone and iPad, Add Link offers Paste when you have copied a web address.
+- **Home Screen Quick Actions** (iPhone and iPad). Touch and hold the Tucked icon for Add Link, Save from Clipboard, New Snippet, or Search.
+- **iCloud activity in Settings.** Settings ▸ iCloud shows when this device last sent and received changes.
+- **We Also Make.** Settings lists the other Low Effort Apps, and About adds Version and Rate & Review.
+
+## IMPROVED
+
+- **Pan a zoomed image.** Drag to move around a zoomed image; it stops at the edges. On iPhone and iPad, the viewer no longer closes when you drag down while zoomed in.
+
+## FIXED
+
+- **Dropped links save.** Drag links onto an empty library and they save. Links dropped on a collection join it, and one bad address no longer stops the rest. On Mac, dragging from the Safari address bar works.
+
+## macOS What's New (paste by hand)
+
+The App Store Connect connector edits only the iOS version. Paste this into the macOS 1.1.3 version. It leaves out the iOS-only items: Home Screen Quick Actions, the Share Sheet notice, the Paste button, and the sheet-dismiss fix.
+
+See `ASC_LISTING.md` ▸ What's New — macOS for the text.
+
+## What to Test — 1.1.3 (18)
+
+- **Broken links:** In Settings ▸ Library Data, run Check for Broken Links. Confirm dead links are listed and Delete moves one to Recently Deleted.
+- **Already tucked:** In Add Link, enter a link you already saved. Confirm the notice shows and View opens its card. On iPhone, re-share a saved link from Safari.
+- **Clipboard:** Copy a web address. On Mac, open Add Link and use the menu bar Save Link from Clipboard. On iPhone, use the Save from Clipboard Quick Action.
+- **iCloud:** Change a link on one device. Confirm Settings ▸ iCloud updates the push time there and the pull time on the other device.
+- **Drop:** Drag a link from Safari onto an empty collection. Confirm it saves into that collection.
+
+---
+
 # Release Notes — v1.1.2
 
 Theme: Find what you came back for, and take your library with you.
