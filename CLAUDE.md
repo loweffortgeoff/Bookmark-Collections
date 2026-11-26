@@ -36,3 +36,22 @@ duplicate apps (cleaned up 2026-11-18: 19 copies).
 Leave the output verbose — don't add `-quiet`. Error parsing (build-runner's
 included) tails the log for the first `error:`, and `-quiet` strips the context
 that makes the first error findable.
+
+## Testing Notes
+
+- **MacBook: add `-allowProvisioningUpdates` to macOS builds and tests.** The
+  MacBook has no local Mac development profiles, so `-destination
+  'platform=macOS'` fails with "No profiles for
+  'com.loweffortapps.BookmarkCollections' were found" without it (confirmed
+  2026-11-26). iOS Simulator builds don't need it.
+- **Fresh simulator: the first StoreKit audit run shows a Sandbox sign-in.** On
+  a newly created or erased simulator, the first `Tucked Audit` run raises
+  "Sign in to Apple Account" and the purchase tests hang. Press Cancel (never
+  sign in), stop the run, and rerun; the warmed simulator then passes
+  `StorefrontAuditTests` with no dialog (2026-11-26). The same dialog can
+  appear on macOS with Geoff's account pre-filled — cancel it.
+- **Expected skips.** Unit suites (`BookmarkCollectionsTests`) skip 16 tests:
+  15 `StorefrontAuditTests` (they run only under `Tucked Audit`) and
+  `ScreenshotSeedTests`. UI suites skip 1:
+  `PaywallFlowAuditTests.testPurchaseClearsRestoreErrorAndUnlocksRunningApp`
+  (also `Tucked Audit` only). Any other skip is new — find out why.
