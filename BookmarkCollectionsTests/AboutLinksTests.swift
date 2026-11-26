@@ -26,10 +26,12 @@ final class AboutLinksTests: XCTestCase {
     }
 
     func testRateAndReviewOpensTuckedWriteReviewPage() {
-        XCTAssertEqual(
-            LowEffortApps.tuckedWriteReviewURL.absoluteString,
-            "https://apps.apple.com/app/id6792490401?action=write-review"
-        )
+        #if os(macOS)
+        let expected = "macappstore://apps.apple.com/app/id6792490401?action=write-review"
+        #else
+        let expected = "https://apps.apple.com/app/id6792490401?action=write-review"
+        #endif
+        XCTAssertEqual(LowEffortApps.tuckedWriteReviewURL.absoluteString, expected)
     }
 
     func testWeAlsoMakeUsesVerifiedLiveAppStoreIDsAndValidURLs() {

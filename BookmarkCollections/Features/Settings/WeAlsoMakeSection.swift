@@ -20,7 +20,13 @@ struct LowEffortApp: Identifiable, Equatable, Sendable {
 enum LowEffortApps {
     /// Tucked's App Store review page. A link always opens it, unlike
     /// requestReview(), which the system may silently skip.
+    /// On macOS the https form opens the product page without the review
+    /// sheet; the macappstore scheme opens Write a Review (Mac mini, macOS 27.2).
+    #if os(macOS)
+    static let tuckedWriteReviewURL = URL(string: "macappstore://apps.apple.com/app/id6792490401?action=write-review")!
+    #else
     static let tuckedWriteReviewURL = URL(string: "https://apps.apple.com/app/id6792490401?action=write-review")!
+    #endif
 
     /// The other live apps, never Tucked itself. IDs checked against the
     /// App Store lookup on 2026-11-26.
