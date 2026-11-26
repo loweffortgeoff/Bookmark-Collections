@@ -17,8 +17,8 @@ struct LibraryGridView: View {
     let onOpen: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
-    let onLimitReached: () -> Void
     let onCommandSelection: (Bookmark) -> Void
+    let onDropSummary: (ImportSummary) -> Void
 
     @State private var isSelecting = false
     @State private var selection: Set<UUID> = []
@@ -38,6 +38,8 @@ struct LibraryGridView: View {
             Group {
                 if visible.isEmpty {
                     emptyState
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .contentShape(Rectangle())
                 } else {
                     GeometryReader { proxy in
                         let layout = GridLayout(width: proxy.size.width, isAccessibilitySize: dynamicTypeSize.isAccessibilitySize)
@@ -73,25 +75,19 @@ struct LibraryGridView: View {
                             }
                             .padding(GridLayout.padding)
                         }
-                        .dropDestination(for: URL.self) { urls, _ in
-                            do {
-                                let repository = BookmarkRepository(context: modelContext)
-                                for url in urls where ["http", "https"].contains(url.scheme?.lowercased()) {
-                                    _ = try repository.save(url: url.absoluteString, preserveOrganization: true)
-                                }
-                                return true
-                            } catch {
-                                if error as? BookmarkRepository.LimitError == .limitReached {
-                                    onLimitReached()
-                                } else {
-                                    onError(error.localizedDescription)
-                                }
-                                return false
-                            }
-                        }
                     }
                 }
             }
+        }
+        // On the outer stack so an empty library or collection accepts drops too.
+        .dropDestination(for: URL.self) { urls, _ in
+            guard destination != .recentlyDeleted else { return false }
+            let summary = LibraryImportService(context: modelContext)
+                .importDroppedURLs(urls, collection: dropTargetCollection)
+            if summary.stoppedAtLimit || !summary.failedLines.isEmpty {
+                onDropSummary(summary)
+            }
+            return summary.newCount + summary.duplicateCount + summary.restoredCount > 0
         }
         .safeAreaInset(edge: .bottom) {
             if isSelecting {
@@ -117,6 +113,12 @@ struct LibraryGridView: View {
                 }
             }
         }
+    }
+
+    /// New links dropped while a collection is open join that collection.
+    private var dropTargetCollection: BookmarkCollection? {
+        guard case let .collection(id) = destination else { return nil }
+        return collections.first(where: { $0.id == id })
     }
 
     private var selectedBookmarks: [Bookmark] {

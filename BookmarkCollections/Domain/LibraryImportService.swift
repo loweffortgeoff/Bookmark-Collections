@@ -52,6 +52,41 @@ struct LibraryImportService {
         return summary
     }
 
+    /// Saves web links dropped onto the library. New links join `collection`;
+    /// links already saved keep their organization. Finder file URLs are
+    /// skipped silently (image drop is separate work); other invalid URLs are
+    /// reported without stopping the batch.
+    func importDroppedURLs(_ urls: [URL], collection: BookmarkCollection? = nil) -> ImportSummary {
+        let repository = BookmarkRepository(context: context)
+        var summary = ImportSummary()
+
+        for url in urls {
+            if url.isFileURL { continue }
+            do {
+                switch try repository.save(
+                    url: url.absoluteString,
+                    collection: collection,
+                    favorite: false,
+                    preserveOrganization: true
+                ) {
+                case .created:
+                    summary.newCount += 1
+                case .updated:
+                    summary.duplicateCount += 1
+                case .restored:
+                    summary.restoredCount += 1
+                }
+            } catch is BookmarkRepository.LimitError {
+                summary.stoppedAtLimit = true
+                break
+            } catch {
+                summary.failedLines.append(url.absoluteString)
+            }
+        }
+
+        return summary
+    }
+
     func importJSON(_ data: Data) throws -> ImportSummary {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in

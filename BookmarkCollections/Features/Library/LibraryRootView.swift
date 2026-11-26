@@ -158,8 +158,8 @@ struct LibraryRootView: View {
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
-                onLimitReached: { sheet = .paywall },
-                onCommandSelection: { commandBookmark = $0 }
+                onCommandSelection: { commandBookmark = $0 },
+                onDropSummary: { sheet = .dropSummary($0) }
             )
             .navigationTitle(navigationTitle)
             .searchable(text: $searchText, isPresented: $isSearchPresented, prompt: "Search bookmarks")
@@ -221,6 +221,12 @@ struct LibraryRootView: View {
             SnippetEditorView(bookmark: bookmark)
         case .paywall:
             PaywallView()
+        case let .dropSummary(summary):
+            ImportSummaryView(
+                summary: summary,
+                title: "Links Dropped",
+                stoppedFooter: "The remaining links were not saved."
+            )
         }
     }
 
@@ -385,6 +391,7 @@ private enum SheetDestination: Identifiable {
     case shareBookmark(Bookmark)
     case snippetEditor(Bookmark?)
     case paywall
+    case dropSummary(ImportSummary)
 
     /// The sheet has text the user typed and would lose if it closed.
     var holdsDraft: Bool {
@@ -406,6 +413,7 @@ private enum SheetDestination: Identifiable {
         case let .shareBookmark(bookmark): "share-\(bookmark.id)"
         case let .snippetEditor(bookmark): "snippet-\(bookmark?.id.uuidString ?? "new")"
         case .paywall: "paywall"
+        case .dropSummary: "drop-summary"
         }
     }
 }
