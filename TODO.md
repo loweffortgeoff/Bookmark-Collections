@@ -10,7 +10,7 @@ Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/20
 
 ### v1.1.3 — Fixes, Capture Polish & Library Health
 
-Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Not merged. The open sub-items are the real-device checks from the plan's release checklist.
+Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Not merged. All real-device checks from the plan's release checklist passed (Geoff, 2026-11-26).
 
 - [x] **F20, image viewer panning while zoomed** (2026-11-26). Clamped panning above `1×`, re-centering at `1×`, re-clamp on resize, no sheet dismissal while zoomed; the image still decodes once. Simulator: a 900-point pan stays clamped and downward drags while zoomed keep the sheet open (iPhone 18 Pro, iOS 27.2).
   - [x] Real device: portrait and landscape images, pinch `1×–8×`, rotate or resize while zoomed (iPhone, iPad, Mac). Passed (Geoff, 2026-11-26).
@@ -20,10 +20,10 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
   - [x] **Safari address-bar drop saved nothing** (found and fixed 2026-11-26, Mac mini). The green + showed, but nothing saved and no summary opened. Cause: on macOS, SwiftUI delivers Safari's address-bar drag (`public.url` plus a promised `.webloc` file) as an item with no types; `dropDestination(for: URL.self)` produced an empty list (Apple side; diagnosed with temporary drop logging). Fix (our code): the drop now uses `onDrop(of: [.url])`, reads `public.url` from each item, and on macOS falls back to the drag pasteboard when no item carries a URL. A dropped `.webloc` file is also read for its link (`testDropReadsLinkFromSafariWeblocFile`). Verified on the Mac: the address-bar drop saved `twit.tv/episodes/reviews` into Test.
 - [x] **Low priority, verify only: paywall under test launch arguments** (2026-11-26). Not a bug. With the local StoreKit configuration (`Tucked Audit`), the paywall shows `$4.99` and Unlock is enabled under `-free-limit 0`; `StorefrontAuditTests` 15/15 and `PaywallFlowAuditTests` 5/5 pass on iPhone 18 Pro (iOS 27.2). Without `-storekit-audit`, UI tests skip StoreKit by design, which disables Unlock. The headline stays static (Geoff, 2026-11-23).
 - [x] **Capture-time "Already tucked" notice** (2026-11-26). Add Link shows the notice with View (focuses the exact card by row); the iOS Share Sheet shows it with no View button. Pickers stay blank (Q2).
-  - [ ] Real device: Safari Share Sheet re-share on iPhone and iPad.
+  - [x] Real device: Safari Share Sheet re-share on iPhone and iPad. (Geoff, 2026-11-26)
 - [x] **Clipboard URL assist** (2026-11-26). macOS Add Link pre-fills a copied URL (selected); the menu bar adds "Save Link from Clipboard"; iOS Add Link shows a PasteButton row only for a probable URL.
   - [x] macOS: no paste prompt before the clipboard read (Geoff, 2026-11-26, Mac mini, Debug build of `dev/v1.1.3`).
-  - [ ] Real iPhone: no paste banner with plain text, image, or empty clipboard.
+  - [x] Real iPhone: no paste banner with plain text, image, or empty clipboard. (Geoff, 2026-11-26)
 - [x] **iOS/iPadOS Home Screen Quick Actions** (2026-11-26). Simulator: all four show; cold-launch New Snippet and warm Save from Clipboard route correctly.
   - [x] **Save from Clipboard pre-fill** (Geoff, 2026-11-26, iPhone 17 Pro, iOS 27.3, Debug build): iOS shows "Tucked would like to paste from Safari"; after Allow Paste, Add Link opens with the copied URL, and the Already-tucked notice appears for a saved link. The empty field seen on the iPhone 18 Pro simulator (iOS 27.2) is simulator-only.
   - [x] Pre-filled address is not selected on iOS (cursor at the end). Geoff, 2026-11-26: not an issue; no change.
@@ -36,7 +36,7 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
   - [x] Real network: a real `404`, an unreachable domain, a bot-walled site, Cancel mid-sweep, Airplane Mode, Open in Browser, single and Move All soft-delete. Simulator (2026-11-26): a sweep of the seeded library finished, found real 404s, skipped the image and snippet, and one soft-delete removed its row.
     - Device (Geoff, 2026-11-26, iPhone, Debug build): all checks pass. httpbin `404` and `410` and a `.invalid` host are listed; `403`, `429`, `503`, and slow `delay/8` links are skipped. Cancel mid-sweep, Airplane Mode (offline screen, Retry), Open, single Delete, Move All, and restore from Recently Deleted work. Open shows a blank page for the httpbin links because they return an empty body (expected).
 - [x] **Branch verification** (2026-11-26, MacBook Pro). All four suites pass with 0 failures: macOS unit 318 (16 skipped), iOS unit 309 (16 skipped), macOS UI 20 (1 skipped), iOS UI 20 (1 skipped), iPhone 18 Pro on iOS 27.2. The skips are the StoreKit audit tests (they run under `Tucked Audit`) and the screenshot seed. Both schemes build for iOS Simulator and macOS, and a signed generic iOS build passes. A fresh whole-branch review found three broken-link sweep defects; all three are fixed with tests (`4457b3a`). The unit counts were taken before the fix commit added 5 tests, except macOS unit (318), which was rerun after it.
-- [ ] **Review follow-ups (not fixed; decide before release).**
+- [x] **Review follow-ups (decide before release).** All decided (2026-11-26).
   - [x] Rate & Review opens the App Store write-review page instead of `requestReview()`, which the system limits to about three prompts a year (Geoff approved, 2026-11-26).
   - [x] After Move All, the review sheet now says "Moved N links to Recently Deleted" instead of "All checked links look reachable" (2026-11-26).
   - [x] `http://` bookmarks fail App Transport Security, so the sweep reports them as "couldn't be confirmed". Geoff, 2026-11-26: acceptable; no change.
