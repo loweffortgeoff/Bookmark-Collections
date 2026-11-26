@@ -56,9 +56,10 @@ final class BrokenLinkCheckerTests: XCTestCase {
 
     private func checker(
         online: Bool = true,
+        internetReachable: Bool = true,
         _ perform: @escaping @Sendable (URLRequest) async throws -> Int
     ) -> BrokenLinkChecker {
-        BrokenLinkChecker(performRequest: perform, isOnline: { online })
+        BrokenLinkChecker(performRequest: perform, isOnline: { online }, isInternetReachable: { internetReachable })
     }
 
     // MARK: - Targets
@@ -194,7 +195,7 @@ final class BrokenLinkCheckerTests: XCTestCase {
         XCTAssertTrue(preflight.findings.isEmpty)
         XCTAssertEqual(preflightRequestCount, 0)
 
-        for code in [URLError.Code.notConnectedToInternet, .networkConnectionLost] {
+        for code in [URLError.Code.notConnectedToInternet, .dataNotAllowed] {
             let transportOffline = checker { request in
                 if request.url?.path == "/0" { return 404 }
                 throw URLError(code)
@@ -205,14 +206,79 @@ final class BrokenLinkCheckerTests: XCTestCase {
         }
     }
 
+    func testSingleConnectionResetIsUncertainNotOffline() async throws {
+        let targets = try makeTargets((0..<4).map { "https://host\($0).example/\($0)" })
+        let checker = checker { request in
+            if request.url?.path == "/1" { throw URLError(.networkConnectionLost) }
+            return 200
+        }
+
+        let result = await checker.check(targets) { _ in }
+
+        XCTAssertFalse(result.abortedOffline)
+        XCTAssertEqual(result.uncertainCount, 1)
+        XCTAssertEqual(result.totalChecked, 4)
+    }
+
     func testCaptivePortalOrBrokenDNSStormAbortsAsOfflineInsteadOfFlaggingLibrary() async throws {
         let targets = try makeTargets((0..<8).map { "https://host\($0).example/\($0)" })
-        let checker = checker { _ in throw URLError(.cannotFindHost) }
+        let checker = checker(internetReachable: false) { _ in throw URLError(.cannotFindHost) }
 
         let result = await checker.check(targets) { _ in }
 
         XCTAssertTrue(result.abortedOffline)
         XCTAssertTrue(result.findings.isEmpty)
+    }
+
+    func testDeadDomainsFirstAreStillReportedWhenInternetProbeSucceeds() async throws {
+        let dead = (0..<5).map { "https://dead\($0).example/x" }
+        let live = (0..<3).map { "https://live\($0).example/x" }
+        let targets = try makeTargets(dead + live)
+        let checker = checker(internetReachable: true) { request in
+            if request.url?.host()?.hasPrefix("dead") == true { throw URLError(.cannotFindHost) }
+            return 200
+        }
+
+        let result = await checker.check(targets, maxConcurrency: 1) { _ in }
+
+        XCTAssertFalse(result.abortedOffline)
+        XCTAssertEqual(result.findings.count, 5)
+        XCTAssertTrue(result.findings.allSatisfy { $0.reason == .hostNotFound })
+    }
+
+    func testDNSBreakingAfterOneSuccessAbortsWhenInternetProbeFails() async throws {
+        let targets = try makeTargets((0..<7).map { "https://host\($0).example/\($0)" })
+        let checker = checker(internetReachable: false) { request in
+            if request.url?.path == "/0" { return 200 }
+            throw URLError(.cannotFindHost)
+        }
+
+        let result = await checker.check(targets, maxConcurrency: 1) { _ in }
+
+        XCTAssertTrue(result.abortedOffline)
+        XCTAssertTrue(result.findings.isEmpty)
+    }
+
+    func testSmallLibraryDNSFailuresAreConfirmedByInternetProbe() async throws {
+        let targets = try makeTargets(["https://a.example/1", "https://b.example/2"])
+        let checker = checker(internetReachable: false) { _ in throw URLError(.cannotFindHost) }
+
+        let result = await checker.check(targets) { _ in }
+
+        XCTAssertTrue(result.abortedOffline)
+        XCTAssertTrue(result.findings.isEmpty)
+    }
+
+    func testLiveBookmarkLookupReturnsNilForDeletedRow() throws {
+        let kept = try insertBookmark("https://kept.example/a")
+        let removed = try insertBookmark("https://removed.example/b")
+        let removedID = removed.persistentModelID
+        let context = try XCTUnwrap(container).mainContext
+        context.delete(removed)
+        try context.save()
+
+        XCTAssertNil(BrokenLinkChecker.liveBookmark(with: removedID, in: context))
+        XCTAssertEqual(BrokenLinkChecker.liveBookmark(with: kept.persistentModelID, in: context)?.urlString, "https://kept.example/a")
     }
 
     // MARK: - Cancellation and concurrency

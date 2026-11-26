@@ -55,13 +55,29 @@ struct BrokenLinkChecker: Sendable {
 
     private let performRequest: RequestPerformer
     private let isOnline: ConnectivityCheck
+    /// Confirms real internet access against a known-good endpoint before any
+    /// "Server not found" result is trusted (captive portal, broken VPN DNS).
+    private let isInternetReachable: ConnectivityCheck
 
     init(
         performRequest: @escaping RequestPerformer = BrokenLinkChecker.defaultPerformer(),
-        isOnline: @escaping ConnectivityCheck = BrokenLinkChecker.defaultConnectivityCheck
+        isOnline: @escaping ConnectivityCheck = BrokenLinkChecker.defaultConnectivityCheck,
+        isInternetReachable: @escaping ConnectivityCheck = BrokenLinkChecker.defaultInternetProbe
     ) {
         self.performRequest = performRequest
         self.isOnline = isOnline
+        self.isInternetReachable = isInternetReachable
+    }
+
+    /// The bookmark behind a finding, or nil when its row no longer exists
+    /// (deleted or merged away while the review sheet was open).
+    @MainActor
+    static func liveBookmark(with id: PersistentIdentifier, in context: ModelContext) -> Bookmark? {
+        // A fetch, not model(for:): that returns an instance even for a
+        // deleted row, and touching it then faults.
+        var descriptor = FetchDescriptor<Bookmark>(predicate: #Predicate { $0.persistentModelID == id })
+        descriptor.fetchLimit = 1
+        return (try? context.fetch(descriptor))?.first
     }
 
     @MainActor
@@ -98,11 +114,14 @@ struct BrokenLinkChecker: Sendable {
         await onProgress(BrokenLinkSweepProgress(checked: 0, total: total))
 
         let distinctHostTotal = Set(targets.map(Self.host(of:))).count
+        // Probe once the DNS failures could be a storm: five distinct hosts,
+        // or every host in a smaller library.
+        let probeThreshold = max(1, min(5, distinctHostTotal))
         var checked = 0
         var uncertainCount = 0
         var findings: [BrokenLinkFinding] = []
-        var respondedCount = 0
         var hostNotFoundHosts: Set<String> = []
+        var internetConfirmed: Bool?
         var abortedOffline = false
 
         await withTaskGroup(of: (LinkCheckTarget, Outcome).self) { group in
@@ -123,37 +142,39 @@ struct BrokenLinkChecker: Sendable {
                 case .cancelled:
                     continue
                 case .reachable:
-                    respondedCount += 1
+                    break
                 case .broken(let reason):
                     findings.append(BrokenLinkFinding(
                         id: target.id, url: target.url, title: target.title, domain: target.domain, reason: reason
                     ))
-                    switch reason {
-                    case .notFound, .gone: respondedCount += 1
-                    case .hostNotFound: hostNotFoundHosts.insert(Self.host(of: target))
-                    case .invalidAddress: break
-                    }
-                case .uncertain(let gotResponse):
+                    if reason == .hostNotFound { hostNotFoundHosts.insert(Self.host(of: target)) }
+                case .uncertain:
                     uncertainCount += 1
-                    if gotResponse { respondedCount += 1 }
                 }
 
                 checked += 1
                 await onProgress(BrokenLinkSweepProgress(checked: checked, total: total))
 
-                // Captive portal or broken DNS: every host "fails", none ever answers. Never blame the library.
-                if respondedCount == 0,
-                   distinctHostTotal >= 3,
-                   hostNotFoundHosts.count >= min(5, distinctHostTotal) {
-                    abortedOffline = true
-                    group.cancelAll()
-                    continue
+                // Captive portal or broken DNS makes every lookup fail. Confirm
+                // the internet works before trusting "Server not found".
+                if internetConfirmed == nil, hostNotFoundHosts.count >= probeThreshold {
+                    internetConfirmed = await isInternetReachable()
+                    if internetConfirmed == false {
+                        abortedOffline = true
+                        group.cancelAll()
+                        continue
+                    }
                 }
 
                 if !Task.isCancelled, let next = pending.next() {
                     group.addTask { (next, await outcome(for: next)) }
                 }
             }
+        }
+
+        // Any remaining DNS finding is trusted only after the probe succeeds.
+        if !abortedOffline, !Task.isCancelled, internetConfirmed == nil, !hostNotFoundHosts.isEmpty {
+            abortedOffline = await isInternetReachable() == false
         }
 
         if abortedOffline {
@@ -210,8 +231,11 @@ private extension BrokenLinkChecker {
         switch urlError.code {
         case .cancelled:
             return Task.isCancelled ? .cancelled : .uncertain(gotResponse: false)
-        case .notConnectedToInternet, .networkConnectionLost, .dataNotAllowed, .internationalRoamingOff:
+        case .notConnectedToInternet, .dataNotAllowed, .internationalRoamingOff:
             return .offline
+        case .networkConnectionLost:
+            // One server dropping a connection is not the device going offline.
+            return .uncertain(gotResponse: false)
         case .cannotFindHost, .dnsLookupFailed:
             return .broken(.hostNotFound)
         case .badURL, .unsupportedURL:
@@ -273,6 +297,23 @@ extension BrokenLinkChecker {
             monitor.start(queue: queue)
             queue.asyncAfter(deadline: .now() + 1.5) { finish(true) }
         }
+    }
+
+    /// Apple's captive-portal check: a working internet connection returns a
+    /// page containing "Success". Anything else means DNS failures are not
+    /// evidence against the links.
+    @Sendable
+    static func defaultInternetProbe() async -> Bool {
+        guard let url = URL(string: "https://captive.apple.com/hotspot-detect.html") else { return false }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 15
+        configuration.waitsForConnectivity = false
+        let session = URLSession(configuration: configuration)
+        defer { session.finishTasksAndInvalidate() }
+        guard let (data, response) = try? await session.data(from: url),
+              (response as? HTTPURLResponse)?.statusCode == 200 else { return false }
+        return String(decoding: data, as: UTF8.self).contains("Success")
     }
 
     /// One ephemeral session per request, because the per-task delegate of `URLSession.data(for:delegate:)`

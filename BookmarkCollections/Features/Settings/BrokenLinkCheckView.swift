@@ -188,13 +188,11 @@ struct BrokenLinkCheckView: View {
         }
     }
 
-    private func bookmark(for finding: BrokenLinkFinding) -> Bookmark? {
-        modelContext.model(for: finding.id) as? Bookmark
-    }
-
     private func moveToRecentlyDeleted(_ finding: BrokenLinkFinding) {
         do {
-            if let bookmark = bookmark(for: finding), bookmark.deletedAt == nil {
+            // A row deleted or merged away meanwhile just leaves the list.
+            if let bookmark = BrokenLinkChecker.liveBookmark(with: finding.id, in: modelContext),
+               bookmark.deletedAt == nil {
                 try BookmarkRepository(context: modelContext).softDelete(bookmark)
             }
             findings.removeAll { $0.id == finding.id }
