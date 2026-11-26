@@ -115,6 +115,42 @@ final class BrokenLinkCheckerTests: XCTestCase {
         ])
     }
 
+    func testHEAD404Or410IsConfirmedWithGETBeforeFlagging() async throws {
+        let targets = try makeTargets([
+            "https://a.example/head404-get200",
+            "https://b.example/head410-get206",
+            "https://c.example/head404-get404",
+        ])
+        let log = RequestLog()
+        let checker = checker { request in
+            await log.append(request)
+            let path = request.url?.path ?? ""
+            if request.httpMethod == "HEAD" {
+                return path.hasPrefix("/head410") ? 410 : 404
+            }
+            if path.hasSuffix("get200") { return 200 }
+            if path.hasSuffix("get206") { return 206 }
+            return 404
+        }
+
+        let result = await checker.check(targets) { _ in }
+
+        let requests = await log.requests
+        XCTAssertEqual(requests.count, 6, "Each HEAD 404/410 gets one confirming GET.")
+        XCTAssertTrue(requests.filter { $0.httpMethod == "GET" }.allSatisfy {
+            $0.value(forHTTPHeaderField: "Range") == "bytes=0-0"
+        })
+        XCTAssertEqual(result.findings.map(\.url.path), ["/head404-get404"])
+        XCTAssertEqual(result.findings.first?.reason, .notFound)
+    }
+
+    func testReviewScreenSaysMovedInsteadOfAllClearAfterMovingFindings() {
+        XCTAssertEqual(BrokenLinkCheckView.reviewScreen(remainingFindings: 3, movedCount: 0), .findings)
+        XCTAssertEqual(BrokenLinkCheckView.reviewScreen(remainingFindings: 1, movedCount: 2), .findings)
+        XCTAssertEqual(BrokenLinkCheckView.reviewScreen(remainingFindings: 0, movedCount: 4), .moved(4))
+        XCTAssertEqual(BrokenLinkCheckView.reviewScreen(remainingFindings: 0, movedCount: 0), .allClear)
+    }
+
     func testGivesBenefitOfTheDoubtTo401_403_429_5xx_TimeoutAndTLSErrors() async throws {
         let targets = try makeTargets((0..<9).map { "https://host\($0).example/\($0)" })
         let checker = checker { request in

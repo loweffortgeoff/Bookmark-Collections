@@ -15,8 +15,21 @@ struct BrokenLinkCheckView: View {
         case completed(totalChecked: Int, uncertainCount: Int)
     }
 
+    /// What the finished review shows.
+    enum ReviewScreen: Equatable {
+        case findings
+        case moved(Int)
+        case allClear
+    }
+
+    static func reviewScreen(remainingFindings: Int, movedCount: Int) -> ReviewScreen {
+        if remainingFindings > 0 { return .findings }
+        return movedCount > 0 ? .moved(movedCount) : .allClear
+    }
+
     @State private var phase: Phase = .running(checked: 0, total: 0)
     @State private var findings: [BrokenLinkFinding] = []
+    @State private var movedCount = 0
     @State private var runID = UUID()
     @State private var confirmsMoveAll = false
     @State private var errorMessage: String?
@@ -85,15 +98,23 @@ struct BrokenLinkCheckView: View {
             }
             .accessibilityIdentifier("brokenLinks.offline")
         case let .completed(totalChecked, uncertainCount):
-            if findings.isEmpty {
+            switch Self.reviewScreen(remainingFindings: findings.count, movedCount: movedCount) {
+            case .findings:
+                findingsList(totalChecked: totalChecked, uncertainCount: uncertainCount)
+            case let .moved(count):
+                ContentUnavailableView(
+                    "Moved \(count) links to Recently Deleted",
+                    systemImage: "trash",
+                    description: Text("They remain recoverable for 30 days.")
+                )
+                .accessibilityIdentifier("brokenLinks.moved")
+            case .allClear:
                 ContentUnavailableView(
                     "All checked links look reachable",
                     systemImage: "checkmark.circle",
                     description: Text(summary(totalChecked: totalChecked, uncertainCount: uncertainCount))
                 )
                 .accessibilityIdentifier("brokenLinks.allClear")
-            } else {
-                findingsList(totalChecked: totalChecked, uncertainCount: uncertainCount)
             }
         }
     }
@@ -165,6 +186,7 @@ struct BrokenLinkCheckView: View {
 
     private func runSweep() async {
         findings = []
+        movedCount = 0
         let bookmarks = (try? modelContext.fetch(FetchDescriptor<Bookmark>())) ?? []
         let targets = BrokenLinkChecker.targets(from: bookmarks)
         guard !targets.isEmpty else {
@@ -194,6 +216,7 @@ struct BrokenLinkCheckView: View {
             if let bookmark = BrokenLinkChecker.liveBookmark(with: finding.id, in: modelContext),
                bookmark.deletedAt == nil {
                 try BookmarkRepository(context: modelContext).softDelete(bookmark)
+                movedCount += 1
             }
             findings.removeAll { $0.id == finding.id }
         } catch {

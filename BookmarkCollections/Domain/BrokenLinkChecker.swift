@@ -255,9 +255,10 @@ private extension BrokenLinkChecker {
             let status = try await performRequest(head)
             switch Self.verdict(forStatus: status, method: "HEAD") {
             case .reachable: return .reachable
-            case .broken(let reason): return .broken(reason)
             case .uncertain: return .uncertain(gotResponse: true)
-            case .retryWithGET:
+            case .broken, .retryWithGET:
+                // Some servers answer HEAD with 404 while the page loads.
+                // Confirm with a GET before flagging, since findings feed Move All.
                 var get = URLRequest(url: target.url)
                 get.httpMethod = "GET"
                 get.setValue("bytes=0-0", forHTTPHeaderField: "Range")

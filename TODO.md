@@ -35,12 +35,12 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
 - [x] **Branch verification** (2026-11-26, MacBook Pro). All four suites pass with 0 failures: macOS unit 318 (16 skipped), iOS unit 309 (16 skipped), macOS UI 20 (1 skipped), iOS UI 20 (1 skipped), iPhone 18 Pro on iOS 27.2. The skips are the StoreKit audit tests (they run under `Tucked Audit`) and the screenshot seed. Both schemes build for iOS Simulator and macOS, and a signed generic iOS build passes. A fresh whole-branch review found three broken-link sweep defects; all three are fixed with tests (`4457b3a`). The unit counts were taken before the fix commit added 5 tests, except macOS unit (318), which was rerun after it.
 - [ ] **Review follow-ups (not fixed; decide before release).**
   - [x] Rate & Review opens the App Store write-review page instead of `requestReview()`, which the system limits to about three prompts a year (Geoff approved, 2026-11-26).
-  - [ ] After Move All, the review sheet says "All checked links look reachable". Show the moved count instead.
+  - [x] After Move All, the review sheet now says "Moved N links to Recently Deleted" instead of "All checked links look reachable" (2026-11-26).
   - [x] `http://` bookmarks fail App Transport Security, so the sweep reports them as "couldn't be confirmed". Geoff, 2026-11-26: acceptable; no change.
-  - [ ] Sheets opened inside Settings (the paywall from an import summary, a running sweep) close when a Quick Action or menu bar request arrives, because `.settings` does not block.
-  - [ ] A HEAD-only 404/410 is flagged without a GET check; some servers mishandle HEAD.
+  - [x] Sheets opened inside Settings close when a Quick Action or menu bar request arrives. Geoff, 2026-11-26: accepted; it needs a deliberate action and loses no data.
+  - [x] A HEAD 404/410 is now confirmed with a ranged GET before the link is flagged (2026-11-26).
   - [x] Pinch while already zoomed works on a device (Geoff, 2026-11-26).
-  - [ ] iOS Paste row can appear for prose that contains a URL; Paste then does nothing.
+  - [x] iOS Paste row can appear for prose that contains a URL; Paste then does nothing. Geoff, 2026-11-26: accepted (rare; does not affect snippets).
 
 ### v1.2.0 — Siri, Shortcuts & Spotlight
 
