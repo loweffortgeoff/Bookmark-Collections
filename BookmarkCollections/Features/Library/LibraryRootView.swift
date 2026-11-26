@@ -25,6 +25,9 @@ struct LibraryRootView: View {
     @Environment(MenuBarRouter.self) private var menuBarRouter
     #if os(macOS)
     @State private var isAddingImages = false
+    #else
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var pendingClipboardSave = false
     #endif
 
     var body: some View {
@@ -83,6 +86,9 @@ struct LibraryRootView: View {
             }
             .onAppear(perform: consumeMenuBarRequest)
             .onChange(of: menuBarRouter.generation) { consumeMenuBarRequest() }
+            #if os(iOS)
+            .onChange(of: scenePhase) { openPendingClipboardSave() }
+            #endif
             .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
                 if bookmarkID == nil { commandBookmark = nil }
             }
@@ -138,11 +144,23 @@ struct LibraryRootView: View {
                 }
             }
             #else
-            // Explicit action: the system paste prompt is expected here.
-            sheet = .addBookmark(initialURL: ClipboardURLAssist.readClipboardURLForExplicitAction() ?? "")
+            // A Quick Action arrives before the scene is active, and iOS
+            // returns no clipboard to an inactive app. Read once active.
+            pendingClipboardSave = true
+            openPendingClipboardSave()
             #endif
         }
     }
+
+    #if os(iOS)
+    private func openPendingClipboardSave() {
+        guard pendingClipboardSave, scenePhase == .active else { return }
+        pendingClipboardSave = false
+        guard sheet?.blocksAppActions != true else { return }
+        // Explicit action: the system paste prompt is expected here.
+        sheet = .addBookmark(initialURL: ClipboardURLAssist.readClipboardURLForExplicitAction() ?? "")
+    }
+    #endif
 
     private var navigationView: some View {
         NavigationSplitView {
