@@ -7,6 +7,7 @@ struct BrokenLinkCheckView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.openURL) private var openURL
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private enum Phase: Equatable {
         case running(checked: Int, total: Int)
@@ -132,10 +133,13 @@ struct BrokenLinkCheckView: View {
                         Label(finding.reason.localizedDescription, systemImage: "exclamationmark.triangle")
                             .font(.footnote)
                             .foregroundStyle(.orange)
-                        ViewThatFits(in: .horizontal) {
-                            HStack { rowActions(for: finding) }
-                            VStack(alignment: .leading) { rowActions(for: finding) }
-                        }
+                        // ViewThatFits kept the HStack at accessibility sizes
+                        // and broke the labels mid-word, so stack by size class.
+                        let actionsLayout = dynamicTypeSize.isAccessibilitySize
+                            ? AnyLayout(VStackLayout(alignment: .leading))
+                            : AnyLayout(HStackLayout())
+                        actionsLayout { rowActions(for: finding) }
+                        .lineLimit(1)
                         .buttonStyle(.bordered)
                         .controlSize(.small)
                     }
@@ -149,6 +153,8 @@ struct BrokenLinkCheckView: View {
                 Button("Move All to Recently Deleted", systemImage: "trash", role: .destructive) {
                     confirmsMoveAll = true
                 }
+                // The destructive role reds the title only; the icon stays accent blue.
+                .foregroundStyle(.red)
                 .accessibilityIdentifier("brokenLinks.moveAll")
             }
         }
@@ -157,10 +163,16 @@ struct BrokenLinkCheckView: View {
 
     @ViewBuilder
     private func rowActions(for finding: BrokenLinkFinding) -> some View {
-        Button("Open in Browser", systemImage: "safari") { openURL(finding.url) }
-        Button("Move to Recently Deleted", systemImage: "trash", role: .destructive) {
+        // Short labels keep both buttons on one line. "Delete" matches the
+        // library's context menu; it moves the link to Recently Deleted.
+        Button("Open", systemImage: "safari") { openURL(finding.url) }
+            .accessibilityLabel("Open in Browser")
+        Button("Delete", systemImage: "trash", role: .destructive) {
             moveToRecentlyDeleted(finding)
         }
+        .accessibilityLabel("Move to Recently Deleted")
+        .tint(.red)
+        .foregroundStyle(.red)
     }
 
     @ToolbarContentBuilder
