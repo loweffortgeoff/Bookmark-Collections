@@ -7,9 +7,9 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     @Environment(Storefront.self) private var storefront
+    @Environment(SyncHealthMonitor.self) private var syncHealth
     let onPaywall: () -> Void
 
-    @StateObject private var syncHealth = SyncHealthMonitor()
     @State private var isImporting = false
     @State private var importSummary: ImportSummary?
     @State private var exportDocument: ExportFileDocument?
@@ -55,7 +55,11 @@ struct SettingsView: View {
                 Section("iCloud") {
                     Label(syncHealth.status.title, systemImage: syncHealth.status.systemImage)
                         .accessibilityIdentifier("settings.syncStatus")
-                    Text("This reports account availability only. Bookmark changes are saved locally first and mirrored by iCloud when available.")
+                    LabeledContent("Last iCloud push", value: SyncHealthMonitor.formattedTimestamp(syncHealth.lastPushDate))
+                        .accessibilityIdentifier("settings.syncLastPush")
+                    LabeledContent("Last iCloud pull", value: SyncHealthMonitor.formattedTimestamp(syncHealth.lastPullDate))
+                        .accessibilityIdentifier("settings.syncLastPull")
+                    Text("Shows iCloud account availability and the last sync activity observed by Tucked on this device. Bookmark changes are saved locally first and mirrored by iCloud when available.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }

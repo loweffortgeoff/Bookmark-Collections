@@ -1,6 +1,13 @@
 import CloudKit
-import Combine
+import CoreData
 import Foundation
+import Observation
+import OSLog
+
+private let syncLogger = Logger(
+    subsystem: "com.loweffortapps.BookmarkCollections",
+    category: "CloudKitSync"
+)
 
 enum SyncHealthStatus: Equatable {
     case checking
@@ -33,30 +40,111 @@ enum SyncHealthStatus: Equatable {
 }
 
 @MainActor
-final class SyncHealthMonitor: ObservableObject {
+@Observable
+final class SyncHealthMonitor {
     typealias AccountStatusLoader = @Sendable () async throws -> CKAccountStatus
 
-    @Published private(set) var status: SyncHealthStatus = .checking
+    enum SyncEventKind: Equatable, Sendable {
+        case export
+        case `import`
+        case setup
+    }
 
-    private let loadAccountStatus: AccountStatusLoader
-    private var notificationTask: Task<Void, Never>?
+    struct SyncEventSnapshot: Equatable, Sendable {
+        let kind: SyncEventKind
+        let endDate: Date?
+        let succeeded: Bool
+    }
 
-    init(loadAccountStatus: @escaping AccountStatusLoader = SyncHealthMonitor.loadDefaultAccountStatus) {
+    static let lastPushDateKey = "tucked.sync.lastPushDate"
+    static let lastPullDateKey = "tucked.sync.lastPullDate"
+
+    private(set) var status: SyncHealthStatus = .checking
+    private(set) var lastPushDate: Date?
+    private(set) var lastPullDate: Date?
+
+    @ObservationIgnored private let loadAccountStatus: AccountStatusLoader
+    @ObservationIgnored private let userDefaults: UserDefaults
+    @ObservationIgnored private let notificationCenter: NotificationCenter
+    @ObservationIgnored private let observesCloudKitEvents: Bool
+    // Removed in deinit, which is nonisolated. NotificationCenter removal is thread-safe.
+    @ObservationIgnored nonisolated(unsafe) private var eventObserver: NSObjectProtocol?
+    @ObservationIgnored nonisolated(unsafe) private var accountObserver: NSObjectProtocol?
+    @ObservationIgnored private var isStarted = false
+
+    init(
+        userDefaults: UserDefaults = .standard,
+        notificationCenter: NotificationCenter = .default,
+        observesCloudKitEvents: Bool = SyncHealthMonitor.defaultObservesCloudKitEvents,
+        loadAccountStatus: @escaping AccountStatusLoader = SyncHealthMonitor.loadDefaultAccountStatus
+    ) {
+        self.userDefaults = userDefaults
+        self.notificationCenter = notificationCenter
+        self.observesCloudKitEvents = observesCloudKitEvents
         self.loadAccountStatus = loadAccountStatus
+        lastPushDate = userDefaults.object(forKey: Self.lastPushDateKey) as? Date
+        lastPullDate = userDefaults.object(forKey: Self.lastPullDateKey) as? Date
     }
 
     deinit {
-        notificationTask?.cancel()
+        if let eventObserver { notificationCenter.removeObserver(eventObserver) }
+        if let accountObserver { notificationCenter.removeObserver(accountObserver) }
     }
 
+    /// Registers observers synchronously. Call before the `ModelContainer`
+    /// opens so launch-time CloudKit mirroring events are not missed.
     func start() {
-        guard notificationTask == nil else { return }
-        notificationTask = Task { [weak self] in
-            for await _ in NotificationCenter.default.notifications(named: .CKAccountChanged) {
-                guard !Task.isCancelled else { return }
+        guard !isStarted else { return }
+        isStarted = true
+        if observesCloudKitEvents {
+            eventObserver = notificationCenter.addObserver(
+                forName: NSPersistentCloudKitContainer.eventChangedNotification,
+                object: nil,
+                queue: nil
+            ) { [weak self] notification in
+                guard let snapshot = Self.snapshot(from: notification) else { return }
+                Task { @MainActor [weak self] in
+                    self?.recordSyncEvent(snapshot)
+                }
+            }
+        }
+        accountObserver = notificationCenter.addObserver(
+            forName: .CKAccountChanged,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
                 await self?.refresh()
             }
         }
+    }
+
+    func recordSyncEvent(_ event: SyncEventSnapshot) {
+        guard event.succeeded, let endDate = event.endDate else { return }
+        switch event.kind {
+        case .export:
+            guard lastPushDate.map({ endDate > $0 }) ?? true else { return }
+            lastPushDate = endDate
+            userDefaults.set(endDate, forKey: Self.lastPushDateKey)
+            syncLogger.info("Observed iCloud push completed at \(endDate, privacy: .public)")
+        case .import:
+            guard lastPullDate.map({ endDate > $0 }) ?? true else { return }
+            lastPullDate = endDate
+            userDefaults.set(endDate, forKey: Self.lastPullDateKey)
+            syncLogger.info("Observed iCloud pull completed at \(endDate, privacy: .public)")
+        case .setup:
+            return
+        }
+    }
+
+    static func formattedTimestamp(_ date: Date?, relativeTo now: Date = Date()) -> String {
+        guard let date else { return String(localized: "Not yet observed") }
+        if now.timeIntervalSince(date) < 60 * 60 * 24 {
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .full
+            return formatter.localizedString(for: date, relativeTo: now)
+        }
+        return date.formatted(date: .abbreviated, time: .shortened)
     }
 
     func refresh() async {
@@ -76,6 +164,26 @@ final class SyncHealthMonitor: ObservableObject {
         } catch {
             status = .error("Couldn’t check iCloud account: \(error.localizedDescription)")
         }
+    }
+
+    nonisolated static var defaultObservesCloudKitEvents: Bool {
+        let process = ProcessInfo.processInfo
+        return !process.arguments.contains("-ui-testing")
+            && process.environment["XCTestConfigurationFilePath"] == nil
+    }
+
+    nonisolated private static func snapshot(from notification: Notification) -> SyncEventSnapshot? {
+        guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
+            as? NSPersistentCloudKitContainer.Event else { return nil }
+        let kind: SyncEventKind
+        switch event.type {
+        case .export: kind = .export
+        case .import: kind = .import
+        case .setup: kind = .setup
+        @unknown default: return nil
+        }
+        syncLogger.debug("CloudKit event \(String(describing: event.type.rawValue), privacy: .public) ended: \(event.endDate != nil, privacy: .public) succeeded: \(event.succeeded, privacy: .public)")
+        return SyncEventSnapshot(kind: kind, endDate: event.endDate, succeeded: event.succeeded)
     }
 
     nonisolated private static func loadDefaultAccountStatus() async throws -> CKAccountStatus {
