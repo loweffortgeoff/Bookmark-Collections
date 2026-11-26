@@ -1,3 +1,4 @@
+import StoreKit
 import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
@@ -8,6 +9,8 @@ struct SettingsView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(Storefront.self) private var storefront
     @Environment(SyncHealthMonitor.self) private var syncHealth
+    @Environment(\.requestReview) private var requestReview
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let onPaywall: () -> Void
 
     @State private var isImporting = false
@@ -17,6 +20,7 @@ struct SettingsView: View {
     @State private var exportFilename = "Tucked Bookmarks"
     @State private var isExporting = false
     @State private var errorMessage: String?
+    @State private var showsBrokenLinkCheck = false
 
     var body: some View {
         NavigationStack {
@@ -46,6 +50,10 @@ struct SettingsView: View {
                         .accessibilityIdentifier("settings.exportHTML")
                     Button("Export JSON", systemImage: "archivebox", action: exportJSON)
                         .accessibilityIdentifier("settings.exportJSON")
+                    Button("Check for Broken Links", systemImage: "checklist") {
+                        showsBrokenLinkCheck = true
+                    }
+                    .accessibilityIdentifier("settings.checkBrokenLinks")
                 } header: {
                     Text("Library Data")
                 } footer: {
@@ -64,7 +72,21 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                WeAlsoMakeSection()
+
                 Section("About") {
+                    versionRow
+                    Button {
+                        requestReview()
+                    } label: {
+                        Label {
+                            Text("Rate & Review")
+                        } icon: {
+                            Image(systemName: "star.fill")
+                                .foregroundStyle(.yellow)
+                        }
+                    }
+                    .accessibilityIdentifier("settings.rateReview")
                     ForEach(AboutLink.allCases) { link in
                         Link(destination: link.url) {
                             Label(link.title, systemImage: link.systemImage)
@@ -104,6 +126,9 @@ struct SettingsView: View {
             defaultFilename: exportFilename,
             onCompletion: handleExportCompletion
         )
+        .sheet(isPresented: $showsBrokenLinkCheck) {
+            BrokenLinkCheckView()
+        }
         .sheet(isPresented: importSummaryPresented) {
             if let importSummary {
                 ImportSummaryView(summary: importSummary)
@@ -114,6 +139,23 @@ struct SettingsView: View {
         } message: {
             Text(errorMessage ?? "Try again.")
         }
+    }
+
+    private var versionRow: some View {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = info?["CFBundleVersion"] as? String ?? "—"
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+            : AnyLayout(HStackLayout())
+        return layout {
+            Text("Version")
+            if !dynamicTypeSize.isAccessibilitySize { Spacer() }
+            Text(verbatim: "\(version) (\(build))")
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("settings.version")
     }
 
     private func beginImport() {
