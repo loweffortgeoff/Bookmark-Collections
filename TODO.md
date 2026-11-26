@@ -10,7 +10,7 @@ Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/20
 
 ### v1.1.3 — Fixes, Capture Polish & Library Health
 
-Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Not merged. All real-device checks from the plan's release checklist passed (Geoff, 2026-11-26).
+Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Merged into `main` at `f9839f5` (2026-11-26, Mac mini); both schemes and macOS build on the merge. All real-device checks from the plan's release checklist passed (Geoff, 2026-11-26).
 
 - [x] **F20, image viewer panning while zoomed** (2026-11-26). Clamped panning above `1×`, re-centering at `1×`, re-clamp on resize, no sheet dismissal while zoomed; the image still decodes once. Simulator: a 900-point pan stays clamped and downward drags while zoomed keep the sheet open (iPhone 18 Pro, iOS 27.2).
   - [x] Real device: portrait and landscape images, pinch `1×–8×`, rotate or resize while zoomed (iPhone, iPad, Mac). Passed (Geoff, 2026-11-26).
