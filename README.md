@@ -93,6 +93,6 @@ duplicate of every other one, and deletes all but the oldest.
 
 ## Data and privacy
 
-The full library remains available locally. CloudKit uses the user’s private database; the app includes no analytics, telemetry, custom account, or third-party sync service. Settings reports only iCloud account availability and does not claim an exact or complete sync time.
+The full library remains available locally. CloudKit uses the user’s private database; the app includes no analytics, telemetry, custom account, or third-party sync service. Settings reports iCloud account availability and the last push and pull that Tucked observed on this device. It does not claim that every device has finished syncing. Settings can also run an opt-in "Check for Broken Links" sweep; its results stay in the review sheet and are never saved.
 
 See [DECISIONS.md](DECISIONS.md) for the design rationale and [CHANGELOG.md](CHANGELOG.md) for release contents.

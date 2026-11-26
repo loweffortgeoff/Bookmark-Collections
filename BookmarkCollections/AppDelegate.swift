@@ -36,6 +36,53 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         remoteNotificationLog.notice("Received remote notification")
         completionHandler(.newData)
     }
+
+    /// SwiftUI apps never receive `application(_:performActionFor:)`, so Home
+    /// Screen Quick Actions arrive through this scene delegate instead. The
+    /// shortcut is not read here; doing so as well would fire it twice.
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        configuration.delegateClass = QuickActionSceneDelegate.self
+        return configuration
+    }
+}
+
+/// Routes Home Screen Quick Actions into `MenuBarRouter.shared`. The library
+/// consumes the request when it appears (cold launch) or when it changes
+/// (warm resume).
+final class QuickActionSceneDelegate: NSObject, UIWindowSceneDelegate {
+    /// Cold launch: the shortcut arrives with the connection options.
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        guard let item = connectionOptions.shortcutItem,
+              let action = HomeScreenQuickAction(rawValue: item.type) else { return }
+        MainActor.assumeIsolated {
+            MenuBarRouter.shared.request(action.routerRequest)
+        }
+    }
+
+    /// Warm resume: the app was already running.
+    func windowScene(
+        _ windowScene: UIWindowScene,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        guard let action = HomeScreenQuickAction(rawValue: shortcutItem.type) else {
+            completionHandler(false)
+            return
+        }
+        MainActor.assumeIsolated {
+            MenuBarRouter.shared.request(action.routerRequest)
+        }
+        completionHandler(true)
+    }
 }
 #elseif os(macOS)
 import AppKit

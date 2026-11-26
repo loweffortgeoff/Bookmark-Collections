@@ -3,6 +3,8 @@ import SwiftUI
 struct ImportSummaryView: View {
     @Environment(\.dismiss) private var dismiss
     let summary: ImportSummary
+    var title: LocalizedStringKey = "Import Complete"
+    var stoppedFooter: LocalizedStringKey = "The rest of the file was not imported."
     @State private var showsPaywall = false
 
     var body: some View {
@@ -22,7 +24,7 @@ struct ImportSummaryView: View {
                     } header: {
                         Text("Stopped at the free limit")
                     } footer: {
-                        Text("The rest of the file was not imported.")
+                        Text(stoppedFooter)
                     }
                 }
 
@@ -35,7 +37,7 @@ struct ImportSummaryView: View {
                     }
                 }
             }
-            .navigationTitle("Import Complete")
+            .navigationTitle(title)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

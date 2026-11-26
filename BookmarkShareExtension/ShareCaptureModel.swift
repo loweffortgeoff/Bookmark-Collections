@@ -46,6 +46,8 @@ final class ShareCaptureModel: ObservableObject {
     @Published private(set) var state: ShareCaptureState = .idle
     @Published private(set) var capture: ShareCapture?
     @Published private(set) var failureReason: ShareFailureReason?
+    /// Set when the shared link is already saved (active or Recently Deleted).
+    @Published private(set) var existingMatch: ExistingLinkMatch?
     let collections: [BookmarkCollection]
     @Published var selectedCollectionID: UUID?
     @Published var isFavorite = false
@@ -135,6 +137,7 @@ final class ShareCaptureModel: ObservableObject {
         failureReason = nil
         existingLookupFailed = false
         capture = nil
+        existingMatch = nil
         selectedCollectionID = nil
         isFavorite = false
 
@@ -230,6 +233,9 @@ final class ShareCaptureModel: ObservableObject {
             if capture.kind == .link, let existing = try lookup?(capture.urlString) {
                 selectedCollectionID = existing.collection?.id
                 isFavorite = existing.isFavorite
+                existingMatch = ExistingLinkMatch(bookmark: existing)
+            } else {
+                existingMatch = nil
             }
             existingLookupFailed = false
             failureReason = nil

@@ -21,12 +21,18 @@ struct BookmarkCollectionsApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #endif
     @State private var storefront = Storefront()
-    @State private var menuBarRouter = MenuBarRouter()
+    @State private var menuBarRouter = MenuBarRouter.shared
+    @State private var syncHealth: SyncHealthMonitor
     private let container: ModelContainer?
 
     init() {
         let runtime = AppRuntimeConfiguration()
         BookmarkLimit.freeBookmarkLimitOverride = runtime.freeBookmarkLimitOverride
+        // Observe CloudKit mirroring events before the container opens so
+        // launch-time sync activity is recorded.
+        let monitor = SyncHealthMonitor()
+        monitor.start()
+        _syncHealth = State(initialValue: monitor)
         container = Self.openLibrary(runtime: runtime) {
             try ModelContainerFactory.make(
                 inMemory: runtime.usesInMemoryStore,
@@ -63,6 +69,7 @@ struct BookmarkCollectionsApp: App {
             LibraryContentView()
                 .environment(storefront)
                 .environment(menuBarRouter)
+                .environment(syncHealth)
                 .modelContainer(container)
         } else {
             LibraryStoreFailureView()

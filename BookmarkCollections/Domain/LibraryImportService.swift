@@ -52,6 +52,61 @@ struct LibraryImportService {
         return summary
     }
 
+    /// Saves web links dropped onto the library. New links join `collection`;
+    /// links already saved keep their organization. Finder file URLs are
+    /// skipped silently (image drop is separate work); other invalid URLs are
+    /// reported without stopping the batch.
+    func importDroppedURLs(_ urls: [URL], collection: BookmarkCollection? = nil) -> ImportSummary {
+        let repository = BookmarkRepository(context: context)
+        var summary = ImportSummary()
+
+        for droppedURL in urls {
+            // Safari's address bar drags a promised `.webloc` file next to the
+            // web URL, and SwiftUI hands over the file. Read its link instead.
+            let url: URL
+            if droppedURL.isFileURL {
+                guard let link = Self.weblocLink(at: droppedURL) else { continue }
+                url = link
+            } else {
+                url = droppedURL
+            }
+            do {
+                switch try repository.save(
+                    url: url.absoluteString,
+                    collection: collection,
+                    favorite: false,
+                    preserveOrganization: true
+                ) {
+                case .created:
+                    summary.newCount += 1
+                case .updated:
+                    summary.duplicateCount += 1
+                case .restored:
+                    summary.restoredCount += 1
+                }
+            } catch is BookmarkRepository.LimitError {
+                summary.stoppedAtLimit = true
+                break
+            } catch {
+                summary.failedLines.append(url.absoluteString)
+            }
+        }
+
+        return summary
+    }
+
+    /// The web link inside a `.webloc` file, or nil for any other file.
+    nonisolated static func weblocLink(at fileURL: URL) -> URL? {
+        guard fileURL.pathExtension.lowercased() == "webloc",
+              let data = try? Data(contentsOf: fileURL),
+              let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+              let string = plist["URL"] as? String,
+              let link = URL(string: string),
+              !link.isFileURL
+        else { return nil }
+        return link
+    }
+
     func importJSON(_ data: Data) throws -> ImportSummary {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in

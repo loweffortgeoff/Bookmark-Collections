@@ -1,5 +1,9 @@
+import OSLog
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
+
+private let dropLog = Logger(subsystem: "com.loweffortapps.BookmarkCollections", category: "Drop")
 
 struct LibraryGridView: View {
     @Environment(\.modelContext) private var modelContext
@@ -17,8 +21,10 @@ struct LibraryGridView: View {
     let onOpen: (Bookmark) -> Void
     let onPermanentDelete: (Bookmark) -> Void
     let onError: (String) -> Void
-    let onLimitReached: () -> Void
     let onCommandSelection: (Bookmark) -> Void
+    let onDropSummary: (ImportSummary) -> Void
+    /// The card to scroll to and highlight, by row identity.
+    var focusedBookmarkID: PersistentIdentifier?
 
     @State private var isSelecting = false
     @State private var selection: Set<UUID> = []
@@ -38,9 +44,12 @@ struct LibraryGridView: View {
             Group {
                 if visible.isEmpty {
                     emptyState
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .contentShape(Rectangle())
                 } else {
                     GeometryReader { proxy in
                         let layout = GridLayout(width: proxy.size.width, isAccessibilitySize: dynamicTypeSize.isAccessibilitySize)
+                        ScrollViewReader { scrollProxy in
                         ScrollView {
                             LazyVGrid(columns: layout.columns, spacing: 18) {
                                 ForEach(visible, id: \.persistentModelID) { bookmark in
@@ -51,6 +60,14 @@ struct LibraryGridView: View {
                                             onCommandSelection: { onCommandSelection(bookmark) }
                                         )
                                         .frame(width: layout.cellWidth)
+                                        .overlay {
+                                            if focusedBookmarkID == bookmark.persistentModelID {
+                                                RoundedRectangle(cornerRadius: 14)
+                                                    .stroke(Color.accentColor, lineWidth: 3)
+                                                    .padding(-4)
+                                                    .accessibilityHidden(true)
+                                            }
+                                        }
                                         if isSelecting {
                                             Image(systemName: selection.contains(bookmark.id) ? "checkmark.circle.fill" : "circle")
                                                 .font(.title2)
@@ -73,25 +90,41 @@ struct LibraryGridView: View {
                             }
                             .padding(GridLayout.padding)
                         }
-                        .dropDestination(for: URL.self) { urls, _ in
-                            do {
-                                let repository = BookmarkRepository(context: modelContext)
-                                for url in urls where ["http", "https"].contains(url.scheme?.lowercased()) {
-                                    _ = try repository.save(url: url.absoluteString, preserveOrganization: true)
-                                }
-                                return true
-                            } catch {
-                                if error as? BookmarkRepository.LimitError == .limitReached {
-                                    onLimitReached()
-                                } else {
-                                    onError(error.localizedDescription)
-                                }
-                                return false
-                            }
+                        // ForEach is keyed by persistentModelID, so it doubles as the scroll ID.
+                        .onChange(of: focusedBookmarkID, initial: true) { _, id in
+                            guard let id else { return }
+                            withAnimation { scrollProxy.scrollTo(id, anchor: .center) }
+                        }
                         }
                     }
                 }
             }
+        }
+        // On the outer stack so an empty library or collection accepts drops too.
+        // Reads `public.url` from each item. On macOS, SwiftUI delivers
+        // Safari's address-bar drag (a URL plus a `.webloc` file promise) as
+        // an item with no types, so that drop falls back to the drag pasteboard.
+        .onDrop(of: [.url], isTargeted: nil) { providers in
+            guard destination != .recentlyDeleted else { return false }
+            let urlProviders = providers.filter { $0.hasItemConformingToTypeIdentifier(UTType.url.identifier) }
+            let pasteboardURLs = urlProviders.isEmpty ? Self.dragPasteboardURLs() : []
+            guard !urlProviders.isEmpty || !pasteboardURLs.isEmpty else { return false }
+            if !pasteboardURLs.isEmpty {
+                dropLog.notice("Drop read \(pasteboardURLs.count, privacy: .public) URL(s) from the drag pasteboard")
+            }
+            let collection = dropTargetCollection
+            Task { @MainActor in
+                var urls = pasteboardURLs
+                for provider in urlProviders {
+                    if let url = await Self.loadDroppedURL(from: provider) { urls.append(url) }
+                }
+                let summary = LibraryImportService(context: modelContext)
+                    .importDroppedURLs(urls, collection: collection)
+                if summary.stoppedAtLimit || !summary.failedLines.isEmpty {
+                    onDropSummary(summary)
+                }
+            }
+            return true
         }
         .safeAreaInset(edge: .bottom) {
             if isSelecting {
@@ -117,6 +150,31 @@ struct LibraryGridView: View {
                 }
             }
         }
+    }
+
+    /// The URL an item provider carries as `public.url` data, or nil.
+    private static func loadDroppedURL(from provider: NSItemProvider) async -> URL? {
+        await withCheckedContinuation { continuation in
+            _ = provider.loadDataRepresentation(forTypeIdentifier: UTType.url.identifier) { data, _ in
+                continuation.resume(returning: data.flatMap { URL(dataRepresentation: $0, relativeTo: nil) })
+            }
+        }
+    }
+
+    /// The URLs on the system drag pasteboard (macOS only; empty on iOS).
+    private static func dragPasteboardURLs() -> [URL] {
+        #if os(macOS)
+        let objects = NSPasteboard(name: .drag).readObjects(forClasses: [NSURL.self], options: nil)
+        return (objects as? [URL]) ?? []
+        #else
+        return []
+        #endif
+    }
+
+    /// New links dropped while a collection is open join that collection.
+    private var dropTargetCollection: BookmarkCollection? {
+        guard case let .collection(id) = destination else { return nil }
+        return collections.first(where: { $0.id == id })
     }
 
     private var selectedBookmarks: [Bookmark] {

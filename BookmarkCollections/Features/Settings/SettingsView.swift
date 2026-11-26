@@ -7,9 +7,10 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     @Environment(Storefront.self) private var storefront
+    @Environment(SyncHealthMonitor.self) private var syncHealth
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let onPaywall: () -> Void
 
-    @StateObject private var syncHealth = SyncHealthMonitor()
     @State private var isImporting = false
     @State private var importSummary: ImportSummary?
     @State private var exportDocument: ExportFileDocument?
@@ -17,6 +18,7 @@ struct SettingsView: View {
     @State private var exportFilename = "Tucked Bookmarks"
     @State private var isExporting = false
     @State private var errorMessage: String?
+    @State private var showsBrokenLinkCheck = false
 
     var body: some View {
         NavigationStack {
@@ -46,6 +48,10 @@ struct SettingsView: View {
                         .accessibilityIdentifier("settings.exportHTML")
                     Button("Export JSON", systemImage: "archivebox", action: exportJSON)
                         .accessibilityIdentifier("settings.exportJSON")
+                    Button("Check for Broken Links", systemImage: "checklist") {
+                        showsBrokenLinkCheck = true
+                    }
+                    .accessibilityIdentifier("settings.checkBrokenLinks")
                 } header: {
                     Text("Library Data")
                 } footer: {
@@ -55,12 +61,28 @@ struct SettingsView: View {
                 Section("iCloud") {
                     Label(syncHealth.status.title, systemImage: syncHealth.status.systemImage)
                         .accessibilityIdentifier("settings.syncStatus")
-                    Text("This reports account availability only. Bookmark changes are saved locally first and mirrored by iCloud when available.")
+                    LabeledContent("Last iCloud push", value: SyncHealthMonitor.formattedTimestamp(syncHealth.lastPushDate))
+                        .accessibilityIdentifier("settings.syncLastPush")
+                    LabeledContent("Last iCloud pull", value: SyncHealthMonitor.formattedTimestamp(syncHealth.lastPullDate))
+                        .accessibilityIdentifier("settings.syncLastPull")
+                    Text("Shows iCloud account availability and the last sync activity observed by Tucked on this device. Bookmark changes are saved locally first and mirrored by iCloud when available.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
 
+                WeAlsoMakeSection()
+
                 Section("About") {
+                    versionRow
+                    Link(destination: LowEffortApps.tuckedWriteReviewURL) {
+                        Label {
+                            Text("Rate & Review")
+                        } icon: {
+                            Image(systemName: "star.fill")
+                                .foregroundStyle(.yellow)
+                        }
+                    }
+                    .accessibilityIdentifier("settings.rateReview")
                     ForEach(AboutLink.allCases) { link in
                         Link(destination: link.url) {
                             Label(link.title, systemImage: link.systemImage)
@@ -100,6 +122,9 @@ struct SettingsView: View {
             defaultFilename: exportFilename,
             onCompletion: handleExportCompletion
         )
+        .sheet(isPresented: $showsBrokenLinkCheck) {
+            BrokenLinkCheckView()
+        }
         .sheet(isPresented: importSummaryPresented) {
             if let importSummary {
                 ImportSummaryView(summary: importSummary)
@@ -110,6 +135,23 @@ struct SettingsView: View {
         } message: {
             Text(errorMessage ?? "Try again.")
         }
+    }
+
+    private var versionRow: some View {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = info?["CFBundleVersion"] as? String ?? "—"
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+            : AnyLayout(HStackLayout())
+        return layout {
+            Text("Version")
+            if !dynamicTypeSize.isAccessibilitySize { Spacer() }
+            Text(verbatim: "\(version) (\(build))")
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("settings.version")
     }
 
     private func beginImport() {

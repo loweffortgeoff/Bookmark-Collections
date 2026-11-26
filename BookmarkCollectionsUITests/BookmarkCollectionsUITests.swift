@@ -33,6 +33,40 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("library.recentlyDeleted").waitForExistence(timeout: 2))
     }
 
+    func testAddLinkShowsAlreadyTuckedNoticeAndViewsExistingItem() {
+        showSidebarIfNeeded()
+        activate(destinationElement("destination.allItems"))
+        XCTAssertTrue(identified("bookmark.seeded-active").waitForExistence(timeout: 5))
+
+        #if os(macOS)
+        app.typeKey("n", modifierFlags: .command)
+        #else
+        app.buttons["Add"].tap()
+        app.buttons["Add Link"].tap()
+        #endif
+        let field = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "https://example.com")).firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        field.typeText("https://example.com/seeded-active")
+
+        let notice = identified("addBookmark.existingMatchNotice")
+        XCTAssertTrue(notice.waitForExistence(timeout: 5), app.debugDescription)
+        // macOS exposes static text as the value; iOS as the label.
+        let noticeText = notice.label + " " + ((notice.value as? String) ?? "")
+        XCTAssertTrue(noticeText.contains("Already tucked"), noticeText)
+        XCTAssertTrue(noticeText.contains("Reading"), noticeText)
+
+        let view = identified("addBookmark.viewExisting")
+        XCTAssertTrue(view.exists)
+        activate(view)
+
+        XCTAssertTrue(field.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(identified("bookmark.seeded-active").waitForExistence(timeout: 5))
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Already tucked View focuses the existing card"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+    }
+
     func testSeededCardOpensEditorFromContextMenu() {
         showSidebarIfNeeded()
         activate(destinationElement("destination.allItems"))
@@ -146,15 +180,32 @@ final class BookmarkCollectionsUITests: XCTestCase {
         XCTAssertTrue(identified("settings.importLinks").waitForExistence(timeout: 2))
         XCTAssertTrue(identified("settings.exportHTML").exists)
         XCTAssertTrue(identified("settings.exportJSON").exists)
-        XCTAssertTrue(identified("settings.syncStatus").exists)
-        #if os(iOS)
-        // The iPhone list creates rows lazily; the About rows sit below the fold.
-        app.swipeUp()
-        #endif
-        XCTAssertTrue(identified("settings.privacyPolicy").waitForExistence(timeout: 2))
-        XCTAssertTrue(identified("settings.support").exists)
-        XCTAssertTrue(identified("settings.website").exists)
+        XCTAssertTrue(identified("settings.checkBrokenLinks").exists)
+        XCTAssertTrue(scrollSettingsUntilExists(identified("settings.syncStatus")))
+        XCTAssertTrue(identified("settings.syncLastPush").exists)
+        XCTAssertTrue(identified("settings.syncLastPull").exists)
+        // The list creates rows lazily; We Also Make and About sit below the fold.
+        XCTAssertTrue(scrollSettingsUntilExists(identified("settings.otherApp.6806063498")))
+        XCTAssertFalse(identified("settings.otherApp.6792490401").exists, "Tucked must not list itself.")
+        XCTAssertTrue(scrollSettingsUntilExists(identified("settings.version")))
+        XCTAssertTrue(identified("settings.rateReview").exists)
+        XCTAssertTrue(scrollSettingsUntilExists(identified("settings.privacyPolicy")))
+        XCTAssertTrue(scrollSettingsUntilExists(identified("settings.support")))
+        XCTAssertTrue(scrollSettingsUntilExists(identified("settings.website")))
         XCTAssertFalse(identified("settings.accentColor").exists)
+    }
+
+    /// Scrolls the Settings form at most four times until `element` exists.
+    private func scrollSettingsUntilExists(_ element: XCUIElement) -> Bool {
+        for _ in 0..<4 {
+            if element.waitForExistence(timeout: 1) { return true }
+            #if os(iOS)
+            app.swipeUp()
+            #else
+            app.scrollViews.firstMatch.scroll(byDeltaX: 0, deltaY: -400)
+            #endif
+        }
+        return element.waitForExistence(timeout: 1)
     }
 
     func testImagesDestinationShowsOnlyImageItems() {

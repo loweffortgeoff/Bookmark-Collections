@@ -6,6 +6,37 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 > **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
 
+### 1.1.3 — unreleased (implemented on `dev/v1.1.3`, 2026-11-26)
+
+Fixes, capture polish, and library health. No persisted model, entitlement, StoreKit configuration, or project-file change (`git diff origin/main` is empty for those paths), so no CloudKit Production deploy is needed. Version numbers are unchanged; the release pass sets them.
+
+#### New
+
+- Added: an inline "Already tucked" notice in Add Link (with View, which focuses the existing card) and the iOS Share Sheet (no View button), for active or Recently Deleted matches.
+- Added: clipboard URL assist. macOS Add Link pre-fills a copied web URL, selected; iOS Add Link offers a Paste button only when the clipboard probably holds a URL; the Mac menu bar adds "Save Link from Clipboard".
+- Added: iOS and iPadOS Home Screen Quick Actions: Add Link, Save from Clipboard, New Snippet, and Search.
+- Added: Settings "We Also Make" section with the five other live Low Effort Apps, plus Version and Rate & Review under About.
+- Added: device-observed "Last iCloud push" and "Last iCloud pull" in Settings → iCloud.
+- Added: opt-in "Check for Broken Links" in Settings → Library Data, with an ephemeral review sheet.
+
+#### Fixed
+
+- Fixed: the image viewer pans while zoomed, clamped to the image edges, and no longer drags the sheet closed while zoomed (F20).
+- Fixed: dropping URLs onto an empty library or collection now saves them; new links join the open collection; invalid URLs no longer abort the batch (F22).
+
+#### Tests
+
+- Added: unit tests for sync timestamps, image-viewer math, URL drops, existing-link matches, clipboard filtering, Quick Action routing, the broken-link checker, and We Also Make; a UI test for the Already-tucked View action; Settings UI test checks for the new rows.
+- Changed: the paywall purchase audit asserts the StoreKit price and an enabled Unlock, waits for Add to be hittable, and closes the Add Link draft the paywall returns to.
+- Fixed (review, 2026-11-26): the broken-link sweep confirms internet access with a captive-portal probe before trusting "Server not found", treats a single connection reset as uncertain instead of offline, and skips findings whose bookmark row is gone.
+- Changed (2026-11-26): Rate & Review opens Tucked's App Store write-review page instead of calling `requestReview()`, which the system may silently skip.
+- Fixed (2026-11-26): the sweep confirms a HEAD 404 or 410 with a ranged GET before flagging the link, and after the last finding is moved the sheet says "Moved N links to Recently Deleted" instead of "All checked links look reachable".
+- Fixed (2026-11-26): Broken Links row buttons read "Open" and "Delete" (VoiceOver keeps the full names), stack vertically at accessibility text sizes instead of breaking labels mid-word, and show red trash icons. A Mac "Couldn't Reach the Internet" report came from a build older than `4457b3a`; current code passes a live 49-link sweep in the macOS sandbox.
+- Verified (2026-11-26, MacBook Pro): final macOS unit suite 321 tests, 0 failures (16 audit and screenshot-seed skips), after the last fixes.
+- Verified (2026-11-26, Geoff, devices): Save from Clipboard pre-fills Add Link on the iPhone 17 Pro (iOS 27.3) after the system paste prompt; macOS shows no paste prompt before the clipboard read (Mac mini); iCloud push and pull appear to work across devices; pinch while zoomed works.
+- Verified (2026-11-26, MacBook Pro): macOS unit 318, iOS unit 309, macOS UI 20, iOS UI 20, all 0 failures (audit and screenshot-seed skips only).
+- Verified: the paywall item is not a bug. Under `Tucked Audit` with `-free-limit 0`, `$4.99` shows and Unlock is enabled (iPhone 18 Pro, iOS 27.2).
+
 ### 1.1.2 — 2026-11-18 (iOS and macOS; build 17 — live; confirmed 2026-11-20)
 
 Small UI-only update. Version settings changed to 1.1.2 (17) on 2026-11-18. No persisted model, entitlement, or StoreKit configuration changed, so this release needs no CloudKit Production deploy.

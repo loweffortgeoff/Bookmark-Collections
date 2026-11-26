@@ -21,9 +21,13 @@ struct LibraryRootView: View {
     @State private var deletingCollection: BookmarkCollection?
     @State private var errorMessage: String?
     @State private var commandBookmark: Bookmark?
+    @State private var focusedBookmarkID: PersistentIdentifier?
     @Environment(MenuBarRouter.self) private var menuBarRouter
     #if os(macOS)
     @State private var isAddingImages = false
+    #else
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var pendingClipboardSave = false
     #endif
 
     var body: some View {
@@ -82,6 +86,9 @@ struct LibraryRootView: View {
             }
             .onAppear(perform: consumeMenuBarRequest)
             .onChange(of: menuBarRouter.generation) { consumeMenuBarRequest() }
+            #if os(iOS)
+            .onChange(of: scenePhase) { openPendingClipboardSave() }
+            #endif
             .onChange(of: visibleCommandBookmark?.id) { _, bookmarkID in
                 if bookmarkID == nil { commandBookmark = nil }
             }
@@ -109,11 +116,11 @@ struct LibraryRootView: View {
     }
 
     private func consumeMenuBarRequest() {
-        guard let request = menuBarRouter.take() else { return }
-        // A menu bar request must not close an editor with unsaved text. It
-        // is dropped, not kept: a kept request would fire later, when the
-        // user no longer expects it. The window still comes forward.
-        if sheet?.holdsDraft == true { return }
+        // A menu bar or Quick Action request must not close an editor with
+        // unsaved text, the paywall, or a drop summary. It is dropped, not
+        // kept: a kept request would fire later, when the user no longer
+        // expects it. The window still comes forward.
+        guard let request = menuBarRouter.consume(blocked: sheet?.blocksAppActions == true) else { return }
         sheet = nil
         switch request {
         case let .destination(target):
@@ -124,8 +131,36 @@ struct LibraryRootView: View {
             isSearchPresented = true
         case .settings:
             sheet = .settings
+        case let .addLink(url):
+            sheet = .addBookmark(initialURL: url ?? "")
+        case .newSnippet:
+            sheet = .snippetEditor(nil)
+        case .saveFromClipboard:
+            #if os(macOS)
+            Task {
+                let url = await ClipboardURLAssist.currentClipboardURL()
+                if sheet?.blocksAppActions != true {
+                    sheet = .addBookmark(initialURL: url ?? "")
+                }
+            }
+            #else
+            // A Quick Action arrives before the scene is active, and iOS
+            // returns no clipboard to an inactive app. Read once active.
+            pendingClipboardSave = true
+            openPendingClipboardSave()
+            #endif
         }
     }
+
+    #if os(iOS)
+    private func openPendingClipboardSave() {
+        guard pendingClipboardSave, scenePhase == .active else { return }
+        pendingClipboardSave = false
+        guard sheet?.blocksAppActions != true else { return }
+        // Explicit action: the system paste prompt is expected here.
+        sheet = .addBookmark(initialURL: ClipboardURLAssist.readClipboardURLForExplicitAction() ?? "")
+    }
+    #endif
 
     private var navigationView: some View {
         NavigationSplitView {
@@ -144,7 +179,7 @@ struct LibraryRootView: View {
                 searchText: searchText,
                 sort: sort,
                 ascending: ascending,
-                onAdd: { sheet = .addBookmark },
+                onAdd: { sheet = .addBookmark() },
                 // Menu commands target the item the user last acted on, never
                 // the card under the pointer.
                 onEdit: { bookmark in
@@ -158,16 +193,24 @@ struct LibraryRootView: View {
                 onOpen: openBookmark,
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
-                onLimitReached: { sheet = .paywall },
-                onCommandSelection: { commandBookmark = $0 }
+                onCommandSelection: { commandBookmark = $0 },
+                onDropSummary: { sheet = .dropSummary($0) },
+                focusedBookmarkID: focusedBookmarkID
             )
+            // The highlight fades after a moment.
+            .task(id: focusedBookmarkID) {
+                guard focusedBookmarkID != nil else { return }
+                try? await Task.sleep(for: .seconds(2))
+                guard !Task.isCancelled else { return }
+                withAnimation { focusedBookmarkID = nil }
+            }
             .navigationTitle(navigationTitle)
             .searchable(text: $searchText, isPresented: $isSearchPresented, prompt: "Search bookmarks")
             .toolbar {
                 LibraryToolbar(
                     sort: $sort,
                     ascending: $ascending,
-                    onAdd: { sheet = .addBookmark },
+                    onAdd: { sheet = .addBookmark() },
                     onNewSnippet: { sheet = .snippetEditor(nil) },
                     onAddImages: addImages,
                     onNewCollection: { sheet = .newCollection },
@@ -201,8 +244,8 @@ struct LibraryRootView: View {
     @ViewBuilder
     private func sheetContent(for destination: SheetDestination) -> some View {
         switch destination {
-        case .addBookmark:
-            AddBookmarkView()
+        case let .addBookmark(initialURL):
+            AddBookmarkView(initialURL: initialURL, onViewExisting: { focusBookmark(persistentID: $0) })
         case let .editBookmark(bookmark):
             BookmarkEditorView(bookmark: bookmark)
         case let .bookmarkInfo(bookmark):
@@ -221,6 +264,12 @@ struct LibraryRootView: View {
             SnippetEditorView(bookmark: bookmark)
         case .paywall:
             PaywallView()
+        case let .dropSummary(summary):
+            ImportSummaryView(
+                summary: summary,
+                title: "Links Dropped",
+                stoppedFooter: "The remaining links were not saved."
+            )
         }
     }
 
@@ -326,7 +375,7 @@ struct LibraryRootView: View {
         let sheetIsOpen = sheet != nil
         let selected = sheetIsOpen ? nil : visibleCommandBookmark
         return BookmarkCommandActions(
-            addLink: { if sheet == nil { sheet = .addBookmark } },
+            addLink: { if sheet == nil { sheet = .addBookmark() } },
             addImages: { if sheet == nil { addImages() } },
             focusSearch: { isSearchPresented = true },
             newCollection: { if sheet == nil { sheet = .newCollection } },
@@ -362,6 +411,22 @@ struct LibraryRootView: View {
         )
     }
 
+    /// Shows one bookmark in the library: switches to a destination that
+    /// contains it, clears a search that hides it, then scrolls to and
+    /// highlights its card. Keyed by row so equal-id clones stay distinct.
+    private func focusBookmark(persistentID: PersistentIdentifier) {
+        guard let bookmark = bookmarks.first(where: { $0.persistentModelID == persistentID }),
+              bookmark.deletedAt == nil else { return }
+        if !(destination ?? .allItems).matches(bookmark, searchText: "") {
+            destination = bookmark.collection.map { .collection($0.id) } ?? .allItems
+        }
+        if !(destination ?? .allItems).matches(bookmark, searchText: searchText) {
+            searchText = ""
+        }
+        commandBookmark = bookmark
+        focusedBookmarkID = bookmark.persistentModelID
+    }
+
     private var visibleCommandBookmark: Bookmark? {
         guard let commandBookmark,
               // By row, not by `id`: equal-id clones exist, and a command on
@@ -375,7 +440,7 @@ struct LibraryRootView: View {
 }
 
 private enum SheetDestination: Identifiable {
-    case addBookmark
+    case addBookmark(initialURL: String = "")
     case editBookmark(Bookmark)
     case bookmarkInfo(Bookmark)
     case imageViewer(Bookmark)
@@ -385,12 +450,22 @@ private enum SheetDestination: Identifiable {
     case shareBookmark(Bookmark)
     case snippetEditor(Bookmark?)
     case paywall
+    case dropSummary(ImportSummary)
 
     /// The sheet has text the user typed and would lose if it closed.
     var holdsDraft: Bool {
         switch self {
         case .addBookmark, .editBookmark, .snippetEditor, .newCollection, .editCollection: true
         default: false
+        }
+    }
+
+    /// Menu bar and Quick Action requests are dropped while this sheet is up.
+    /// Settings stays replaceable, as before.
+    var blocksAppActions: Bool {
+        switch self {
+        case .paywall, .dropSummary: true
+        default: holdsDraft
         }
     }
 
@@ -406,6 +481,7 @@ private enum SheetDestination: Identifiable {
         case let .shareBookmark(bookmark): "share-\(bookmark.id)"
         case let .snippetEditor(bookmark): "snippet-\(bookmark?.id.uuidString ?? "new")"
         case .paywall: "paywall"
+        case .dropSummary: "drop-summary"
         }
     }
 }
