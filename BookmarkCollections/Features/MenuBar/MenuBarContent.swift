@@ -10,6 +10,7 @@ struct MenuBarContent: View {
 
     var body: some View {
         Button("Search", systemImage: "magnifyingglass") { show(.search) }
+        Button("Save Link from Clipboard", systemImage: "doc.on.clipboard") { show(.saveFromClipboard) }
         Divider()
         Button("Links", systemImage: LibraryDestination.links.systemImage) { show(.destination(.links)) }
         Button("Images", systemImage: LibraryDestination.images.systemImage) { show(.destination(.images)) }

@@ -21,7 +21,7 @@ struct BookmarkCollectionsApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     #endif
     @State private var storefront = Storefront()
-    @State private var menuBarRouter = MenuBarRouter()
+    @State private var menuBarRouter = MenuBarRouter.shared
     @State private var syncHealth: SyncHealthMonitor
     private let container: ModelContainer?
 
