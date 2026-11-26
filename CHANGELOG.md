@@ -29,6 +29,10 @@ Fixes, capture polish, and library health. No persisted model, entitlement, Stor
 - Added: unit tests for sync timestamps, image-viewer math, URL drops, existing-link matches, clipboard filtering, Quick Action routing, the broken-link checker, and We Also Make; a UI test for the Already-tucked View action; Settings UI test checks for the new rows.
 - Changed: the paywall purchase audit asserts the StoreKit price and an enabled Unlock, waits for Add to be hittable, and closes the Add Link draft the paywall returns to.
 - Fixed (review, 2026-11-26): the broken-link sweep confirms internet access with a captive-portal probe before trusting "Server not found", treats a single connection reset as uncertain instead of offline, and skips findings whose bookmark row is gone.
+- Changed (2026-11-26): Rate & Review opens Tucked's App Store write-review page instead of calling `requestReview()`, which the system may silently skip.
+- Fixed (2026-11-26): the sweep confirms a HEAD 404 or 410 with a ranged GET before flagging the link, and after the last finding is moved the sheet says "Moved N links to Recently Deleted" instead of "All checked links look reachable".
+- Verified (2026-11-26, MacBook Pro): final macOS unit suite 321 tests, 0 failures (16 audit and screenshot-seed skips), after the last fixes.
+- Verified (2026-11-26, Geoff, devices): Save from Clipboard pre-fills Add Link on the iPhone 17 Pro (iOS 27.3) after the system paste prompt; macOS shows no paste prompt before the clipboard read (Mac mini); iCloud push and pull appear to work across devices; pinch while zoomed works.
 - Verified (2026-11-26, MacBook Pro): macOS unit 318, iOS unit 309, macOS UI 20, iOS UI 20, all 0 failures (audit and screenshot-seed skips only).
 - Verified: the paywall item is not a bug. Under `Tucked Audit` with `-free-limit 0`, `$4.99` shows and Unlock is enabled (iPhone 18 Pro, iOS 27.2).
 

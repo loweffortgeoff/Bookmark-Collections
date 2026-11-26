@@ -4,6 +4,12 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-26 (Rate & Review opens the App Store review page)
+
+- **Decision:** The Settings Rate & Review row links to `https://apps.apple.com/app/id6792490401?action=write-review` instead of calling `requestReview()`. Amends 2026-11-23 Q5, which specified `requestReview()`.
+- **Why:** The system limits `requestReview()` to about three prompts a year and never shows it in TestFlight, so a button that calls it can silently do nothing. A link always opens the review page. Raised in the v1.1.3 whole-branch review; Geoff approved.
+- **Alternative considered:** Keep `requestReview()`. Rejected; a tap that does nothing reads as a bug.
+
 ## 2026-11-23 (Show device-observed iCloud sync timestamps in Settings)
 
 - **Decision:** Amend the [2026-07-18 Honest sync health](#2026-07-18-honest-sync-health) decision to display visible device-observed iCloud sync activity timestamps (last push / last pull) in Settings alongside iCloud account availability, sourced from real CloudKit mirroring events.
