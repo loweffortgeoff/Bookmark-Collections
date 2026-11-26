@@ -54,7 +54,12 @@ final class PaywallFlowAuditTests: XCTestCase {
             app.menuItems[title].click()
         }
         #else
-        app.buttons["Add"].tap()
+        // A sheet that is still animating closed leaves Add unhittable.
+        let addButton = app.buttons["Add"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        let hittable = expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: addButton)
+        wait(for: [hittable], timeout: 5)
+        addButton.tap()
         app.buttons[title].tap()
         #endif
     }
@@ -139,6 +144,12 @@ final class PaywallFlowAuditTests: XCTestCase {
         field.typeText("https://audit.example/purchase-flow")
         app.buttons["Save"].clickOrTap()
         XCTAssertTrue(app.staticTexts["Ten Bookmarks Is Not Enough"].waitForExistence(timeout: 5))
+        // With the local StoreKit configuration attached, the product loads:
+        // the price comes from StoreKit and Unlock is enabled.
+        XCTAssertTrue(app.staticTexts["$4.99"].waitForExistence(timeout: 5), app.debugDescription)
+        let unlock = app.buttons["Unlock Tucked for Life"]
+        XCTAssertTrue(unlock.waitForExistence(timeout: 5))
+        XCTAssertTrue(unlock.isEnabled)
         #if !os(macOS)
         for _ in 0..<3 {
             if app.buttons["Restore Purchases"].isHittable { break }
@@ -155,6 +166,14 @@ final class PaywallFlowAuditTests: XCTestCase {
         paywall.name = "Library after verified purchase"
         paywall.lifetime = .keepAlways
         add(paywall)
+        // The paywall returns to the kept Add Link draft. Close it. (Saving here
+        // would still read the "-tuckedProUnlocked NO" launch argument, which
+        // shadows the shared unlock flag for this test process.)
+        let cancel = app.buttons["Cancel"]
+        if cancel.waitForExistence(timeout: 2) {
+            cancel.clickOrTap()
+            XCTAssertTrue(cancel.waitForNonExistence(timeout: 5))
+        }
         add("Settings", app: app)
         let badge = app.descendants(matching: .any).matching(identifier: "settings.proBadge").firstMatch
         XCTAssertTrue(badge.waitForExistence(timeout: 5), app.debugDescription)
