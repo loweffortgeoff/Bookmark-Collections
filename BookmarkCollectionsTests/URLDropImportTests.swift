@@ -114,4 +114,30 @@ final class URLDropImportTests: XCTestCase {
             XCTAssertEqual(try container.mainContext.fetchCount(FetchDescriptor<Bookmark>()), 10)
         }
     }
+
+    /// Safari's address bar drags a promised `.webloc` file; SwiftUI delivers
+    /// that file URL instead of the web URL.
+    func testDropReadsLinkFromSafariWeblocFile() throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let webloc = folder.appendingPathComponent("This Week in Tech.webloc")
+        let data = try PropertyListSerialization.data(
+            fromPropertyList: ["URL": "https://twit.tv/"], format: .binary, options: 0
+        )
+        try data.write(to: webloc)
+
+        let container = try makeContainer()
+        let context = container.mainContext
+        let collection = BookmarkCollection(name: "Test", sortPosition: 0)
+        context.insert(collection)
+
+        let summary = LibraryImportService(context: context).importDroppedURLs([webloc], collection: collection)
+
+        XCTAssertEqual(summary.newCount, 1)
+        XCTAssertTrue(summary.failedLines.isEmpty)
+        let saved = try XCTUnwrap(try context.fetch(FetchDescriptor<Bookmark>()).first)
+        XCTAssertEqual(saved.urlString, "https://twit.tv/")
+        XCTAssertEqual(saved.collection?.id, collection.id)
+    }
 }

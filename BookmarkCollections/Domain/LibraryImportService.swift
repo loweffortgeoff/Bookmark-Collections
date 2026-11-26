@@ -60,8 +60,16 @@ struct LibraryImportService {
         let repository = BookmarkRepository(context: context)
         var summary = ImportSummary()
 
-        for url in urls {
-            if url.isFileURL { continue }
+        for droppedURL in urls {
+            // Safari's address bar drags a promised `.webloc` file next to the
+            // web URL, and SwiftUI hands over the file. Read its link instead.
+            let url: URL
+            if droppedURL.isFileURL {
+                guard let link = Self.weblocLink(at: droppedURL) else { continue }
+                url = link
+            } else {
+                url = droppedURL
+            }
             do {
                 switch try repository.save(
                     url: url.absoluteString,
@@ -85,6 +93,18 @@ struct LibraryImportService {
         }
 
         return summary
+    }
+
+    /// The web link inside a `.webloc` file, or nil for any other file.
+    nonisolated static func weblocLink(at fileURL: URL) -> URL? {
+        guard fileURL.pathExtension.lowercased() == "webloc",
+              let data = try? Data(contentsOf: fileURL),
+              let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+              let string = plist["URL"] as? String,
+              let link = URL(string: string),
+              !link.isFileURL
+        else { return nil }
+        return link
     }
 
     func importJSON(_ data: Data) throws -> ImportSummary {
