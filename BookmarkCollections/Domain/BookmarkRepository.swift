@@ -29,6 +29,46 @@ extension BookmarkRepository {
     }
 }
 
+/// A saved bookmark whose normalized URL matches an address being captured.
+/// Lives here so the Share Extension compiles it too.
+struct ExistingLinkMatch: Equatable, Sendable {
+    enum Status: Equatable, Sendable {
+        case active(savedAt: Date, collectionName: String?)
+        case recentlyDeleted
+    }
+
+    let bookmarkPersistentID: PersistentIdentifier
+    let status: Status
+
+    func noticeText(relativeTo now: Date = Date()) -> String {
+        switch status {
+        case let .active(savedAt, collectionName):
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .full
+            let relative = formatter.localizedString(for: savedAt, relativeTo: now)
+            if let collectionName {
+                return String(localized: "Already tucked · saved \(relative) in \(collectionName)")
+            }
+            return String(localized: "Already tucked · saved \(relative)")
+        case .recentlyDeleted:
+            return String(localized: "In Recently Deleted · saving will restore it.")
+        }
+    }
+
+    init(bookmarkPersistentID: PersistentIdentifier, status: Status) {
+        self.bookmarkPersistentID = bookmarkPersistentID
+        self.status = status
+    }
+
+    @MainActor
+    init(bookmark: Bookmark) {
+        bookmarkPersistentID = bookmark.persistentModelID
+        status = bookmark.deletedAt == nil
+            ? .active(savedAt: bookmark.createdAt, collectionName: bookmark.collection?.name)
+            : .recentlyDeleted
+    }
+}
+
 @MainActor
 struct BookmarkRepository {
     let context: ModelContext
@@ -91,6 +131,14 @@ struct BookmarkRepository {
             sortBy: [SortDescriptor(\Bookmark.createdAt), SortDescriptor(\Bookmark.id)]
         ))
         return matches.first(where: { $0.deletedAt == nil }) ?? matches.first
+    }
+
+    /// The active (or else Recently Deleted) bookmark for `rawURL`, or nil when
+    /// the address is invalid or unsaved. Never creates or changes anything.
+    func existingLinkMatch(for rawURL: String, applyUserEnteredFixup: Bool = false) throws -> ExistingLinkMatch? {
+        let value = applyUserEnteredFixup ? NormalizedURL.userEntered(rawURL) : rawURL
+        guard (try? NormalizedURL(value)) != nil else { return nil }
+        return try sharedLinkMatch(url: value).map(ExistingLinkMatch.init(bookmark:))
     }
 
     private func saveLink(

@@ -21,6 +21,7 @@ struct LibraryRootView: View {
     @State private var deletingCollection: BookmarkCollection?
     @State private var errorMessage: String?
     @State private var commandBookmark: Bookmark?
+    @State private var focusedBookmarkID: PersistentIdentifier?
     @Environment(MenuBarRouter.self) private var menuBarRouter
     #if os(macOS)
     @State private var isAddingImages = false
@@ -159,8 +160,16 @@ struct LibraryRootView: View {
                 onPermanentDelete: { permanentlyDeleting = $0 },
                 onError: { errorMessage = $0 },
                 onCommandSelection: { commandBookmark = $0 },
-                onDropSummary: { sheet = .dropSummary($0) }
+                onDropSummary: { sheet = .dropSummary($0) },
+                focusedBookmarkID: focusedBookmarkID
             )
+            // The highlight fades after a moment.
+            .task(id: focusedBookmarkID) {
+                guard focusedBookmarkID != nil else { return }
+                try? await Task.sleep(for: .seconds(2))
+                guard !Task.isCancelled else { return }
+                withAnimation { focusedBookmarkID = nil }
+            }
             .navigationTitle(navigationTitle)
             .searchable(text: $searchText, isPresented: $isSearchPresented, prompt: "Search bookmarks")
             .toolbar {
@@ -202,7 +211,7 @@ struct LibraryRootView: View {
     private func sheetContent(for destination: SheetDestination) -> some View {
         switch destination {
         case .addBookmark:
-            AddBookmarkView()
+            AddBookmarkView(onViewExisting: { focusBookmark(persistentID: $0) })
         case let .editBookmark(bookmark):
             BookmarkEditorView(bookmark: bookmark)
         case let .bookmarkInfo(bookmark):
@@ -366,6 +375,22 @@ struct LibraryRootView: View {
             surpriseMe: { if sheet == nil { surpriseMe() } },
             canSurpriseMe: !sheetIsOpen && destination != .recentlyDeleted && hasSurpriseCandidates
         )
+    }
+
+    /// Shows one bookmark in the library: switches to a destination that
+    /// contains it, clears a search that hides it, then scrolls to and
+    /// highlights its card. Keyed by row so equal-id clones stay distinct.
+    private func focusBookmark(persistentID: PersistentIdentifier) {
+        guard let bookmark = bookmarks.first(where: { $0.persistentModelID == persistentID }),
+              bookmark.deletedAt == nil else { return }
+        if !(destination ?? .allItems).matches(bookmark, searchText: "") {
+            destination = bookmark.collection.map { .collection($0.id) } ?? .allItems
+        }
+        if !(destination ?? .allItems).matches(bookmark, searchText: searchText) {
+            searchText = ""
+        }
+        commandBookmark = bookmark
+        focusedBookmarkID = bookmark.persistentModelID
     }
 
     private var visibleCommandBookmark: Bookmark? {

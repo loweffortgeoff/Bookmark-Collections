@@ -49,6 +49,13 @@ struct ShareCaptureView: View {
     private var captureForm: some View {
         Form {
             captureSection
+            // Quiet notice only. The Share Sheet has no View button (DECISIONS 2026-11-02).
+            if let match = model.existingMatch {
+                Label(match.noticeText(), systemImage: "bookmark.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("share.existingMatchNotice")
+            }
             if model.capture != nil {
                 Picker("Collection", selection: $model.selectedCollectionID) {
                     Text("None").tag(nil as UUID?)

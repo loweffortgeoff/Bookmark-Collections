@@ -19,6 +19,8 @@ struct LibraryGridView: View {
     let onError: (String) -> Void
     let onCommandSelection: (Bookmark) -> Void
     let onDropSummary: (ImportSummary) -> Void
+    /// The card to scroll to and highlight, by row identity.
+    var focusedBookmarkID: PersistentIdentifier?
 
     @State private var isSelecting = false
     @State private var selection: Set<UUID> = []
@@ -43,6 +45,7 @@ struct LibraryGridView: View {
                 } else {
                     GeometryReader { proxy in
                         let layout = GridLayout(width: proxy.size.width, isAccessibilitySize: dynamicTypeSize.isAccessibilitySize)
+                        ScrollViewReader { scrollProxy in
                         ScrollView {
                             LazyVGrid(columns: layout.columns, spacing: 18) {
                                 ForEach(visible, id: \.persistentModelID) { bookmark in
@@ -53,6 +56,14 @@ struct LibraryGridView: View {
                                             onCommandSelection: { onCommandSelection(bookmark) }
                                         )
                                         .frame(width: layout.cellWidth)
+                                        .overlay {
+                                            if focusedBookmarkID == bookmark.persistentModelID {
+                                                RoundedRectangle(cornerRadius: 14)
+                                                    .stroke(Color.accentColor, lineWidth: 3)
+                                                    .padding(-4)
+                                                    .accessibilityHidden(true)
+                                            }
+                                        }
                                         if isSelecting {
                                             Image(systemName: selection.contains(bookmark.id) ? "checkmark.circle.fill" : "circle")
                                                 .font(.title2)
@@ -74,6 +85,12 @@ struct LibraryGridView: View {
                                 }
                             }
                             .padding(GridLayout.padding)
+                        }
+                        // ForEach is keyed by persistentModelID, so it doubles as the scroll ID.
+                        .onChange(of: focusedBookmarkID, initial: true) { _, id in
+                            guard let id else { return }
+                            withAnimation { scrollProxy.scrollTo(id, anchor: .center) }
+                        }
                         }
                     }
                 }
