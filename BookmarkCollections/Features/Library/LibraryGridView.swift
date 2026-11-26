@@ -1,5 +1,9 @@
+import OSLog
 import SwiftData
 import SwiftUI
+import UniformTypeIdentifiers
+
+private let dropLog = Logger(subsystem: "com.loweffortapps.BookmarkCollections", category: "Drop")
 
 struct LibraryGridView: View {
     @Environment(\.modelContext) private var modelContext
@@ -97,14 +101,30 @@ struct LibraryGridView: View {
             }
         }
         // On the outer stack so an empty library or collection accepts drops too.
-        .dropDestination(for: URL.self) { urls, _ in
+        // Reads `public.url` from each item. On macOS, SwiftUI delivers
+        // Safari's address-bar drag (a URL plus a `.webloc` file promise) as
+        // an item with no types, so that drop falls back to the drag pasteboard.
+        .onDrop(of: [.url], isTargeted: nil) { providers in
             guard destination != .recentlyDeleted else { return false }
-            let summary = LibraryImportService(context: modelContext)
-                .importDroppedURLs(urls, collection: dropTargetCollection)
-            if summary.stoppedAtLimit || !summary.failedLines.isEmpty {
-                onDropSummary(summary)
+            let urlProviders = providers.filter { $0.hasItemConformingToTypeIdentifier(UTType.url.identifier) }
+            let pasteboardURLs = urlProviders.isEmpty ? Self.dragPasteboardURLs() : []
+            guard !urlProviders.isEmpty || !pasteboardURLs.isEmpty else { return false }
+            if !pasteboardURLs.isEmpty {
+                dropLog.notice("Drop read \(pasteboardURLs.count, privacy: .public) URL(s) from the drag pasteboard")
             }
-            return summary.newCount + summary.duplicateCount + summary.restoredCount > 0
+            let collection = dropTargetCollection
+            Task { @MainActor in
+                var urls = pasteboardURLs
+                for provider in urlProviders {
+                    if let url = await Self.loadDroppedURL(from: provider) { urls.append(url) }
+                }
+                let summary = LibraryImportService(context: modelContext)
+                    .importDroppedURLs(urls, collection: collection)
+                if summary.stoppedAtLimit || !summary.failedLines.isEmpty {
+                    onDropSummary(summary)
+                }
+            }
+            return true
         }
         .safeAreaInset(edge: .bottom) {
             if isSelecting {
@@ -130,6 +150,25 @@ struct LibraryGridView: View {
                 }
             }
         }
+    }
+
+    /// The URL an item provider carries as `public.url` data, or nil.
+    private static func loadDroppedURL(from provider: NSItemProvider) async -> URL? {
+        await withCheckedContinuation { continuation in
+            _ = provider.loadDataRepresentation(forTypeIdentifier: UTType.url.identifier) { data, _ in
+                continuation.resume(returning: data.flatMap { URL(dataRepresentation: $0, relativeTo: nil) })
+            }
+        }
+    }
+
+    /// The URLs on the system drag pasteboard (macOS only; empty on iOS).
+    private static func dragPasteboardURLs() -> [URL] {
+        #if os(macOS)
+        let objects = NSPasteboard(name: .drag).readObjects(forClasses: [NSURL.self], options: nil)
+        return (objects as? [URL]) ?? []
+        #else
+        return []
+        #endif
     }
 
     /// New links dropped while a collection is open join that collection.
