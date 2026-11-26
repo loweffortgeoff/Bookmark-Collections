@@ -24,7 +24,7 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
   - [ ] Real iPhone: no paste banner with plain text, image, or empty clipboard.
 - [x] **iOS/iPadOS Home Screen Quick Actions** (2026-11-26). Simulator: all four show; cold-launch New Snippet and warm Save from Clipboard route correctly.
   - [x] **Save from Clipboard pre-fill** (Geoff, 2026-11-26, iPhone 17 Pro, iOS 27.3, Debug build): iOS shows "Tucked would like to paste from Safari"; after Allow Paste, Add Link opens with the copied URL, and the Already-tucked notice appears for a saved link. The empty field seen on the iPhone 18 Pro simulator (iOS 27.2) is simulator-only.
-  - [ ] Pre-filled address is not selected on iOS (cursor at the end), so it can't be replaced in one keystroke. The `TextSelection` set in `AddBookmarkView` does not survive the field taking focus. Low priority.
+  - [x] Pre-filled address is not selected on iOS (cursor at the end). Geoff, 2026-11-26: not an issue; no change.
   - [ ] Real device: all four from cold launch and warm resume; dropped while a draft, paywall, or drop summary is open.
 - [x] **Settings: We Also Make section** (2026-11-26). Five live apps, Tucked excluded, IDs checked against the App Store lookup (Weather in Words `6806063498`; `6760272161` returns nothing). About adds Version and Rate & Review (Q5).
   - [ ] Visual: light and dark icons, XXXL text; tap each row to open the App Store.
@@ -36,10 +36,10 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
 - [ ] **Review follow-ups (not fixed; decide before release).**
   - [x] Rate & Review opens the App Store write-review page instead of `requestReview()`, which the system limits to about three prompts a year (Geoff approved, 2026-11-26).
   - [ ] After Move All, the review sheet says "All checked links look reachable". Show the moved count instead.
-  - [ ] `http://` bookmarks fail App Transport Security before the network, so the sweep can never check them. Option: try `https` first.
+  - [x] `http://` bookmarks fail App Transport Security, so the sweep reports them as "couldn't be confirmed". Geoff, 2026-11-26: acceptable; no change.
   - [ ] Sheets opened inside Settings (the paywall from an import summary, a running sweep) close when a Quick Action or menu bar request arrives, because `.settings` does not block.
   - [ ] A HEAD-only 404/410 is flagged without a GET check; some servers mishandle HEAD.
-  - [ ] Pinch while already zoomed: magnify and pan are separate gestures; check on a device, use `simultaneousGesture` if pinch stops working.
+  - [x] Pinch while already zoomed works on a device (Geoff, 2026-11-26).
   - [ ] iOS Paste row can appear for prose that contains a URL; Paste then does nothing.
 
 ### v1.2.0 — Siri, Shortcuts & Spotlight
