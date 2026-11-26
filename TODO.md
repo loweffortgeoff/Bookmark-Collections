@@ -13,7 +13,7 @@ Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/20
 Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Not merged. The open sub-items are the real-device checks from the plan's release checklist.
 
 - [x] **F20, image viewer panning while zoomed** (2026-11-26). Clamped panning above `1×`, re-centering at `1×`, re-clamp on resize, no sheet dismissal while zoomed; the image still decodes once. Simulator: a 900-point pan stays clamped and downward drags while zoomed keep the sheet open (iPhone 18 Pro, iOS 27.2).
-  - [ ] Real device: portrait and landscape images, pinch `1×–8×`, rotate or resize while zoomed (iPhone, iPad, Mac).
+  - [x] Real device: portrait and landscape images, pinch `1×–8×`, rotate or resize while zoomed (iPhone, iPad, Mac). Passed (Geoff, 2026-11-26).
 - [x] **F22, URL drag-and-drop fixes** (2026-11-26). Drops land on an empty library, new links join the open collection, saved links keep their organization, Finder file URLs are skipped silently, other invalid URLs are reported in a "Links Dropped" summary, and a free-limit stop keeps saved links.
   - [ ] Real device: drag valid, invalid, mixed, and Finder batches (Mac, iPad).
 - [x] **Low priority, verify only: paywall under test launch arguments** (2026-11-26). Not a bug. With the local StoreKit configuration (`Tucked Audit`), the paywall shows `$4.99` and Unlock is enabled under `-free-limit 0`; `StorefrontAuditTests` 15/15 and `PaywallFlowAuditTests` 5/5 pass on iPhone 18 Pro (iOS 27.2). Without `-storekit-audit`, UI tests skip StoreKit by design, which disables Unlock. The headline stays static (Geoff, 2026-11-23).
