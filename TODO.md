@@ -23,7 +23,8 @@ Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). N
   - [x] macOS: no paste prompt before the clipboard read (Geoff, 2026-11-26, Mac mini, Debug build of `dev/v1.1.3`).
   - [ ] Real iPhone: no paste banner with plain text, image, or empty clipboard.
 - [x] **iOS/iPadOS Home Screen Quick Actions** (2026-11-26). Simulator: all four show; cold-launch New Snippet and warm Save from Clipboard route correctly.
-  - [ ] **Save from Clipboard pre-fill:** on the iPhone 18 Pro simulator (iOS 27.2), Add Link opened empty and no paste prompt appeared, even with a URL on the clipboard. A scene-active deferral (`2a0d481`) did not change it. Check on a real iPhone; if it still opens empty, debug the explicit `UIPasteboard` read.
+  - [x] **Save from Clipboard pre-fill** (Geoff, 2026-11-26, iPhone 17 Pro, iOS 27.3, Debug build): iOS shows "Tucked would like to paste from Safari"; after Allow Paste, Add Link opens with the copied URL, and the Already-tucked notice appears for a saved link. The empty field seen on the iPhone 18 Pro simulator (iOS 27.2) is simulator-only.
+  - [ ] Pre-filled address is not selected on iOS (cursor at the end), so it can't be replaced in one keystroke. The `TextSelection` set in `AddBookmarkView` does not survive the field taking focus. Low priority.
   - [ ] Real device: all four from cold launch and warm resume; dropped while a draft, paywall, or drop summary is open.
 - [x] **Settings: We Also Make section** (2026-11-26). Five live apps, Tucked excluded, IDs checked against the App Store lookup (Weather in Words `6806063498`; `6760272161` returns nothing). About adds Version and Rate & Review (Q5).
   - [ ] Visual: light and dark icons, XXXL text; tap each row to open the App Store.
