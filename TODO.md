@@ -10,15 +10,27 @@ Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/20
 
 ### v1.1.3 — Fixes, Capture Polish & Library Health
 
-- [ ] **F20, image viewer panning while zoomed.** Add clamped panning when zoomed (`> 1×`) with clean re-centering at `1×`; keep the single-decode fix from 1.1.1.
-- [ ] **F22, URL drag-and-drop fixes.** Handle drops onto an empty library, respect the active collection, and skip invalid URLs without aborting the batch. Separate from image drag-and-drop.
-- [ ] **Low priority, verify only: paywall under test launch arguments.** With `-ui-testing` and `-free-limit 0`, Unlock is disabled and the headline reads "Ten Bookmarks…". Check with the real StoreKit configuration before treating it as a bug.
-- [ ] **Capture-time "Already tucked" notice.** Show a quiet inline match notice in Add Link (with a View action) and iOS Share Sheet for active or Recently Deleted normalized-URL matches; keep upsert/restore semantics.
-- [ ] **Clipboard URL assist.** Pre-fill/offer a copied web URL in Add Link (using pattern detection on iOS to avoid unwanted paste banners) and add a "Save Link from Clipboard" action in the Mac menu bar helper. URLs only; clipboard snippet capture remains out of scope.
-- [ ] **iOS/iPadOS Home Screen Quick Actions.** Add Link, Save from Clipboard, New Snippet, and Search.
-- [ ] **Settings: add a We Also Make section that mirrors the other apps.** Match the existing `AboutSectionView` pattern in Offshoots, Weather in Words, Task(ed), and EveryPaw: the same app rows, light and dark icon handling, and App Store link structure, listing the other live Low Effort Apps but not Tucked itself. Check App Store IDs against the live listings (the old Weather in Words ID `6760272161` is dead; use `6806063498`). Requested by Geoff 2026-11-22.
-- [ ] **Settings: visible device-observed iCloud sync timestamps.** Show last push / last pull timestamps observed on this device from CloudKit mirroring events, keeping local-first wording (amends the 2026-07-18 honest sync health decision).
-- [ ] **Settings: manual "Check for Broken Links" sweep.** Opt-in, cancellable, robots-tolerant check over active links with an ephemeral review sheet (Open in Browser / Move to Recently Deleted; no persisted schema change).
+Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Not merged. The open sub-items are the real-device checks from the plan's release checklist.
+
+- [x] **F20, image viewer panning while zoomed** (2026-11-26). Clamped panning above `1×`, re-centering at `1×`, re-clamp on resize, no sheet dismissal while zoomed; the image still decodes once. Simulator: a 900-point pan stays clamped and downward drags while zoomed keep the sheet open (iPhone 18 Pro, iOS 27.2).
+  - [ ] Real device: portrait and landscape images, pinch `1×–8×`, rotate or resize while zoomed (iPhone, iPad, Mac).
+- [x] **F22, URL drag-and-drop fixes** (2026-11-26). Drops land on an empty library, new links join the open collection, saved links keep their organization, Finder file URLs are skipped silently, other invalid URLs are reported in a "Links Dropped" summary, and a free-limit stop keeps saved links.
+  - [ ] Real device: drag valid, invalid, mixed, and Finder batches (Mac, iPad).
+- [x] **Low priority, verify only: paywall under test launch arguments** (2026-11-26). Not a bug. With the local StoreKit configuration (`Tucked Audit`), the paywall shows `$4.99` and Unlock is enabled under `-free-limit 0`; `StorefrontAuditTests` 15/15 and `PaywallFlowAuditTests` 5/5 pass on iPhone 18 Pro (iOS 27.2). Without `-storekit-audit`, UI tests skip StoreKit by design, which disables Unlock. The headline stays static (Geoff, 2026-11-23).
+- [x] **Capture-time "Already tucked" notice** (2026-11-26). Add Link shows the notice with View (focuses the exact card by row); the iOS Share Sheet shows it with no View button. Pickers stay blank (Q2).
+  - [ ] Real device: Safari Share Sheet re-share on iPhone and iPad.
+- [x] **Clipboard URL assist** (2026-11-26). macOS Add Link pre-fills a copied URL (selected); the menu bar adds "Save Link from Clipboard"; iOS Add Link shows a PasteButton row only for a probable URL.
+  - [ ] macOS 27.2: confirm whether reading the clipboard shows a paste prompt.
+  - [ ] Real iPhone: no paste banner with plain text, image, or empty clipboard.
+- [x] **iOS/iPadOS Home Screen Quick Actions** (2026-11-26). Simulator: all four show; cold-launch New Snippet and warm Save from Clipboard route correctly.
+  - [ ] **Save from Clipboard pre-fill:** on the iPhone 18 Pro simulator (iOS 27.2), Add Link opened empty and no paste prompt appeared, even with a URL on the clipboard. A scene-active deferral (`2a0d481`) did not change it. Check on a real iPhone; if it still opens empty, debug the explicit `UIPasteboard` read.
+  - [ ] Real device: all four from cold launch and warm resume; dropped while a draft, paywall, or drop summary is open.
+- [x] **Settings: We Also Make section** (2026-11-26). Five live apps, Tucked excluded, IDs checked against the App Store lookup (Weather in Words `6806063498`; `6760272161` returns nothing). About adds Version and Rate & Review (Q5).
+  - [ ] Visual: light and dark icons, XXXL text; tap each row to open the App Store.
+- [x] **Settings: visible device-observed iCloud sync timestamps** (2026-11-26). Precondition met: SwiftData delivers `NSPersistentCloudKitContainer.eventChangedNotification` on macOS 27.2 (MacBook Pro) and iOS 27.3 (iPhone 17 Pro), Debug builds, CloudKit Development. Both devices stored real push and pull dates.
+  - [ ] Two-device check: change on one device, then confirm "Last iCloud pull" advances on the other and both survive relaunch.
+- [x] **Settings: manual "Check for Broken Links" sweep** (2026-11-26). Library Data entry (Q6); ephemeral review sheet; 8 deterministic checker tests.
+  - [ ] Real network: a real `404`, an unreachable domain, a bot-walled site, Cancel mid-sweep, Airplane Mode, Open in Browser, single and Move All soft-delete.
 
 ### v1.2.0 — Siri, Shortcuts & Spotlight
 
