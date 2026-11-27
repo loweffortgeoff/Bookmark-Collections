@@ -10,7 +10,7 @@ Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/20
 
 ### v1.2.0 — Siri, Shortcuts & Spotlight
 
-- [ ] **App Intents, App Shortcuts, and Spotlight indexing.** Ship the first Siri, Shortcuts, and Spotlight suite in the "show without opening" model (`openAppWhenRun = false` for read, rediscovery, and write intents), with typed `BookmarkAppEntity` / `CollectionAppEntity`, inline SwiftUI result snippets, Untuck rediscovery intents (`Show Forgotten`, `Surprise Me`, `On This Day`), navigation intents (`Open Collection`, `Open Bookmark`), 8 curated `AppShortcutsProvider` phrases with full Siri AI descriptions, and CoreSpotlight indexing. See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md#cycle-2--v120-siri-shortcuts--spotlight).
+- [ ] **App Intents, App Shortcuts, and Spotlight indexing.** Ship the first Siri, Shortcuts, and Spotlight suite in the "show without opening" model (background by default for read, rediscovery, and write intents; floor stays iOS 18 / macOS 15), with typed `BookmarkAppEntity` / `CollectionAppEntity`, inline SwiftUI result snippets, Untuck rediscovery intents (`Show Forgotten`, `Surprise Me`, `On This Day`), navigation intents (`Open Collection`, `Open Bookmark`), 8 curated `AppShortcutsProvider` phrases with full Siri AI descriptions, and CoreSpotlight indexing. See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md#cycle-2--v120-siri-shortcuts--spotlight) and [engineering design](docs/superpowers/specs/2026-11-27-v1.2.0-siri-shortcuts-design.md) (2026-11-27).
 
 ### v1.3 — Visual tuck and image import (after v1.2.0)
 
