@@ -4,6 +4,16 @@ For current work and approval dependencies see [TODO](TODO.md); the [verificatio
 
 Significant decisions made during development, logged for future reference.
 
+## 2026-11-27 (Backlog triage after v1.1.3)
+
+- **Decision:** Sort the 13 Backlog features and ideas. None joins v1.2.0, which stays Siri, Shortcuts and Spotlight only.
+  - **v1.3 (Visual tuck and image import):** Visual tuck OCR, Photos-picker import, drag & drop image import, image-capable backup. JPEG/HEIC encoding ships with them.
+  - **Trigger-gated:** F15 (real host-app payloads first), Untuck hub sheet (intent usage shows a discoverability gap), On-device smart tuck (after Visual tuck), Why I tucked this (schema batch).
+  - **Parked:** Private boards.
+  - **Canceled:** clipboard snippet capture, configurable Forgotten threshold, "not opened in 30 days" re-entry, `pageDescription`.
+- **Why:** One product bet per feature release. Image import makes OCR more useful, so the four v1.3 items form one set. The v1.2.0 `Show Forgotten` intent fixes the 30-day rule, so the two rule changes are canceled now and not left to change the intent later. `pageDescription` alone does not justify a Production CloudKit deploy.
+- **Spec changes:** Image-capable backup leaves the schema batch. `Bookmark` already stores image bytes (`previewImageData`), so only the `BackupDocument` file format changes. `pageDescription` is canceled. The schema batch has no trigger of its own; it opens on the first F1 field report. Geoff approved the triage as proposed.
+
 ## 2026-11-26 (Separate macOS What's New for 1.1.3)
 
 - **Decision:** Ship 1.1.3 with two What's New texts: the iOS text, and a macOS text without the iOS-only items (Home Screen Quick Actions, the Share Sheet "Already tucked" notice, the Paste button, and the sheet-dismiss fix). The macOS text names the Mac-only clipboard behavior: Add Link fills in a copied URL, and the menu bar adds Save Link from Clipboard. The Description stays shared because each platform-specific line starts with "On iPhone and iPad" or "On Mac".

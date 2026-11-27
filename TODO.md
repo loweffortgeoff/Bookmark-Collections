@@ -12,6 +12,16 @@ Spec for the next two cycles: [v1.1.3 and v1.2.0 spec](docs/superpowers/specs/20
 
 - [ ] **App Intents, App Shortcuts, and Spotlight indexing.** Ship the first Siri, Shortcuts, and Spotlight suite in the "show without opening" model (`openAppWhenRun = false` for read, rediscovery, and write intents), with typed `BookmarkAppEntity` / `CollectionAppEntity`, inline SwiftUI result snippets, Untuck rediscovery intents (`Show Forgotten`, `Surprise Me`, `On This Day`), navigation intents (`Open Collection`, `Open Bookmark`), 8 curated `AppShortcutsProvider` phrases with full Siri AI descriptions, and CoreSpotlight indexing. See [spec](docs/superpowers/specs/2026-11-23-v1.1.3-and-v1.2.0-spec.md#cycle-2--v120-siri-shortcuts--spotlight).
 
+### v1.3 — Visual tuck and image import (after v1.2.0)
+
+Approved 2026-11-27 in the Backlog triage ([decision](DECISIONS.md#2026-11-27-backlog-triage-after-v113)). One product bet: save what you *saw*. No persisted SwiftData schema change is expected. Write a spec before work starts.
+
+- [ ] **Visual tuck (OCR / screenshot search).** On-device Vision OCR so screenshots are searchable; optional “links found in this image.” Privacy-fit (no cloud AI). Rough size: 1–2 weeks for a useful v1.
+- [ ] **Photos-picker in-app image import.** An alternate in-app import path; Share surfaces already capture images.
+- [ ] **Drag & drop image import onto the library grid (Mac/iPad).** Reuse the v1.1.3 F22 drop path where it fits.
+- [ ] **Image-capable backup.** Image bookmarks are excluded from JSON/HTML export today. `Bookmark` already stores the image bytes (`previewImageData`), so this changes the `BackupDocument` file format only, not the SwiftData schema (model fields checked 2026-11-27; not prototyped).
+- [ ] **Encode shared photos as JPEG/HEIC instead of PNG** (CloudKit payload size). Ships with image import and backup.
+
 ### Monitor / Unscheduled
 
 - [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
@@ -147,33 +157,41 @@ Approved work queue (2026-10-21). Things: Tucked area, Bug Fixes and Feature Wor
 
 ## Backlog
 
-The deferred Photos picker and drag-and-drop items below are alternate in-app import paths, not missing Share Sheet support; macOS and iOS Share surfaces already capture images.
+Triaged 2026-11-27 ([decision](DECISIONS.md#2026-11-27-backlog-triage-after-v113)): four items moved to `## Next` › v1.3, four are trigger-gated, one is parked, and four are canceled (see `## Canceled`). No Backlog item is in v1.2.0.
+
+**Schema batch.** F1 and "Why I tucked this" need a new synced field and a Production CloudKit deploy. The batch has no trigger of its own: it opens on the first field report of duplicate pairs (F1). Until then, items behind it are shelved in practice.
 
 - **F1, permanent fix for identical clone pairs.** Moved from the Watch List on 2026-11-11: its trigger, the release that ships Chapter 1, occurred when 1.1.1 went live. Importing one JSON backup on two devices before sync finishes makes two records with the same `id` and `createdAt`; both stay visible until the user deletes one. The interim conditions are met: the [decision](DECISIONS.md#2026-11-09-keep-identical-copies-from-a-double-import) is recorded and the 1.1.1 release notes disclose the limit. A clean merge needs a new synced field and a Production CloudKit deploy. No release is chosen; raise its priority on the first field report of duplicate pairs. See [Chapter 4, item 1](docs/superpowers/archive/2026-11-09-adversarial-review-fixes.md#chapter-4--decisions-for-geoff-no-code-until-chosen).
-- **F15, Share URL/title classification:** capture payloads from 3–4 real host apps before choosing a heuristic. Preserve selected prose as snippets; implementation is not yet chosen.
+- **Why I tucked this** — Trigger: the schema batch opens. Optional one-line intent at capture or edit (“gift idea”, “for the trip”); filter/search by it. Complements single-collection + Favorite without tags. Adds a persisted field. Rough size: 3–5 days.
+
+**Trigger-gated.** Start only when the trigger occurs.
+
+- **F15, Share URL/title classification.** Trigger: payloads captured from 3–4 real host apps. Then choose a heuristic. Preserve selected prose as snippets; implementation is not yet chosen.
+- **Untuck hub sheet (approach B)** on top of `UntuckRules` (~1–2 days). Trigger: usage of the v1.2.0 Forgotten and Surprise Me intents shows that people cannot find these features in the app.
+- **On-device smart tuck.** Trigger: Visual tuck ships. Local-only helpers: similar saves, collection suggestions from title/OCR, automatic dead-link checks on open (the manual sweep shipped in v1.1.3). Apple frameworks only; no third-party AI APIs. Rough size: 2+ weeks.
+
+**Parked.**
+
+- **Private boards (presentation, not new model)** — Collections as mixed-media boards (links + screenshots). Full-bleed / collage browse per collection; private Pinterest energy without social. Mostly UX on the existing `kind` model. Rough size: 1–2 weeks. A later bet, behind Visual tuck.
+
+**Watch.**
 
 - Watch for the same stale-cell-geometry pattern (iPadOS 26 continuous window resize not re-proposing width to already-materialized cells) if other adaptive/resizable grid or list layouts are added later.
-- Photos-picker in-app image import.
-- Drag & drop image import onto the library grid (Mac/iPad).
-- `pageDescription` field + og:description fetch for the info panel.
-- Image bookmarks are excluded from JSON/HTML export; design image-capable backup.
-- Encode shared photos as JPEG/HEIC instead of PNG (CloudKit payload size).
-- Clipboard snippet capture, only if Share capture leaves a real gap. Shared text and the Mac menu bar shipped in 1.1.0; URL clipboard assist is scoped separately for v1.1.3.
-- Untuck hub sheet (approach B) on top of `UntuckRules`.
-- Configurable Forgotten threshold / Settings control.
-- “Not opened in 30 days” re-entry (opened once, then stale again).
 
-### Product differentiation ideas (2026-07-30)
+### Product differentiation rule (2026-07-30)
 
-Captured during the post-v1 uniqueness brainstorm. Untuck (Forgotten + Surprise me) shipped first. These are the next bets to consider, not committed work. Prefer one clear bet at a time over a feature pile. Full design only when one is picked.
-
-- **Visual tuck (OCR / screenshot research)** — Strongest long-term moat around image-kind bookmarks. On-device Vision OCR so screenshots are searchable; optional “links found in this image.” Positioning: save what you *saw*, not only the URL. Privacy-fit (no cloud AI). Rough size: 1–2 weeks for a useful v1.
-- **Why I tucked this** — Lightest product experiment. Optional one-line intent at capture or edit (“gift idea”, “for the trip”); filter/search by it. Complements single-collection + Favorite without tags. Rough size: 3–5 days.
-- **Private boards (presentation, not new model)** — Collections as mixed-media boards (links + screenshots). Full-bleed / collage browse per collection; private Pinterest energy without social. Mostly UX on the existing `kind` model. Rough size: 1–2 weeks for a first collage surface.
-- **On-device smart tuck** — Local-only helpers after the above: similar saves, collection suggestions from title/OCR, automatic dead-link checks on open (manual sweep is scoped for v1.1.3). Apple frameworks only; no third-party AI APIs. Do after Visual tuck or Untuck has more usage signal. Rough size: 2+ weeks.
-- **Untuck hub sheet (B)** — Already listed above. Branded shell on `UntuckRules` (~1–2 days) if Forgotten/Surprise need a stronger discoverability moment.
+Prefer one clear bet at a time over a feature pile. Full design only when one is picked. Untuck (Forgotten + Surprise me) shipped first; Visual tuck is the next bet (v1.3).
 
 **Deprioritize / skip for now** (crowded or fights brand): multi-label tags as the main differentiator, browser extensions, collaborative/social collections, full offline page archives, cloud “AI summarize every page.”
+
+## Canceled
+
+Canceled 2026-11-27 in the Backlog triage ([decision](DECISIONS.md#2026-11-27-backlog-triage-after-v113)). Each needs a new product decision before it returns.
+
+- **Clipboard snippet capture.** URL clipboard assist shipped in v1.1.3. Nobody has shown a gap for snippets.
+- **Configurable Forgotten threshold / Settings control.** The v1.2.0 `Show Forgotten` intent is built on the fixed 30-day rule (`UntuckRules.forgottenAge`). Keep that rule fixed.
+- **“Not opened in 30 days” re-entry** (opened once, then stale again). Same reason: a rule change after v1.2.0 would change what the intent returns.
+- **`pageDescription` field + og:description fetch for the info panel.** A small info-panel gain is not worth a new synced field and a Production CloudKit deploy.
 
 ## Deferred Beyond v1
 
