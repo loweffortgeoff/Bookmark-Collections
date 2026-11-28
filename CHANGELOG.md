@@ -6,14 +6,14 @@ All notable project changes are recorded here. For the current queue, see [TODO]
 
 > **Platform note:** 1.0.1 and 1.0.2 shipped on iOS only. The approved Mac 1.0 (2026-11-02) carries the 1.0 source plus the Mac App Review fix (window reopen, unused entitlements; `4931b3a`). 1.1.0 is the first shared iOS and macOS update, so it brings the 1.0.1 and 1.0.2 changes to Mac.
 
-### 1.1.3 — 2026-11-26 (iOS and macOS; build 18 — uploaded, processing)
+### 1.1.3 — 2026-11-26 (iOS build 18 — live Nov 27, 12:15 PM ET; macOS 1.1.3 submitted, waiting for review (confirmed by Geoff 2026-11-27))
 
 Fixes, capture polish, and library health. Merged into `main` at `f9839f5`. No persisted model, entitlement, or StoreKit configuration change, so no CloudKit Production deploy is needed. Marketing version set to 1.1.3 at `a4a4860`; build set to 18 in the release pass.
 
 #### Delivery
 
-- Delivery (2026-11-26, Mac mini, macOS 27.2, Xcode 27.2): archived `Tucked Release` for iOS and macOS. App and Share Extension read 1.1.3 (18) with team `2R5TZD4XAH` and valid signatures. Both uploads succeeded. At the last read, App Store Connect listed the iOS build 18 as `PROCESSING` with export compliance unset; the macOS build 18 was not listed yet. Processing is not confirmed.
-- ASC copy (2026-11-26): iOS 1.1.3 en-US What's New and Description saved and read back; Promotional Text and Keywords already matched. The macOS What's New and Description are in `ASC_LISTING.md` for Geoff to paste (the connector edits only iOS). No build is attached and nothing is submitted.
+- Delivery (2026-11-26, Mac mini, macOS 27.2, Xcode 27.2): archived `Tucked Release` for iOS and macOS. App and Share Extension read 1.1.3 (18) with team `2R5TZD4XAH` and valid signatures. Both uploads succeeded. iOS build 18 is VALID, export compliance reads false, attached, and live on the App Store since Nov 27, 12:15 PM ET (ASC read 2026-11-27). macOS 1.1.3 submitted, waiting for review (confirmed by Geoff 2026-11-27).
+- ASC copy (2026-11-26): iOS 1.1.3 en-US What's New and Description saved and read back; Promotional Text and Keywords already matched. The macOS What's New and Description are in `ASC_LISTING.md` for Geoff to paste (the connector edits only iOS). iOS build 18 is attached and released (ASC read 2026-11-27). macOS 1.1.3 submitted, waiting for review (confirmed by Geoff 2026-11-27).
 
 #### New
 

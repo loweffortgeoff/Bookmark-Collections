@@ -29,9 +29,11 @@ Approved 2026-11-27 in the Backlog triage ([decision](DECISIONS.md#2026-11-27-ba
 
 Clipboard *snippet* capture still has no demonstrated gap; v1.1.3 shipped URL clipboard assist only.
 
-## Done — v1.1.3 (uploaded 2026-11-26)
+## Done — v1.1.3 (iOS live 2026-11-27; macOS submitted, waiting for review)
 
-- [ ] **Release 1.1.3 (18)** for iOS and macOS. Archived and uploaded 2026-11-26 (Mac mini, macOS 27.2, Xcode 27.2). iOS ASC copy saved and read back. Open: confirm both builds `VALID`, answer export compliance, paste the macOS What's New and Description, attach builds, submit.
+- [ ] **Release 1.1.3 (18)** for iOS and macOS. Archived and uploaded 2026-11-26 (Mac mini, macOS 27.2, Xcode 27.2). iOS ASC copy saved and read back.
+  - [x] **iOS:** build 18 is VALID, export compliance reads false, attached, and live on the App Store since Nov 27, 12:15 PM ET (ASC read 2026-11-27). — 2026-11-27
+  - [ ] **macOS:** macOS 1.1.3 submitted, waiting for review (confirmed by Geoff 2026-11-27). Open until approved.
 
 Implemented on `dev/v1.1.3` (2026-11-26, MacBook Pro, macOS 27.2, Xcode 27.2). Merged into `main` at `f9839f5` (2026-11-26, Mac mini); both schemes and macOS build on the merge. All real-device checks from the plan's release checklist passed (Geoff, 2026-11-26).
 
