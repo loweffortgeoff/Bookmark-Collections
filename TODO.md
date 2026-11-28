@@ -25,11 +25,13 @@ Approved 2026-11-27 in the Backlog triage ([decision](DECISIONS.md#2026-11-27-ba
 ### Monitor / Unscheduled
 
 - [ ] **Low priority, investigate: Release build window did not appear under remote launch.** On 2026-11-10 Claude launched the same build with the same `open -n … --args -ui-testing -ApplePersistenceIgnoreState YES` command from the agent session (MacBook, macOS 27.2). It happened twice. The second run had screen recording granted and a screenshot confirms it: Tucked is frontmost with its menu bar and status item, but no window opens in 20 s. The same command from Geoff's T3 terminal opens the window. Cause not known; it may be how a background agent process launches the app. Recheck only if a user sees a window-less launch.
-- [ ] **Recheck iCloud push/pull side by side** once all devices run the 1.1.3 TestFlight build (from the 2026-11-26 two-device check).
+
 
 Clipboard *snippet* capture still has no demonstrated gap; v1.1.3 shipped URL clipboard assist only.
 
 ## Done — v1.1.3 (iOS live 2026-11-27; macOS submitted, waiting for review)
+
+- [x] **Recheck iCloud push/pull side by side** once all devices run the 1.1.3 TestFlight build (from the 2026-11-26 two-device check).
 
 - [ ] **Release 1.1.3 (18)** for iOS and macOS. Archived and uploaded 2026-11-26 (Mac mini, macOS 27.2, Xcode 27.2). iOS ASC copy saved and read back.
   - [x] **iOS:** build 18 is VALID, export compliance reads false, attached, and live on the App Store since Nov 27, 12:15 PM ET (ASC read 2026-11-27). — 2026-11-27
